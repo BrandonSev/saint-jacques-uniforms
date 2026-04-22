@@ -1,0 +1,169 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { ChevronRight, ShieldCheck } from "lucide-react";
+import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
+import polo from "@/assets/polo-college.jpg";
+import pull from "@/assets/pull-college.jpg";
+import tshirt from "@/assets/tshirt-college.jpg";
+import poloPorte from "@/assets/college-polo-porte.jpg";
+
+export const Route = createFileRoute("/college")({
+  head: () => ({
+    meta: [
+      { title: "Uniformes collège — Saint-Jacques de Compostelle" },
+      {
+        name: "description",
+        content:
+          "Polos, pulls et t-shirts validés par l'établissement pour les collégiens du Groupe Saint-Jacques de Compostelle.",
+      },
+    ],
+  }),
+  component: CollegePage,
+});
+
+const sizes = ["XS", "S", "M", "L", "XL"];
+
+const products = [
+  {
+    id: "polo",
+    name: "Polo manches courtes",
+    ref: "SJC-POL-MC",
+    price: 24.9,
+    image: polo,
+    tag: "Best-seller",
+    desc: "Piqué de coton, col bleu marine, écusson brodé poitrine.",
+  },
+  {
+    id: "pull",
+    name: "Pull col V marine",
+    ref: "SJC-PUL-V",
+    price: 39.9,
+    image: pull,
+    tag: "Hiver",
+    desc: "Maille fine, 100% coton peigné, écusson brodé.",
+  },
+  {
+    id: "tshirt",
+    name: "T-shirt EPS",
+    ref: "SJC-TSH-EPS",
+    price: 14.9,
+    image: tshirt,
+    tag: "Sport",
+    desc: "Coton bio, col contrasté, idéal pour les cours d'EPS.",
+  },
+];
+
+function CollegePage() {
+  return (
+    <div className="min-h-screen bg-background">
+      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" cartCount={0} />
+
+      <div className="border-b border-border bg-card">
+        <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
+          <Link to="/niveau" className="hover:text-primary">Boutique</Link>
+          <ChevronRight className="h-3 w-3" />
+          <span className="text-foreground">Collège</span>
+        </div>
+      </div>
+
+      {/* Hero */}
+      <section className="relative overflow-hidden border-b border-border">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
+              <ShieldCheck className="h-3 w-3" /> Sélection validée par l'établissement
+            </span>
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              Uniformes collège
+            </h1>
+            <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
+              Sélection d'uniformes validée par l'établissement — commande simple
+              pour les familles. Tous les produits ci-dessous sont autorisés au
+              collège Saint-Jacques de Compostelle.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2 text-xs">
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">3 produits</span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles XS → XL</span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison école</span>
+            </div>
+          </div>
+          <div className="relative h-64 overflow-hidden rounded-3xl border border-border lg:h-80">
+            <img src={poloPorte} alt="Collégien en uniforme" className="h-full w-full object-cover" loading="lazy" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary/40 to-transparent" />
+          </div>
+        </div>
+      </section>
+
+      {/* Products */}
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {products.map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
+        </div>
+      </section>
+
+      <SiteFooter />
+    </div>
+  );
+}
+
+function ProductCard({ product }: { product: (typeof products)[number] }) {
+  const [size, setSize] = useState("M");
+  const [qty, setQty] = useState(1);
+
+  return (
+    <article className="group overflow-hidden rounded-3xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
+      <div className="relative aspect-square overflow-hidden bg-secondary">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          loading="lazy"
+        />
+        <span className="absolute left-4 top-4 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary backdrop-blur">
+          {product.tag}
+        </span>
+      </div>
+
+      <div className="p-6">
+        <div className="flex items-baseline justify-between gap-3">
+          <h3 className="text-lg font-semibold tracking-tight text-foreground">{product.name}</h3>
+          <span className="text-lg font-semibold text-foreground">{product.price.toFixed(2)} €</span>
+        </div>
+        <p className="mt-1 text-xs text-muted-foreground">Réf. {product.ref}</p>
+        <p className="mt-3 text-sm leading-relaxed text-foreground/75">{product.desc}</p>
+
+        <div className="mt-5">
+          <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Taille</div>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {sizes.map((s) => (
+              <button
+                key={s}
+                onClick={() => setSize(s)}
+                className={`h-9 w-11 rounded-md border text-xs font-medium transition-all ${
+                  size === s
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-card text-foreground hover:border-primary/40"
+                }`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-5 flex items-stretch gap-2">
+          <div className="inline-flex h-11 items-center rounded-lg border border-border bg-background">
+            <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 text-muted-foreground hover:text-foreground">−</button>
+            <span className="w-7 text-center text-sm font-semibold">{qty}</span>
+            <button onClick={() => setQty(qty + 1)} className="px-3 text-muted-foreground hover:text-foreground">+</button>
+          </div>
+          <button className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
+            Ajouter au panier
+          </button>
+        </div>
+      </div>
+    </article>
+  );
+}
