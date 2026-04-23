@@ -2,9 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronRight, ShieldCheck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
-import polo from "@/assets/polo-college.jpg";
-import pull from "@/assets/pull-college.jpg";
-import tshirt from "@/assets/tshirt-college.jpg";
+import polo from "@/assets/polo-alban.jpg";
+import pull from "@/assets/pull-oscar.jpg";
+import tshirt from "@/assets/tshirt-valery.jpg";
+import chemise from "@/assets/chemise-candice.jpg";
 import poloPorte from "@/assets/college-polo-porte.jpg";
 
 export const Route = createFileRoute("/college")({
@@ -26,30 +27,39 @@ const sizes = ["XS", "S", "M", "L", "XL"];
 const products = [
   {
     id: "polo",
-    name: "Polo manches courtes",
-    ref: "SJC-POL-MC",
+    name: "Polo Alban",
+    ref: "SJC-POL-ALBAN",
     price: 24.9,
     image: polo,
     tag: "Best-seller",
-    desc: "Piqué de coton, col bleu marine, écusson brodé poitrine.",
+    desc: "Polo blanc en piqué de coton, écusson brodé du groupe scolaire et liseré tricolore.",
   },
   {
     id: "pull",
-    name: "Pull col V marine",
-    ref: "SJC-PUL-V",
+    name: "Pull Oscar",
+    ref: "SJC-PUL-OSCAR",
     price: 39.9,
     image: pull,
     tag: "Hiver",
-    desc: "Maille fine, 100% coton peigné, écusson brodé.",
+    desc: "Pull col V bleu marine, maille jacquard, écusson brodé poitrine.",
+  },
+  {
+    id: "chemise",
+    name: "Chemise Candice",
+    ref: "SJC-CHE-CANDICE",
+    price: 34.9,
+    image: chemise,
+    tag: "Cérémonie",
+    desc: "Chemise blanche manches longues, coton tissé, écusson brodé poitrine.",
   },
   {
     id: "tshirt",
-    name: "T-shirt EPS",
-    ref: "SJC-TSH-EPS",
+    name: "Tee-shirt Valery",
+    ref: "SJC-TSH-VALERY",
     price: 14.9,
     image: tshirt,
     tag: "Sport",
-    desc: "Coton bio, col contrasté, idéal pour les cours d'EPS.",
+    desc: "Tee-shirt blanc col rond, coton souple, écusson brodé et finition tricolore.",
   },
 ];
 
@@ -82,7 +92,7 @@ function CollegePage() {
               collège Saint-Jacques de Compostelle.
             </p>
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">3 produits</span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">4 produits</span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles XS → XL</span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison école</span>
             </div>
@@ -96,7 +106,7 @@ function CollegePage() {
 
       {/* Products */}
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {products.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
@@ -114,11 +124,11 @@ function ProductCard({ product }: { product: (typeof products)[number] }) {
 
   return (
     <article className="group overflow-hidden rounded-3xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
-      <div className="relative aspect-square overflow-hidden bg-secondary">
+      <div className="relative aspect-square overflow-hidden" style={{ backgroundColor: "#f3edE0" }}>
         <img
           src={product.image}
           alt={product.name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          className="h-full w-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.03]"
           loading="lazy"
         />
         <span className="absolute left-4 top-4 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary backdrop-blur">
