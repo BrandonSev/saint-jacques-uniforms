@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Lock, Minus, Plus, Trash2 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
+import { ShellMotif } from "@/components/SchoolMotif";
 import blouse from "@/assets/blouse-bleue-officielle.jpeg";
 import polo from "@/assets/polo-college.jpg";
 import pull from "@/assets/pull-college.jpg";
@@ -49,10 +50,16 @@ function PanierPage() {
     <div className="min-h-screen bg-background">
       <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" cartCount={totalArticles} />
 
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="flex items-baseline justify-between">
+      <section className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="pointer-events-none absolute -top-10 left-0 -z-0 h-80 w-80 text-primary">
+          <ShellMotif className="h-full w-full" opacity={0.045} />
+        </div>
+        <div className="relative flex items-baseline justify-between">
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Mon panier</h1>
+            <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
+              <span className="h-px w-6 bg-gold" /> Famille Martin
+            </span>
+            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Mon panier</h1>
             <p className="mt-2 text-sm text-muted-foreground">
               {totalArticles} articles · répartis pour {cart.length} enfants
             </p>

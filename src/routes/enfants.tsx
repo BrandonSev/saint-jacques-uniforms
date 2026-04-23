@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Info, Plus, Ruler } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
+import { ShellMotif } from "@/components/SchoolMotif";
 
 export const Route = createFileRoute("/enfants")({
   head: () => ({
@@ -50,10 +51,15 @@ function EnfantsPage() {
     <div className="min-h-screen bg-background">
       <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
 
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+      <section className="relative mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="pointer-events-none absolute -top-10 right-0 -z-0 h-72 w-72 text-primary">
+          <ShellMotif className="h-full w-full" opacity={0.05} />
+        </div>
+        <div className="relative flex flex-wrap items-end justify-between gap-4">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-primary">Espace famille Martin</span>
+            <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
+              <span className="h-px w-6 bg-gold" /> Espace famille Martin
+            </span>
             <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               Mes enfants
             </h1>

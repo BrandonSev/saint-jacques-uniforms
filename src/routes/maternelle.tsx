@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Check, ChevronRight, Heart, Minus, Plus, ShieldCheck, Truck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
+import { ShellMotif } from "@/components/SchoolMotif";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import bloussePliee from "@/assets/blouse-pliee.jpeg";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
@@ -44,8 +45,11 @@ function MaternellePage() {
         </div>
       </div>
 
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-2">
+      <section className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="pointer-events-none absolute right-0 top-0 -z-0 h-96 w-96 text-primary">
+          <ShellMotif className="h-full w-full" opacity={0.04} />
+        </div>
+        <div className="relative grid gap-10 lg:grid-cols-2">
           {/* Gallery */}
           <div>
             <div className="overflow-hidden rounded-3xl border border-border bg-secondary">

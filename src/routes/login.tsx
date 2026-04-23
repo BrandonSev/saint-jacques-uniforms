@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Lock, ShieldCheck, User } from "lucide-react";
-import sjcLogo from "@/assets/saint-jacques-logo.png";
+import sjcLogo from "@/assets/saint-jacques-logo-full.png";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
 import logoFU from "@/assets/france-uniformes-logo-blue.jpeg";
+import { ShellMotif } from "@/components/SchoolMotif";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -22,7 +23,10 @@ function LoginPage() {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       {/* Left: form */}
-      <div className="flex flex-col bg-background">
+      <div className="relative flex flex-col bg-background">
+        <div className="pointer-events-none absolute inset-0 text-primary">
+          <ShellMotif className="absolute -left-40 top-20 h-[520px] w-[520px]" opacity={0.045} />
+        </div>
         <header className="flex items-center justify-between px-6 py-5 lg:px-10">
           <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
             <ArrowLeft className="h-4 w-4" /> Changer d'établissement
@@ -33,15 +37,16 @@ function LoginPage() {
           </div>
         </header>
 
-        <div className="flex flex-1 items-center justify-center px-6 py-10 lg:px-10">
+        <div className="relative flex flex-1 items-center justify-center px-6 py-10 lg:px-10">
           <div className="w-full max-w-md">
             <div className="flex flex-col items-center text-center">
               <img
                 src={sjcLogo}
                 alt="Saint-Jacques de Compostelle"
-                className="h-24 w-auto"
+                className="h-32 w-auto drop-shadow-sm"
               />
-              <span className="mt-6 inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-primary">
+              <div className="mt-5 h-px w-12 bg-gold" />
+              <span className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
                 <ShieldCheck className="h-3 w-3" /> Espace sécurisé
               </span>
               <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground">
