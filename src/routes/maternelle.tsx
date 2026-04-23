@@ -6,7 +6,6 @@ import { ShellMotif } from "@/components/SchoolMotif";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import bloussePliee from "@/assets/blouse-pliee.jpeg";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
-import maternelle from "@/assets/classe-maternelle-blouses.jpg";
 
 export const Route = createFileRoute("/maternelle")({
   head: () => ({
@@ -28,7 +27,7 @@ function MaternellePage() {
   const [size, setSize] = useState("6 ans");
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
-  const gallery = [blouseProduct, classeBlouses, bloussePliee, maternelle];
+  const gallery = [blouseProduct, classeBlouses, bloussePliee];
 
   return (
     <div className="min-h-screen bg-background">
@@ -60,7 +59,7 @@ function MaternellePage() {
                 loading="eager"
               />
             </div>
-            <div className="mt-4 grid grid-cols-4 gap-3">
+            <div className="mt-4 grid grid-cols-3 gap-3">
               {gallery.map((img, i) => (
                 <button
                   key={i}
