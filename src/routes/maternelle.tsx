@@ -88,8 +88,7 @@ function MaternellePage() {
             </p>
 
             <div className="mt-6 flex items-baseline gap-3">
-              <span className="text-3xl font-semibold text-foreground">32,90 €</span>
-              <span className="text-sm text-muted-foreground line-through">38,00 €</span>
+              <span className="text-3xl font-semibold text-foreground">30,00 €</span>
               <span className="rounded-md bg-[var(--school-yellow)]/30 px-2 py-0.5 text-xs font-medium text-foreground">
                 Tarif famille
               </span>
