@@ -23,7 +23,7 @@ export const Route = createFileRoute("/college")({
   component: CollegePage,
 });
 
-const sizes = ["XS", "S", "M", "L", "XL"];
+const sizes = ["10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];
 
 const products = [
   {
@@ -98,7 +98,7 @@ function CollegePage() {
             </p>
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">4 produits</span>
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles XS → XL</span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles 10 → 18 ans</span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison école</span>
             </div>
           </div>
@@ -124,7 +124,7 @@ function CollegePage() {
 }
 
 function ProductCard({ product }: { product: (typeof products)[number] }) {
-  const [size, setSize] = useState("M");
+  const [size, setSize] = useState("14 ans");
   const [qty, setQty] = useState(1);
 
   return (
@@ -156,7 +156,7 @@ function ProductCard({ product }: { product: (typeof products)[number] }) {
               <button
                 key={s}
                 onClick={() => setSize(s)}
-                className={`h-9 w-11 rounded-md border text-xs font-medium transition-all ${
+                className={`h-9 px-2 min-w-[3.5rem] rounded-md border text-xs font-medium transition-all ${
                   size === s
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-card text-foreground hover:border-primary/40"
