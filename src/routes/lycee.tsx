@@ -18,7 +18,7 @@ function LyceePage() {
         <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
           <Link to="/niveau" className="hover:text-primary">Boutique</Link>
           <ChevronRight className="h-3 w-3" />
-          <span className="text-foreground">Lycée</span>
+          <span className="text-foreground">Lycée (3ᵉ → Terminale)</span>
         </div>
       </div>
       <section className="mx-auto max-w-5xl px-4 py-16 text-center sm:px-6 lg:px-8">
@@ -29,7 +29,7 @@ function LyceePage() {
           <ShieldCheck className="h-3 w-3" /> Prochainement !
         </span>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-          Uniformes lycée
+          Uniformes lycée — Prochainement !
         </h1>
         <p className="mx-auto mt-4 max-w-xl leading-relaxed text-muted-foreground">
           Il n'y a pas d'uniformes au lycée actuellement. Les élèves de 3ᵉ sont
