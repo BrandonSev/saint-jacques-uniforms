@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronRight, ShieldCheck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
+import { ShellMotif } from "@/components/SchoolMotif";
 import polo from "@/assets/polo-alban.jpg";
 import pull from "@/assets/pull-oscar.jpg";
 import tshirt from "@/assets/tshirt-valery.jpg";
@@ -77,8 +78,11 @@ function CollegePage() {
       </div>
 
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
+      <section className="relative overflow-hidden border-b border-border" style={{ background: "var(--gradient-soft)" }}>
+        <div className="pointer-events-none absolute inset-0 text-primary">
+          <ShellMotif className="absolute -left-32 -bottom-32 h-[480px] w-[480px]" opacity={0.05} />
+        </div>
+        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
               <ShieldCheck className="h-3 w-3" /> Sélection validée par l'établissement

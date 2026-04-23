@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, MapPin, Search, ShieldCheck, Truck } from "lucide-react";
 import logoFU from "@/assets/france-uniformes-logo-blue.jpeg";
-import sjcLogo from "@/assets/saint-jacques-logo.png";
-import sjcSeal from "@/assets/saint-jacques-seal.png";
+import sjcLogo from "@/assets/saint-jacques-logo-full.png";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
+import { ShellMotif } from "@/components/SchoolMotif";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -28,7 +28,7 @@ const schools = [
   {
     name: "Saint-Jacques de Compostelle",
     city: "Dax (40)",
-    seal: sjcSeal,
+    seal: sjcLogo,
     featured: true,
   },
   { name: "Sainte-Marie", city: "Bayonne (64)" },
@@ -73,7 +73,7 @@ function Index() {
           className="absolute inset-0 -z-10"
           style={{ background: "var(--gradient-hero)" }}
         />
-        <div className="absolute inset-0 -z-10 opacity-25 mix-blend-overlay">
+        <div className="absolute inset-0 -z-10 opacity-20 mix-blend-overlay">
           <img
             src={classeBlouses}
             alt=""
@@ -81,13 +81,18 @@ function Index() {
             loading="eager"
           />
         </div>
+        <div className="pointer-events-none absolute inset-0 -z-10 text-white">
+          <ShellMotif className="absolute -left-40 -top-32 h-[700px] w-[700px]" opacity={0.10} />
+          <ShellMotif className="absolute -right-48 -bottom-48 h-[700px] w-[700px]" opacity={0.08} />
+        </div>
         <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 sm:py-28 lg:px-8">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-white backdrop-blur">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-white backdrop-blur">
             <ShieldCheck className="h-3.5 w-3.5" /> Espace familles officiel
           </span>
           <h1 className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
             Boutique des uniformes scolaires
           </h1>
+          <div className="mx-auto mt-5 h-px w-16 bg-gold" />
           <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/85 sm:text-lg">
             Accédez à votre espace établissement pour commander les tenues officielles
             de votre enfant en quelques clics.
@@ -173,9 +178,9 @@ function SchoolCard({ school }: { school: (typeof schools)[number] }) {
         </span>
       )}
       <div className="flex items-start gap-4">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary">
+        <div className="flex h-20 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary p-1.5">
           {school.seal ? (
-            <img src={school.seal} alt={school.name} className="h-14 w-14 object-contain" />
+            <img src={school.seal} alt={school.name} className="h-full w-full object-contain" />
           ) : (
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-sm font-semibold text-primary">
               {school.name
