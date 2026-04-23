@@ -22,7 +22,7 @@ export const Route = createFileRoute("/maternelle")({
   component: MaternellePage,
 });
 
-const sizes = ["3 ans", "4 ans", "5 ans", "6 ans", "7 ans", "8 ans", "10 ans", "12 ans"];
+const sizes = ["3 ans", "4 ans", "5 ans", "6 ans", "7 ans", "8 ans", "9 ans", "10 ans"];
 
 function MaternellePage() {
   const [size, setSize] = useState("6 ans");
@@ -39,7 +39,7 @@ function MaternellePage() {
         <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
           <Link to="/niveau" className="hover:text-primary">Boutique</Link>
           <ChevronRight className="h-3 w-3" />
-          <span>Maternelle & Élémentaire</span>
+          <span>Maternelle & Élémentaire (PS → CM1)</span>
           <ChevronRight className="h-3 w-3" />
           <span className="text-foreground">Blouse officielle</span>
         </div>

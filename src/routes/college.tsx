@@ -73,7 +73,7 @@ function CollegePage() {
         <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
           <Link to="/niveau" className="hover:text-primary">Boutique</Link>
           <ChevronRight className="h-3 w-3" />
-          <span className="text-foreground">Collège</span>
+          <span className="text-foreground">Collège (CM2 → 4ᵉ)</span>
         </div>
       </div>
 
@@ -88,12 +88,13 @@ function CollegePage() {
               <ShieldCheck className="h-3 w-3" /> Sélection validée par l'établissement
             </span>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Uniformes collège
+              Uniformes collège — CM2 à 4ᵉ
             </h1>
             <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
-              Sélection d'uniformes validée par l'établissement — commande simple
-              pour les familles. Tous les produits ci-dessous sont autorisés au
-              collège Saint-Jacques de Compostelle.
+              Sélection d'uniformes validée par l'établissement pour les classes
+              de CM2, 6ᵉ, 5ᵉ et 4ᵉ. Commande simple pour les familles : tous les
+              produits ci-dessous sont autorisés au collège Saint-Jacques de
+              Compostelle.
             </p>
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">4 produits</span>
