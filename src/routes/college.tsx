@@ -7,6 +7,7 @@ import polo from "@/assets/polo-alban.jpg";
 import pull from "@/assets/pull-oscar.jpg";
 import tshirt from "@/assets/tshirt-valery.jpg";
 import chemise from "@/assets/chemise-candice.jpg";
+import chemiseFille from "@/assets/chemise-candice-fille.png";
 import poloPorte from "@/assets/college-polo-porte.jpg";
 
 export const Route = createFileRoute("/college")({
@@ -46,12 +47,21 @@ const products = [
   },
   {
     id: "chemise",
-    name: "Chemise Candice",
+    name: "Chemise Candice — Garçon",
     ref: "CHE-FU-002G",
     price: 26.4,
     image: chemise,
     tag: "Cérémonie",
     desc: "Chemise blanche manches longues, coton tissé, écusson brodé poitrine.",
+  },
+  {
+    id: "chemise-fille",
+    name: "Chemise Candice — Fille",
+    ref: "CHE-FU-002F",
+    price: 29.4,
+    image: chemiseFille,
+    tag: "Fille",
+    desc: "Chemise blanche manches longues, coupe cintrée (pinces poitrine & dos), 50% polyester / 50% coton.",
   },
   {
     id: "tshirt",
