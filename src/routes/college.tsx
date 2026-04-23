@@ -92,6 +92,11 @@ function CollegePage() {
         <div className="pointer-events-none absolute inset-0 text-primary">
           <ShellMotif className="absolute -left-32 -bottom-32 h-[480px] w-[480px]" opacity={0.05} />
         </div>
+        <div className="absolute right-4 top-4 z-10 sm:right-6 lg:right-8">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--school-yellow)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary-deep shadow-[var(--shadow-card)]">
+            Rentrée 2026-2027
+          </span>
+        </div>
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
