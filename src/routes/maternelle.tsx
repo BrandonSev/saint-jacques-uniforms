@@ -97,8 +97,9 @@ function MaternellePage() {
 
             <p className="mt-6 leading-relaxed text-foreground/80">
               Blouse officielle du groupe scolaire — portée au quotidien par les élèves.
-              Coton mélangé, fermeture à boutons jaunes, écusson brodé poitrine, poche
-              latérale. Confectionnée dans nos ateliers du Sud-Ouest.
+              Coton mélangé bleu roi, fermeture boutonnée, col contrasté bleu marine,
+              écusson brodé poitrine et poches plaquées. Confectionnée dans nos ateliers
+              français.
             </p>
 
             {/* Size */}
