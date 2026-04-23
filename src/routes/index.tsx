@@ -1,9 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, MapPin, Search, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, MapPin, Search, ShieldCheck, Truck, GraduationCap, Package } from "lucide-react";
 import logoFU from "@/assets/france-uniformes-logo-blue.jpeg";
 import sjcLogo from "@/assets/saint-jacques-logo-full.png";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
 import { ShellMotif } from "@/components/SchoolMotif";
+import lysLogo from "@/assets/schools/lys.png";
+import saintLouisLogo from "@/assets/schools/saint-louis.png";
+import genevieveLogo from "@/assets/schools/genevieve.png";
+import sacreCoeurLogo from "@/assets/schools/sacre-coeur.png";
+import saintMichelLogo from "@/assets/schools/saint-michel.png";
+import providenceLogo from "@/assets/schools/providence.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,11 +37,12 @@ const schools = [
     seal: sjcLogo,
     featured: true,
   },
-  { name: "Sainte-Marie", city: "Bayonne (64)" },
-  { name: "Notre-Dame du Rosaire", city: "Pau (64)" },
-  { name: "Saint-Joseph", city: "Bordeaux (33)" },
-  { name: "Sacré-Cœur", city: "Mont-de-Marsan (40)" },
-  { name: "Saint-Vincent-de-Paul", city: "Toulouse (31)" },
+  { name: "Notre-Dame des Lys", city: "Lille (59)", seal: lysLogo },
+  { name: "Institution Saint-Louis", city: "Strasbourg (67)", seal: saintLouisLogo },
+  { name: "Sainte-Geneviève", city: "Rennes (35)", seal: genevieveLogo },
+  { name: "Sacré-Cœur", city: "Lyon (69)", seal: sacreCoeurLogo },
+  { name: "Saint-Michel", city: "Reims (51)", seal: saintMichelLogo },
+  { name: "Notre-Dame de la Providence", city: "Amiens (80)", seal: providenceLogo },
 ];
 
 function Index() {
