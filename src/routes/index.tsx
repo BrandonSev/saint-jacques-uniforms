@@ -80,7 +80,7 @@ function Index() {
           className="absolute inset-0 -z-10"
           style={{ background: "var(--gradient-hero)" }}
         />
-        <div className="absolute inset-0 -z-10 opacity-20 mix-blend-overlay">
+        <div className="absolute inset-0 -z-10 opacity-30 mix-blend-overlay">
           <img
             src={classeBlouses}
             alt=""
@@ -92,30 +92,64 @@ function Index() {
           <ShellMotif className="absolute -left-40 -top-32 h-[700px] w-[700px]" opacity={0.10} />
           <ShellMotif className="absolute -right-48 -bottom-48 h-[700px] w-[700px]" opacity={0.08} />
         </div>
-        <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 sm:py-28 lg:px-8">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-white backdrop-blur">
-            <ShieldCheck className="h-3.5 w-3.5" /> Espace familles officiel
-          </span>
-          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Boutique des uniformes scolaires
-          </h1>
-          <div className="mx-auto mt-5 h-px w-16 bg-gold" />
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/85 sm:text-lg">
-            Accédez à votre espace établissement pour commander les tenues officielles
-            de votre enfant en quelques clics.
-          </p>
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr]">
+            {/* Left : copy + search */}
+            <div className="text-center lg:text-left">
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-white backdrop-blur">
+                <ShieldCheck className="h-3.5 w-3.5" /> Espace familles officiel
+              </span>
+              <h1 className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-[3.4rem] lg:leading-[1.05]">
+                Boutique des uniformes scolaires
+              </h1>
+              <div className="mt-5 h-px w-16 bg-gold mx-auto lg:mx-0" />
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg mx-auto lg:mx-0">
+                Sélectionnez l'établissement de votre enfant pour accéder à son
+                espace familles et commander les tenues officielles en quelques clics.
+              </p>
 
-          {/* Search bar */}
-          <div className="mx-auto mt-10 flex max-w-xl items-center gap-2 rounded-full border border-white/20 bg-white p-2 shadow-2xl">
-            <Search className="ml-3 h-5 w-5 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Rechercher votre établissement…"
-              className="flex-1 bg-transparent px-2 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground"
-            />
-            <button className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
-              Rechercher
-            </button>
+              {/* Search bar */}
+              <div className="mt-8 flex max-w-xl items-center gap-2 rounded-full border border-white/20 bg-white p-2 shadow-2xl mx-auto lg:mx-0">
+                <Search className="ml-3 h-5 w-5 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Rechercher votre établissement…"
+                  className="flex-1 bg-transparent px-2 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                />
+                <button className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+                  Rechercher
+                </button>
+              </div>
+
+              {/* Stats */}
+              <div className="mt-10 grid grid-cols-3 gap-4 max-w-xl mx-auto lg:mx-0">
+                <HeroStat icon={<GraduationCap className="h-4 w-4" />} value="120+" label="Établissements" />
+                <HeroStat icon={<Package className="h-4 w-4" />} value="48 000" label="Tenues / an" />
+                <HeroStat icon={<MapPin className="h-4 w-4" />} value="30 ans" label="Savoir-faire" />
+              </div>
+            </div>
+
+            {/* Right : framed photo */}
+            <div className="relative hidden lg:block">
+              <div className="relative overflow-hidden rounded-3xl border border-white/20 shadow-2xl">
+                <img
+                  src={classeBlouses}
+                  alt="Élèves en blouse"
+                  className="aspect-[4/5] w-full object-cover"
+                  loading="eager"
+                />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-primary-deep/85 via-primary-deep/30 to-transparent p-6">
+                  <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-white/75">
+                    Rentrée 2025-2026
+                  </div>
+                  <div className="mt-1 text-base font-semibold text-white">
+                    Tenues officielles validées par les établissements
+                  </div>
+                </div>
+              </div>
+              <div className="absolute -right-4 -top-4 h-20 w-20 rounded-2xl border-2 border-gold/70 bg-white/10 backdrop-blur" />
+              <div className="absolute -left-3 bottom-10 h-12 w-12 rounded-full bg-gold/90" />
+            </div>
           </div>
         </div>
       </section>
