@@ -221,7 +221,11 @@ function SchoolCard({ school }: { school: (typeof schools)[number] }) {
       <div className="flex items-start gap-4">
         <div className="flex h-20 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary p-1.5">
           {school.seal ? (
-            <img src={school.seal} alt={school.name} className="h-full w-full object-contain" />
+            <img
+              src={school.seal}
+              alt={school.name}
+              className="h-[140%] w-full object-contain object-top"
+            />
           ) : (
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-sm font-semibold text-primary">
               {school.name
@@ -272,6 +276,18 @@ function TrustItem({ icon, title, text }: { icon: React.ReactNode; title: string
         <h4 className="text-sm font-semibold text-foreground">{title}</h4>
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{text}</p>
       </div>
+    </div>
+  );
+}
+
+function HeroStat({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
+  return (
+    <div className="rounded-xl border border-white/15 bg-white/10 px-3 py-3 text-left backdrop-blur">
+      <div className="flex items-center gap-1.5 text-white/70">
+        {icon}
+        <span className="text-[10px] font-medium uppercase tracking-[0.18em]">{label}</span>
+      </div>
+      <div className="mt-1 text-xl font-semibold text-white">{value}</div>
     </div>
   );
 }
