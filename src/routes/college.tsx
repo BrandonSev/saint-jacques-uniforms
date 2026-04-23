@@ -23,7 +23,7 @@ export const Route = createFileRoute("/college")({
   component: CollegePage,
 });
 
-const sizes = ["XS", "S", "M", "L", "XL"];
+const sizes = ["10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];
 
 const products = [
   {
