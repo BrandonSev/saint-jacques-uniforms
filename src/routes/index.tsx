@@ -89,7 +89,8 @@ function Index() {
           />
         </div>
         {/* Dark scrim to guarantee white text legibility over the photo */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-primary-deep/85 via-primary-deep/60 to-primary-deep/30" />
+        <div className="absolute inset-0 -z-10 bg-primary-deep/70" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-primary-deep/80 via-primary-deep/60 to-primary-deep/40" />
         <div className="pointer-events-none absolute inset-0 -z-10 text-white">
           <ShellMotif className="absolute -left-40 -top-32 h-[700px] w-[700px]" opacity={0.10} />
           <ShellMotif className="absolute -right-48 -bottom-48 h-[700px] w-[700px]" opacity={0.08} />
