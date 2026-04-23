@@ -26,14 +26,15 @@ function LyceePage() {
           <img src={lycee} alt="Lycéens en uniforme" className="aspect-[16/9] w-full object-cover" loading="lazy" />
         </div>
         <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
-          <ShieldCheck className="h-3 w-3" /> Bientôt disponible
+          <ShieldCheck className="h-3 w-3" /> Prochainement !
         </span>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Uniformes lycée
         </h1>
         <p className="mx-auto mt-4 max-w-xl leading-relaxed text-muted-foreground">
-          La sélection lycée arrive prochainement. Les familles seront informées par
-          mail dès l'ouverture de la boutique.
+          Il n'y a pas d'uniformes au lycée actuellement. Les élèves de 3ᵉ sont
+          rattachés à cette tranche. Les familles seront informées par mail si
+          une sélection venait à être proposée.
         </p>
         <Link
           to="/niveau"
