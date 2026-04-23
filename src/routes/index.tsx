@@ -80,7 +80,7 @@ function Index() {
           className="absolute inset-0 -z-10"
           style={{ background: "var(--gradient-hero)" }}
         />
-        <div className="absolute inset-0 -z-10 opacity-30 mix-blend-overlay">
+        <div className="absolute inset-0 -z-10 opacity-25 mix-blend-overlay">
           <img
             src={classeBlouses}
             alt=""
@@ -88,6 +88,8 @@ function Index() {
             loading="eager"
           />
         </div>
+        {/* Dark scrim to guarantee white text legibility over the photo */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-primary-deep/85 via-primary-deep/60 to-primary-deep/30" />
         <div className="pointer-events-none absolute inset-0 -z-10 text-white">
           <ShellMotif className="absolute -left-40 -top-32 h-[700px] w-[700px]" opacity={0.10} />
           <ShellMotif className="absolute -right-48 -bottom-48 h-[700px] w-[700px]" opacity={0.08} />
