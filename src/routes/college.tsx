@@ -29,8 +29,8 @@ const products = [
   {
     id: "polo",
     name: "Polo Alban",
-    ref: "SJC-POL-ALBAN",
-    price: 24.9,
+    ref: "PO-FU-013",
+    price: 33.6,
     image: polo,
     tag: "Best-seller",
     desc: "Polo blanc en piqué de coton, écusson brodé du groupe scolaire et liseré tricolore.",
@@ -38,8 +38,8 @@ const products = [
   {
     id: "pull",
     name: "Pull Oscar",
-    ref: "SJC-PUL-OSCAR",
-    price: 39.9,
+    ref: "PU-FU-009",
+    price: 45.6,
     image: pull,
     tag: "Hiver",
     desc: "Pull col V bleu marine, maille jacquard, écusson brodé poitrine.",
@@ -47,8 +47,8 @@ const products = [
   {
     id: "chemise",
     name: "Chemise Candice",
-    ref: "SJC-CHE-CANDICE",
-    price: 34.9,
+    ref: "CHE-FU-002G",
+    price: 26.4,
     image: chemise,
     tag: "Cérémonie",
     desc: "Chemise blanche manches longues, coton tissé, écusson brodé poitrine.",
@@ -56,8 +56,8 @@ const products = [
   {
     id: "tshirt",
     name: "Tee-shirt Valery",
-    ref: "SJC-TSH-VALERY",
-    price: 14.9,
+    ref: "TS-FU-019",
+    price: 19.2,
     image: tshirt,
     tag: "Sport",
     desc: "Tee-shirt blanc col rond, coton souple, écusson brodé et finition tricolore.",
