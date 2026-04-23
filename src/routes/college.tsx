@@ -92,7 +92,7 @@ function CollegePage() {
               collège Saint-Jacques de Compostelle.
             </p>
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">3 produits</span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">4 produits</span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles XS → XL</span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison école</span>
             </div>
@@ -106,7 +106,7 @@ function CollegePage() {
 
       {/* Products */}
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {products.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
@@ -124,11 +124,11 @@ function ProductCard({ product }: { product: (typeof products)[number] }) {
 
   return (
     <article className="group overflow-hidden rounded-3xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
-      <div className="relative aspect-square overflow-hidden bg-secondary">
+      <div className="relative aspect-square overflow-hidden" style={{ backgroundColor: "#f3edE0" }}>
         <img
           src={product.image}
           alt={product.name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          className="h-full w-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.03]"
           loading="lazy"
         />
         <span className="absolute left-4 top-4 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary backdrop-blur">
