@@ -62,7 +62,7 @@ function NiveauPage() {
         </div>
         <div className="relative mx-auto max-w-7xl px-4 py-16 text-center sm:px-6 lg:px-8">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-white px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-primary shadow-sm">
-            <Sparkles className="h-3 w-3" /> Rentrée 2025-2026
+            <Sparkles className="h-3 w-3" /> Rentrée 2026-2027
           </span>
           <h1 className="mt-5 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
             Choisissez le niveau de votre enfant

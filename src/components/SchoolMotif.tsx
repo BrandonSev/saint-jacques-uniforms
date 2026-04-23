@@ -67,7 +67,7 @@ export function SchoolIdentityBar() {
           </div>
         </div>
         <div className="hidden items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-white/90 backdrop-blur sm:inline-flex">
-          Espace familles · Rentrée 2025-2026
+          Espace familles · Rentrée 2026-2027
         </div>
       </div>
     </div>
