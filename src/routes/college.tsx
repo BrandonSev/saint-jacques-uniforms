@@ -124,7 +124,7 @@ function CollegePage() {
 }
 
 function ProductCard({ product }: { product: (typeof products)[number] }) {
-  const [size, setSize] = useState("M");
+  const [size, setSize] = useState("14 ans");
   const [qty, setQty] = useState(1);
 
   return (
