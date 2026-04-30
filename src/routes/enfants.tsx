@@ -193,7 +193,13 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
               onClick={onAdd}
               title="Ajouter un nouvel enfant"
               aria-label="Ajouter un nouvel enfant"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-primary shadow-sm transition-colors hover:bg-primary hover:text-primary-foreground"
+              className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-white shadow-sm transition-colors ${
+                enfant.genre === "Fille"
+                  ? "bg-pink-500 hover:bg-pink-600"
+                  : enfant.genre === "Garçon"
+                  ? "bg-sky-500 hover:bg-sky-600"
+                  : "bg-primary hover:bg-primary/90"
+              }`}
             >
               <Plus className="h-4 w-4" />
             </button>
@@ -236,7 +242,16 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
               <Trash2 className="h-3.5 w-3.5" /> Supprimer
             </button>
             <div className="flex gap-2">
-              <button onClick={onEdit} className="inline-flex h-9 items-center rounded-lg border border-border bg-card px-3 text-xs font-medium text-foreground hover:bg-muted">
+              <button
+                onClick={onEdit}
+                className={`inline-flex h-9 items-center rounded-lg border px-3 text-xs font-medium ${
+                  enfant.genre === "Fille"
+                    ? "border-pink-300 bg-pink-100 text-pink-700 hover:bg-pink-200"
+                    : enfant.genre === "Garçon"
+                    ? "border-sky-300 bg-sky-100 text-sky-700 hover:bg-sky-200"
+                    : "border-border bg-card text-foreground hover:bg-muted"
+                }`}
+              >
                 Modifier
               </button>
               <Link
