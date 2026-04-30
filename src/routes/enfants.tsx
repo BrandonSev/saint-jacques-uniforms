@@ -119,12 +119,18 @@ function EnfantsPage() {
             </div>
           )}
           {children.map((e) => (
-            <EnfantCard key={e.id} enfant={e} onEdit={() => setEditing(e)} onDelete={async () => {
-              if (confirm(`Supprimer ${e.prenom} ?`)) {
-                try { await removeChild(e.id); toast.success("Enfant supprimé"); }
-                catch (err: any) { toast.error(err.message); }
-              }
-            }} />
+            <EnfantCard
+              key={e.id}
+              enfant={e}
+              onEdit={() => setEditing(e)}
+              onAdd={() => setCreating(true)}
+              onDelete={async () => {
+                if (confirm(`Supprimer ${e.prenom} ?`)) {
+                  try { await removeChild(e.id); toast.success("Enfant supprimé"); }
+                  catch (err: any) { toast.error(err.message); }
+                }
+              }}
+            />
           ))}
           {children.length > 0 && (
             <button
@@ -157,7 +163,7 @@ function EnfantsPage() {
   );
 }
 
-function EnfantCard({ enfant, onEdit, onDelete }: { enfant: Child; onEdit: () => void; onDelete: () => void }) {
+function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit: () => void; onDelete: () => void; onAdd: () => void }) {
   return (
     <article
       className={`overflow-hidden rounded-2xl border border-border shadow-[var(--shadow-card)] ${
@@ -178,8 +184,19 @@ function EnfantCard({ enfant, onEdit, onDelete }: { enfant: Child; onEdit: () =>
               : enfant.color
           }`}
         >
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-xl font-semibold text-primary shadow-sm">
-            {enfant.initials}
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-xl font-semibold text-primary shadow-sm">
+              {enfant.initials}
+            </div>
+            <button
+              type="button"
+              onClick={onAdd}
+              title="Ajouter un nouvel enfant"
+              aria-label="Ajouter un nouvel enfant"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-primary shadow-sm transition-colors hover:bg-primary hover:text-primary-foreground"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
           </div>
           <div>
             <h3 className="text-2xl font-semibold tracking-tight text-foreground">{enfant.prenom} {enfant.nom}</h3>
