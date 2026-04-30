@@ -1,7 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Info, Plus, Ruler } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { Info, Plus, Ruler, Trash2, X } from "lucide-react";
+import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
+import { useStore, type Child } from "@/lib/store";
 
 export const Route = createFileRoute("/enfants")({
   head: () => ({
@@ -10,43 +13,39 @@ export const Route = createFileRoute("/enfants")({
   component: EnfantsPage,
 });
 
-const enfants = [
-  {
-    initials: "LM",
-    prenom: "Léa",
-    naissance: "12/04/2017",
-    classe: "CE2",
-    section: "Élémentaire",
-    taille: "8 ans",
-    hauteur: "128 cm",
-    tour: "62 cm",
-    color: "from-pink-100 to-pink-50",
-  },
-  {
-    initials: "TM",
-    prenom: "Thomas",
-    naissance: "03/09/2014",
-    classe: "6e B",
-    section: "Collège",
-    taille: "M",
-    hauteur: "152 cm",
-    tour: "72 cm",
-    color: "from-sky-100 to-sky-50",
-  },
-  {
-    initials: "CM",
-    prenom: "Camille",
-    naissance: "27/06/2020",
-    classe: "Moyenne section",
-    section: "Maternelle",
-    taille: "5 ans",
-    hauteur: "108 cm",
-    tour: "55 cm",
-    color: "from-amber-100 to-amber-50",
-  },
-];
+type ChildForm = {
+  prenom: string;
+  nom: string;
+  naissance: string;
+  classe: string;
+  section: string;
+  taille: string;
+  hauteur: string;
+  tour: string;
+};
+
+const empty: ChildForm = { prenom: "", nom: "", naissance: "", classe: "", section: "Maternelle", taille: "", hauteur: "", tour: "" };
 
 function EnfantsPage() {
+  const { user, profile, children, addChild, updateChild, removeChild, authLoading } = useStore();
+  const [editing, setEditing] = useState<Child | null>(null);
+  const [creating, setCreating] = useState(false);
+
+  if (authLoading) return null;
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background">
+        <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
+        <section className="mx-auto max-w-xl px-4 py-20 text-center">
+          <h1 className="text-2xl font-semibold">Espace réservé aux familles</h1>
+          <p className="mt-3 text-sm text-muted-foreground">Connectez-vous pour gérer vos enfants.</p>
+          <Link to="/login" className="mt-6 inline-flex h-11 items-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground">Se connecter</Link>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
@@ -58,7 +57,7 @@ function EnfantsPage() {
         <div className="relative flex flex-wrap items-end justify-between gap-4">
           <div>
             <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
-              <span className="h-px w-6 bg-gold" /> Espace famille Martin
+              <span className="h-px w-6 bg-gold" /> Espace famille {profile?.nom || ""}
             </span>
             <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               Mes enfants
@@ -69,7 +68,7 @@ function EnfantsPage() {
               adaptées.
             </p>
           </div>
-          <button className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
+          <button onClick={() => setCreating(true)} className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
             <Plus className="h-4 w-4" /> Ajouter un enfant
           </button>
         </div>
@@ -80,55 +79,81 @@ function EnfantsPage() {
         </div>
 
         <div className="mt-8 space-y-5">
-          {enfants.map((e) => (
-            <EnfantCard key={e.prenom} enfant={e} />
+          {children.length === 0 && !creating && (
+            <div className="rounded-2xl border border-dashed border-border bg-card p-10 text-center">
+              <p className="text-sm text-muted-foreground">Aucun enfant enregistré. Ajoutez votre premier enfant pour commencer.</p>
+            </div>
+          )}
+          {children.map((e) => (
+            <EnfantCard key={e.id} enfant={e} onEdit={() => setEditing(e)} onDelete={async () => {
+              if (confirm(`Supprimer ${e.prenom} ?`)) {
+                try { await removeChild(e.id); toast.success("Enfant supprimé"); }
+                catch (err: any) { toast.error(err.message); }
+              }
+            }} />
           ))}
         </div>
       </section>
+
+      {(creating || editing) && (
+        <ChildDialog
+          initial={editing ?? empty}
+          onClose={() => { setCreating(false); setEditing(null); }}
+          onSave={async (data) => {
+            try {
+              if (editing) { await updateChild(editing.id, data); toast.success("Enfant mis à jour"); }
+              else { await addChild({ ...data, naissance: data.naissance }); toast.success("Enfant ajouté"); }
+              setCreating(false); setEditing(null);
+            } catch (err: any) { toast.error(err.message); }
+          }}
+        />
+      )}
 
       <SiteFooter />
     </div>
   );
 }
 
-function EnfantCard({ enfant }: { enfant: (typeof enfants)[number] }) {
+function EnfantCard({ enfant, onEdit, onDelete }: { enfant: Child; onEdit: () => void; onDelete: () => void }) {
   return (
     <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]">
       <div className="grid gap-0 lg:grid-cols-[280px_1fr]">
-        {/* Avatar block */}
         <div className={`relative flex flex-col justify-between bg-gradient-to-br ${enfant.color} p-6`}>
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-xl font-semibold text-primary shadow-sm">
             {enfant.initials}
           </div>
           <div>
-            <h3 className="text-2xl font-semibold tracking-tight text-foreground">{enfant.prenom}</h3>
-            <p className="mt-1 text-xs text-foreground/70">Né(e) le {enfant.naissance}</p>
-            <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-[11px] font-medium text-primary backdrop-blur">
-              {enfant.section} · {enfant.classe}
-            </div>
+            <h3 className="text-2xl font-semibold tracking-tight text-foreground">{enfant.prenom} {enfant.nom}</h3>
+            {enfant.naissance && <p className="mt-1 text-xs text-foreground/70">Né(e) le {new Date(enfant.naissance).toLocaleDateString("fr-FR")}</p>}
+            {(enfant.section || enfant.classe) && (
+              <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-[11px] font-medium text-primary backdrop-blur">
+                {[enfant.section, enfant.classe].filter(Boolean).join(" · ")}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Info & sizes */}
         <div className="p-6 sm:p-8">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             <Ruler className="h-3.5 w-3.5" /> Mensurations
           </div>
           <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
-            <Field label="Taille recommandée" value={enfant.taille} />
-            <Field label="Hauteur" value={enfant.hauteur} />
-            <Field label="Tour de poitrine" value={enfant.tour} />
+            <Field label="Taille recommandée" value={enfant.taille || "—"} />
+            <Field label="Hauteur" value={enfant.hauteur || "—"} />
+            <Field label="Tour de poitrine" value={enfant.tour || "—"} />
           </div>
 
           <div className="mt-6 flex items-center justify-between border-t border-border pt-5">
-            <p className="text-xs text-muted-foreground">Dernière mise à jour : 02/09/2025</p>
+            <button onClick={onDelete} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive">
+              <Trash2 className="h-3.5 w-3.5" /> Supprimer
+            </button>
             <div className="flex gap-2">
-              <button className="inline-flex h-9 items-center rounded-lg border border-border bg-card px-3 text-xs font-medium text-foreground hover:bg-muted">
+              <button onClick={onEdit} className="inline-flex h-9 items-center rounded-lg border border-border bg-card px-3 text-xs font-medium text-foreground hover:bg-muted">
                 Modifier
               </button>
-              <button className="inline-flex h-9 items-center rounded-lg bg-primary px-3 text-xs font-medium text-primary-foreground hover:bg-primary/90">
+              <Link to="/niveau" className="inline-flex h-9 items-center rounded-lg bg-primary px-3 text-xs font-medium text-primary-foreground hover:bg-primary/90">
                 Voir la boutique
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -143,5 +168,65 @@ function Field({ label, value }: { label: string; value: string }) {
       <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="mt-1 text-base font-semibold text-foreground">{value}</div>
     </div>
+  );
+}
+
+function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child; onClose: () => void; onSave: (data: ChildForm) => Promise<void> }) {
+  const [form, setForm] = useState<ChildForm>({
+    prenom: initial.prenom, nom: initial.nom, naissance: initial.naissance,
+    classe: initial.classe, section: initial.section, taille: initial.taille,
+    hauteur: initial.hauteur, tour: initial.tour,
+  });
+  const [saving, setSaving] = useState(false);
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.prenom || !form.nom) return;
+    setSaving(true);
+    await onSave(form);
+    setSaving(false);
+  };
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
+      <form onClick={(e) => e.stopPropagation()} onSubmit={submit} className="w-full max-w-lg rounded-2xl bg-card p-6 shadow-xl">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold">{("id" in initial) ? "Modifier l'enfant" : "Ajouter un enfant"}</h2>
+          <button type="button" onClick={onClose} className="rounded-lg p-1.5 hover:bg-muted"><X className="h-4 w-4" /></button>
+        </div>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <Input label="Prénom *" value={form.prenom} onChange={(v) => setForm({ ...form, prenom: v })} />
+          <Input label="Nom *" value={form.nom} onChange={(v) => setForm({ ...form, nom: v })} />
+          <Input label="Date de naissance" type="date" value={form.naissance} onChange={(v) => setForm({ ...form, naissance: v })} />
+          <Select label="Section" value={form.section} onChange={(v) => setForm({ ...form, section: v })} options={["Maternelle", "Élémentaire", "Collège", "Lycée"]} />
+          <Input label="Classe" value={form.classe} onChange={(v) => setForm({ ...form, classe: v })} placeholder="ex: CE2, 6e B" />
+          <Input label="Taille recommandée" value={form.taille} onChange={(v) => setForm({ ...form, taille: v })} placeholder="ex: 8 ans, M" />
+          <Input label="Hauteur" value={form.hauteur} onChange={(v) => setForm({ ...form, hauteur: v })} placeholder="ex: 128 cm" />
+          <Input label="Tour de poitrine" value={form.tour} onChange={(v) => setForm({ ...form, tour: v })} placeholder="ex: 62 cm" />
+        </div>
+        <div className="mt-6 flex justify-end gap-2">
+          <button type="button" onClick={onClose} className="h-10 rounded-lg border border-border bg-card px-4 text-sm font-medium hover:bg-muted">Annuler</button>
+          <button type="submit" disabled={saving} className="h-10 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-60">{saving ? "Enregistrement…" : "Enregistrer"}</button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+function Input({ label, value, onChange, type = "text", placeholder }: { label: string; value: string; onChange: (v: string) => void; type?: string; placeholder?: string }) {
+  return (
+    <label className="block">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+      <input type={type} value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm" />
+    </label>
+  );
+}
+
+function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: string[] }) {
+  return (
+    <label className="block">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+      <select value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm">
+        {options.map((o) => <option key={o} value={o}>{o}</option>)}
+      </select>
+    </label>
   );
 }

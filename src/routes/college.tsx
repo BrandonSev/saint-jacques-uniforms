@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronRight, ShieldCheck } from "lucide-react";
+import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
+import { ChildPicker } from "@/components/ChildPicker";
+import { useStore } from "@/lib/store";
 import polo from "@/assets/polo-alban.jpg";
 import pull from "@/assets/pull-oscar.jpg";
 import tshirt from "@/assets/tshirt-valery.jpg";
@@ -77,7 +80,7 @@ const products = [
 function CollegePage() {
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" cartCount={0} />
+      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
 
       <div className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
@@ -134,8 +137,20 @@ function CollegePage() {
 }
 
 function ProductCard({ product }: { product: (typeof products)[number] }) {
+  const { addToCart, children } = useStore();
   const [size, setSize] = useState("14 ans");
   const [qty, setQty] = useState(1);
+  const [childId, setChildId] = useState<string>("");
+
+  const handleAdd = () => {
+    if (children.length > 0 && !childId) { toast.error("Choisissez un enfant"); return; }
+    addToCart({
+      productId: product.id, name: product.name, ref: product.ref,
+      price: product.price, size, qty, image: product.image,
+      childId: childId || (children[0]?.id ?? ""),
+    });
+    toast.success(`${product.name} ajouté au panier`);
+  };
 
   return (
     <article className="group overflow-hidden rounded-3xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
@@ -178,13 +193,18 @@ function ProductCard({ product }: { product: (typeof products)[number] }) {
           </div>
         </div>
 
+        <div className="mt-4">
+          <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Pour quel enfant ?</div>
+          <div className="mt-2"><ChildPicker value={childId} onChange={setChildId} /></div>
+        </div>
+
         <div className="mt-5 flex items-stretch gap-2">
           <div className="inline-flex h-11 items-center rounded-lg border border-border bg-background">
             <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 text-muted-foreground hover:text-foreground">−</button>
             <span className="w-7 text-center text-sm font-semibold">{qty}</span>
             <button onClick={() => setQty(qty + 1)} className="px-3 text-muted-foreground hover:text-foreground">+</button>
           </div>
-          <button className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
+          <button onClick={handleAdd} className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
             Ajouter au panier
           </button>
         </div>

@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Check, ChevronRight, Heart, Minus, Plus, ShieldCheck, Truck } from "lucide-react";
+import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
+import { ChildPicker } from "@/components/ChildPicker";
+import { useStore } from "@/lib/store";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import bloussePliee from "@/assets/blouse-pliee.jpeg";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
@@ -24,14 +27,26 @@ export const Route = createFileRoute("/maternelle")({
 const sizes = ["3 ans", "4 ans", "5 ans", "6 ans", "7 ans", "8 ans", "9 ans", "10 ans"];
 
 function MaternellePage() {
+  const { addToCart, children } = useStore();
   const [size, setSize] = useState("6 ans");
   const [qty, setQty] = useState(1);
+  const [childId, setChildId] = useState("");
   const [activeImg, setActiveImg] = useState(0);
   const gallery = [blouseProduct, classeBlouses, bloussePliee];
 
+  const handleAdd = () => {
+    if (children.length > 0 && !childId) { toast.error("Choisissez un enfant"); return; }
+    addToCart({
+      productId: "blouse-officielle", name: "Blouse scolaire officielle",
+      ref: "SJC-BLS-2025", price: 30, size, qty, image: blouseProduct,
+      childId: childId || (children[0]?.id ?? ""),
+    });
+    toast.success("Blouse ajoutée au panier");
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" cartCount={0} />
+      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
 
       {/* Breadcrumb */}
       <div className="border-b border-border bg-card">
@@ -140,12 +155,17 @@ function MaternellePage() {
                   <Plus className="h-4 w-4" />
                 </button>
               </div>
-              <button className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] transition-all hover:bg-primary/90">
+              <button onClick={handleAdd} className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] transition-all hover:bg-primary/90">
                 Ajouter au panier
               </button>
               <button className="inline-flex h-14 w-14 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition-colors hover:text-primary">
                 <Heart className="h-5 w-5" />
               </button>
+            </div>
+
+            <div className="mt-6">
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pour quel enfant ?</div>
+              <div className="mt-2"><ChildPicker value={childId} onChange={setChildId} /></div>
             </div>
 
             {/* Trust */}
