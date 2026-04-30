@@ -3,6 +3,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif, WaveMotif } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
+import { RequireAuth } from "@/components/RequireAuth";
 import maternelle from "@/assets/classe-maternelle-blouses.jpg";
 import college from "@/assets/college-polo-porte.jpg";
 import lycee from "@/assets/lycee-uniformes.jpg";
@@ -18,7 +19,11 @@ export const Route = createFileRoute("/boutique")({
       },
     ],
   }),
-  component: NiveauPage,
+  component: () => (
+    <RequireAuth>
+      <NiveauPage />
+    </RequireAuth>
+  ),
 });
 
 const levels = [
