@@ -4,7 +4,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
- import schoolLogo from "@/assets/saint-jacques-logo-new.png";
+import schoolLogo from "@/assets/saint-jacques-blason.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -104,27 +104,6 @@ function Index() {
             </div>
 
             <div className="relative hidden lg:block">
-              {/* Animated school crest */}
-              <div className="relative mx-auto mb-8 flex h-56 w-56 items-center justify-center">
-                <span className="absolute inset-0 rounded-full border border-white/20 animate-[ping_3s_ease-out_infinite]" />
-                <span
-                  className="absolute inset-4 rounded-full border border-gold/30 animate-[ping_3s_ease-out_infinite]"
-                  style={{ animationDelay: "1s" }}
-                />
-                <span
-                  className="absolute inset-8 rounded-full border border-white/15 animate-[ping_3s_ease-out_infinite]"
-                  style={{ animationDelay: "2s" }}
-                />
-                <span
-                  className="absolute inset-0 rounded-full opacity-60 blur-2xl"
-                  style={{ background: "radial-gradient(closest-side, var(--gold) 0%, transparent 70%)" }}
-                />
-                 <img
-                   src={schoolLogo}
-                   alt="Blason Saint-Jacques de Compostelle"
-                   className="relative h-40 w-40 drop-shadow-[0_12px_30px_rgba(0,0,0,0.45)] animate-[float_6s_ease-in-out_infinite] object-scale-down"
-                 />
-              </div>
               <div className="relative overflow-hidden rounded-3xl border border-white/20 shadow-2xl">
                 <img
                   src={classeBlouses}
@@ -140,6 +119,18 @@ function Index() {
                     Tenues officielles validées par les établissements
                   </div>
                 </div>
+              </div>
+              {/* Blason en chevauchement haut-gauche */}
+              <div className="pointer-events-none absolute -left-10 -top-10 z-10">
+                <span
+                  className="absolute inset-0 rounded-full opacity-60 blur-2xl"
+                  style={{ background: "radial-gradient(closest-side, var(--gold) 0%, transparent 70%)" }}
+                />
+                <img
+                  src={schoolLogo}
+                  alt="Blason Saint-Jacques de Compostelle"
+                  className="relative h-44 w-44 drop-shadow-[0_18px_40px_rgba(0,0,0,0.55)] animate-[float_6s_ease-in-out_infinite] object-scale-down"
+                />
               </div>
               <div className="absolute -right-4 -top-4 h-20 w-20 rounded-2xl border-2 border-gold/70 bg-white/10 backdrop-blur" />
               <div className="absolute -left-3 bottom-10 h-12 w-12 rounded-full bg-gold/90" />
