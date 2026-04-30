@@ -202,7 +202,10 @@ function MaternellePage() {
             </div>
             <div className="space-y-4 text-sm leading-relaxed text-foreground/80 lg:col-span-2">
               <p>
-                La blouse de Saint-Jacques de Compostelle est portée par tous les élèves de maternelle et d'élémentaire. Sa coupe ajustée reste ample et permet une grande liberté de mouvement et protège les vêtements pendant les activités du quotidien. 
+                La blouse de Saint-Jacques de Compostelle est portée par tous les élèves de maternelle et d'élémentaire. Sa coupe à la fois ajustée et ample, permet une grande liberté de mouvement tout en offrant une apparence harmonieuse. 
+              </p>
+              <p>
+                Elle protège les vêtements pendant les activités du quotidien.
               </p>
               <p>
                 Tissu résistant, lavable en machine à 40°C, détachable facilement et séchage rapide. 
