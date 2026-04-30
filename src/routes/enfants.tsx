@@ -184,25 +184,8 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
               : enfant.color
           }`}
         >
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-xl font-semibold text-primary shadow-sm">
-              {enfant.initials}
-            </div>
-            <button
-              type="button"
-              onClick={onAdd}
-              title="Ajouter un nouvel enfant"
-              aria-label="Ajouter un nouvel enfant"
-              className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-white shadow-sm transition-colors ${
-                enfant.genre === "Fille"
-                  ? "bg-pink-500 hover:bg-pink-600"
-                  : enfant.genre === "Garçon"
-                  ? "bg-sky-500 hover:bg-sky-600"
-                  : "bg-primary hover:bg-primary/90"
-              }`}
-            >
-              <Plus className="h-4 w-4" />
-            </button>
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-xl font-semibold text-primary shadow-sm">
+            {enfant.initials}
           </div>
           <div>
             <h3 className="text-2xl font-semibold tracking-tight text-foreground">{enfant.prenom} {enfant.nom}</h3>
