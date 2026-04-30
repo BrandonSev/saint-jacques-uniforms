@@ -273,21 +273,48 @@ function ConfirmModal({
 }
 
 function ChildGroup({ group, onQty, onRemove }: { group: Group; onQty: (id: string, qty: number) => void; onRemove: (id: string) => void }) {
-  const totalQty = group.items.reduce((a, i) => a + i.qty, 0);
+  const genre = group.child?.genre;
+  const tone =
+    genre === "Fille"
+      ? {
+          card: "border-pink-200",
+          header: "border-pink-200 bg-pink-50",
+          badge: "bg-pink-500 text-white",
+          chip: "bg-white text-pink-700 border border-pink-200",
+          name: "text-pink-800",
+        }
+      : genre === "Garçon"
+      ? {
+          card: "border-sky-200",
+          header: "border-sky-200 bg-sky-50",
+          badge: "bg-sky-500 text-white",
+          chip: "bg-white text-sky-700 border border-sky-200",
+          name: "text-sky-800",
+        }
+      : {
+          card: "border-border",
+          header: "border-border bg-secondary/60",
+          badge: "bg-primary/10 text-primary",
+          chip: "bg-card text-muted-foreground",
+          name: "text-foreground",
+        };
+  const summary = summarizeItems(group.items) || "Articles";
   return (
-    <section className="overflow-hidden rounded-3xl border border-border bg-card">
-      <header className="flex items-center justify-between border-b border-border bg-secondary/60 px-6 py-4">
+    <section className={`overflow-hidden rounded-3xl border ${tone.card} bg-card`}>
+      <header className={`flex items-center justify-between border-b ${tone.header} px-6 py-4`}>
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+          <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold ${tone.badge}`}>
             {group.child?.initials ?? "—"}
           </div>
           <div>
-            <h3 className="text-base font-semibold tracking-tight text-foreground">Pour {group.child ? `${group.child.prenom} ${group.child.nom}` : "—"}</h3>
+            <h3 className={`text-base font-semibold tracking-tight ${tone.name}`}>
+              Pour {group.child ? `${group.child.prenom} ${group.child.nom}` : "—"}
+            </h3>
             <p className="text-xs text-muted-foreground">{group.child ? [group.child.classe, group.child.section].filter(Boolean).join(" · ") || "—" : "Enfant non défini"}</p>
           </div>
         </div>
-        <span className="rounded-full bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-          Blouse
+        <span className={`rounded-full px-3 py-1 text-xs font-medium ${tone.chip}`}>
+          {summary}
         </span>
       </header>
 
