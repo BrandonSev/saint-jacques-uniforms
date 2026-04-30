@@ -1,7 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif, WaveMotif } from "@/components/SchoolMotif";
+import { useStore } from "@/lib/store";
 import maternelle from "@/assets/classe-maternelle-blouses.jpg";
 import college from "@/assets/college-polo-porte.jpg";
 import lycee from "@/assets/lycee-uniformes.jpg";
@@ -61,6 +62,9 @@ const levels = [
 ];
 
 function NiveauPage() {
+  const { isAdmin, authLoading } = useStore();
+  if (authLoading) return null;
+  if (isAdmin) return <Navigate to="/admin" />;
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" cartCount={0} />

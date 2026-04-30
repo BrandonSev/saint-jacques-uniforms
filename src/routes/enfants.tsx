@@ -28,10 +28,24 @@ const empty: ChildForm = { prenom: "", nom: "", naissance: "", classe: "", secti
 
 function EnfantsPage() {
   const { user, profile, children, addChild, updateChild, removeChild, authLoading } = useStore();
+  const { isAdmin } = useStore();
   const [editing, setEditing] = useState<Child | null>(null);
   const [creating, setCreating] = useState(false);
 
   if (authLoading) return null;
+
+  if (isAdmin) {
+    return (
+      <div className="min-h-screen bg-background">
+        <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
+        <section className="mx-auto max-w-xl px-4 py-20 text-center">
+          <h1 className="text-2xl font-semibold">Espace administrateur</h1>
+          <p className="mt-3 text-sm text-muted-foreground">Cette section est réservée aux familles.</p>
+          <Link to="/admin" className="mt-6 inline-flex h-11 items-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground">Aller à l'administration</Link>
+        </section>
+      </div>
+    );
+  }
 
   if (!user) {
     return (
