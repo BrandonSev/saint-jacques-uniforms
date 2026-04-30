@@ -276,8 +276,8 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
           />
           <div className="sm:col-span-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
             <Input label="Taille habituellement commandée*" value={form.taille} onChange={(v) => setForm({ ...form, taille: v })} placeholder="ex: 8 ans, M" required />
-            <Input label="Hauteur *" value={form.hauteur} onChange={(v) => setForm({ ...form, hauteur: v })} placeholder="ex: 128 cm" required />
-            <Input label="Tour de poitrine *" value={form.tour} onChange={(v) => setForm({ ...form, tour: v })} placeholder="ex: 62 cm" required />
+            <Input label="Hauteur *" value={form.hauteur} onChange={(v) => setForm({ ...form, hauteur: v })} placeholder="ex: 128" suffix="cm" required />
+            <Input label="Tour de poitrine *" value={form.tour} onChange={(v) => setForm({ ...form, tour: v })} placeholder="ex: 62" suffix="cm" required />
           </div>
         </div>
         <div className="mt-6 flex justify-end gap-2">
@@ -289,11 +289,25 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
   );
 }
 
-function Input({ label, value, onChange, type = "text", placeholder, required }: { label: string; value: string; onChange: (v: string) => void; type?: string; placeholder?: string; required?: boolean }) {
+function Input({ label, value, onChange, type = "text", placeholder, required, suffix }: { label: string; value: string; onChange: (v: string) => void; type?: string; placeholder?: string; required?: boolean; suffix?: string }) {
   return (
     <label className="block">
       <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
-      <input type={type} value={value} placeholder={placeholder} required={required} onChange={(e) => onChange(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm" />
+      <div className="relative mt-1">
+        <input
+          type={type}
+          value={value}
+          placeholder={placeholder}
+          required={required}
+          onChange={(e) => onChange(e.target.value)}
+          className={`h-10 w-full rounded-lg border border-border bg-background px-3 text-sm ${suffix ? "pr-10" : ""}`}
+        />
+        {suffix && (
+          <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-medium text-muted-foreground">
+            {suffix}
+          </span>
+        )}
+      </div>
     </label>
   );
 }
