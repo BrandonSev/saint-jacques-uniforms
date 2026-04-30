@@ -193,13 +193,13 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
             {enfant.naissance && (() => {
               const age = computeAgeFromISO(enfant.naissance);
               return (
-                <div className="mt-1 flex items-baseline gap-3 flex-wrap">
+                <div className="mt-1 flex items-baseline gap-2 flex-wrap">
                   <p className="text-xs text-foreground/70">
                     {enfant.genre === "Fille" ? "Née" : enfant.genre === "Garçon" ? "Né" : "Né(e)"} le {new Date(enfant.naissance).toLocaleDateString("fr-FR")}
                   </p>
                   {age !== null && (
-                    <span className="ml-auto text-2xl font-extrabold tracking-tight text-primary">
-                      {age} ans
+                    <span className="text-xs font-bold text-foreground/70">
+                      · {age} ans
                     </span>
                   )}
                 </div>
@@ -227,11 +227,14 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
             <Field label="Tour de poitrine" value={enfant.tour ? `${enfant.tour} cm` : "—"} />
           </div>
 
-          <div className="mt-6 flex items-center justify-between border-t border-border pt-5">
-            <button onClick={onDelete} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive">
-              <Trash2 className="h-3.5 w-3.5" /> Supprimer
+          <div className="mt-6 flex items-center justify-end gap-2 border-t border-border pt-5">
+            <button
+              onClick={onDelete}
+              title="Supprimer la fiche de l'enfant"
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-card px-3 text-xs font-medium text-muted-foreground hover:border-destructive/40 hover:text-destructive"
+            >
+              <Trash2 className="h-3.5 w-3.5" /> Supprimer la fiche de l'enfant
             </button>
-            <div className="flex gap-2">
               <button
                 onClick={onEdit}
                 className={`inline-flex h-9 items-center rounded-lg border px-3 text-xs font-medium ${
@@ -256,7 +259,6 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
               >
                 Voir la boutique
               </Link>
-            </div>
           </div>
         </div>
       </div>
