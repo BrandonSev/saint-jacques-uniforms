@@ -91,7 +91,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
             {showAccount && user && (
               <button
                 type="button"
-                className="hidden h-10 items-center gap-2 rounded-full border border-border bg-card px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted sm:inline-flex"
+                className="hidden h-10 items-center gap-2 rounded-full border border-border bg-card px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted sm:inline-flex bg-slate-400"
               >
                 <User className="h-4 w-4" />
                 <span className="max-w-[160px] truncate">{familyLabel}</span>
