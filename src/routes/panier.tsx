@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { AlertTriangle, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
@@ -19,6 +19,8 @@ function PanierPage() {
   const { user, profile, cart, children, cartCount, updateQty, removeFromCart, checkout } = useStore();
   const navigate = useNavigate();
   const [processing, setProcessing] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [sizeConfirmed, setSizeConfirmed] = useState(false);
 
   const groups = useMemo<Group[]>(() => {
     const map = new Map<string, Group>();
@@ -34,13 +36,19 @@ function PanierPage() {
   const subtotal = cart.reduce((s, i) => s + i.qty * i.price, 0);
   const total = 0;
 
-  const onCheckout = async () => {
+  const openConfirm = () => {
     if (!user) { navigate({ to: "/login" }); return; }
     if (!profile) { toast.error("Profil non chargé"); return; }
+    setSizeConfirmed(false);
+    setConfirmOpen(true);
+  };
+
+  const onCheckout = async () => {
     setProcessing(true);
     try {
       const { orderNumber } = await checkout();
       toast.success(`Commande ${orderNumber} enregistrée !`);
+      setConfirmOpen(false);
       navigate({ to: "/enfants" });
     } catch (err: any) {
       toast.error(err.message || "Erreur lors du paiement");
@@ -99,8 +107,8 @@ function PanierPage() {
                 <span className="text-base font-semibold text-foreground">Total à régler</span>
                 <span className="text-2xl font-semibold text-foreground">{total.toFixed(2)} €</span>
               </div>
-              <button onClick={onCheckout} disabled={processing} className="mt-6 inline-flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] hover:bg-primary/90 disabled:opacity-60">
-                {processing ? "Envoi…" : user ? "Envoyer ma commande" : "Se connecter pour commander"}
+              <button onClick={openConfirm} disabled={processing} className="mt-6 inline-flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] hover:bg-primary/90 disabled:opacity-60">
+                {user ? "Envoyer ma commande" : "Se connecter pour commander"}
               </button>
               <p className="mt-3 text-center text-[11px] text-muted-foreground">
                 Le paiement en ligne sera disponible prochainement.
@@ -116,7 +124,125 @@ function PanierPage() {
         )}
       </section>
 
+      {confirmOpen && (
+        <ConfirmModal
+          groups={groups}
+          subtotal={subtotal}
+          processing={processing}
+          sizeConfirmed={sizeConfirmed}
+          onToggleSize={() => setSizeConfirmed((v) => !v)}
+          onClose={() => !processing && setConfirmOpen(false)}
+          onConfirm={onCheckout}
+        />
+      )}
+
       <SiteFooter />
+    </div>
+  );
+}
+
+function ConfirmModal({
+  groups, subtotal, processing, sizeConfirmed, onToggleSize, onClose, onConfirm,
+}: {
+  groups: Group[];
+  subtotal: number;
+  processing: boolean;
+  sizeConfirmed: boolean;
+  onToggleSize: () => void;
+  onClose: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl overflow-hidden rounded-2xl bg-card shadow-2xl">
+        <header className="flex items-center justify-between border-b border-border px-6 py-4">
+          <div>
+            <h2 className="text-lg font-semibold tracking-tight text-foreground">Confirmer ma commande</h2>
+            <p className="mt-0.5 text-xs text-muted-foreground">Vérifiez les tailles avant de valider — les échanges sont possibles sous 30 jours.</p>
+          </div>
+          <button type="button" onClick={onClose} disabled={processing} className="rounded-lg p-1.5 hover:bg-muted disabled:opacity-50">
+            <X className="h-4 w-4" />
+          </button>
+        </header>
+
+        <div className="max-h-[55vh] overflow-y-auto px-6 py-5">
+          <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <div>
+              <p className="font-semibold">Avez-vous bien vérifié la taille de chaque article ?</p>
+              <p className="mt-1 opacity-90">En cas de doute, consultez le guide des tailles. Les uniformes sont préparés sur mesure pour chaque famille.</p>
+            </div>
+          </div>
+
+          <ul className="space-y-4">
+            {groups.map((group, i) => (
+              <li key={group.child?.id ?? `none-${i}`} className="rounded-xl border border-border bg-background">
+                <div className="flex items-center gap-3 border-b border-border px-4 py-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                    {group.child?.initials ?? "—"}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-foreground">
+                      {group.child ? `${group.child.prenom} ${group.child.nom}` : "Enfant non défini"}
+                    </p>
+                    {group.child && (
+                      <p className="text-[11px] text-muted-foreground">
+                        {[group.child.classe, group.child.section].filter(Boolean).join(" · ") || "—"}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <ul className="divide-y divide-border">
+                  {group.items.map((item) => (
+                    <li key={item.id} className="flex items-center justify-between gap-4 px-4 py-3 text-xs">
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-foreground">{item.name}</p>
+                        <p className="mt-0.5 text-muted-foreground">Réf. {item.ref} · Qté {item.qty}</p>
+                      </div>
+                      <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
+                        Taille {item.size}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <footer className="border-t border-border bg-secondary/40 px-6 py-4">
+          <label className="flex items-start gap-2.5 text-xs text-foreground">
+            <input
+              type="checkbox"
+              checked={sizeConfirmed}
+              onChange={onToggleSize}
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-primary"
+            />
+            <span>
+              Je confirme avoir vérifié les <span className="font-semibold">tailles</span> et le <span className="font-semibold">destinataire</span> de chaque article.
+            </span>
+          </label>
+
+          <div className="mt-4 flex items-center justify-between gap-3">
+            <div className="text-xs text-muted-foreground">
+              Sous-total indicatif : <span className="font-semibold text-foreground">{subtotal.toFixed(2)} €</span>
+            </div>
+            <div className="flex gap-2">
+              <button type="button" onClick={onClose} disabled={processing} className="h-10 rounded-lg border border-border bg-card px-4 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-50">
+                Modifier
+              </button>
+              <button
+                type="button"
+                onClick={onConfirm}
+                disabled={!sizeConfirmed || processing}
+                className="h-10 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {processing ? "Envoi…" : "Confirmer et envoyer"}
+              </button>
+            </div>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }
