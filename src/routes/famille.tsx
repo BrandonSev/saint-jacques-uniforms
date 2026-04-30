@@ -438,12 +438,16 @@ function ParentCard({
             checked={form.has_alt_shipping}
             onChange={(e) => {
               const checked = e.target.checked;
+              const isSecondary = index >= 1;
               setForm((f) => ({
                 ...f,
                 has_alt_shipping: checked,
-                shipping_adresse: checked && !f.shipping_adresse ? f.adresse : f.shipping_adresse,
-                shipping_code_postal: checked && !f.shipping_code_postal ? f.code_postal : f.shipping_code_postal,
-                shipping_ville: checked && !f.shipping_ville ? f.ville : f.shipping_ville,
+                shipping_adresse:
+                  checked && isSecondary && !f.shipping_adresse ? f.adresse : f.shipping_adresse,
+                shipping_code_postal:
+                  checked && isSecondary && !f.shipping_code_postal ? f.code_postal : f.shipping_code_postal,
+                shipping_ville:
+                  checked && isSecondary && !f.shipping_ville ? f.ville : f.shipping_ville,
               }));
             }}
             className="mt-0.5 h-4 w-4 rounded border-border accent-primary"
@@ -452,6 +456,7 @@ function ParentCard({
             <span className="font-medium">Adresse de livraison différente</span>
             <span className="block text-xs text-muted-foreground">
               Cochez pour livrer à une autre adresse (ex. lieu de travail, autre domicile).
+              {index >= 1 && " L'adresse principale sera recopiée automatiquement, vous pourrez ensuite la modifier."}
             </span>
           </span>
         </label>
