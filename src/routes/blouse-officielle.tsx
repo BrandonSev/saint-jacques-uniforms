@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, ChevronRight, Heart, Minus, Plus, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
@@ -37,7 +37,35 @@ function MaternellePage() {
   const [qty, setQty] = useState(1);
   const [childId, setChildId] = useState("");
   const [activeImg, setActiveImg] = useState(0);
+  const [isFavorite, setIsFavorite] = useState(false);
   const gallery = [blouseProduct, classeBlouses, bloussePliee];
+
+  const FAV_KEY = "sjc.favorites";
+  const PRODUCT_ID = "blouse-officielle";
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(FAV_KEY);
+      const list: string[] = raw ? JSON.parse(raw) : [];
+      setIsFavorite(list.includes(PRODUCT_ID));
+    } catch {}
+  }, []);
+
+  const toggleFavorite = () => {
+    try {
+      const raw = localStorage.getItem(FAV_KEY);
+      const list: string[] = raw ? JSON.parse(raw) : [];
+      const next = list.includes(PRODUCT_ID)
+        ? list.filter((id) => id !== PRODUCT_ID)
+        : [...list, PRODUCT_ID];
+      localStorage.setItem(FAV_KEY, JSON.stringify(next));
+      const nowFav = next.includes(PRODUCT_ID);
+      setIsFavorite(nowFav);
+      toast.success(nowFav ? "Ajouté à vos favoris" : "Retiré de vos favoris");
+    } catch {
+      toast.error("Impossible d'enregistrer le favori");
+    }
+  };
 
   const handleAdd = () => {
     if (children.length === 0) { toast.error("Ajoutez d'abord un enfant"); return; }
@@ -178,8 +206,18 @@ function MaternellePage() {
                 className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">
                 {children.length === 0 ? "Ajoutez un enfant" : !childId ? "Choisir un enfant" : "Ajouter au panier"}
               </button>
-              <button className="inline-flex h-14 w-14 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition-colors hover:text-primary">
-                <Heart className="h-5 w-5" />
+              <button
+                onClick={toggleFavorite}
+                aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+                aria-pressed={isFavorite}
+                title={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+                className={`inline-flex h-14 w-14 items-center justify-center rounded-xl border transition-colors ${
+                  isFavorite
+                    ? "border-[var(--rouge)]/40 bg-[var(--rouge)]/10 text-[var(--rouge)]"
+                    : "border-border bg-card text-muted-foreground hover:text-primary"
+                }`}
+              >
+                <Heart className={`h-5 w-5 ${isFavorite ? "fill-current" : ""}`} />
               </button>
             </div>
 
