@@ -103,7 +103,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
         </div>
       </div>
     </header>
-    {schoolName && <SchoolIdentityBar />}
+    {/* SchoolIdentityBar retiré : faisait doublon avec le header */}
     </>
   );
 }
