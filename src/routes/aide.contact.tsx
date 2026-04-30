@@ -24,7 +24,7 @@ function ContactPage() {
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           <Item icon={<MapPin className="h-5 w-5" />} title="Adresse">
-            Groupe scolaire Saint-Jacques de Compostelle<br />
+            2 rue Paul Lahargou<br />
             40100 Dax
           </Item>
           <Item icon={<Mail className="h-5 w-5" />} title="Email">
