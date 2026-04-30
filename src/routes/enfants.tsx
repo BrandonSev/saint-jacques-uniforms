@@ -34,6 +34,18 @@ const classesBySection: Record<string, string[]> = {
   Lycée: ["3e", "2nde", "1re", "Terminale"],
 };
 
+function computeAgeFromISO(iso: string): number | null {
+  if (!iso) return null;
+  const birth = new Date(iso);
+  if (isNaN(birth.getTime())) return null;
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const mDiff = today.getMonth() - birth.getMonth();
+  if (mDiff < 0 || (mDiff === 0 && today.getDate() < birth.getDate())) age--;
+  if (age < 0 || age > 120) return null;
+  return age;
+}
+
 function EnfantsPage() {
   const { user, profile, children, addChild, updateChild, removeChild, authLoading } = useStore();
   const { isAdmin } = useStore();
@@ -158,6 +170,10 @@ function EnfantCard({ enfant, onEdit, onDelete }: { enfant: Child; onEdit: () =>
             {enfant.naissance && (
               <p className="mt-1 text-xs text-foreground/70">
                 {enfant.genre === "Fille" ? "Née" : enfant.genre === "Garçon" ? "Né" : "Né(e)"} le {new Date(enfant.naissance).toLocaleDateString("fr-FR")}
+                {(() => {
+                  const age = computeAgeFromISO(enfant.naissance);
+                  return age !== null ? ` · ${age} ans` : "";
+                })()}
               </p>
             )}
             {(enfant.section || enfant.classe) && (
