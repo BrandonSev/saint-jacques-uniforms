@@ -113,11 +113,7 @@ function Index() {
                 />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-primary-deep/85 via-primary-deep/30 to-transparent p-6">
                   <div className="font-medium uppercase tracking-[0.22em] text-white/75 text-base">
-                    <span className="relative inline-block">
-                      <span
-                        aria-hidden="true"
-                        className="pointer-events-none absolute left-[0.42em] top-1/2 z-0 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/90 shadow-lg"
-                      />
+                    <span id="rentree-anchor" className="relative inline-block">
                       <span className="relative z-10">Rentrée 2026-2027</span>
                     </span>
                   </div>
@@ -126,6 +122,12 @@ function Index() {
                   </div>
                 </div>
               </div>
+              {/* Rond jaune décoratif — débordant et translucide, centré sur le R de "Rentrée" */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute z-30 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/80 shadow-lg"
+                style={{ left: "calc(1.5rem + 0.42em * 1rem)", bottom: "calc(1.5rem + 0.5em + 0.25rem + 1.875rem)" }}
+              />
               {/* Blason en chevauchement haut-gauche */}
               <div className="pointer-events-none absolute -left-10 -top-10 z-30">
                 <span
