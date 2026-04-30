@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Package, ChevronDown, ChevronUp } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
@@ -35,7 +35,7 @@ type OrderItem = {
 };
 
 function CommandesPage() {
-  const { user, profile, authLoading } = useStore();
+  const { user, profile, authLoading, isAdmin } = useStore();
   const [orders, setOrders] = useState<Order[]>([]);
   const [items, setItems] = useState<OrderItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,6 +56,8 @@ function CommandesPage() {
   }, [user]);
 
   if (authLoading) return null;
+
+  if (isAdmin) return <Navigate to="/admin" />;
 
   if (!user) {
     return (
