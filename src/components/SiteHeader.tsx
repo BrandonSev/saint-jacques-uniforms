@@ -89,13 +89,15 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
 
           <div className="flex items-center gap-2">
             {showAccount && user && (
-              <button
-                type="button"
-                className="hidden h-10 items-center gap-2 rounded-full border border-border bg-card px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted sm:inline-flex bg-slate-200"
+              <Link
+                to="/famille"
+                title="Voir et modifier les coordonnées de la famille"
+                className="hidden h-10 items-center gap-2 rounded-full border border-border bg-slate-200 px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted sm:inline-flex"
+                activeProps={{ className: "ring-2 ring-primary/40" }}
               >
                 <User className="h-4 w-4" />
                 <span className="max-w-[160px] truncate">{familyLabel}</span>
-              </button>
+              </Link>
             )}
             {showAccount && user && (
               <button
