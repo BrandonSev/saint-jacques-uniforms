@@ -130,7 +130,7 @@ function PanierPage() {
               <div className="my-5 h-px bg-border" />
               <div className="flex items-baseline justify-between">
                 <span className="text-base font-semibold text-foreground">Total à régler</span>
-                <span className="text-2xl font-semibold text-foreground">{total.toFixed(2)} €</span>
+                <span className="text-2xl font-semibold text-foreground">{formatEUR(total)}</span>
               </div>
               <button onClick={openConfirm} disabled={processing} className="mt-6 inline-flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] hover:bg-primary/90 disabled:opacity-60">
                 {user ? "Envoyer ma commande" : "Se connecter pour commander"}
@@ -250,7 +250,7 @@ function ConfirmModal({
 
           <div className="mt-4 flex items-center justify-between gap-3">
             <div className="text-xs text-muted-foreground">
-              Sous-total indicatif : <span className="font-semibold text-foreground">{subtotal.toFixed(2)} €</span>
+              Sous-total indicatif : <span className="font-semibold text-foreground">{formatEUR(subtotal)}</span>
             </div>
             <div className="flex gap-2">
               <button type="button" onClick={onClose} disabled={processing} className="h-10 rounded-lg border border-border bg-card px-4 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-50">
@@ -314,9 +314,9 @@ function ChildGroup({ group, onQty, onRemove }: { group: Group; onQty: (id: stri
                 </div>
                 <div className="shrink-0 text-right">
                   <div className="text-base font-semibold text-foreground">
-                    {(item.qty * item.price).toFixed(2)} €
+                    {formatEUR(item.qty * item.price)}
                   </div>
-                  <div className="text-xs text-muted-foreground">{item.price.toFixed(2)} € l'unité</div>
+                  <div className="text-xs text-muted-foreground">{formatEUR(item.price)} l'unité</div>
                 </div>
               </div>
               <div className="mt-3 flex items-center justify-between">
