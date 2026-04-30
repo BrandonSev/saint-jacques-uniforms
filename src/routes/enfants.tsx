@@ -275,7 +275,7 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
             placeholder="Sélectionner une classe"
           />
           <div className="sm:col-span-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <Input label="Taille habituellement commandée*" value={form.taille} onChange={(v) => setForm({ ...form, taille: v })} placeholder="ex: 8 ans, M" required />
+            <Input label="Taille habituellement commandée*" value={form.taille} onChange={(v) => setForm({ ...form, taille: v })} placeholder="ex: 8" suffix="ans" required />
             <Input label="Hauteur *" value={form.hauteur} onChange={(v) => setForm({ ...form, hauteur: v })} placeholder="ex: 128" suffix="cm" required />
             <Input label="Tour de poitrine *" value={form.tour} onChange={(v) => setForm({ ...form, tour: v })} placeholder="ex: 62" suffix="cm" required />
           </div>
