@@ -53,7 +53,7 @@ function Index() {
                 <ShieldCheck className="h-3.5 w-3.5" /> Espace familles officiel
               </span>
               <h1 className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-[3.4rem] lg:leading-[1.05]">
-                Boutique des uniformes — Saint-Jacques de Compostelle
+                Boutique des uniformes scolaires — Groupe Scolaire Saint-Jacques de Compostelle de DAX.
               </h1>
               <div className="mt-5 h-px w-16 bg-gold mx-auto lg:mx-0" />
               <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg mx-auto lg:mx-0">
