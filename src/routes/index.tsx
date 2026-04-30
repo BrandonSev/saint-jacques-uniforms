@@ -4,6 +4,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
+import schoolLogo from "@/assets/saint-jacques-logo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -52,10 +53,35 @@ function Index() {
               <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-white backdrop-blur">
                 <ShieldCheck className="h-3.5 w-3.5" /> Espace familles officiel
               </span>
-              <h1 className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-[3.4rem] lg:leading-[1.05]">
-                Boutique des uniformes scolaires — Groupe Scolaire Saint-Jacques de Compostelle de DAX.
+              <h1 className="mt-6 font-display text-white">
+                <span className="block text-sm font-medium uppercase tracking-[0.32em] text-gold/90 animate-fade-in">
+                  Boutique des uniformes scolaires
+                </span>
+                <span
+                  className="mt-3 block text-4xl font-semibold tracking-tight sm:text-5xl lg:text-[3.6rem] lg:leading-[1.02] animate-fade-in"
+                  style={{ animationDelay: "120ms", animationFillMode: "both" }}
+                >
+                  Groupe Scolaire{" "}
+                  <span className="relative inline-block bg-gradient-to-r from-white via-cream to-gold bg-clip-text text-transparent">
+                    Saint-Jacques
+                    <span className="absolute -bottom-1 left-0 h-[3px] w-full origin-left rounded-full bg-gradient-to-r from-gold via-gold/70 to-transparent" />
+                  </span>{" "}
+                  de Compostelle
+                </span>
+                <span
+                  className="mt-2 block text-2xl font-light tracking-[0.18em] text-white/80 sm:text-3xl animate-fade-in"
+                  style={{ animationDelay: "260ms", animationFillMode: "both" }}
+                >
+                  — DAX —
+                </span>
               </h1>
-              <div className="mt-5 h-px w-16 bg-gold mx-auto lg:mx-0" />
+              <div className="mt-6 flex items-center gap-3 justify-center lg:justify-start">
+                <span className="h-px w-10 bg-gold" />
+                <span className="text-[10px] font-medium uppercase tracking-[0.32em] text-white/70">
+                  Depuis 1875
+                </span>
+                <span className="h-px w-10 bg-gold" />
+              </div>
               <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg mx-auto lg:mx-0">
                 Bienvenue sur l'espace familles du Groupe Saint-Jacques de Compostelle de Dax. Commandez les tenues
                 officielles de la maternelle au lycée en quelques clics.
@@ -78,6 +104,27 @@ function Index() {
             </div>
 
             <div className="relative hidden lg:block">
+              {/* Animated school crest */}
+              <div className="relative mx-auto mb-8 flex h-56 w-56 items-center justify-center">
+                <span className="absolute inset-0 rounded-full border border-white/20 animate-[ping_3s_ease-out_infinite]" />
+                <span
+                  className="absolute inset-4 rounded-full border border-gold/30 animate-[ping_3s_ease-out_infinite]"
+                  style={{ animationDelay: "1s" }}
+                />
+                <span
+                  className="absolute inset-8 rounded-full border border-white/15 animate-[ping_3s_ease-out_infinite]"
+                  style={{ animationDelay: "2s" }}
+                />
+                <span
+                  className="absolute inset-0 rounded-full opacity-60 blur-2xl"
+                  style={{ background: "radial-gradient(closest-side, var(--gold) 0%, transparent 70%)" }}
+                />
+                <img
+                  src={schoolLogo}
+                  alt="Blason Saint-Jacques de Compostelle"
+                  className="relative h-40 w-40 object-contain drop-shadow-[0_12px_30px_rgba(0,0,0,0.45)] animate-[float_6s_ease-in-out_infinite]"
+                />
+              </div>
               <div className="relative overflow-hidden rounded-3xl border border-white/20 shadow-2xl">
                 <img
                   src={classeBlouses}
