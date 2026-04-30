@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Check, ChevronRight, Heart, Minus, Plus, ShieldCheck, Truck } from "lucide-react";
+import { Check, ChevronRight, Heart, Minus, Plus, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
