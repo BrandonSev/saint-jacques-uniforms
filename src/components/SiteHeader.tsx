@@ -1,8 +1,10 @@
-import { Link } from "@tanstack/react-router";
-import { ShoppingBag, User } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { LogOut, ShieldCheck, ShoppingBag, User } from "lucide-react";
 import logo from "@/assets/france-uniformes-logo-blue.jpeg";
 import sjcLogo from "@/assets/saint-jacques-logo-full.png";
 import { SchoolIdentityBar } from "@/components/SchoolMotif";
+import { useStore } from "@/lib/store";
+import { toast } from "sonner";
 
 interface SiteHeaderProps {
   schoolName?: string;
@@ -10,7 +12,16 @@ interface SiteHeaderProps {
   showAccount?: boolean;
 }
 
-export function SiteHeader({ schoolName, cartCount = 0, showAccount = true }: SiteHeaderProps) {
+export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHeaderProps) {
+  const { cartCount: storeCount, profile, user, signOut, isAdmin } = useStore();
+  const count = cartCount ?? storeCount;
+  const navigate = useNavigate();
+  const familyLabel = profile?.nom ? `Famille ${profile.nom}` : (user?.email ?? "Mon compte");
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Déconnecté");
+    navigate({ to: "/login" });
+  };
   return (
     <>
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/90 backdrop-blur-md">
@@ -46,20 +57,35 @@ export function SiteHeader({ schoolName, cartCount = 0, showAccount = true }: Si
             <Link to="/enfants" className="transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
               Mes enfants
             </Link>
-            <Link to="/panier" className="transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
-              Commandes
+            <Link to="/commandes" className="transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
+              Mes commandes
             </Link>
+            {isAdmin && (
+              <Link to="/admin" className="inline-flex items-center gap-1 transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
+                <ShieldCheck className="h-3.5 w-3.5" /> Admin
+              </Link>
+            )}
           </nav>
         )}
 
         <div className="flex items-center gap-2">
-          {showAccount && (
+          {showAccount && user && (
             <button
               type="button"
               className="hidden h-10 items-center gap-2 rounded-full border border-border bg-card px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted sm:inline-flex"
             >
               <User className="h-4 w-4" />
-              <span>Famille Martin</span>
+              <span className="max-w-[160px] truncate">{familyLabel}</span>
+            </button>
+          )}
+          {showAccount && user && (
+            <button
+              type="button"
+              onClick={handleSignOut}
+              title="Se déconnecter"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-muted-foreground hover:text-[var(--rouge)] hover:bg-muted"
+            >
+              <LogOut className="h-4 w-4" />
             </button>
           )}
           <Link
@@ -68,9 +94,9 @@ export function SiteHeader({ schoolName, cartCount = 0, showAccount = true }: Si
           >
             <ShoppingBag className="h-4 w-4" />
             <span className="hidden sm:inline">Panier</span>
-            {cartCount > 0 && (
+            {count > 0 && (
               <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--rouge)] px-1.5 text-[11px] font-semibold text-white">
-                {cartCount}
+                {count}
               </span>
             )}
           </Link>
