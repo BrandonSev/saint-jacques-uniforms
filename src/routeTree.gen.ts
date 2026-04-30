@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PanierRouteImport } from './routes/panier'
 import { Route as NiveauRouteImport } from './routes/niveau'
-import { Route as MaternelleRouteImport } from './routes/maternelle'
 import { Route as LyceeRouteImport } from './routes/lycee'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as EnfantsRouteImport } from './routes/enfants'
@@ -19,6 +18,7 @@ import { Route as CommandesRouteImport } from './routes/commandes'
 import { Route as CollegeRouteImport } from './routes/college'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MaternelleBlouseRouteImport } from './routes/maternelle.blouse'
 
 const PanierRoute = PanierRouteImport.update({
   id: '/panier',
@@ -28,11 +28,6 @@ const PanierRoute = PanierRouteImport.update({
 const NiveauRoute = NiveauRouteImport.update({
   id: '/niveau',
   path: '/niveau',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MaternelleRoute = MaternelleRouteImport.update({
-  id: '/maternelle',
-  path: '/maternelle',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LyceeRoute = LyceeRouteImport.update({
@@ -70,6 +65,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MaternelleBlouseRoute = MaternelleBlouseRouteImport.update({
+  id: '/maternelle/blouse',
+  path: '/maternelle/blouse',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -79,9 +79,9 @@ export interface FileRoutesByFullPath {
   '/enfants': typeof EnfantsRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
-  '/maternelle': typeof MaternelleRoute
   '/niveau': typeof NiveauRoute
   '/panier': typeof PanierRoute
+  '/maternelle/blouse': typeof MaternelleBlouseRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -91,9 +91,9 @@ export interface FileRoutesByTo {
   '/enfants': typeof EnfantsRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
-  '/maternelle': typeof MaternelleRoute
   '/niveau': typeof NiveauRoute
   '/panier': typeof PanierRoute
+  '/maternelle/blouse': typeof MaternelleBlouseRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -104,9 +104,9 @@ export interface FileRoutesById {
   '/enfants': typeof EnfantsRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
-  '/maternelle': typeof MaternelleRoute
   '/niveau': typeof NiveauRoute
   '/panier': typeof PanierRoute
+  '/maternelle/blouse': typeof MaternelleBlouseRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -118,9 +118,9 @@ export interface FileRouteTypes {
     | '/enfants'
     | '/login'
     | '/lycee'
-    | '/maternelle'
     | '/niveau'
     | '/panier'
+    | '/maternelle/blouse'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -130,9 +130,9 @@ export interface FileRouteTypes {
     | '/enfants'
     | '/login'
     | '/lycee'
-    | '/maternelle'
     | '/niveau'
     | '/panier'
+    | '/maternelle/blouse'
   id:
     | '__root__'
     | '/'
@@ -142,9 +142,9 @@ export interface FileRouteTypes {
     | '/enfants'
     | '/login'
     | '/lycee'
-    | '/maternelle'
     | '/niveau'
     | '/panier'
+    | '/maternelle/blouse'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -155,9 +155,9 @@ export interface RootRouteChildren {
   EnfantsRoute: typeof EnfantsRoute
   LoginRoute: typeof LoginRoute
   LyceeRoute: typeof LyceeRoute
-  MaternelleRoute: typeof MaternelleRoute
   NiveauRoute: typeof NiveauRoute
   PanierRoute: typeof PanierRoute
+  MaternelleBlouseRoute: typeof MaternelleBlouseRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -174,13 +174,6 @@ declare module '@tanstack/react-router' {
       path: '/niveau'
       fullPath: '/niveau'
       preLoaderRoute: typeof NiveauRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/maternelle': {
-      id: '/maternelle'
-      path: '/maternelle'
-      fullPath: '/maternelle'
-      preLoaderRoute: typeof MaternelleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lycee': {
@@ -232,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/maternelle/blouse': {
+      id: '/maternelle/blouse'
+      path: '/maternelle/blouse'
+      fullPath: '/maternelle/blouse'
+      preLoaderRoute: typeof MaternelleBlouseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -243,10 +243,19 @@ const rootRouteChildren: RootRouteChildren = {
   EnfantsRoute: EnfantsRoute,
   LoginRoute: LoginRoute,
   LyceeRoute: LyceeRoute,
-  MaternelleRoute: MaternelleRoute,
   NiveauRoute: NiveauRoute,
   PanierRoute: PanierRoute,
+  MaternelleBlouseRoute: MaternelleBlouseRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
