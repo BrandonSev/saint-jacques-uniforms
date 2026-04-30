@@ -436,7 +436,16 @@ function ParentCard({
           <input
             type="checkbox"
             checked={form.has_alt_shipping}
-            onChange={(e) => set("has_alt_shipping", e.target.checked)}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              setForm((f) => ({
+                ...f,
+                has_alt_shipping: checked,
+                shipping_adresse: checked && !f.shipping_adresse ? f.adresse : f.shipping_adresse,
+                shipping_code_postal: checked && !f.shipping_code_postal ? f.code_postal : f.shipping_code_postal,
+                shipping_ville: checked && !f.shipping_ville ? f.ville : f.shipping_ville,
+              }));
+            }}
             className="mt-0.5 h-4 w-4 rounded border-border accent-primary"
           />
           <span className="text-sm text-foreground">
