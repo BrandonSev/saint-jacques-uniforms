@@ -311,7 +311,18 @@ function ParentCard({
     }
   };
 
-  const title = index === 0 ? "Coordonnées de la famille" : `Membre ${index + 1}`;
+  const roleLabels: Record<string, string> = {
+    "Mère": "Mère de famille",
+    "Père": "Père de famille",
+    "Tuteur": "Tuteur légal",
+    "Tutrice": "Tutrice légale",
+    "Beau-père": "Beau-père",
+    "Belle-mère": "Belle-mère",
+    "Grand-parent": "Grand-parent",
+    "Autre": "Autre membre",
+    "Parent": "Parent",
+  };
+  const title = roleLabels[form.role] || form.role || `Membre ${index + 1}`;
 
   return (
     <form
