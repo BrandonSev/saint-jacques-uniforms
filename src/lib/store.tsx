@@ -216,7 +216,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
       const total = cart.reduce((s, i) => s + i.qty * i.price, 0);
       const { data: order, error: oErr } = await supabase.from("orders").insert({
         user_id: user.id,
-        status: "En attente",
+        status: "Envoyée",
         total_amount: total,
         family_civilite: profile.civilite,
         family_nom: profile.nom,
