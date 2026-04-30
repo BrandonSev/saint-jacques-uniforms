@@ -151,7 +151,7 @@ function EnfantCard({ enfant, onEdit, onDelete }: { enfant: Child; onEdit: () =>
               <button onClick={onEdit} className="inline-flex h-9 items-center rounded-lg border border-border bg-card px-3 text-xs font-medium text-foreground hover:bg-muted">
                 Modifier
               </button>
-              <Link to="/niveau" className="inline-flex h-9 items-center rounded-lg bg-primary px-3 text-xs font-medium text-primary-foreground hover:bg-primary/90">
+              <Link to={shopHrefForSection(enfant.section)} className="inline-flex h-9 items-center rounded-lg bg-primary px-3 text-xs font-medium text-primary-foreground hover:bg-primary/90">
                 Voir la boutique
               </Link>
             </div>
