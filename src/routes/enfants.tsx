@@ -251,7 +251,7 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
           </fieldset>
           <Input label="Prénom *" value={form.prenom} onChange={(v) => setForm({ ...form, prenom: v })} required />
           <Input label="Nom *" value={form.nom} onChange={(v) => setForm({ ...form, nom: v })} required />
-          <Input label="Date de naissance *" type="date" value={form.naissance} onChange={(v) => setForm({ ...form, naissance: v })} required />
+          <DateOfBirthPicker label="Date de naissance *" value={form.naissance} onChange={(v) => setForm({ ...form, naissance: v })} />
           <Select
             label="Section *"
             value={form.section}
