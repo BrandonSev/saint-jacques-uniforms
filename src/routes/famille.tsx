@@ -237,13 +237,18 @@ function ParentCard({
   isDraft,
   onSave,
   onRemove,
+  primaryAddress,
 }: {
   parent: FamilyParent;
   index: number;
   isDraft: boolean;
   onSave: (patch: Partial<Omit<FamilyParent, "id">>) => Promise<void>;
   onRemove: null | (() => Promise<void>);
+  primaryAddress: { adresse: string; code_postal: string; ville: string } | null;
 }) {
+  const initialAdresse = parent.adresse || primaryAddress?.adresse || "";
+  const initialCp = parent.code_postal || primaryAddress?.code_postal || "";
+  const initialVille = parent.ville || primaryAddress?.ville || "";
   const [form, setForm] = useState({
     role: parent.role || "Parent",
     civilite: parent.civilite || "Mme",
@@ -251,9 +256,15 @@ function ParentCard({
     nom: parent.nom || "",
     email: parent.email || "",
     telephone: parent.telephone || "",
-    adresse: parent.adresse || "",
-    code_postal: parent.code_postal || "",
-    ville: parent.ville || "",
+    adresse: initialAdresse,
+    code_postal: initialCp,
+    ville: initialVille,
+    is_shipping_default: parent.is_shipping_default ?? true,
+    has_alt_shipping: parent.has_alt_shipping ?? false,
+    shipping_label: parent.shipping_label || "",
+    shipping_adresse: parent.shipping_adresse || "",
+    shipping_code_postal: parent.shipping_code_postal || "",
+    shipping_ville: parent.shipping_ville || "",
   });
   const [saving, setSaving] = useState(false);
 
@@ -265,11 +276,17 @@ function ParentCard({
       nom: parent.nom || "",
       email: parent.email || "",
       telephone: parent.telephone || "",
-      adresse: parent.adresse || "",
-      code_postal: parent.code_postal || "",
-      ville: parent.ville || "",
+      adresse: parent.adresse || primaryAddress?.adresse || "",
+      code_postal: parent.code_postal || primaryAddress?.code_postal || "",
+      ville: parent.ville || primaryAddress?.ville || "",
+      is_shipping_default: parent.is_shipping_default ?? true,
+      has_alt_shipping: parent.has_alt_shipping ?? false,
+      shipping_label: parent.shipping_label || "",
+      shipping_adresse: parent.shipping_adresse || "",
+      shipping_code_postal: parent.shipping_code_postal || "",
+      shipping_ville: parent.shipping_ville || "",
     });
-  }, [parent]);
+  }, [parent, primaryAddress?.adresse, primaryAddress?.code_postal, primaryAddress?.ville]);
 
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
@@ -396,6 +413,76 @@ function ParentCard({
             className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
           />
         </Field>
+      </div>
+
+      {/* Options de livraison */}
+      <div className="mt-5 space-y-3 rounded-2xl border border-border bg-muted/30 p-4">
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={form.is_shipping_default}
+            onChange={(e) => set("is_shipping_default", e.target.checked)}
+            className="mt-0.5 h-4 w-4 rounded border-border accent-primary"
+          />
+          <span className="text-sm text-foreground">
+            <span className="font-medium">Adresse de livraison par défaut</span>
+            <span className="block text-xs text-muted-foreground">
+              Les commandes seront livrées à l'adresse ci-dessus.
+            </span>
+          </span>
+        </label>
+
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={form.has_alt_shipping}
+            onChange={(e) => set("has_alt_shipping", e.target.checked)}
+            className="mt-0.5 h-4 w-4 rounded border-border accent-primary"
+          />
+          <span className="text-sm text-foreground">
+            <span className="font-medium">Adresse de livraison différente</span>
+            <span className="block text-xs text-muted-foreground">
+              Cochez pour livrer à une autre adresse (ex. lieu de travail, autre domicile).
+            </span>
+          </span>
+        </label>
+
+        {form.has_alt_shipping && (
+          <div className="mt-2 grid gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-2">
+            <div className="flex items-center gap-2 sm:col-span-2 text-xs font-semibold uppercase tracking-wider text-primary">
+              <Truck className="h-3.5 w-3.5" /> Adresse de livraison
+            </div>
+            <Field label="Nom de l'adresse" full>
+              <input
+                value={form.shipping_label}
+                onChange={(e) => set("shipping_label", e.target.value)}
+                placeholder="Ex. Bureau, Domicile mère, Grands-parents…"
+                className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
+              />
+            </Field>
+            <Field label="Adresse (numéro et rue)" full>
+              <input
+                value={form.shipping_adresse}
+                onChange={(e) => set("shipping_adresse", e.target.value)}
+                className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
+              />
+            </Field>
+            <Field label="Code postal">
+              <input
+                value={form.shipping_code_postal}
+                onChange={(e) => set("shipping_code_postal", e.target.value)}
+                className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
+              />
+            </Field>
+            <Field label="Ville">
+              <input
+                value={form.shipping_ville}
+                onChange={(e) => set("shipping_ville", e.target.value)}
+                className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
+              />
+            </Field>
+          </div>
+        )}
       </div>
 
       <div className="mt-6 flex items-center justify-end gap-3">
