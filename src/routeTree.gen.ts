@@ -15,7 +15,6 @@ import { Route as MaternelleRouteImport } from './routes/maternelle'
 import { Route as LyceeRouteImport } from './routes/lycee'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as EnfantsRouteImport } from './routes/enfants'
-import { Route as ElementaireRouteImport } from './routes/elementaire'
 import { Route as CommandesRouteImport } from './routes/commandes'
 import { Route as CollegeRouteImport } from './routes/college'
 import { Route as BlouseOfficielleRouteImport } from './routes/blouse-officielle'
@@ -56,11 +55,6 @@ const LoginRoute = LoginRouteImport.update({
 const EnfantsRoute = EnfantsRouteImport.update({
   id: '/enfants',
   path: '/enfants',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ElementaireRoute = ElementaireRouteImport.update({
-  id: '/elementaire',
-  path: '/elementaire',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommandesRoute = CommandesRouteImport.update({
@@ -125,7 +119,6 @@ export interface FileRoutesByFullPath {
   '/blouse-officielle': typeof BlouseOfficielleRoute
   '/college': typeof CollegeRoute
   '/commandes': typeof CommandesRoute
-  '/elementaire': typeof ElementaireRoute
   '/enfants': typeof EnfantsRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
@@ -145,7 +138,6 @@ export interface FileRoutesByTo {
   '/blouse-officielle': typeof BlouseOfficielleRoute
   '/college': typeof CollegeRoute
   '/commandes': typeof CommandesRoute
-  '/elementaire': typeof ElementaireRoute
   '/enfants': typeof EnfantsRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
@@ -166,7 +158,6 @@ export interface FileRoutesById {
   '/blouse-officielle': typeof BlouseOfficielleRoute
   '/college': typeof CollegeRoute
   '/commandes': typeof CommandesRoute
-  '/elementaire': typeof ElementaireRoute
   '/enfants': typeof EnfantsRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
@@ -188,7 +179,6 @@ export interface FileRouteTypes {
     | '/blouse-officielle'
     | '/college'
     | '/commandes'
-    | '/elementaire'
     | '/enfants'
     | '/login'
     | '/lycee'
@@ -208,7 +198,6 @@ export interface FileRouteTypes {
     | '/blouse-officielle'
     | '/college'
     | '/commandes'
-    | '/elementaire'
     | '/enfants'
     | '/login'
     | '/lycee'
@@ -228,7 +217,6 @@ export interface FileRouteTypes {
     | '/blouse-officielle'
     | '/college'
     | '/commandes'
-    | '/elementaire'
     | '/enfants'
     | '/login'
     | '/lycee'
@@ -249,7 +237,6 @@ export interface RootRouteChildren {
   BlouseOfficielleRoute: typeof BlouseOfficielleRoute
   CollegeRoute: typeof CollegeRoute
   CommandesRoute: typeof CommandesRoute
-  ElementaireRoute: typeof ElementaireRoute
   EnfantsRoute: typeof EnfantsRoute
   LoginRoute: typeof LoginRoute
   LyceeRoute: typeof LyceeRoute
@@ -306,13 +293,6 @@ declare module '@tanstack/react-router' {
       path: '/enfants'
       fullPath: '/enfants'
       preLoaderRoute: typeof EnfantsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/elementaire': {
-      id: '/elementaire'
-      path: '/elementaire'
-      fullPath: '/elementaire'
-      preLoaderRoute: typeof ElementaireRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/commandes': {
@@ -401,7 +381,6 @@ const rootRouteChildren: RootRouteChildren = {
   BlouseOfficielleRoute: BlouseOfficielleRoute,
   CollegeRoute: CollegeRoute,
   CommandesRoute: CommandesRoute,
-  ElementaireRoute: ElementaireRoute,
   EnfantsRoute: EnfantsRoute,
   LoginRoute: LoginRoute,
   LyceeRoute: LyceeRoute,
