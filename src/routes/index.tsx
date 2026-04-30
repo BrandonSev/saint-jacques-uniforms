@@ -49,7 +49,7 @@ function Index() {
         </div>
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr]">
-            <div className="text-center lg:text-left">
+            <div className="relative text-center lg:text-left">
               {/* Blason en filigrane derrière le titre, centré côté DAX */}
               <img
                 src={schoolLogo}
