@@ -111,30 +111,28 @@ function Index() {
             </div>
 
             <div className="relative hidden lg:block">
-              <div className="relative z-20 rounded-3xl border border-white/20 shadow-2xl">
+              <div className="relative z-20 rounded-xl border border-white/20 shadow-2xl">
                 <img
                   src={classeBlouses}
                   alt="Élèves en blouse"
-                  className="aspect-[4/5] w-full rounded-3xl object-cover"
+                  className="aspect-[4/5] w-full rounded-xl object-cover"
                   loading="eager"
                 />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-b-3xl bg-gradient-to-t from-primary-deep/85 via-primary-deep/30 to-transparent p-6">
-                  <div className="font-medium uppercase tracking-[0.22em] text-white/75 text-base">
-                    <span className="relative inline-block">
-                      {/* Rond jaune décoratif — débordant, translucide, centré sur le R */}
-                      <span
-                        aria-hidden="true"
-                        className="pointer-events-none absolute left-[0.42em] top-1/2 z-0 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/80 shadow-lg"
-                      />
-                      <span className="relative z-10">Rentrée 2026-2027</span>
-                    </span>
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex min-h-[22rem] flex-col justify-end overflow-visible rounded-b-xl bg-gradient-to-t from-primary-deep/85 via-primary-deep/30 to-transparent p-6">
+                  <div className="relative font-medium uppercase tracking-[0.22em] text-white/75 text-base">
+                    {/* Rond jaune décoratif — débordant hors de l'image, centré sur le R */}
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -left-8 top-1/2 z-0 h-24 w-24 -translate-y-1/2 rounded-full bg-gold/80 shadow-lg"
+                    />
+                    <span className="relative z-10">Rentrée 2026-2027</span>
                   </div>
                   <div className="relative z-10 mt-1 font-semibold text-white text-3xl">
                     Tenues officielles validées par l'établissement
                   </div>
                 </div>
               </div>
-              <div className="absolute -right-4 -top-4 z-0 h-20 w-20 rounded-2xl border-2 border-gold/70 bg-white/10 backdrop-blur" />
+              <div className="absolute -right-4 -top-4 z-0 h-20 w-20 rounded-lg border-2 border-gold/70 bg-white/10 backdrop-blur" />
             </div>
           </div>
         </div>
