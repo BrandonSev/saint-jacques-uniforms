@@ -101,7 +101,7 @@ function CollegePage() {
               <ShieldCheck className="h-3 w-3" /> Sélection validée par l'établissement
             </span>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Uniformes collège — CM2 à 4ᵉ
+              Collège
             </h1>
             <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
               Sélection d'uniformes validée par l'établissement pour les classes

@@ -12,18 +12,18 @@ import classeBlouses from "@/assets/classe-maternelle-blouses.jpg";
 export const Route = createFileRoute("/maternelle")({
   head: () => ({
     meta: [
-      { title: "Uniformes Maternelle & Élémentaire — Saint-Jacques de Compostelle" },
+      { title: "Uniformes Maternelle — Saint-Jacques de Compostelle" },
       {
         name: "description",
         content:
-          "Sélection d'uniformes validée par l'établissement pour les élèves de maternelle et élémentaire.",
+          "Sélection d'uniformes validée par l'établissement pour les élèves de maternelle (PS, MS, GS).",
       },
     ],
   }),
   component: MaternelleListPage,
 });
 
-const sizes = ["3 ans", "4 ans", "5 ans", "6 ans", "7 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans"];
+const sizes = ["3 ans", "4 ans", "5 ans", "6 ans"];
 
 const products = [
   {
@@ -47,7 +47,7 @@ function MaternelleListPage() {
         <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
           <Link to="/niveau" className="hover:text-primary">Boutique</Link>
           <ChevronRight className="h-3 w-3" />
-          <span className="text-foreground">Maternelle & Élémentaire (PS → CM1)</span>
+          <span className="text-foreground">Maternelle (PS · MS · GS)</span>
         </div>
       </div>
 
@@ -62,15 +62,15 @@ function MaternelleListPage() {
               <ShieldCheck className="h-3 w-3" /> Sélection validée par l'établissement
             </span>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Uniformes Maternelle & Élémentaire
+              Maternelle
             </h1>
             <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
-              Tenue officielle pour les classes de PS, MS, GS, CP, CE1, CE2, CM1.
+              Tenue officielle pour les classes de PS, MS et GS.
               Portée au quotidien par tous les élèves.
             </p>
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">1 produit</span>
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles 3 → 16 ans</span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles 3 → 6 ans</span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison à l'école</span>
             </div>
           </div>
@@ -97,7 +97,7 @@ function MaternelleListPage() {
 
 function ProductCard({ product }: { product: (typeof products)[number] }) {
   const { addToCart, children } = useStore();
-  const [size, setSize] = useState("6 ans");
+  const [size, setSize] = useState("4 ans");
   const [qty, setQty] = useState(1);
   const [childId, setChildId] = useState<string>("");
 
@@ -139,6 +139,11 @@ function ProductCard({ product }: { product: (typeof products)[number] }) {
         <p className="mt-3 text-sm leading-relaxed text-foreground/75">{product.desc}</p>
 
         <div className="mt-5">
+          <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Pour quel enfant ?</div>
+          <div className="mt-2"><ChildPicker value={childId} onChange={setChildId} filter={(c) => c.section === "Maternelle"} /></div>
+        </div>
+
+        <div className="mt-4">
           <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Taille</div>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {sizes.map((s) => (
@@ -155,11 +160,6 @@ function ProductCard({ product }: { product: (typeof products)[number] }) {
               </button>
             ))}
           </div>
-        </div>
-
-        <div className="mt-4">
-          <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Pour quel enfant ?</div>
-          <div className="mt-2"><ChildPicker value={childId} onChange={setChildId} filter={(c) => c.section === "Maternelle" || c.section === "Élémentaire"} /></div>
         </div>
 
         <div className="mt-5 flex items-stretch gap-2">
