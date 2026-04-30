@@ -78,7 +78,7 @@ function FamillePage() {
             {displayedFamilyName ? `Famille ${displayedFamilyName}` : "Ma famille"}
           </h1>
           <p className="text-sm text-muted-foreground">
-            Gérez le nom de la famille, ses parents et l'accès à la fiche des enfants.
+            Gérez le nom de la famille,  les parents et l'accès à la fiche des enfants.
           </p>
         </div>
 
