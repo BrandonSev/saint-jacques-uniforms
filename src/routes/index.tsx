@@ -35,7 +35,7 @@ function Index() {
       <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden bg-primary">
         <div className="absolute inset-0 -z-10" style={{ background: "var(--gradient-hero)" }} />
         <div className="absolute inset-0 -z-10 opacity-25 mix-blend-overlay">
           <img src={classeBlouses} alt="" className="h-full w-full object-cover" loading="eager" />
