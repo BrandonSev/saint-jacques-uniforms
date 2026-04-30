@@ -23,14 +23,14 @@ export const Route = createFileRoute("/maternelle")({
   component: MaternelleListPage,
 });
 
-const sizes = ["3 ans", "4 ans", "5 ans", "6 ans", "7 ans", "8 ans", "9 ans", "10 ans"];
+const sizes = ["3 ans", "4 ans", "5 ans", "6 ans", "7 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans"];
 
 const products = [
   {
     id: "blouse-officielle",
     name: "Blouse scolaire officielle",
     ref: "SJC-BLS-2025",
-    price: 30,
+    price: 25,
     image: blouseProduct,
     tag: "Officielle",
     desc: "Blouse bleu Riviera, col contrasté, écusson brodé. Tenue quotidienne portée par tous les élèves.",
@@ -70,7 +70,7 @@ function MaternelleListPage() {
             </p>
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">1 produit</span>
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles 3 → 10 ans</span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles 3 → 16 ans</span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison à l'école</span>
             </div>
           </div>
