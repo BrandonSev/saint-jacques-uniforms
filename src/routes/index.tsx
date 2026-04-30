@@ -121,7 +121,7 @@ function Index() {
                 </div>
               </div>
               {/* Blason en chevauchement haut-gauche */}
-              <div className="pointer-events-none absolute -left-10 -top-10 z-10">
+              <div className="pointer-events-none absolute -left-10 -top-10 z-30">
                 <span
                   className="absolute inset-0 rounded-full opacity-60 blur-2xl"
                   style={{ background: "radial-gradient(closest-side, var(--gold) 0%, transparent 70%)" }}
@@ -132,8 +132,8 @@ function Index() {
                   className="relative h-44 w-44 drop-shadow-[0_18px_40px_rgba(0,0,0,0.55)] animate-[float_6s_ease-in-out_infinite] object-scale-down"
                 />
               </div>
-              <div className="absolute -right-4 -top-4 h-20 w-20 rounded-2xl border-2 border-gold/70 bg-white/10 backdrop-blur" />
-              <div className="absolute -left-3 bottom-10 h-12 w-12 rounded-full bg-gold/90" />
+              <div className="absolute -right-4 -top-4 z-0 h-20 w-20 rounded-2xl border-2 border-gold/70 bg-white/10 backdrop-blur" />
+              <div className="absolute -left-3 bottom-10 z-0 h-12 w-12 rounded-full bg-gold/90" />
             </div>
           </div>
         </div>
