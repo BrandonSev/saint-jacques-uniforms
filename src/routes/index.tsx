@@ -113,7 +113,13 @@ function Index() {
                 />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-primary-deep/85 via-primary-deep/30 to-transparent p-6">
                   <div className="font-medium uppercase tracking-[0.22em] text-white/75 text-base">
-                    Rentrée 2026-2027
+                    <span className="relative inline-block">
+                      <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute left-[0.42em] top-1/2 z-0 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/90 shadow-lg"
+                      />
+                      <span className="relative z-10">Rentrée 2026-2027</span>
+                    </span>
                   </div>
                   <div className="mt-1 font-semibold text-white text-3xl">
                     Tenues officielles validées par l'établissement
@@ -133,7 +139,6 @@ function Index() {
                 />
               </div>
               <div className="absolute -right-4 -top-4 z-0 h-20 w-20 rounded-2xl border-2 border-gold/70 bg-white/10 backdrop-blur" />
-              <div className="absolute left-1.5 bottom-12 z-30 h-12 w-12 rounded-full bg-gold/90 shadow-lg" />
             </div>
           </div>
         </div>
