@@ -128,16 +128,19 @@ function PanierPage() {
                 <Row label="Enfants concernés" value={`${groups.length}`} />
               </dl>
               <div className="my-5 h-px bg-border" />
-              <div className="flex items-baseline justify-between">
-                <span className="text-base font-semibold text-foreground">Total à régler</span>
+              <div className="rounded-xl bg-secondary/60 p-3 text-xs text-foreground/75">
+                <p className="font-semibold text-foreground">Phase actuelle : prépayé par votre établissement</p>
+              </div>
+              <div className="mt-4 flex items-baseline justify-between">
+                <span className="text-sm font-semibold text-foreground">Montant total à régler à l'établissement</span>
                 <span className="text-2xl font-semibold text-foreground">{formatEUR(total)}</span>
               </div>
               <button onClick={openConfirm} disabled={processing} className="mt-6 inline-flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] hover:bg-primary/90 disabled:opacity-60">
                 {user ? "Envoyer ma commande" : "Se connecter pour commander"}
               </button>
               <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground whitespace-pre-line">
-                Le paiement en ligne sera disponible prochainement.{"\n\n"}
-                En attendant vous devez régler l'école directement lors de la remise du trousseau. 
+                Rien à payer aujourd'hui.{"\n\n"}
+                Le règlement se fera selon les modalités choisies par votre établissement.
               </p>
 
               <div className="mt-6 rounded-xl bg-secondary p-4 text-xs leading-relaxed text-foreground/75">
