@@ -191,18 +191,15 @@ function MaternellePage() {
           <div className="grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-1">
               <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-                Pensée pour le quotidien des élèves
+                Pensée pour le quotidien des élèves de SJDC
               </h2>
             </div>
             <div className="space-y-4 text-sm leading-relaxed text-foreground/80 lg:col-span-2">
               <p>
-                La blouse Saint-Jacques de Compostelle est portée par tous les élèves de
-                maternelle et d'élémentaire. Sa coupe ample permet une grande liberté de
-                mouvement et protège les vêtements pendant les activités manuelles.
+                La blouse de Saint-Jacques de Compostelle est portée par tous les élèves de maternelle et d'élémentaire. Sa coupe ajustée reste ample et permet une grande liberté de mouvement et protège les vêtements pendant les activités du quotidien. 
               </p>
               <p>
-                Tissu résistant, lavable en machine à 40°C, séchage rapide. Les boutons
-                jaunes facilitent l'apprentissage de l'autonomie pour les plus petits.
+                Tissu résistant, lavable en machine à 40°C, détachable facilement et séchage rapide. 
               </p>
             </div>
           </div>
