@@ -236,7 +236,7 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           <fieldset className="sm:col-span-2">
-            <legend className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Genre</legend>
+            <legend className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Genre *</legend>
             <div className="mt-2 flex gap-4">
               <label className="inline-flex items-center gap-2 text-sm text-foreground">
                 <input
@@ -268,7 +268,7 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
             options={["Maternelle", "Élémentaire", "Collège", "Lycée"]}
           />
           <Select
-            label="Classe actuelle*"
+            label="Classe actuelle *"
             value={form.classe}
             onChange={(v) => setForm({ ...form, classe: v })}
             options={classesBySection[form.section] ?? []}
@@ -276,7 +276,7 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
           />
           <div className="sm:col-span-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
             <Input
-              label="Taille portée*"
+              label="Taille portée *"
               value={form.taille}
               onChange={(v) => setForm({ ...form, taille: v })}
               placeholder="ex: 8"
