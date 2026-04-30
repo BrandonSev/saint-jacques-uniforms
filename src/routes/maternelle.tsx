@@ -34,7 +34,7 @@ const products = [
     image: blouseProduct,
     tag: "Officielle",
     desc: "Blouse bleu Riviera, col contrasté, écusson brodé. Tenue quotidienne portée par tous les élèves.",
-    href: "/maternelle/blouse" as const,
+    href: "/blouse-officielle" as const,
   },
 ];
 
