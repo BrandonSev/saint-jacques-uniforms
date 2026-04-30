@@ -197,9 +197,13 @@ function EnfantCard({ enfant, onEdit, onDelete }: { enfant: Child; onEdit: () =>
             <Ruler className="h-3.5 w-3.5" /> Mensurations
           </div>
           <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
-            <Field label="Taille recommandée" value={enfant.taille || "—"} />
-            <Field label="Hauteur" value={enfant.hauteur || "—"} />
-            <Field label="Tour de poitrine" value={enfant.tour || "—"} />
+            <Field
+              label="Taille portée"
+              value={enfant.taille ? `${enfant.taille} ans` : "—"}
+              tooltip="A titre d'information, taille que vous avez l'habitude d'acheter pour votre enfant actuellement"
+            />
+            <Field label="Hauteur" value={enfant.hauteur ? `${enfant.hauteur} cm` : "—"} />
+            <Field label="Tour de poitrine" value={enfant.tour ? `${enfant.tour} cm` : "—"} />
           </div>
 
           <div className="mt-6 flex items-center justify-between border-t border-border pt-5">
@@ -221,10 +225,17 @@ function EnfantCard({ enfant, onEdit, onDelete }: { enfant: Child; onEdit: () =>
   );
 }
 
-function Field({ label, value }: { label: string; value: string }) {
+function Field({ label, value, tooltip }: { label: string; value: string; tooltip?: string }) {
   return (
     <div className="rounded-xl border border-border bg-background px-4 py-3">
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <span>{label}</span>
+        {tooltip && (
+          <span title={tooltip} aria-label={tooltip} className="cursor-help text-primary">
+            <Info className="h-3 w-3" />
+          </span>
+        )}
+      </div>
       <div className="mt-1 text-base font-semibold text-foreground">{value}</div>
     </div>
   );
