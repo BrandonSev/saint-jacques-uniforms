@@ -275,7 +275,15 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
             placeholder="Sélectionner une classe"
           />
           <div className="sm:col-span-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <Input label="Taille habituellement commandée*" value={form.taille} onChange={(v) => setForm({ ...form, taille: v })} placeholder="ex: 8" suffix="ans" required />
+            <Input
+              label="Taille habituellement commandée*"
+              value={form.taille}
+              onChange={(v) => setForm({ ...form, taille: v })}
+              placeholder="ex: 8"
+              suffix="ans"
+              required
+              tooltip="A titre d'information, taille que vous avez l'habitude d'acheter pour votre enfant actuellement"
+            />
             <Input label="Hauteur *" value={form.hauteur} onChange={(v) => setForm({ ...form, hauteur: v })} placeholder="ex: 128" suffix="cm" required />
             <Input label="Tour de poitrine *" value={form.tour} onChange={(v) => setForm({ ...form, tour: v })} placeholder="ex: 62" suffix="cm" required />
           </div>
@@ -289,10 +297,17 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
   );
 }
 
-function Input({ label, value, onChange, type = "text", placeholder, required, suffix }: { label: string; value: string; onChange: (v: string) => void; type?: string; placeholder?: string; required?: boolean; suffix?: string }) {
+function Input({ label, value, onChange, type = "text", placeholder, required, suffix, tooltip }: { label: string; value: string; onChange: (v: string) => void; type?: string; placeholder?: string; required?: boolean; suffix?: string; tooltip?: string }) {
   return (
     <label className="flex flex-col">
-      <span className="line-clamp-2 min-h-[2rem] text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+      <span className="line-clamp-2 inline-flex min-h-[2rem] items-start gap-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <span>{label}</span>
+        {tooltip && (
+          <span title={tooltip} className="cursor-help text-primary" aria-label={tooltip}>
+            <Info className="h-3 w-3" />
+          </span>
+        )}
+      </span>
       <div className="relative mt-auto">
         <input
           type={type}
