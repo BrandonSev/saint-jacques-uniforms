@@ -12,6 +12,7 @@ export type Child = {
   taille: string;
   hauteur: string;
   tour: string;
+  genre: "" | "Fille" | "Garçon";
   initials: string;
   color: string;
 };
@@ -48,7 +49,7 @@ const COLORS = [
 ];
 
 function decorate(
-  c: { id: string; prenom: string; nom: string; naissance: string | null; classe: string | null; section: string | null; taille: string | null; hauteur: string | null; tour: string | null },
+  c: { id: string; prenom: string; nom: string; naissance: string | null; classe: string | null; section: string | null; taille: string | null; hauteur: string | null; tour: string | null; genre?: string | null },
   idx: number,
 ): Child {
   const initials = ((c.prenom[0] ?? "") + (c.nom[0] ?? "")).toUpperCase();
@@ -62,6 +63,7 @@ function decorate(
     taille: c.taille ?? "",
     hauteur: c.hauteur ?? "",
     tour: c.tour ?? "",
+    genre: (c.genre as Child["genre"]) ?? "",
     initials,
     color: COLORS[idx % COLORS.length],
   };
@@ -180,6 +182,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
         naissance: c.naissance || null,
         classe: c.classe || null, section: c.section || null,
         taille: c.taille || null, hauteur: c.hauteur || null, tour: c.tour || null,
+        genre: c.genre || null,
       }).select().single();
       if (error) throw error;
       if (data) setChildList((p) => [...p, decorate(data as any, p.length)]);
@@ -187,6 +190,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
     updateChild: async (id, patch) => {
       const dbPatch: any = { ...patch };
       if ("naissance" in dbPatch && !dbPatch.naissance) dbPatch.naissance = null;
+      if ("genre" in dbPatch && !dbPatch.genre) dbPatch.genre = null;
       const { data, error } = await supabase.from("children").update(dbPatch).eq("id", id).select().single();
       if (error) throw error;
       if (data) setChildList((p) => p.map((c, i) => (c.id === id ? decorate(data as any, i) : c)));

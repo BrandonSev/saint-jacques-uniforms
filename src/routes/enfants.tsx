@@ -22,9 +22,10 @@ type ChildForm = {
   taille: string;
   hauteur: string;
   tour: string;
+  genre: "" | "Fille" | "Garçon";
 };
 
-const empty: ChildForm = { prenom: "", nom: "", naissance: "", classe: "", section: "Maternelle", taille: "", hauteur: "", tour: "" };
+const empty: ChildForm = { prenom: "", nom: "", naissance: "", classe: "", section: "Maternelle", taille: "", hauteur: "", tour: "", genre: "" };
 
 const classesBySection: Record<string, string[]> = {
   Maternelle: ["PS", "MS", "GS"],
@@ -154,7 +155,11 @@ function EnfantCard({ enfant, onEdit, onDelete }: { enfant: Child; onEdit: () =>
           </div>
           <div>
             <h3 className="text-2xl font-semibold tracking-tight text-foreground">{enfant.prenom} {enfant.nom}</h3>
-            {enfant.naissance && <p className="mt-1 text-xs text-foreground/70">Né(e) le {new Date(enfant.naissance).toLocaleDateString("fr-FR")}</p>}
+            {enfant.naissance && (
+              <p className="mt-1 text-xs text-foreground/70">
+                {enfant.genre === "Fille" ? "Née" : enfant.genre === "Garçon" ? "Né" : "Né(e)"} le {new Date(enfant.naissance).toLocaleDateString("fr-FR")}
+              </p>
+            )}
             {(enfant.section || enfant.classe) && (
               <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-[11px] font-medium text-primary backdrop-blur">
                 {[enfant.section, enfant.classe].filter(Boolean).join(" · ")}
@@ -214,8 +219,10 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
     prenom: initial.prenom, nom: initial.nom, naissance: initial.naissance,
     classe: initial.classe, section: initial.section, taille: initial.taille,
     hauteur: initial.hauteur, tour: initial.tour,
+    genre: ("genre" in initial ? (initial.genre as ChildForm["genre"]) : "") || "",
   });
-  const [genre, setGenre] = useState<"Fille" | "Garçon" | "">("");
+  const genre = form.genre;
+  const setGenre = (g: ChildForm["genre"]) => setForm((f) => ({ ...f, genre: g }));
   const [saving, setSaving] = useState(false);
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
