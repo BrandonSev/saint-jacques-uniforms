@@ -43,8 +43,13 @@ function MaternellePage() {
     if (children.length === 0) { toast.error("Ajoutez d'abord un enfant"); return; }
     if (!childId) { toast.error("Choisissez un enfant"); return; }
     addToCart({
-    productId: "blouse-officielle", name: "Blouse Annabelle",
-    ref: "BLSE-FU-001", price: 30, size, qty, image: blouseProduct,
+      productId: "blouse-officielle",
+      name: "Blouse scolaire officielle SJDC",
+      ref: "Riviera Dax",
+      price: 30,
+      size,
+      qty,
+      image: blouseProduct,
       childId,
     });
     toast.success("Blouse ajoutée au panier");
@@ -101,10 +106,10 @@ function MaternellePage() {
               <ShieldCheck className="h-3 w-3" /> Tenue officielle de l'établissement
             </span>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Blouse Annabelle
+              Blouse scolaire officielle SJDC
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Blouse Annabelle · Maternelle & Élémentaire
+              Ref : Riviera Dax · Maternelle & Élémentaire
             </p>
 
             <div className="mt-6 flex items-baseline gap-3">
@@ -116,10 +121,11 @@ function MaternellePage() {
 
             <p className="mt-6 leading-relaxed text-foreground/80">
               Blouse officielle du groupe scolaire — portée au quotidien par les élèves.
-              Coton mélangé de couleur bleu Riviera, fermeture central boutonnée par des
-              boutons pressions jaunes, col biais, semi contrasté bleu Riviera foncé,
-              écusson du blason de l'école brodé sur le coeur et 1 poche plaquée à gauche
-              au porté. Confectionnée dans nos ateliers français.
+              Coton mélangé de couleur bleu Riviera, fermeture centrale par 5 boutons
+              pressions jaunes, élastiquage léger autour des poignets, col biais, semi
+              contrasté bleu Riviera foncé, écusson du blason de l'école brodé sur le
+              coeur et 1 poche plaquée à gauche au porté. Confectionnée dans nos
+              ateliers français.
             </p>
 
             {/* Pour quel enfant — d'abord */}
@@ -179,7 +185,7 @@ function MaternellePage() {
 
             {/* Trust */}
             <div className="mt-8 grid gap-3 rounded-2xl border border-border bg-card p-5 sm:grid-cols-2">
-              <Bullet icon={<ShieldCheck className="h-4 w-4" />} text="Échange de taille gratuit pendant 30 jours" />
+              <Bullet icon={<ShieldCheck className="h-4 w-4" />} text="Conforme aux exigences SJDC " />
               <Bullet icon={<Check className="h-4 w-4" />} text="Coton certifié OEKO-TEX" />
               <Bullet icon={<Check className="h-4 w-4" />} text="Fabrication française" />
             </div>
