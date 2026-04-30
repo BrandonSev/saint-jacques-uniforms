@@ -1,0 +1,415 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Mail, MapPin, Phone, User, Users, Plus, Trash2, Home } from "lucide-react";
+import { toast } from "sonner";
+import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
+import { RequireAuth } from "@/components/RequireAuth";
+import { useStore, type FamilyParent } from "@/lib/store";
+
+export const Route = createFileRoute("/famille")({
+  head: () => ({
+    meta: [{ title: "Ma famille — Espace familles" }],
+  }),
+  component: () => (
+    <RequireAuth>
+      <FamillePage />
+    </RequireAuth>
+  ),
+});
+
+function FamillePage() {
+  const {
+    profile,
+    user,
+    updateProfile,
+    children,
+    parents,
+    addParent,
+    updateParent,
+    removeParent,
+    authLoading,
+  } = useStore();
+
+  const [familyName, setFamilyName] = useState("");
+  const [savingName, setSavingName] = useState(false);
+
+  useEffect(() => {
+    if (profile) {
+      setFamilyName(profile.family_name || profile.nom || "");
+    }
+  }, [profile]);
+
+  if (authLoading) return null;
+
+  const handleSaveName = async () => {
+    setSavingName(true);
+    try {
+      await updateProfile({ family_name: familyName.trim() });
+      toast.success("Nom de famille enregistré");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Erreur");
+    } finally {
+      setSavingName(false);
+    }
+  };
+
+  const handleAddParent = async () => {
+    try {
+      await addParent({
+        role: parents.length === 0 ? "Mère" : parents.length === 1 ? "Père" : "Parent",
+      });
+      toast.success("Parent ajouté");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Erreur");
+    }
+  };
+
+  const displayedFamilyName = profile?.family_name || profile?.nom || "";
+
+  return (
+    <div className="min-h-screen bg-background">
+      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
+      <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-2">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
+            Espace familles
+          </span>
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            {displayedFamilyName ? `Famille ${displayedFamilyName}` : "Ma famille"}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Gérez le nom de la famille, ses parents et l'accès à la fiche des enfants.
+          </p>
+        </div>
+
+        {/* Boîte indépendante : Nom de la famille */}
+        <div className="mt-8 rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
+          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <Home className="h-4 w-4 text-primary" /> Nom de la famille
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Ce nom apparaît en titre. Il peut être différent du nom des parents (ex. Dupont-Martin).
+          </p>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+            <input
+              value={familyName}
+              onChange={(e) => setFamilyName(e.target.value)}
+              placeholder="Nom de la famille"
+              maxLength={80}
+              className="h-11 flex-1 rounded-lg border border-border bg-background px-3 text-sm"
+            />
+            <button
+              onClick={handleSaveName}
+              disabled={savingName}
+              className="h-11 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] hover:bg-primary/90 disabled:opacity-50"
+            >
+              {savingName ? "Enregistrement…" : "Enregistrer"}
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-6 lg:grid-cols-3">
+          <div className="space-y-4 lg:col-span-2">
+            {parents.length === 0 && (
+              <ParentCard
+                key="initial"
+                parent={{
+                  id: "__new__",
+                  role: "Mère",
+                  civilite: profile?.civilite || "Mme",
+                  prenom: profile?.prenom || "",
+                  nom: profile?.nom || "",
+                  email: user?.email ?? profile?.email ?? "",
+                  telephone: profile?.telephone ?? "",
+                  adresse: profile?.adresse ?? "",
+                  code_postal: profile?.code_postal ?? "",
+                  ville: profile?.ville ?? "",
+                  is_primary: true,
+                  position: 0,
+                }}
+                index={0}
+                isDraft
+                onSave={async (patch) => {
+                  await addParent(patch);
+                  toast.success("Premier membre enregistré");
+                }}
+                onRemove={null}
+              />
+            )}
+
+            {parents.map((p, idx) => (
+              <ParentCard
+                key={p.id}
+                parent={p}
+                index={idx}
+                isDraft={false}
+                onSave={async (patch) => {
+                  await updateParent(p.id, patch);
+                  toast.success("Membre mis à jour");
+                }}
+                onRemove={
+                  parents.length > 1
+                    ? async () => {
+                        await removeParent(p.id);
+                        toast.success("Membre retiré");
+                      }
+                    : null
+                }
+              />
+            ))}
+
+            {parents.length > 0 && (
+              <button
+                onClick={handleAddParent}
+                className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-card/50 px-4 py-5 text-sm font-semibold text-muted-foreground transition hover:border-primary hover:text-primary"
+              >
+                <Plus className="h-4 w-4" /> Ajouter un membre de la famille
+              </button>
+            )}
+          </div>
+
+          <aside className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <Users className="h-4 w-4 text-primary" /> Mes enfants
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {children.length === 0
+                ? "Aucun enfant enregistré pour le moment."
+                : `${children.length} enfant${children.length > 1 ? "s" : ""} dans votre famille.`}
+            </p>
+            {children.length > 0 && (
+              <ul className="mt-4 space-y-2">
+                {children.map((c) => (
+                  <li
+                    key={c.id}
+                    className="flex items-center gap-3 rounded-xl border border-border bg-background px-3 py-2"
+                  >
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                      {c.initials}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm font-medium text-foreground">
+                        {c.prenom} {c.nom}
+                      </div>
+                      <div className="truncate text-xs text-muted-foreground">
+                        {c.section || "—"} {c.classe ? `· ${c.classe}` : ""}
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <Link
+              to="/enfants"
+              className="mt-5 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-4 text-sm font-semibold text-primary hover:bg-primary/10"
+            >
+              Gérer mes enfants
+            </Link>
+          </aside>
+        </div>
+      </section>
+      <SiteFooter />
+    </div>
+  );
+}
+
+const ROLE_OPTIONS = ["Mère", "Père", "Tuteur", "Tutrice", "Beau-père", "Belle-mère", "Grand-parent", "Autre"];
+
+function ParentCard({
+  parent,
+  index,
+  isDraft,
+  onSave,
+  onRemove,
+}: {
+  parent: FamilyParent;
+  index: number;
+  isDraft: boolean;
+  onSave: (patch: Partial<Omit<FamilyParent, "id">>) => Promise<void>;
+  onRemove: null | (() => Promise<void>);
+}) {
+  const [form, setForm] = useState({
+    role: parent.role || "Parent",
+    civilite: parent.civilite || "Mme",
+    prenom: parent.prenom || "",
+    nom: parent.nom || "",
+    email: parent.email || "",
+    telephone: parent.telephone || "",
+    adresse: parent.adresse || "",
+    code_postal: parent.code_postal || "",
+    ville: parent.ville || "",
+  });
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setForm({
+      role: parent.role || "Parent",
+      civilite: parent.civilite || "Mme",
+      prenom: parent.prenom || "",
+      nom: parent.nom || "",
+      email: parent.email || "",
+      telephone: parent.telephone || "",
+      adresse: parent.adresse || "",
+      code_postal: parent.code_postal || "",
+      ville: parent.ville || "",
+    });
+  }, [parent]);
+
+  const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
+    setForm((f) => ({ ...f, [k]: v }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await onSave(form);
+    } catch (err: any) {
+      toast.error(err?.message ?? "Erreur");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const title = index === 0 ? "Coordonnées de la famille" : `Membre ${index + 1}`;
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)]"
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+          <User className="h-4 w-4 text-primary" /> {title}
+        </div>
+        {onRemove && (
+          <button
+            type="button"
+            onClick={async () => {
+              if (confirm("Retirer ce membre ?")) await onRemove();
+            }}
+            className="inline-flex items-center gap-1 rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:border-[var(--rouge)]/40 hover:text-[var(--rouge)]"
+          >
+            <Trash2 className="h-3.5 w-3.5" /> Retirer
+          </button>
+        )}
+      </div>
+
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <Field label="Rôle">
+          <select
+            value={form.role}
+            onChange={(e) => set("role", e.target.value)}
+            className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
+          >
+            {ROLE_OPTIONS.map((r) => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
+        </Field>
+        <Field label="Civilité">
+          <select
+            value={form.civilite}
+            onChange={(e) => set("civilite", e.target.value)}
+            className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
+          >
+            <option value="Mme">Mme</option>
+            <option value="M.">M.</option>
+          </select>
+        </Field>
+        <Field label="Prénom">
+          <input
+            required
+            value={form.prenom}
+            onChange={(e) => set("prenom", e.target.value)}
+            className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
+          />
+        </Field>
+        <Field label="Nom">
+          <input
+            required
+            value={form.nom}
+            onChange={(e) => set("nom", e.target.value)}
+            className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
+          />
+        </Field>
+        <Field label="Email">
+          <div className="flex h-11 items-center gap-2 rounded-lg border border-border bg-background px-3">
+            <Mail className="h-4 w-4 text-muted-foreground" />
+            <input
+              type="email"
+              value={form.email}
+              onChange={(e) => set("email", e.target.value)}
+              className="h-full w-full bg-transparent text-sm outline-none"
+              placeholder="parent@email.fr"
+            />
+          </div>
+        </Field>
+        <Field label="Téléphone">
+          <div className="flex h-11 items-center gap-2 rounded-lg border border-border bg-background px-3">
+            <Phone className="h-4 w-4 text-muted-foreground" />
+            <input
+              value={form.telephone}
+              onChange={(e) => set("telephone", e.target.value)}
+              className="h-full w-full bg-transparent text-sm outline-none"
+              placeholder="06 12 34 56 78"
+            />
+          </div>
+        </Field>
+        <Field label="Adresse" full>
+          <div className="flex h-11 items-center gap-2 rounded-lg border border-border bg-background px-3">
+            <MapPin className="h-4 w-4 text-muted-foreground" />
+            <input
+              value={form.adresse}
+              onChange={(e) => set("adresse", e.target.value)}
+              className="h-full w-full bg-transparent text-sm outline-none"
+              placeholder="Numéro et rue"
+            />
+          </div>
+        </Field>
+        <Field label="Code postal">
+          <input
+            value={form.code_postal}
+            onChange={(e) => set("code_postal", e.target.value)}
+            className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
+          />
+        </Field>
+        <Field label="Ville">
+          <input
+            value={form.ville}
+            onChange={(e) => set("ville", e.target.value)}
+            className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
+          />
+        </Field>
+      </div>
+
+      <div className="mt-6 flex items-center justify-end gap-3">
+        <button
+          type="submit"
+          disabled={saving}
+          className="h-11 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] hover:bg-primary/90 disabled:opacity-50"
+        >
+          {saving ? "Enregistrement…" : isDraft ? "Enregistrer ce membre" : "Enregistrer"}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function Field({
+  label,
+  children,
+  full,
+}: {
+  label: string;
+  children: React.ReactNode;
+  full?: boolean;
+}) {
+  return (
+    <label className={`flex flex-col gap-1.5 ${full ? "sm:col-span-2" : ""}`}>
+      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </span>
+      {children}
+    </label>
+  );
+}

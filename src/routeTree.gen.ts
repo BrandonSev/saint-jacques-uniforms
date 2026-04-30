@@ -15,7 +15,6 @@ import { Route as MotDePasseOublieRouteImport } from './routes/mot-de-passe-oubl
 import { Route as MaternelleRouteImport } from './routes/maternelle'
 import { Route as LyceeRouteImport } from './routes/lycee'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as FamilleRouteImport } from './routes/famille'
 import { Route as EnfantsRouteImport } from './routes/enfants'
 import { Route as CommandesRouteImport } from './routes/commandes'
 import { Route as CollegeRouteImport } from './routes/college'
@@ -58,11 +57,6 @@ const LyceeRoute = LyceeRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FamilleRoute = FamilleRouteImport.update({
-  id: '/famille',
-  path: '/famille',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EnfantsRoute = EnfantsRouteImport.update({
@@ -139,7 +133,6 @@ export interface FileRoutesByFullPath {
   '/college': typeof CollegeRoute
   '/commandes': typeof CommandesRoute
   '/enfants': typeof EnfantsRoute
-  '/famille': typeof FamilleRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
   '/maternelle': typeof MaternelleRoute
@@ -161,7 +154,6 @@ export interface FileRoutesByTo {
   '/college': typeof CollegeRoute
   '/commandes': typeof CommandesRoute
   '/enfants': typeof EnfantsRoute
-  '/famille': typeof FamilleRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
   '/maternelle': typeof MaternelleRoute
@@ -184,7 +176,6 @@ export interface FileRoutesById {
   '/college': typeof CollegeRoute
   '/commandes': typeof CommandesRoute
   '/enfants': typeof EnfantsRoute
-  '/famille': typeof FamilleRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
   '/maternelle': typeof MaternelleRoute
@@ -208,7 +199,6 @@ export interface FileRouteTypes {
     | '/college'
     | '/commandes'
     | '/enfants'
-    | '/famille'
     | '/login'
     | '/lycee'
     | '/maternelle'
@@ -230,7 +220,6 @@ export interface FileRouteTypes {
     | '/college'
     | '/commandes'
     | '/enfants'
-    | '/famille'
     | '/login'
     | '/lycee'
     | '/maternelle'
@@ -252,7 +241,6 @@ export interface FileRouteTypes {
     | '/college'
     | '/commandes'
     | '/enfants'
-    | '/famille'
     | '/login'
     | '/lycee'
     | '/maternelle'
@@ -275,7 +263,6 @@ export interface RootRouteChildren {
   CollegeRoute: typeof CollegeRoute
   CommandesRoute: typeof CommandesRoute
   EnfantsRoute: typeof EnfantsRoute
-  FamilleRoute: typeof FamilleRoute
   LoginRoute: typeof LoginRoute
   LyceeRoute: typeof LyceeRoute
   MaternelleRoute: typeof MaternelleRoute
@@ -332,13 +319,6 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/famille': {
-      id: '/famille'
-      path: '/famille'
-      fullPath: '/famille'
-      preLoaderRoute: typeof FamilleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/enfants': {
@@ -443,7 +423,6 @@ const rootRouteChildren: RootRouteChildren = {
   CollegeRoute: CollegeRoute,
   CommandesRoute: CommandesRoute,
   EnfantsRoute: EnfantsRoute,
-  FamilleRoute: FamilleRoute,
   LoginRoute: LoginRoute,
   LyceeRoute: LyceeRoute,
   MaternelleRoute: MaternelleRoute,
