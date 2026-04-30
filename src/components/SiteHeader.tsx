@@ -16,7 +16,8 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
   const { cartCount: storeCount, profile, user, signOut, isAdmin } = useStore();
   const count = cartCount ?? storeCount;
   const navigate = useNavigate();
-  const familyLabel = profile?.nom ? `Famille ${profile.nom}` : (user?.email ?? "Mon compte");
+  const famName = profile?.family_name || profile?.nom;
+  const familyLabel = famName ? `Famille ${famName}` : (user?.email ?? "Mon compte");
   const handleSignOut = async () => {
     await signOut();
     toast.success("Déconnecté");
