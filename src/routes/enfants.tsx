@@ -158,6 +158,10 @@ function EnfantCard({ enfant, onEdit, onDelete }: { enfant: Child; onEdit: () =>
             {enfant.naissance && (
               <p className="mt-1 text-xs text-foreground/70">
                 {enfant.genre === "Fille" ? "Née" : enfant.genre === "Garçon" ? "Né" : "Né(e)"} le {new Date(enfant.naissance).toLocaleDateString("fr-FR")}
+                {(() => {
+                  const age = computeAgeFromISO(enfant.naissance);
+                  return age !== null ? ` · ${age} ans` : "";
+                })()}
               </p>
             )}
             {(enfant.section || enfant.classe) && (
