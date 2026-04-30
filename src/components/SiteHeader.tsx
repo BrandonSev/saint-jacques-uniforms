@@ -57,7 +57,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
               </Link>
             ) : (
               <>
-                <Link to="/niveau" className="transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
+                <Link to="/boutique" className="transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
                   Boutique
                 </Link>
                 <Link to="/enfants" className="transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
@@ -142,7 +142,7 @@ export function SiteFooter() {
               <li><Link to="/admin" className="hover:text-white hover:underline">Tableau de bord</Link></li>
             ) : (
               <>
-                <li><Link to="/niveau" className="hover:text-white hover:underline">Boutique</Link></li>
+                <li><Link to="/boutique" className="hover:text-white hover:underline">Boutique</Link></li>
                 <li><Link to="/enfants" className="hover:text-white hover:underline">Mes enfants</Link></li>
                 <li><Link to="/commandes" className="hover:text-white hover:underline">Mes commandes</Link></li>
                 <li><Link to="/aide/guide-tailles" className="hover:text-white hover:underline">Guide des tailles</Link></li>

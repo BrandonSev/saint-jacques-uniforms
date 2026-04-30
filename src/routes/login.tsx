@@ -43,7 +43,7 @@ function LoginPage() {
   const { user, authLoading } = useStore();
 
   useEffect(() => {
-    if (!authLoading && user) navigate({ to: "/niveau" });
+    if (!authLoading && user) navigate({ to: "/boutique" });
   }, [user, authLoading, navigate]);
 
   const [civilite, setCivilite] = useState<"M." | "Mme" | "Autre">("Mme");
@@ -65,7 +65,7 @@ function LoginPage() {
     setLoading(false);
     if (error) { toast.error(error.message === "Invalid login credentials" ? "Identifiants invalides" : error.message); return; }
     toast.success("Bienvenue !");
-    navigate({ to: "/niveau" });
+    navigate({ to: "/boutique" });
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -77,7 +77,7 @@ function LoginPage() {
       email: parsed.data.email,
       password: parsed.data.password,
       options: {
-        emailRedirectTo: `${window.location.origin}/niveau`,
+        emailRedirectTo: `${window.location.origin}/boutique`,
         data: {
           civilite: parsed.data.civilite,
           prenom: parsed.data.prenom,
@@ -105,7 +105,7 @@ function LoginPage() {
       }).eq("id", u.id);
     }
     toast.success("Espace famille créé !");
-    navigate({ to: "/niveau" });
+    navigate({ to: "/boutique" });
   };
 
   return (

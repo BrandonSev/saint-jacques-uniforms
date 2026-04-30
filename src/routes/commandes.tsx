@@ -93,7 +93,7 @@ function CommandesPage() {
           <div className="mt-12 rounded-3xl border border-dashed border-border bg-card p-16 text-center">
             <Package className="mx-auto h-10 w-10 text-muted-foreground" />
             <p className="mt-4 text-sm text-muted-foreground">Aucune commande pour le moment.</p>
-            <Link to="/niveau" className="mt-6 inline-flex h-11 items-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground">Découvrir la boutique</Link>
+            <Link to="/boutique" className="mt-6 inline-flex h-11 items-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground">Découvrir la boutique</Link>
           </div>
         ) : (
           <div className="mt-8 space-y-3">

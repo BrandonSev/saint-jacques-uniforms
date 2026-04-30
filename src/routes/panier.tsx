@@ -75,7 +75,7 @@ function PanierPage() {
               {cartCount} article{cartCount > 1 ? "s" : ""} · {groups.length} enfant{groups.length > 1 ? "s" : ""}
             </p>
           </div>
-          <Link to="/niveau" className="hidden text-sm text-primary hover:underline sm:inline">
+          <Link to="/boutique" className="hidden text-sm text-primary hover:underline sm:inline">
             ← Continuer mes achats
           </Link>
         </div>
@@ -84,7 +84,7 @@ function PanierPage() {
           <div className="mt-12 rounded-3xl border border-dashed border-border bg-card p-16 text-center">
             <ShoppingBag className="mx-auto h-10 w-10 text-muted-foreground" />
             <p className="mt-4 text-sm text-muted-foreground">Votre panier est vide.</p>
-            <Link to="/niveau" className="mt-6 inline-flex h-11 items-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground">Découvrir la boutique</Link>
+            <Link to="/boutique" className="mt-6 inline-flex h-11 items-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground">Découvrir la boutique</Link>
           </div>
         ) : (
         <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_380px]">

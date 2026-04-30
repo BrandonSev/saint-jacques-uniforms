@@ -28,7 +28,7 @@ function Index() {
   const { user, isAdmin, authLoading } = useStore();
   if (authLoading) return null;
   if (user && isAdmin) return <Navigate to="/admin" />;
-  if (user) return <Navigate to="/niveau" />;
+  if (user) return <Navigate to="/boutique" />;
 
   return (
     <div className="min-h-screen bg-background">
@@ -74,7 +74,7 @@ function Index() {
                 <Link to="/login" className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-primary shadow-xl transition-all hover:gap-3">
                   Accéder à mon espace famille <ArrowRight className="h-4 w-4" />
                 </Link>
-                <Link to="/niveau" className="inline-flex h-12 items-center gap-2 rounded-full border border-white/30 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur transition-colors hover:bg-white/20">
+                <Link to="/boutique" className="inline-flex h-12 items-center gap-2 rounded-full border border-white/30 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur transition-colors hover:bg-white/20">
                   Découvrir la boutique
                 </Link>
               </div>

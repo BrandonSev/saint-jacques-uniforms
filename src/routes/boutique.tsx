@@ -7,7 +7,7 @@ import maternelle from "@/assets/classe-maternelle-blouses.jpg";
 import college from "@/assets/college-polo-porte.jpg";
 import lycee from "@/assets/lycee-uniformes.jpg";
 
-export const Route = createFileRoute("/niveau")({
+export const Route = createFileRoute("/boutique")({
   head: () => ({
     meta: [
       { title: "Choisir le niveau — Boutique Saint-Jacques de Compostelle" },
