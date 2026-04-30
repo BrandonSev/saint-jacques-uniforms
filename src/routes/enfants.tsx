@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore, type Child } from "@/lib/store";
+import { PurchaseHistoryPreview } from "@/components/PurchaseHistoryPreview";
 
 export const Route = createFileRoute("/enfants")({
   head: () => ({
@@ -259,6 +260,7 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
           </div>
         </div>
       </div>
+      <PurchaseHistoryPreview childId={enfant.id} genre={enfant.genre} />
     </article>
   );
 }
