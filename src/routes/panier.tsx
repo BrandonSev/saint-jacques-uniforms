@@ -73,7 +73,7 @@ function PanierPage() {
         <div className="relative flex items-baseline justify-between">
           <div>
             <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
-              <span className="h-px w-6 bg-gold" /> Famille {profile?.nom || ""}
+              <span className="h-px w-6 bg-gold" /> Famille {profile?.family_name || profile?.nom || ""}
             </span>
             <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Mon panier</h1>
             <p className="mt-2 text-sm text-muted-foreground">
