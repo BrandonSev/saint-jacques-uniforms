@@ -10,7 +10,7 @@ import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import bloussePliee from "@/assets/blouse-pliee.jpeg";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
 
-export const Route = createFileRoute("/maternelle/blouse")({
+export const Route = createFileRoute("/blouse-officielle")({
   head: () => ({
     meta: [
       { title: "Blouse officielle — Maternelle & Élémentaire" },
