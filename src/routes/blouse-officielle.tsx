@@ -43,8 +43,8 @@ function MaternellePage() {
     if (children.length === 0) { toast.error("Ajoutez d'abord un enfant"); return; }
     if (!childId) { toast.error("Choisissez un enfant"); return; }
     addToCart({
-      productId: "blouse-officielle", name: "Blouse scolaire officielle",
-      ref: "BLSE-FU-001", price: 30, size, qty, image: blouseProduct,
+    productId: "blouse-officielle", name: "Blouse Annabelle",
+    ref: "BLSE-FU-001", price: 30, size, qty, image: blouseProduct,
       childId,
     });
     toast.success("Blouse ajoutée au panier");
@@ -101,14 +101,14 @@ function MaternellePage() {
               <ShieldCheck className="h-3 w-3" /> Tenue officielle de l'établissement
             </span>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Blouse scolaire officielle
+              Blouse Annabelle
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Réf. BLSE-FU-001 · Maternelle & Élémentaire
+              Blouse Annabelle · Maternelle & Élémentaire
             </p>
 
             <div className="mt-6 flex items-baseline gap-3">
-              <span className="text-3xl font-semibold text-foreground">30,00 €</span>
+              <span className="text-3xl font-semibold text-foreground">30 €</span>
               <span className="rounded-md bg-[var(--school-yellow)]/30 px-2 py-0.5 text-xs font-medium text-foreground">
                 Tarif famille
               </span>
@@ -116,9 +116,10 @@ function MaternellePage() {
 
             <p className="mt-6 leading-relaxed text-foreground/80">
               Blouse officielle du groupe scolaire — portée au quotidien par les élèves.
-              Coton mélangé bleu Riviera, fermeture boutonnée, col contrasté bleu marine,
-              écusson brodé poitrine et poches plaquées. Confectionnée dans nos ateliers
-              français.
+              Coton mélangé de couleur bleu Riviera, fermeture central boutonnée par des
+              boutons pressions jaunes, col biais, semi contrasté bleu Riviera foncé,
+              écusson du blason de l'école brodé sur le coeur et 1 poche plaquée à gauche
+              au porté. Confectionnée dans nos ateliers français.
             </p>
 
             {/* Pour quel enfant — d'abord */}
