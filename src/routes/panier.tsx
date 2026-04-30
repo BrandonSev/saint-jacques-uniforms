@@ -135,8 +135,9 @@ function PanierPage() {
               <button onClick={openConfirm} disabled={processing} className="mt-6 inline-flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] hover:bg-primary/90 disabled:opacity-60">
                 {user ? "Envoyer ma commande" : "Se connecter pour commander"}
               </button>
-              <p className="mt-3 text-center text-[11px] text-muted-foreground">
-                Le paiement en ligne sera disponible prochainement.
+              <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground whitespace-pre-line">
+                Le paiement en ligne sera disponible prochainement.{"\n\n"}
+                En attendant vous devez régler l'école directement lors de la remise du trousseau.
               </p>
 
               <div className="mt-6 rounded-xl bg-secondary p-4 text-xs leading-relaxed text-foreground/75">
