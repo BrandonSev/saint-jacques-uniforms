@@ -167,7 +167,7 @@ function MaternellePage() {
 
             <div className="mt-6">
               <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pour quel enfant ?</div>
-              <div className="mt-2"><ChildPicker value={childId} onChange={setChildId} /></div>
+              <div className="mt-2"><ChildPicker value={childId} onChange={setChildId} filter={(c) => c.section === "Maternelle" || c.section === "Élémentaire"} /></div>
             </div>
 
             {/* Trust */}

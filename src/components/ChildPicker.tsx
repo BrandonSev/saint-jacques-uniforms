@@ -5,11 +5,14 @@ import { useStore, type Child } from "@/lib/store";
 export function ChildPicker({
   value,
   onChange,
+  filter,
 }: {
   value: string;
   onChange: (id: string) => void;
+  filter?: (c: Child) => boolean;
 }) {
   const { children, user } = useStore();
+  const list = filter ? children.filter(filter) : children;
 
   if (!user) {
     return (
@@ -33,9 +36,20 @@ export function ChildPicker({
     );
   }
 
+  if (list.length === 0) {
+    return (
+      <div className="rounded-lg border border-dashed border-border bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">
+        Aucun enfant concerné par cette section.{" "}
+        <Link to="/enfants" className="font-semibold text-primary hover:underline">
+          Modifier
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-wrap gap-1.5">
-      {children.map((c: Child) => (
+      {list.map((c: Child) => (
         <button
           key={c.id}
           onClick={() => onChange(c.id)}
