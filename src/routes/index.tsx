@@ -115,11 +115,11 @@ function Index() {
                   <div className="font-medium uppercase tracking-[0.22em] text-white/75 text-base">
                     <span className="relative inline-block">
                       {/* Rond jaune décoratif — débordant, translucide, centré sur le R */}
+                      <span className="relative z-0">Rentrée 2026-2027</span>
                       <span
                         aria-hidden="true"
-                        className="pointer-events-none absolute left-[0.42em] top-1/2 z-0 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/80 shadow-lg"
+                        className="pointer-events-none absolute left-[0.42em] top-1/2 z-10 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/80 shadow-lg"
                       />
-                      <span className="relative z-10">Rentrée 2026-2027</span>
                     </span>
                   </div>
                   <div className="mt-1 font-semibold text-white text-3xl">
