@@ -133,7 +133,7 @@ function Index() {
                 />
               </div>
               <div className="absolute -right-4 -top-4 z-0 h-20 w-20 rounded-2xl border-2 border-gold/70 bg-white/10 backdrop-blur" />
-              <div className="absolute -left-3 bottom-28 z-30 h-12 w-12 rounded-full bg-gold/90 shadow-lg" />
+              <div className="absolute left-1.5 bottom-12 z-30 h-12 w-12 rounded-full bg-gold/90 shadow-lg" />
             </div>
           </div>
         </div>
