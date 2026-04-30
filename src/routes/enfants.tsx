@@ -151,7 +151,7 @@ function EnfantCard({ enfant, onEdit, onDelete }: { enfant: Child; onEdit: () =>
               <button onClick={onEdit} className="inline-flex h-9 items-center rounded-lg border border-border bg-card px-3 text-xs font-medium text-foreground hover:bg-muted">
                 Modifier
               </button>
-              <Link to="/niveau" className="inline-flex h-9 items-center rounded-lg bg-primary px-3 text-xs font-medium text-primary-foreground hover:bg-primary/90">
+              <Link to={shopHrefForSection(enfant.section)} className="inline-flex h-9 items-center rounded-lg bg-primary px-3 text-xs font-medium text-primary-foreground hover:bg-primary/90">
                 Voir la boutique
               </Link>
             </div>
@@ -169,6 +169,14 @@ function Field({ label, value }: { label: string; value: string }) {
       <div className="mt-1 text-base font-semibold text-foreground">{value}</div>
     </div>
   );
+}
+
+function shopHrefForSection(section?: string): "/maternelle" | "/college" | "/lycee" | "/niveau" {
+  const s = (section || "").toLowerCase();
+  if (s.includes("maternelle") || s.includes("élémentaire") || s.includes("elementaire")) return "/maternelle";
+  if (s.includes("collège") || s.includes("college")) return "/college";
+  if (s.includes("lycée") || s.includes("lycee")) return "/lycee";
+  return "/niveau";
 }
 
 function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child; onClose: () => void; onSave: (data: ChildForm) => Promise<void> }) {
