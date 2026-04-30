@@ -196,7 +196,7 @@ function ProductCard({ product }: { product: (typeof products)[number] }) {
 
         <div className="mt-4">
           <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Pour quel enfant ?</div>
-          <div className="mt-2"><ChildPicker value={childId} onChange={setChildId} /></div>
+          <div className="mt-2"><ChildPicker value={childId} onChange={setChildId} filter={(c) => c.section === "Collège" || c.section === "Lycée"} /></div>
         </div>
 
         <div className="mt-5 flex items-stretch gap-2">
