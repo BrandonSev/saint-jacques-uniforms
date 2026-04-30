@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           classe: string | null
           created_at: string
+          genre: string | null
           hauteur: string | null
           id: string
           naissance: string | null
@@ -32,6 +33,7 @@ export type Database = {
         Insert: {
           classe?: string | null
           created_at?: string
+          genre?: string | null
           hauteur?: string | null
           id?: string
           naissance?: string | null
@@ -46,6 +48,7 @@ export type Database = {
         Update: {
           classe?: string | null
           created_at?: string
+          genre?: string | null
           hauteur?: string | null
           id?: string
           naissance?: string | null
