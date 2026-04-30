@@ -35,11 +35,12 @@ function MaternellePage() {
   const gallery = [blouseProduct, classeBlouses, bloussePliee];
 
   const handleAdd = () => {
-    if (children.length > 0 && !childId) { toast.error("Choisissez un enfant"); return; }
+    if (children.length === 0) { toast.error("Ajoutez d'abord un enfant"); return; }
+    if (!childId) { toast.error("Choisissez un enfant"); return; }
     addToCart({
       productId: "blouse-officielle", name: "Blouse scolaire officielle",
       ref: "SJC-BLS-2025", price: 30, size, qty, image: blouseProduct,
-      childId: childId || (children[0]?.id ?? ""),
+      childId,
     });
     toast.success("Blouse ajoutée au panier");
   };
@@ -155,8 +156,9 @@ function MaternellePage() {
                   <Plus className="h-4 w-4" />
                 </button>
               </div>
-              <button onClick={handleAdd} className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] transition-all hover:bg-primary/90">
-                Ajouter au panier
+              <button onClick={handleAdd} disabled={children.length === 0 || !childId}
+                className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">
+                {children.length === 0 ? "Ajoutez un enfant" : !childId ? "Choisir un enfant" : "Ajouter au panier"}
               </button>
               <button className="inline-flex h-14 w-14 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition-colors hover:text-primary">
                 <Heart className="h-5 w-5" />
