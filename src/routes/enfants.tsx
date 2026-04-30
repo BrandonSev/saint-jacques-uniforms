@@ -298,3 +298,50 @@ function Select({ label, value, onChange, options, placeholder }: { label: strin
     </label>
   );
 }
+
+function DateOfBirthPicker({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  const [y, m, d] = value ? value.split("-") : ["", "", ""];
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 19 }, (_, i) => String(currentYear - i));
+  const months = [
+    { v: "01", n: "Janvier" }, { v: "02", n: "Février" }, { v: "03", n: "Mars" },
+    { v: "04", n: "Avril" }, { v: "05", n: "Mai" }, { v: "06", n: "Juin" },
+    { v: "07", n: "Juillet" }, { v: "08", n: "Août" }, { v: "09", n: "Septembre" },
+    { v: "10", n: "Octobre" }, { v: "11", n: "Novembre" }, { v: "12", n: "Décembre" },
+  ];
+  const daysInMonth = (yy: string, mm: string) => {
+    if (!yy || !mm) return 31;
+    return new Date(Number(yy), Number(mm), 0).getDate();
+  };
+  const days = Array.from({ length: daysInMonth(y, m) }, (_, i) => String(i + 1).padStart(2, "0"));
+
+  const update = (ny: string, nm: string, nd: string) => {
+    if (ny && nm && nd) {
+      const max = daysInMonth(ny, nm);
+      const safeDay = Number(nd) > max ? String(max).padStart(2, "0") : nd;
+      onChange(`${ny}-${nm}-${safeDay}`);
+    } else {
+      onChange("");
+    }
+  };
+
+  return (
+    <div className="block">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+      <div className="mt-1 grid grid-cols-3 gap-2">
+        <select value={d} onChange={(e) => update(y, m, e.target.value)} className="h-10 w-full rounded-lg border border-border bg-background px-2 text-sm">
+          <option value="">Jour</option>
+          {days.map((dd) => <option key={dd} value={dd}>{Number(dd)}</option>)}
+        </select>
+        <select value={m} onChange={(e) => update(y, e.target.value, d)} className="h-10 w-full rounded-lg border border-border bg-background px-2 text-sm">
+          <option value="">Mois</option>
+          {months.map((mm) => <option key={mm.v} value={mm.v}>{mm.n}</option>)}
+        </select>
+        <select value={y} onChange={(e) => update(e.target.value, m, d)} className="h-10 w-full rounded-lg border border-border bg-background px-2 text-sm">
+          <option value="">Année</option>
+          {years.map((yy) => <option key={yy} value={yy}>{yy}</option>)}
+        </select>
+      </div>
+    </div>
+  );
+}
