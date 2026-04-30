@@ -43,6 +43,12 @@ export type FamilyParent = {
   ville: string | null;
   is_primary: boolean;
   position: number;
+  is_shipping_default: boolean;
+  has_alt_shipping: boolean;
+  shipping_label: string | null;
+  shipping_adresse: string | null;
+  shipping_code_postal: string | null;
+  shipping_ville: string | null;
 };
 
 export type CartItem = {
