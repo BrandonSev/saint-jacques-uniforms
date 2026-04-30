@@ -112,6 +112,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
 }
 
 export function SiteFooter() {
+  const { isAdmin } = useStore();
   return (
     <footer className="mt-24 border-t border-border" style={{ background: "var(--gradient-hero)" }}>
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 text-white sm:px-6 lg:grid-cols-4 lg:px-8">
@@ -135,12 +136,18 @@ export function SiteFooter() {
           </div>
         </div>
         <div>
-          <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Famille</h4>
+          <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">{isAdmin ? "Administration" : "Famille"}</h4>
           <ul className="mt-4 space-y-2 text-sm text-white/85">
-            <li><Link to="/niveau" className="hover:text-white hover:underline">Boutique</Link></li>
-            <li><Link to="/enfants" className="hover:text-white hover:underline">Mes enfants</Link></li>
-            <li><Link to="/commandes" className="hover:text-white hover:underline">Mes commandes</Link></li>
-            <li><Link to="/aide/guide-tailles" className="hover:text-white hover:underline">Guide des tailles</Link></li>
+            {isAdmin ? (
+              <li><Link to="/admin" className="hover:text-white hover:underline">Tableau de bord</Link></li>
+            ) : (
+              <>
+                <li><Link to="/niveau" className="hover:text-white hover:underline">Boutique</Link></li>
+                <li><Link to="/enfants" className="hover:text-white hover:underline">Mes enfants</Link></li>
+                <li><Link to="/commandes" className="hover:text-white hover:underline">Mes commandes</Link></li>
+                <li><Link to="/aide/guide-tailles" className="hover:text-white hover:underline">Guide des tailles</Link></li>
+              </>
+            )}
           </ul>
         </div>
         <div>
