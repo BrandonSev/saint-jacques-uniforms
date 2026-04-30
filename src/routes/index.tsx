@@ -47,12 +47,12 @@ function Index() {
           <ShellMotif className="absolute -left-40 -top-32 h-[700px] w-[700px]" opacity={0.1} />
           <ShellMotif className="absolute -right-48 -bottom-48 h-[700px] w-[700px]" opacity={0.08} />
         </div>
-        {/* Blason en filigrane plein arrière-plan (watermark global) */}
+        {/* Blason en filigrane plein arrière-plan (watermark global), au-dessus des overlays mais derrière le contenu */}
         <img
           src={schoolLogo}
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[55rem] w-[55rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-[0.07] mix-blend-screen lg:left-[58%] lg:h-[65rem] lg:w-[65rem]"
+          className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[55rem] w-[55rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-[0.08] mix-blend-screen lg:left-[58%] lg:h-[65rem] lg:w-[65rem]"
         />
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr]">
