@@ -239,7 +239,16 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
               <button onClick={onEdit} className="inline-flex h-9 items-center rounded-lg border border-border bg-card px-3 text-xs font-medium text-foreground hover:bg-muted">
                 Modifier
               </button>
-              <Link to={shopHrefForSection(enfant.section)} className="inline-flex h-9 items-center rounded-lg bg-primary px-3 text-xs font-medium text-primary-foreground hover:bg-primary/90">
+              <Link
+                to={shopHrefForSection(enfant.section)}
+                className={`inline-flex h-9 items-center rounded-lg px-3 text-xs font-medium text-white ${
+                  enfant.genre === "Fille"
+                    ? "bg-pink-500 hover:bg-pink-600"
+                    : enfant.genre === "Garçon"
+                    ? "bg-sky-500 hover:bg-sky-600"
+                    : "bg-primary hover:bg-primary/90"
+                }`}
+              >
                 Voir la boutique
               </Link>
             </div>
