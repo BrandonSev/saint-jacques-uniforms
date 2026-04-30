@@ -27,6 +27,22 @@ export type Profile = {
   adresse: string | null;
   code_postal: string | null;
   ville: string | null;
+  family_name: string | null;
+};
+
+export type FamilyParent = {
+  id: string;
+  role: string;
+  civilite: string;
+  prenom: string;
+  nom: string;
+  email: string | null;
+  telephone: string | null;
+  adresse: string | null;
+  code_postal: string | null;
+  ville: string | null;
+  is_primary: boolean;
+  position: number;
 };
 
 export type CartItem = {
@@ -84,6 +100,11 @@ type StoreCtx = {
   updateChild: (id: string, patch: Partial<Omit<Child, "id" | "initials" | "color">>) => Promise<void>;
   removeChild: (id: string) => Promise<void>;
 
+  parents: FamilyParent[];
+  addParent: (p: Partial<Omit<FamilyParent, "id">>) => Promise<void>;
+  updateParent: (id: string, patch: Partial<Omit<FamilyParent, "id">>) => Promise<void>;
+  removeParent: (id: string) => Promise<void>;
+
   cart: CartItem[];
   addToCart: (item: Omit<CartItem, "id">) => void;
   updateQty: (id: string, qty: number) => void;
@@ -118,6 +139,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [childList, setChildList] = useState<Child[]>([]);
+  const [parentList, setParentList] = useState<FamilyParent[]>([]);
   const [cart, setCart] = useLocal<CartItem[]>("sjc.cart", []);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -128,6 +150,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
       if (!s) {
         setProfile(null);
         setChildList([]);
+        setParentList([]);
         setIsAdmin(false);
       }
     });
@@ -149,6 +172,16 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
     if (data) setChildList(data.map((c, i) => decorate(c as any, i)));
   }, []);
 
+  const loadParents = useCallback(async (uid: string) => {
+    const { data } = await supabase
+      .from("family_parents")
+      .select("*")
+      .eq("user_id", uid)
+      .order("position", { ascending: true })
+      .order("created_at", { ascending: true });
+    if (data) setParentList(data as FamilyParent[]);
+  }, []);
+
   const loadAdmin = useCallback(async (uid: string) => {
     const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid).eq("role", "admin").maybeSingle();
     setIsAdmin(!!data);
@@ -158,9 +191,10 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
     if (user) {
       loadProfile(user.id);
       loadChildren(user.id);
+      loadParents(user.id);
       loadAdmin(user.id);
     }
-  }, [user, loadProfile, loadChildren, loadAdmin]);
+  }, [user, loadProfile, loadChildren, loadParents, loadAdmin]);
 
   const value = useMemo<StoreCtx>(() => ({
     user, session, profile, authLoading, isAdmin,
@@ -200,6 +234,38 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
       if (error) throw error;
       setChildList((p) => p.filter((c) => c.id !== id));
       setCart((p) => p.filter((i) => i.childId !== id));
+    },
+
+    parents: parentList,
+    addParent: async (p) => {
+      if (!user) return;
+      const position = parentList.length;
+      const { data, error } = await supabase.from("family_parents").insert({
+        user_id: user.id,
+        role: p.role || (position === 0 ? "Mère" : "Père"),
+        civilite: p.civilite || "Mme",
+        prenom: p.prenom || "",
+        nom: p.nom || "",
+        email: p.email || null,
+        telephone: p.telephone || null,
+        adresse: p.adresse || null,
+        code_postal: p.code_postal || null,
+        ville: p.ville || null,
+        is_primary: position === 0,
+        position,
+      }).select().single();
+      if (error) throw error;
+      if (data) setParentList((prev) => [...prev, data as FamilyParent]);
+    },
+    updateParent: async (id, patch) => {
+      const { data, error } = await supabase.from("family_parents").update(patch).eq("id", id).select().single();
+      if (error) throw error;
+      if (data) setParentList((prev) => prev.map((p) => (p.id === id ? (data as FamilyParent) : p)));
+    },
+    removeParent: async (id) => {
+      const { error } = await supabase.from("family_parents").delete().eq("id", id);
+      if (error) throw error;
+      setParentList((prev) => prev.filter((p) => p.id !== id));
     },
 
     cart,
@@ -254,7 +320,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
       setCart([]);
       return { orderId: order.id, orderNumber: order.order_number };
     },
-  }), [user, session, profile, authLoading, isAdmin, childList, cart, setCart, loadProfile]);
+  }), [user, session, profile, authLoading, isAdmin, childList, parentList, cart, setCart, loadProfile]);
 
   return <Ctx.Provider value={value}>{kids}</Ctx.Provider>;
 }
