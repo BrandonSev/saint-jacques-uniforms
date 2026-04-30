@@ -259,7 +259,7 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
             options={["Maternelle", "Élémentaire", "Collège", "Lycée"]}
           />
           <Select
-            label="Classe *"
+            label="Classe actuelle*"
             value={form.classe}
             onChange={(v) => setForm({ ...form, classe: v })}
             options={classesBySection[form.section] ?? []}
