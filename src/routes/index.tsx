@@ -112,11 +112,11 @@ function Index() {
                   loading="eager"
                 />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-primary-deep/85 via-primary-deep/30 to-transparent p-6">
-                  <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-white/75">
+                  <div className="font-medium uppercase tracking-[0.22em] text-white/75 text-base">
                     Rentrée 2026-2027
                   </div>
-                  <div className="mt-1 text-base font-semibold text-white">
-                    Tenues officielles validées par les établissements
+                  <div className="mt-1 font-semibold text-white text-3xl">
+                    Tenues officielles validées par l'établissement
                   </div>
                 </div>
               </div>
