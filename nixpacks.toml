@@ -1,7 +1,8 @@
+# Nixpacks config pour Coolify avec Bun
 providers = ["node"]
 
 [phases.setup]
-nixPkgs = ["bun", "nodejs_20"]
+nixPkgs = ["bun"]
 
 [phases.install]
 cmds = ["bun install --frozen-lockfile"]
@@ -10,4 +11,4 @@ cmds = ["bun install --frozen-lockfile"]
 cmds = ["bun run build"]
 
 [start]
-cmd = "bun run start"
+cmd = "bun run preview -- --host 0.0.0.0 --port $PORT"
