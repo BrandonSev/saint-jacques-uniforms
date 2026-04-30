@@ -35,23 +35,15 @@ function Index() {
       <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div
-          className="absolute inset-0 -z-10"
-          style={{ background: "var(--gradient-hero)" }}
-        />
+      <section className="relative overflow-hidden bg-primary">
+        <div className="absolute inset-0 -z-10" style={{ background: "var(--gradient-hero)" }} />
         <div className="absolute inset-0 -z-10 opacity-25 mix-blend-overlay">
-          <img
-            src={classeBlouses}
-            alt=""
-            className="h-full w-full object-cover"
-            loading="eager"
-          />
+          <img src={classeBlouses} alt="" className="h-full w-full object-cover" loading="eager" />
         </div>
         <div className="absolute inset-0 -z-10 bg-primary-deep/70" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-primary-deep/80 via-primary-deep/60 to-primary-deep/40" />
         <div className="pointer-events-none absolute inset-0 -z-10 text-white">
-          <ShellMotif className="absolute -left-40 -top-32 h-[700px] w-[700px]" opacity={0.10} />
+          <ShellMotif className="absolute -left-40 -top-32 h-[700px] w-[700px]" opacity={0.1} />
           <ShellMotif className="absolute -right-48 -bottom-48 h-[700px] w-[700px]" opacity={0.08} />
         </div>
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
@@ -65,16 +57,21 @@ function Index() {
               </h1>
               <div className="mt-5 h-px w-16 bg-gold mx-auto lg:mx-0" />
               <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg mx-auto lg:mx-0">
-                Bienvenue sur l'espace familles du Groupe Saint-Jacques de
-                Compostelle de Dax. Commandez les tenues officielles de la
-                maternelle au lycée en quelques clics.
+                Bienvenue sur l'espace familles du Groupe Saint-Jacques de Compostelle de Dax. Commandez les tenues
+                officielles de la maternelle au lycée en quelques clics.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-                <Link to="/login" className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-primary shadow-xl transition-all hover:gap-3">
+                <Link
+                  to="/login"
+                  className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-primary shadow-xl transition-all hover:gap-3"
+                >
                   Accéder à mon espace famille <ArrowRight className="h-4 w-4" />
                 </Link>
-                <Link to="/boutique" className="inline-flex h-12 items-center gap-2 rounded-full border border-white/30 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur transition-colors hover:bg-white/20">
+                <Link
+                  to="/boutique"
+                  className="inline-flex h-12 items-center gap-2 rounded-full border border-white/30 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur transition-colors hover:bg-white/20"
+                >
                   Découvrir la boutique
                 </Link>
               </div>
