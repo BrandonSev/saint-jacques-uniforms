@@ -53,13 +53,17 @@ export function ChildPicker({
         <button
           key={c.id}
           onClick={() => onChange(c.id)}
-          className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-all ${
+          className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-semibold transition-all ${
             value === c.id
-              ? "border-primary bg-primary text-primary-foreground"
+              ? c.genre === "Fille"
+                ? "border-pink-400 bg-pink-500 text-white"
+                : c.genre === "Garçon"
+                ? "border-sky-400 bg-sky-500 text-white"
+                : "border-primary bg-primary text-primary-foreground"
               : "border-border bg-card text-foreground hover:border-primary/40"
           }`}
         >
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/30 text-[9px] font-bold">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/30 text-[10px] font-bold">
             {c.initials}
           </span>
           {c.prenom}
@@ -69,9 +73,9 @@ export function ChildPicker({
         to="/enfants"
         title="Ajouter un nouvel enfant"
         aria-label="Ajouter un nouvel enfant"
-        className="inline-flex items-center gap-1 rounded-full border border-dashed border-primary/40 bg-primary/5 px-2.5 py-1 text-[11px] font-semibold text-primary transition-colors hover:bg-primary/10"
+        className="inline-flex items-center gap-1 rounded-full border border-dashed border-primary/40 bg-primary/5 px-3 py-1.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
       >
-        <Plus className="h-3.5 w-3.5" />
+        <Plus className="h-4 w-4" />
       </Link>
     </div>
   );
