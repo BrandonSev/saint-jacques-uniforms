@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Package, ShieldAlert } from "lucide-react";
+import { Download, Package, ShieldAlert } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { useStore } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
@@ -74,16 +74,55 @@ function AdminPage() {
     );
   }
 
+  const exportCsv = () => {
+    const headers = ["Commande", "Date", "Statut", "Total", "Famille", "Email", "Téléphone", "Enfant", "Classe", "Section", "Produit", "Référence", "Taille", "Quantité", "PU", "Total ligne"];
+    const rows: string[][] = [];
+    for (const o of orders) {
+      const oItems = items.filter((i) => i.order_id === o.id);
+      const family = `${o.family_civilite ?? ""} ${o.family_prenom} ${o.family_nom}`.trim();
+      const date = new Date(o.created_at).toLocaleDateString("fr-FR");
+      if (oItems.length === 0) {
+        rows.push([o.order_number, date, o.status, String(o.total_amount), family, o.family_email, o.family_telephone ?? "", "", "", "", "", "", "", "", "", ""]);
+      } else {
+        for (const i of oItems) {
+          rows.push([
+            o.order_number, date, o.status, String(o.total_amount), family, o.family_email, o.family_telephone ?? "",
+            `${i.child_prenom} ${i.child_nom}`, i.child_classe ?? "", i.child_section ?? "",
+            i.product_name, i.product_ref, i.size, String(i.quantity), String(i.unit_price), String(i.line_total),
+          ]);
+        }
+      }
+    }
+    const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
+    const csv = [headers, ...rows].map((r) => r.map(escape).join(";")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `commandes-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div>
-          <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
-            <span className="h-px w-6 bg-gold" /> Espace administrateur
-          </span>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Commandes</h1>
-          <p className="mt-2 text-sm text-muted-foreground">{orders.length} commande{orders.length > 1 ? "s" : ""}</p>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
+              <span className="h-px w-6 bg-gold" /> Espace administrateur
+            </span>
+            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Commandes</h1>
+            <p className="mt-2 text-sm text-muted-foreground">{orders.length} commande{orders.length > 1 ? "s" : ""}</p>
+          </div>
+          <button
+            onClick={exportCsv}
+            disabled={orders.length === 0}
+            className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] hover:bg-primary/90 disabled:opacity-50"
+          >
+            <Download className="h-4 w-4" /> Exporter pour le fournisseur (CSV)
+          </button>
         </div>
 
         {loading ? (

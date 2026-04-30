@@ -51,19 +51,22 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
 
         {schoolName && (
           <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
-            <Link to="/niveau" className="transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
-              Boutique
-            </Link>
-            <Link to="/enfants" className="transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
-              Mes enfants
-            </Link>
-            <Link to="/commandes" className="transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
-              Mes commandes
-            </Link>
-            {isAdmin && (
+            {isAdmin ? (
               <Link to="/admin" className="inline-flex items-center gap-1 transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
-                <ShieldCheck className="h-3.5 w-3.5" /> Admin
+                <ShieldCheck className="h-3.5 w-3.5" /> Administration
               </Link>
+            ) : (
+              <>
+                <Link to="/niveau" className="transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
+                  Boutique
+                </Link>
+                <Link to="/enfants" className="transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
+                  Mes enfants
+                </Link>
+                <Link to="/commandes" className="transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
+                  Mes commandes
+                </Link>
+              </>
             )}
           </nav>
         )}
@@ -88,7 +91,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
               <LogOut className="h-4 w-4" />
             </button>
           )}
-          <Link
+          {!isAdmin && <Link
             to="/panier"
             className="relative inline-flex h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground shadow-[var(--shadow-card)] transition-colors hover:bg-primary/90"
           >
@@ -99,7 +102,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                 {count}
               </span>
             )}
-          </Link>
+          </Link>}
         </div>
       </div>
     </header>
@@ -134,25 +137,26 @@ export function SiteFooter() {
         <div>
           <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Famille</h4>
           <ul className="mt-4 space-y-2 text-sm text-white/85">
-            <li>Mon espace</li>
-            <li>Mes enfants</li>
-            <li>Mes commandes</li>
-            <li>Guide des tailles</li>
+            <li><Link to="/niveau" className="hover:text-white hover:underline">Boutique</Link></li>
+            <li><Link to="/enfants" className="hover:text-white hover:underline">Mes enfants</Link></li>
+            <li><Link to="/commandes" className="hover:text-white hover:underline">Mes commandes</Link></li>
+            <li><Link to="/aide/guide-tailles" className="hover:text-white hover:underline">Guide des tailles</Link></li>
           </ul>
         </div>
         <div>
           <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Aide</h4>
           <ul className="mt-4 space-y-2 text-sm text-white/85">
-            <li>Livraison & retours</li>
-            <li>Contact établissement</li>
-            <li>Conditions générales</li>
-            <li>Mentions légales</li>
+            <li><Link to="/aide/livraison" className="hover:text-white hover:underline">Livraison & retours</Link></li>
+            <li><Link to="/aide/contact" className="hover:text-white hover:underline">Contact établissement</Link></li>
+            <li><Link to="/aide/cgu" className="hover:text-white hover:underline">Conditions générales</Link></li>
+            <li><Link to="/aide/confidentialite" className="hover:text-white hover:underline">Confidentialité</Link></li>
+            <li><Link to="/aide/mentions-legales" className="hover:text-white hover:underline">Mentions légales</Link></li>
           </ul>
         </div>
       </div>
       <div className="border-t border-white/15">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-white/70 sm:flex-row sm:px-6 lg:px-8">
-          <span>© {new Date().getFullYear()} France Uniformes — Fabrication française</span>
+          <span>© {new Date().getFullYear()} France Uniformes · Tous droits réservés · Fabrication française</span>
           <span>Paiement sécurisé · Livraison à l'établissement</span>
         </div>
       </div>

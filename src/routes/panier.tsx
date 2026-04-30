@@ -154,6 +154,12 @@ function ChildGroup({ group, onQty, onRemove }: { group: Group; onQty: (id: stri
                   <p className="mt-2 text-xs text-foreground/80">
                     Taille <span className="font-semibold">{item.size}</span>
                   </p>
+                  {group.child && (
+                    <p className="mt-1 text-[11px] text-muted-foreground">
+                      Pour <span className="font-medium text-foreground">{group.child.prenom} {group.child.nom}</span>
+                      {group.child.classe && <> · classe {group.child.classe}</>}
+                    </p>
+                  )}
                 </div>
                 <div className="shrink-0 text-right">
                   <div className="text-base font-semibold text-foreground">

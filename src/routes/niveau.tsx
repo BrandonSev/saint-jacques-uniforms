@@ -1,10 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif, WaveMotif } from "@/components/SchoolMotif";
+import { useStore } from "@/lib/store";
 import maternelle from "@/assets/classe-maternelle-blouses.jpg";
 import college from "@/assets/college-polo-porte.jpg";
 import lycee from "@/assets/lycee-uniformes.jpg";
+import elementaireImg from "@/assets/elementaire-hero.jpg";
 
 export const Route = createFileRoute("/niveau")({
   head: () => ({
@@ -23,16 +25,25 @@ export const Route = createFileRoute("/niveau")({
 const levels = [
   {
     id: "maternelle",
-    title: "Blouses scolaires",
-    subtitle: "Maternelle & Élémentaire",
-    range: "PS · MS · GS · CP → CM1",
+    title: "Maternelle",
+    subtitle: "Maternelle",
+    range: "PS · MS · GS",
     image: maternelle,
     href: "/maternelle" as const,
-    accent: "Tenue quotidienne officielle",
+    accent: "Blouse quotidienne officielle",
+  },
+  {
+    id: "elementaire",
+    title: "Élémentaire",
+    subtitle: "Élémentaire",
+    range: "CP · CE1 · CE2 · CM1",
+    image: elementaireImg,
+    href: "/elementaire" as const,
+    accent: "Blouse quotidienne officielle",
   },
   {
     id: "college",
-    title: "Uniformes collège",
+    title: "Collège",
     subtitle: "Collège",
     range: "CM2 · 6e · 5e · 4e",
     image: college,
@@ -41,16 +52,19 @@ const levels = [
   },
   {
     id: "lycee",
-    title: "Prochainement !",
+    title: "Lycée",
     subtitle: "Lycée",
     range: "3e · 2nde · 1re · Terminale",
     image: lycee,
     href: "/lycee" as const,
-    accent: "Sélection à venir",
+    accent: "Prochainement !",
   },
 ];
 
 function NiveauPage() {
+  const { isAdmin, authLoading } = useStore();
+  if (authLoading) return null;
+  if (isAdmin) return <Navigate to="/admin" />;
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" cartCount={0} />
@@ -77,7 +91,7 @@ function NiveauPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {levels.map((level, idx) => (
             <LevelCard key={level.id} level={level} priority={idx === 0} />
           ))}
@@ -104,7 +118,7 @@ function LevelCard({
   return (
     <Link
       to={level.href}
-      className="group relative flex h-[460px] flex-col justify-end overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-card)] transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-elegant)]"
+      className="group relative flex h-[420px] flex-col justify-end overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-card)] transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-elegant)]"
     >
       <img
         src={level.image}
@@ -120,13 +134,13 @@ function LevelCard({
         </span>
       </div>
 
-      <div className="relative p-7 text-white">
-        <p className="text-xs uppercase tracking-wider text-white/75">{level.range}</p>
+      <div className="relative p-6 text-white">
+        <p className="text-[11px] uppercase tracking-wider text-white/75">{level.range}</p>
         <h3 className="mt-2 text-2xl font-semibold tracking-tight">{level.title}</h3>
         <p className="mt-1 text-sm text-white/85">{level.accent}</p>
 
-        <div className="mt-5 inline-flex h-11 items-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-primary shadow-md transition-all group-hover:gap-3">
-          Accéder <ArrowRight className="h-4 w-4" />
+        <div className="mt-4 inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-full bg-white px-4 text-sm font-semibold text-primary shadow-md transition-all group-hover:gap-3">
+          Accéder <ArrowRight className="h-4 w-4 shrink-0" />
         </div>
       </div>
     </Link>

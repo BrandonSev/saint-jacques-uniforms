@@ -29,7 +29,7 @@ function LyceePage() {
           <ShieldCheck className="h-3 w-3" /> Prochainement !
         </span>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-          Uniformes lycée — Prochainement !
+          Lycée — Prochainement !
         </h1>
         <p className="mx-auto mt-4 max-w-xl leading-relaxed text-muted-foreground">
           Il n'y a pas d'uniformes au lycée actuellement. Les élèves de 3ᵉ sont

@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Lock, Mail, ShieldCheck, User as UserIcon, Phone } from "lucide-react";
+import { ArrowLeft, Lock, Mail, MapPin, ShieldCheck, User as UserIcon, Phone } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import sjcLogo from "@/assets/saint-jacques-logo-full.png";
@@ -30,6 +30,9 @@ const signupSchema = z.object({
   nom: z.string().trim().min(1, "Nom requis").max(80),
   email: z.string().trim().email("Email invalide").max(255),
   telephone: z.string().trim().max(30).optional().or(z.literal("")),
+  adresse: z.string().trim().min(1, "Adresse requise").max(200),
+  code_postal: z.string().trim().min(4, "Code postal requis").max(10),
+  ville: z.string().trim().min(1, "Ville requise").max(100),
   password: z.string().min(8, "Mot de passe : 8 caractères minimum").max(128),
 });
 
@@ -48,6 +51,9 @@ function LoginPage() {
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
   const [telephone, setTelephone] = useState("");
+  const [adresse, setAdresse] = useState("");
+  const [codePostal, setCodePostal] = useState("");
+  const [ville, setVille] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -64,7 +70,7 @@ function LoginPage() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    const parsed = signupSchema.safeParse({ civilite, prenom, nom, email, telephone, password });
+    const parsed = signupSchema.safeParse({ civilite, prenom, nom, email, telephone, adresse, code_postal: codePostal, ville, password });
     if (!parsed.success) { toast.error(parsed.error.issues[0].message); return; }
     setLoading(true);
     const { error } = await supabase.auth.signUp({
@@ -77,6 +83,9 @@ function LoginPage() {
           prenom: parsed.data.prenom,
           nom: parsed.data.nom,
           telephone: parsed.data.telephone || "",
+          adresse: parsed.data.adresse,
+          code_postal: parsed.data.code_postal,
+          ville: parsed.data.ville,
         },
       },
     });
@@ -84,6 +93,16 @@ function LoginPage() {
     if (error) {
       toast.error(error.message.includes("already") ? "Cet email est déjà utilisé" : error.message);
       return;
+    }
+    // Persiste les infos postales sur le profil après création
+    const { data: { user: u } } = await supabase.auth.getUser();
+    if (u) {
+      await supabase.from("profiles").update({
+        adresse: parsed.data.adresse,
+        code_postal: parsed.data.code_postal,
+        ville: parsed.data.ville,
+        telephone: parsed.data.telephone || null,
+      }).eq("id", u.id);
     }
     toast.success("Espace famille créé !");
     navigate({ to: "/niveau" });
@@ -165,6 +184,17 @@ function LoginPage() {
                 <Field label="Téléphone (optionnel)" icon={<Phone className="h-4 w-4" />}>
                   <input type="tel" value={telephone} onChange={(e) => setTelephone(e.target.value)} maxLength={30} placeholder="06 12 34 56 78" className={inputCls} />
                 </Field>
+                <Field label="Adresse postale" icon={<MapPin className="h-4 w-4" />}>
+                  <input type="text" required value={adresse} onChange={(e) => setAdresse(e.target.value)} maxLength={200} placeholder="12 rue des Écoles" className={inputCls} />
+                </Field>
+                <div className="grid grid-cols-[120px_1fr] gap-3">
+                  <Field label="Code postal" icon={<MapPin className="h-4 w-4" />}>
+                    <input type="text" required value={codePostal} onChange={(e) => setCodePostal(e.target.value)} maxLength={10} placeholder="40100" className={inputCls} />
+                  </Field>
+                  <Field label="Ville" icon={<MapPin className="h-4 w-4" />}>
+                    <input type="text" required value={ville} onChange={(e) => setVille(e.target.value)} maxLength={100} placeholder="Dax" className={inputCls} />
+                  </Field>
+                </div>
                 <Field label="Mot de passe (8 car. min.)" icon={<Lock className="h-4 w-4" />}>
                   <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} minLength={8} className={inputCls} />
                 </Field>
@@ -175,8 +205,10 @@ function LoginPage() {
             )}
 
             <p className="mt-6 text-center text-xs text-muted-foreground">
-              En continuant, vous acceptez les <span className="text-[var(--teal-deep)]">CGU</span> et notre{" "}
-              <span className="text-[var(--teal-deep)]">politique de confidentialité</span>.
+              En continuant, vous acceptez nos{" "}
+              <Link to="/aide/cgu" className="text-[var(--teal-deep)] underline hover:text-primary">CGU</Link>
+              {" "}et notre{" "}
+              <Link to="/aide/confidentialite" className="text-[var(--teal-deep)] underline hover:text-primary">politique de confidentialité</Link>.
             </p>
           </div>
         </div>
