@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { RequireAuth } from "@/components/RequireAuth";
 import { useMemo, useState } from "react";
 import { AlertTriangle, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
@@ -10,7 +11,11 @@ export const Route = createFileRoute("/panier")({
   head: () => ({
     meta: [{ title: "Mon panier — Espace familles" }],
   }),
-  component: PanierPage,
+  component: () => (
+    <RequireAuth>
+      <PanierPage />
+    </RequireAuth>
+  ),
 });
 
 type Group = { child: Child | null; items: CartItem[] };

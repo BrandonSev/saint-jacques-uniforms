@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { RequireAuth } from "@/components/RequireAuth";
 import { ChevronRight, ShieldCheck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
@@ -21,7 +22,11 @@ export const Route = createFileRoute("/college")({
       },
     ],
   }),
-  component: CollegePage,
+  component: () => (
+    <RequireAuth>
+      <CollegePage />
+    </RequireAuth>
+  ),
 });
 
 const sizes = ["10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];

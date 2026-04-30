@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { RequireAuth } from "@/components/RequireAuth";
 import { ChevronRight, ShieldCheck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import lycee from "@/assets/lycee-uniformes.jpg";
@@ -7,7 +8,11 @@ export const Route = createFileRoute("/lycee")({
   head: () => ({
     meta: [{ title: "Uniformes lycée — Saint-Jacques de Compostelle" }],
   }),
-  component: LyceePage,
+  component: () => (
+    <RequireAuth>
+      <LyceePage />
+    </RequireAuth>
+  ),
 });
 
 function LyceePage() {
