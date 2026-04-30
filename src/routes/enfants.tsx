@@ -199,6 +199,7 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
     classe: initial.classe, section: initial.section, taille: initial.taille,
     hauteur: initial.hauteur, tour: initial.tour,
   });
+  const [genre, setGenre] = useState<"Fille" | "Garçon" | "">("");
   const [saving, setSaving] = useState(false);
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -218,6 +219,29 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
           <button type="button" onClick={onClose} className="rounded-lg p-1.5 hover:bg-muted"><X className="h-4 w-4" /></button>
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <fieldset className="sm:col-span-2">
+            <legend className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Genre</legend>
+            <div className="mt-2 flex gap-4">
+              <label className="inline-flex items-center gap-2 text-sm text-foreground">
+                <input
+                  type="checkbox"
+                  checked={genre === "Fille"}
+                  onChange={() => setGenre(genre === "Fille" ? "" : "Fille")}
+                  className="h-4 w-4 rounded border-border accent-primary"
+                />
+                Fille
+              </label>
+              <label className="inline-flex items-center gap-2 text-sm text-foreground">
+                <input
+                  type="checkbox"
+                  checked={genre === "Garçon"}
+                  onChange={() => setGenre(genre === "Garçon" ? "" : "Garçon")}
+                  className="h-4 w-4 rounded border-border accent-primary"
+                />
+                Garçon
+              </label>
+            </div>
+          </fieldset>
           <Input label="Prénom *" value={form.prenom} onChange={(v) => setForm({ ...form, prenom: v })} required />
           <Input label="Nom *" value={form.nom} onChange={(v) => setForm({ ...form, nom: v })} required />
           <Input label="Date de naissance *" type="date" value={form.naissance} onChange={(v) => setForm({ ...form, naissance: v })} required />
