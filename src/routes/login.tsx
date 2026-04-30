@@ -116,7 +116,7 @@ function LoginPage() {
         </div>
         <header className="flex items-center justify-between px-6 py-5 lg:px-10">
           <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
-            <ArrowLeft className="h-4 w-4" /> Changer d'établissement
+            <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
           </Link>
           <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Saint-Jacques · Dax</span>
         </header>

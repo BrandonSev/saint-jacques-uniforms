@@ -49,7 +49,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
           )}
         </Link>
 
-        {schoolName && (
+        {schoolName && user && (
           <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
             {isAdmin ? (
               <Link to="/admin" className="inline-flex items-center gap-1 transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
@@ -91,7 +91,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
               <LogOut className="h-4 w-4" />
             </button>
           )}
-          {!isAdmin && <Link
+          {!isAdmin && user && <Link
             to="/panier"
             className="relative inline-flex h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground shadow-[var(--shadow-card)] transition-colors hover:bg-primary/90"
           >
