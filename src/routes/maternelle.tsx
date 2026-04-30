@@ -20,7 +20,7 @@ export const Route = createFileRoute("/maternelle")({
   component: MaternelleListPage,
 });
 
-const sizes = ["3 ans", "4 ans", "5 ans", "6 ans", "7 ans", "8 ans", "10 ans", "12 ans"];
+const sizes = ["4 ans", "6 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];
 
 const products = [
   {
@@ -67,7 +67,7 @@ function MaternelleListPage() {
             </p>
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">1 produit</span>
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles 3 → 12 ans</span>
+            <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles 4 → 18 ans</span>
             </div>
           </div>
           <div className="relative h-64 overflow-hidden rounded-3xl border border-border lg:h-80">
@@ -85,7 +85,7 @@ function MaternelleListPage() {
               key={p.id}
               product={p}
               sizes={sizes}
-              defaultSize="4 ans"
+              defaultSize="6 ans"
               childFilter={(c) => c.section === "Maternelle" || c.section === "Élémentaire"}
             />
           ))}
