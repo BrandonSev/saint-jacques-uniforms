@@ -112,6 +112,13 @@ function Index() {
                   loading="eager"
                 />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 rounded-b-3xl bg-gradient-to-t from-primary-deep/85 via-primary-deep/30 to-transparent p-6">
+                  {/* Blason en arrière-plan, derrière les textes */}
+                  <img
+                    src={schoolLogo}
+                    alt=""
+                    aria-hidden="true"
+                    className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[22rem] w-[22rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-30 animate-[float_6s_ease-in-out_infinite]"
+                  />
                   <div className="font-medium uppercase tracking-[0.22em] text-white/75 text-base">
                     <span className="relative inline-block">
                       {/* Rond jaune décoratif — débordant, translucide, centré sur le R */}
@@ -126,18 +133,6 @@ function Index() {
                     Tenues officielles validées par l'établissement
                   </div>
                 </div>
-              </div>
-              {/* Blason en chevauchement haut-gauche */}
-              <div className="pointer-events-none absolute -left-10 -top-10 z-30">
-                <span
-                  className="absolute inset-0 rounded-full opacity-60 blur-2xl"
-                  style={{ background: "radial-gradient(closest-side, var(--gold) 0%, transparent 70%)" }}
-                />
-                <img
-                  src={schoolLogo}
-                  alt="Blason Saint-Jacques de Compostelle"
-                  className="relative h-44 w-44 drop-shadow-[0_18px_40px_rgba(0,0,0,0.55)] animate-[float_6s_ease-in-out_infinite] object-scale-down"
-                />
               </div>
               <div className="absolute -right-4 -top-4 z-0 h-20 w-20 rounded-2xl border-2 border-gold/70 bg-white/10 backdrop-blur" />
             </div>
