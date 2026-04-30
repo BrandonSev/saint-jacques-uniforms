@@ -70,7 +70,7 @@ export function ProductCard({ product, sizes, defaultSize, childFilter }: Props)
       <div className="flex flex-1 flex-col p-6">
         <div className="flex items-baseline justify-between gap-3">
           {Title}
-          <span className="text-lg font-semibold text-foreground">{product.price.toFixed(2)} €</span>
+          <span className="text-lg font-semibold text-foreground">{product.price} €</span>
         </div>
         <p className="mt-1 text-xs text-muted-foreground">Réf. {product.ref}</p>
         {product.desc && <p className="mt-3 text-sm leading-relaxed text-foreground/75">{product.desc}</p>}

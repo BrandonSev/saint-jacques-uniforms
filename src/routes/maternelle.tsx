@@ -30,12 +30,12 @@ const sizes = ["4 ans", "6 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans"
 const products = [
   {
     id: "blouse-officielle",
-    name: "Blouse scolaire officielle",
+    name: "Blouse Annabelle",
     ref: "BLSE-FU-001",
     price: 30,
     image: blouseProduct,
     tag: "Officielle",
-    desc: "Blouse bleu Riviera, col contrasté, écusson brodé. Tenue quotidienne portée par tous les élèves.",
+    desc: "Blouse de couleur bleu Riviera, boutons pressions jaunes, col biais, écusson brodé sur le coeur.",
     href: "/blouse-officielle" as const,
   },
 ];
