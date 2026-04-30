@@ -189,15 +189,21 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
           </div>
           <div>
             <h3 className="text-2xl font-semibold tracking-tight text-foreground">{enfant.prenom} {enfant.nom}</h3>
-            {enfant.naissance && (
-              <p className="mt-1 text-xs text-foreground/70">
-                {enfant.genre === "Fille" ? "Née" : enfant.genre === "Garçon" ? "Né" : "Né(e)"} le {new Date(enfant.naissance).toLocaleDateString("fr-FR")}
-                {(() => {
-                  const age = computeAgeFromISO(enfant.naissance);
-                  return age !== null ? ` · ${age} ans` : "";
-                })()}
-              </p>
-            )}
+            {enfant.naissance && (() => {
+              const age = computeAgeFromISO(enfant.naissance);
+              return (
+                <div className="mt-1 flex items-baseline gap-3 flex-wrap">
+                  <p className="text-xs text-foreground/70">
+                    {enfant.genre === "Fille" ? "Née" : enfant.genre === "Garçon" ? "Né" : "Né(e)"} le {new Date(enfant.naissance).toLocaleDateString("fr-FR")}
+                  </p>
+                  {age !== null && (
+                    <span className="ml-auto text-2xl font-extrabold tracking-tight text-primary">
+                      {age} ans
+                    </span>
+                  )}
+                </div>
+              );
+            })()}
             {(enfant.section || enfant.classe) && (
               <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-[11px] font-medium text-primary backdrop-blur">
                 {[enfant.section, enfant.classe].filter(Boolean).join(" · ")}
