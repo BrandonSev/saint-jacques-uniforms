@@ -30,8 +30,8 @@ const sizes = ["4 ans", "6 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans"
 const products = [
   {
     id: "blouse-officielle",
-    name: "Blouse Annabelle",
-    ref: "BLSE-FU-001",
+    name: "Blouse scolaire officielle SJDC",
+    ref: "Riviera Dax",
     price: 30,
     image: blouseProduct,
     tag: "Officielle",
