@@ -5,8 +5,8 @@ import { Truck, Package, RefreshCw } from "lucide-react";
 export const Route = createFileRoute("/aide/livraison")({
   head: () => ({
     meta: [
-      { title: "Livraison & retours — Saint-Jacques de Compostelle" },
-      { name: "description", content: "Modalités de livraison et de retour pour les commandes d'uniformes." },
+      { title: "Livraisons — Saint-Jacques de Compostelle" },
+      { name: "description", content: "Modalités de livraison pour les commandes d'uniformes." },
     ],
   }),
   component: LivraisonPage,
@@ -20,7 +20,7 @@ function LivraisonPage() {
         <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
           <span className="h-px w-6 bg-gold" /> Aide
         </span>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Livraison & retours</h1>
+        <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Livraisons</h1>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Toutes les commandes sont préparées dans nos ateliers français et livrées directement à
           l'établissement Saint-Jacques de Compostelle.
