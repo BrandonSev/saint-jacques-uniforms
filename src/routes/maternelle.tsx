@@ -27,7 +27,7 @@ const products = [
     id: "blouse-officielle",
     name: "Blouse scolaire officielle",
     ref: "BLSE-FU-001",
-    price: 25,
+    price: 30,
     image: blouseProduct,
     tag: "Officielle",
     desc: "Blouse bleu Riviera, col contrasté, écusson brodé. Tenue quotidienne portée par tous les élèves.",
@@ -68,7 +68,6 @@ function MaternelleListPage() {
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">1 produit</span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles 3 → 12 ans</span>
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison à l'école</span>
             </div>
           </div>
           <div className="relative h-64 overflow-hidden rounded-3xl border border-border lg:h-80">

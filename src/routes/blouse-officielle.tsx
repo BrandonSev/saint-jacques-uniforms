@@ -39,7 +39,7 @@ function MaternellePage() {
     if (!childId) { toast.error("Choisissez un enfant"); return; }
     addToCart({
       productId: "blouse-officielle", name: "Blouse scolaire officielle",
-      ref: "BLSE-FU-001", price: 25, size, qty, image: blouseProduct,
+      ref: "BLSE-FU-001", price: 30, size, qty, image: blouseProduct,
       childId,
     });
     toast.success("Blouse ajoutée au panier");
@@ -103,7 +103,7 @@ function MaternellePage() {
             </p>
 
             <div className="mt-6 flex items-baseline gap-3">
-              <span className="text-3xl font-semibold text-foreground">25,00 €</span>
+              <span className="text-3xl font-semibold text-foreground">30,00 €</span>
               <span className="rounded-md bg-[var(--school-yellow)]/30 px-2 py-0.5 text-xs font-medium text-foreground">
                 Tarif famille
               </span>
@@ -173,7 +173,6 @@ function MaternellePage() {
 
             {/* Trust */}
             <div className="mt-8 grid gap-3 rounded-2xl border border-border bg-card p-5 sm:grid-cols-2">
-              <Bullet icon={<Truck className="h-4 w-4" />} text="Livraison à l'école sous 5 à 7 jours" />
               <Bullet icon={<ShieldCheck className="h-4 w-4" />} text="Échange de taille gratuit pendant 30 jours" />
               <Bullet icon={<Check className="h-4 w-4" />} text="Coton certifié OEKO-TEX" />
               <Bullet icon={<Check className="h-4 w-4" />} text="Fabrication française" />

@@ -47,13 +47,7 @@ function CguPage() {
             d'ici là, les commandes sont enregistrées et facturées par l'établissement.
           </p>
 
-          <h2 className="mt-6 text-lg font-semibold text-foreground">5. Échanges et retours</h2>
-          <p className="mt-2 text-sm leading-relaxed">
-            Échange de taille gratuit dans les 30 jours suivant la réception. Voir la page
-            « Livraison & retours » pour les modalités.
-          </p>
-
-          <h2 className="mt-6 text-lg font-semibold text-foreground">6. Données personnelles</h2>
+          <h2 className="mt-6 text-lg font-semibold text-foreground">5. Données personnelles</h2>
           <p className="mt-2 text-sm leading-relaxed">
             Voir la <Link to="/aide/confidentialite" className="text-primary hover:underline">politique de confidentialité</Link>.
           </p>

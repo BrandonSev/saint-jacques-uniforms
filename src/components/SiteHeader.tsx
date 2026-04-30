@@ -223,7 +223,7 @@ export function SiteFooter() {
       <div className="border-t border-white/15">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-white/70 sm:flex-row sm:px-6 lg:px-8">
           <span>© {new Date().getFullYear()} France Uniformes · Tous droits réservés · Fabrication française</span>
-          <span>Paiement sécurisé · Livraison à l'établissement</span>
+          <span>Paiement sécurisé</span>
         </div>
       </div>
     </footer>
