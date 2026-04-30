@@ -32,8 +32,7 @@ function PanierPage() {
   }, [cart, children]);
 
   const subtotal = cart.reduce((s, i) => s + i.qty * i.price, 0);
-  const delivery = 0;
-  const total = subtotal + delivery;
+  const total = 0;
 
   const onCheckout = async () => {
     if (!user) { navigate({ to: "/login" }); return; }
@@ -91,26 +90,25 @@ function PanierPage() {
             <div className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
               <h2 className="text-lg font-semibold tracking-tight text-foreground">Récapitulatif</h2>
               <dl className="mt-5 space-y-3 text-sm">
-                <Row label={`Sous-total (${cartCount} articles)`} value={`${subtotal.toFixed(2)} €`} />
-                <Row label="Livraison à domicile" value="Offerte" valueClass="text-primary" />
-                <Row label="TVA incluse" value={`${(subtotal * 0.2).toFixed(2)} €`} muted />
+                <Row label={`Articles`} value={`${cartCount}`} />
+                <Row label="Enfants concernés" value={`${groups.length}`} />
+                <Row label="Livraison à l'établissement" value="Incluse" valueClass="text-primary" />
               </dl>
               <div className="my-5 h-px bg-border" />
               <div className="flex items-baseline justify-between">
-                <span className="text-base font-semibold text-foreground">Total</span>
+                <span className="text-base font-semibold text-foreground">Total à régler</span>
                 <span className="text-2xl font-semibold text-foreground">{total.toFixed(2)} €</span>
               </div>
               <button onClick={onCheckout} disabled={processing} className="mt-6 inline-flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] hover:bg-primary/90 disabled:opacity-60">
-                <Lock className="h-4 w-4" />
-                {processing ? "Traitement…" : user ? "Valider la commande" : "Se connecter pour commander"}
+                {processing ? "Envoi…" : user ? "Envoyer ma commande" : "Se connecter pour commander"}
               </button>
               <p className="mt-3 text-center text-[11px] text-muted-foreground">
-                Paiement sécurisé · CB · Prélèvement · 3× sans frais
+                Le paiement en ligne sera disponible prochainement.
               </p>
 
               <div className="mt-6 rounded-xl bg-secondary p-4 text-xs leading-relaxed text-foreground/75">
-                <p className="font-semibold text-foreground">Livraison à domicile</p>
-                <p className="mt-1">Vos commandes seront expédiées à l'adresse indiquée dans votre profil sous 5 à 7 jours ouvrés.</p>
+                <p className="font-semibold text-foreground">Commande transmise à l'établissement</p>
+                <p className="mt-1">Votre commande sera enregistrée et préparée. Aucun paiement n'est requis pour le moment.</p>
               </div>
             </div>
           </aside>
