@@ -185,12 +185,12 @@ function Field({ label, value }: { label: string; value: string }) {
   );
 }
 
-function shopHrefForSection(section?: string): "/maternelle" | "/college" | "/lycee" | "/niveau" {
+function shopHrefForSection(section?: string): "/maternelle" | "/college" | "/lycee" | "/boutique" {
   const s = (section || "").toLowerCase();
   if (s.includes("maternelle") || s.includes("élémentaire") || s.includes("elementaire")) return "/maternelle";
   if (s.includes("collège") || s.includes("college")) return "/college";
   if (s.includes("lycée") || s.includes("lycee")) return "/lycee";
-  return "/niveau";
+  return "/boutique";
 }
 
 function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child; onClose: () => void; onSave: (data: ChildForm) => Promise<void> }) {

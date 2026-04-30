@@ -10,13 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PanierRouteImport } from './routes/panier'
-import { Route as NiveauRouteImport } from './routes/niveau'
 import { Route as MaternelleRouteImport } from './routes/maternelle'
 import { Route as LyceeRouteImport } from './routes/lycee'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as EnfantsRouteImport } from './routes/enfants'
 import { Route as CommandesRouteImport } from './routes/commandes'
 import { Route as CollegeRouteImport } from './routes/college'
+import { Route as BoutiqueRouteImport } from './routes/boutique'
 import { Route as BlouseOfficielleRouteImport } from './routes/blouse-officielle'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -30,11 +30,6 @@ import { Route as AideCguRouteImport } from './routes/aide.cgu'
 const PanierRoute = PanierRouteImport.update({
   id: '/panier',
   path: '/panier',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NiveauRoute = NiveauRouteImport.update({
-  id: '/niveau',
-  path: '/niveau',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MaternelleRoute = MaternelleRouteImport.update({
@@ -65,6 +60,11 @@ const CommandesRoute = CommandesRouteImport.update({
 const CollegeRoute = CollegeRouteImport.update({
   id: '/college',
   path: '/college',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BoutiqueRoute = BoutiqueRouteImport.update({
+  id: '/boutique',
+  path: '/boutique',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlouseOfficielleRoute = BlouseOfficielleRouteImport.update({
@@ -117,13 +117,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/blouse-officielle': typeof BlouseOfficielleRoute
+  '/boutique': typeof BoutiqueRoute
   '/college': typeof CollegeRoute
   '/commandes': typeof CommandesRoute
   '/enfants': typeof EnfantsRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
   '/maternelle': typeof MaternelleRoute
-  '/niveau': typeof NiveauRoute
   '/panier': typeof PanierRoute
   '/aide/cgu': typeof AideCguRoute
   '/aide/confidentialite': typeof AideConfidentialiteRoute
@@ -136,13 +136,13 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/blouse-officielle': typeof BlouseOfficielleRoute
+  '/boutique': typeof BoutiqueRoute
   '/college': typeof CollegeRoute
   '/commandes': typeof CommandesRoute
   '/enfants': typeof EnfantsRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
   '/maternelle': typeof MaternelleRoute
-  '/niveau': typeof NiveauRoute
   '/panier': typeof PanierRoute
   '/aide/cgu': typeof AideCguRoute
   '/aide/confidentialite': typeof AideConfidentialiteRoute
@@ -156,13 +156,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/blouse-officielle': typeof BlouseOfficielleRoute
+  '/boutique': typeof BoutiqueRoute
   '/college': typeof CollegeRoute
   '/commandes': typeof CommandesRoute
   '/enfants': typeof EnfantsRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
   '/maternelle': typeof MaternelleRoute
-  '/niveau': typeof NiveauRoute
   '/panier': typeof PanierRoute
   '/aide/cgu': typeof AideCguRoute
   '/aide/confidentialite': typeof AideConfidentialiteRoute
@@ -177,13 +177,13 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/blouse-officielle'
+    | '/boutique'
     | '/college'
     | '/commandes'
     | '/enfants'
     | '/login'
     | '/lycee'
     | '/maternelle'
-    | '/niveau'
     | '/panier'
     | '/aide/cgu'
     | '/aide/confidentialite'
@@ -196,13 +196,13 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/blouse-officielle'
+    | '/boutique'
     | '/college'
     | '/commandes'
     | '/enfants'
     | '/login'
     | '/lycee'
     | '/maternelle'
-    | '/niveau'
     | '/panier'
     | '/aide/cgu'
     | '/aide/confidentialite'
@@ -215,13 +215,13 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/blouse-officielle'
+    | '/boutique'
     | '/college'
     | '/commandes'
     | '/enfants'
     | '/login'
     | '/lycee'
     | '/maternelle'
-    | '/niveau'
     | '/panier'
     | '/aide/cgu'
     | '/aide/confidentialite'
@@ -235,13 +235,13 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   BlouseOfficielleRoute: typeof BlouseOfficielleRoute
+  BoutiqueRoute: typeof BoutiqueRoute
   CollegeRoute: typeof CollegeRoute
   CommandesRoute: typeof CommandesRoute
   EnfantsRoute: typeof EnfantsRoute
   LoginRoute: typeof LoginRoute
   LyceeRoute: typeof LyceeRoute
   MaternelleRoute: typeof MaternelleRoute
-  NiveauRoute: typeof NiveauRoute
   PanierRoute: typeof PanierRoute
   AideCguRoute: typeof AideCguRoute
   AideConfidentialiteRoute: typeof AideConfidentialiteRoute
@@ -258,13 +258,6 @@ declare module '@tanstack/react-router' {
       path: '/panier'
       fullPath: '/panier'
       preLoaderRoute: typeof PanierRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/niveau': {
-      id: '/niveau'
-      path: '/niveau'
-      fullPath: '/niveau'
-      preLoaderRoute: typeof NiveauRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/maternelle': {
@@ -307,6 +300,13 @@ declare module '@tanstack/react-router' {
       path: '/college'
       fullPath: '/college'
       preLoaderRoute: typeof CollegeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/boutique': {
+      id: '/boutique'
+      path: '/boutique'
+      fullPath: '/boutique'
+      preLoaderRoute: typeof BoutiqueRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blouse-officielle': {
@@ -379,13 +379,13 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   BlouseOfficielleRoute: BlouseOfficielleRoute,
+  BoutiqueRoute: BoutiqueRoute,
   CollegeRoute: CollegeRoute,
   CommandesRoute: CommandesRoute,
   EnfantsRoute: EnfantsRoute,
   LoginRoute: LoginRoute,
   LyceeRoute: LyceeRoute,
   MaternelleRoute: MaternelleRoute,
-  NiveauRoute: NiveauRoute,
   PanierRoute: PanierRoute,
   AideCguRoute: AideCguRoute,
   AideConfidentialiteRoute: AideConfidentialiteRoute,

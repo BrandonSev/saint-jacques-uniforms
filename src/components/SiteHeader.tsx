@@ -49,7 +49,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
           )}
         </Link>
 
-        {schoolName && (
+        {schoolName && user && (
           <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
             {isAdmin ? (
               <Link to="/admin" className="inline-flex items-center gap-1 transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
@@ -57,7 +57,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
               </Link>
             ) : (
               <>
-                <Link to="/niveau" className="transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
+                <Link to="/boutique" className="transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
                   Boutique
                 </Link>
                 <Link to="/enfants" className="transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>
@@ -91,7 +91,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
               <LogOut className="h-4 w-4" />
             </button>
           )}
-          {!isAdmin && <Link
+          {!isAdmin && user && <Link
             to="/panier"
             className="relative inline-flex h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground shadow-[var(--shadow-card)] transition-colors hover:bg-primary/90"
           >
@@ -142,7 +142,7 @@ export function SiteFooter() {
               <li><Link to="/admin" className="hover:text-white hover:underline">Tableau de bord</Link></li>
             ) : (
               <>
-                <li><Link to="/niveau" className="hover:text-white hover:underline">Boutique</Link></li>
+                <li><Link to="/boutique" className="hover:text-white hover:underline">Boutique</Link></li>
                 <li><Link to="/enfants" className="hover:text-white hover:underline">Mes enfants</Link></li>
                 <li><Link to="/commandes" className="hover:text-white hover:underline">Mes commandes</Link></li>
                 <li><Link to="/aide/guide-tailles" className="hover:text-white hover:underline">Guide des tailles</Link></li>

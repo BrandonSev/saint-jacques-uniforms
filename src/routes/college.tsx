@@ -81,7 +81,7 @@ function CollegePage() {
 
       <div className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
-          <Link to="/niveau" className="hover:text-primary">Boutique</Link>
+          <Link to="/boutique" className="hover:text-primary">Boutique</Link>
           <ChevronRight className="h-3 w-3" />
           <span className="text-foreground">Collège (CM2 → 4ᵉ)</span>
         </div>

@@ -52,7 +52,7 @@ function MaternellePage() {
       {/* Breadcrumb */}
       <div className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
-          <Link to="/niveau" className="hover:text-primary">Boutique</Link>
+          <Link to="/boutique" className="hover:text-primary">Boutique</Link>
           <ChevronRight className="h-3 w-3" />
           <Link to="/maternelle" className="hover:text-primary">Maternelle & Élémentaire</Link>
           <ChevronRight className="h-3 w-3" />

@@ -43,7 +43,7 @@ function LoginPage() {
   const { user, authLoading } = useStore();
 
   useEffect(() => {
-    if (!authLoading && user) navigate({ to: "/niveau" });
+    if (!authLoading && user) navigate({ to: "/boutique" });
   }, [user, authLoading, navigate]);
 
   const [civilite, setCivilite] = useState<"M." | "Mme" | "Autre">("Mme");
@@ -65,7 +65,7 @@ function LoginPage() {
     setLoading(false);
     if (error) { toast.error(error.message === "Invalid login credentials" ? "Identifiants invalides" : error.message); return; }
     toast.success("Bienvenue !");
-    navigate({ to: "/niveau" });
+    navigate({ to: "/boutique" });
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -77,7 +77,7 @@ function LoginPage() {
       email: parsed.data.email,
       password: parsed.data.password,
       options: {
-        emailRedirectTo: `${window.location.origin}/niveau`,
+        emailRedirectTo: `${window.location.origin}/boutique`,
         data: {
           civilite: parsed.data.civilite,
           prenom: parsed.data.prenom,
@@ -105,7 +105,7 @@ function LoginPage() {
       }).eq("id", u.id);
     }
     toast.success("Espace famille créé !");
-    navigate({ to: "/niveau" });
+    navigate({ to: "/boutique" });
   };
 
   return (
@@ -116,7 +116,7 @@ function LoginPage() {
         </div>
         <header className="flex items-center justify-between px-6 py-5 lg:px-10">
           <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
-            <ArrowLeft className="h-4 w-4" /> Changer d'établissement
+            <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
           </Link>
           <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Saint-Jacques · Dax</span>
         </header>
