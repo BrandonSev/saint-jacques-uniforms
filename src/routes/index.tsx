@@ -104,16 +104,21 @@ function Index() {
             </div>
 
             <div className="relative hidden lg:block">
-              <div className="relative z-20 overflow-hidden rounded-3xl border border-white/20 shadow-2xl">
+              <div className="relative z-20 rounded-3xl border border-white/20 shadow-2xl">
                 <img
                   src={classeBlouses}
                   alt="Élèves en blouse"
-                  className="aspect-[4/5] w-full object-cover"
+                  className="aspect-[4/5] w-full rounded-3xl object-cover"
                   loading="eager"
                 />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-primary-deep/85 via-primary-deep/30 to-transparent p-6">
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 rounded-b-3xl bg-gradient-to-t from-primary-deep/85 via-primary-deep/30 to-transparent p-6">
                   <div className="font-medium uppercase tracking-[0.22em] text-white/75 text-base">
-                    <span id="rentree-anchor" className="relative inline-block">
+                    <span className="relative inline-block">
+                      {/* Rond jaune décoratif — débordant, translucide, centré sur le R */}
+                      <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute left-[0.42em] top-1/2 z-0 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/80 shadow-lg"
+                      />
                       <span className="relative z-10">Rentrée 2026-2027</span>
                     </span>
                   </div>
@@ -122,12 +127,6 @@ function Index() {
                   </div>
                 </div>
               </div>
-              {/* Rond jaune décoratif — débordant et translucide, centré sur le R de "Rentrée" */}
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute z-30 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/80 shadow-lg"
-                style={{ left: "calc(1.5rem + 0.42em * 1rem)", bottom: "calc(1.5rem + 0.5em + 0.25rem + 1.875rem)" }}
-              />
               {/* Blason en chevauchement haut-gauche */}
               <div className="pointer-events-none absolute -left-10 -top-10 z-30">
                 <span
