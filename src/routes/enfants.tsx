@@ -365,7 +365,7 @@ function DateOfBirthPicker({ label, value, onChange }: { label: string; value: s
         <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
         {age !== null && (
           <span className="text-[11px] font-semibold text-primary">
-            {age === 0 ? "Moins d'un an" : `${age} an${age > 1 ? "s" : ""}`}
+            {age === 0 ? "Moins d'un an" : `${age} ans`}
           </span>
         )}
       </div>
