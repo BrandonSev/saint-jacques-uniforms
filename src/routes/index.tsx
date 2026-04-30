@@ -108,7 +108,6 @@ function Index() {
                   Découvrir la boutique
                 </Link>
               </div>
-              </div>
             </div>
 
             <div className="relative hidden lg:block">
