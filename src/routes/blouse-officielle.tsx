@@ -116,11 +116,17 @@ function MaternellePage() {
               français.
             </p>
 
+            {/* Pour quel enfant — d'abord */}
+            <div className="mt-8">
+              <label className="text-sm font-semibold text-foreground">Pour quel enfant ?</label>
+              <div className="mt-3"><ChildPicker value={childId} onChange={setChildId} filter={(c) => c.section === "Maternelle" || c.section === "Élémentaire"} /></div>
+            </div>
+
             {/* Size */}
             <div className="mt-8">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-semibold text-foreground">Taille</label>
-                <button className="text-xs text-primary hover:underline">Guide des tailles</button>
+                <Link to="/aide/guide-tailles" className="text-xs text-primary hover:underline">Guide des tailles</Link>
               </div>
               <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8">
                 {sizes.map((s) => (
@@ -163,11 +169,6 @@ function MaternellePage() {
               <button className="inline-flex h-14 w-14 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition-colors hover:text-primary">
                 <Heart className="h-5 w-5" />
               </button>
-            </div>
-
-            <div className="mt-6">
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pour quel enfant ?</div>
-              <div className="mt-2"><ChildPicker value={childId} onChange={setChildId} filter={(c) => c.section === "Maternelle" || c.section === "Élémentaire"} /></div>
             </div>
 
             {/* Trust */}
