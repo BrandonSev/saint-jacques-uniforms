@@ -4,7 +4,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
-import schoolLogo from "@/assets/saint-jacques-logo.png";
+ import schoolLogo from "@/assets/saint-jacques-logo-new.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -119,11 +119,11 @@ function Index() {
                   className="absolute inset-0 rounded-full opacity-60 blur-2xl"
                   style={{ background: "radial-gradient(closest-side, var(--gold) 0%, transparent 70%)" }}
                 />
-                <img
-                  src={schoolLogo}
-                  alt="Blason Saint-Jacques de Compostelle"
-                  className="relative h-40 w-40 object-contain drop-shadow-[0_12px_30px_rgba(0,0,0,0.45)] animate-[float_6s_ease-in-out_infinite]"
-                />
+                 <img
+                   src={schoolLogo}
+                   alt="Blason Saint-Jacques de Compostelle"
+                   className="relative h-40 w-40 drop-shadow-[0_12px_30px_rgba(0,0,0,0.45)] animate-[float_6s_ease-in-out_infinite] object-scale-down"
+                 />
               </div>
               <div className="relative overflow-hidden rounded-3xl border border-white/20 shadow-2xl">
                 <img
