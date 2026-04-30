@@ -27,11 +27,8 @@ function ContactPage() {
             Groupe scolaire Saint-Jacques de Compostelle<br />
             40100 Dax
           </Item>
-          <Item icon={<Phone className="h-5 w-5" />} title="Téléphone">
-            05 58 00 00 00
-          </Item>
-          <Item icon={<Mail className="h-5 w-5" />} title="Email boutique">
-            <a href="mailto:boutique@saintjacques-dax.fr" className="text-primary hover:underline">boutique@saintjacques-dax.fr</a>
+          <Item icon={<Mail className="h-5 w-5" />} title="Email">
+            <a href="mailto:boutique@franceuniformes.fr" className="text-primary hover:underline">boutique@franceuniformes.fr</a>
           </Item>
           <Item icon={<Clock className="h-5 w-5" />} title="Horaires">
             Lundi → vendredi<br />9h – 17h

@@ -93,7 +93,7 @@ function NiveauPage() {
         </div>
 
         <p className="mt-10 text-center text-xs text-muted-foreground">
-          Besoin d'aide ? Contactez la boutique au <span className="text-foreground font-medium">05 58 00 00 00</span> ·
+          Besoin d'aide ? Contactez la boutique par email à <span className="text-foreground font-medium">boutique@franceuniformes.fr</span> ·
           du lundi au vendredi, 9h–17h
         </p>
       </section>
