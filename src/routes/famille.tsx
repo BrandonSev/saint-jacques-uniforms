@@ -211,7 +211,7 @@ function FamillePage() {
                         {c.initials}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <div className={`truncate text-sm font-semibold ${tone.name}`}>
+                        <div className={`truncate text-lg font-extrabold ${tone.name}`}>
                           {c.prenom} {c.nom}
                         </div>
                         <div className="truncate text-xs text-muted-foreground">
