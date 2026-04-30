@@ -266,7 +266,7 @@ function ChildGroup({ group, onQty, onRemove }: { group: Group; onQty: (id: stri
           </div>
         </div>
         <span className="rounded-full bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-          {totalQty} article{totalQty > 1 ? "s" : ""}
+          Blouse
         </span>
       </header>
 
