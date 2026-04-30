@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Mail, MapPin, Phone, User, Users, Plus, Trash2, Home } from "lucide-react";
+import { Mail, MapPin, Phone, User, Users, Plus, Trash2, Home, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { RequireAuth } from "@/components/RequireAuth";
@@ -126,6 +126,12 @@ function FamillePage() {
                   ville: profile?.ville ?? "",
                   is_primary: true,
                   position: 0,
+                  is_shipping_default: true,
+                  has_alt_shipping: false,
+                  shipping_label: null,
+                  shipping_adresse: null,
+                  shipping_code_postal: null,
+                  shipping_ville: null,
                 }}
                 index={0}
                 isDraft
@@ -134,6 +140,7 @@ function FamillePage() {
                   toast.success("Premier membre enregistré");
                 }}
                 onRemove={null}
+                primaryAddress={null}
               />
             )}
 
@@ -154,6 +161,15 @@ function FamillePage() {
                         toast.success("Membre retiré");
                       }
                     : null
+                }
+                primaryAddress={
+                  idx === 0
+                    ? null
+                    : {
+                        adresse: parents[0]?.adresse ?? "",
+                        code_postal: parents[0]?.code_postal ?? "",
+                        ville: parents[0]?.ville ?? "",
+                      }
                 }
               />
             ))}
