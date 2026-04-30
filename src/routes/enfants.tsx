@@ -287,11 +287,12 @@ function Input({ label, value, onChange, type = "text", placeholder, required }:
   );
 }
 
-function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: string[] }) {
+function Select({ label, value, onChange, options, placeholder }: { label: string; value: string; onChange: (v: string) => void; options: string[]; placeholder?: string }) {
   return (
     <label className="block">
       <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
       <select value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm">
+        {placeholder && <option value="">{placeholder}</option>}
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
     </label>
