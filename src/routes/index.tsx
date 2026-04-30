@@ -104,7 +104,7 @@ function Index() {
             </div>
 
             <div className="relative hidden lg:block">
-              <div className="relative overflow-hidden rounded-3xl border border-white/20 shadow-2xl">
+              <div className="relative z-20 overflow-hidden rounded-3xl border border-white/20 shadow-2xl">
                 <img
                   src={classeBlouses}
                   alt="Élèves en blouse"
