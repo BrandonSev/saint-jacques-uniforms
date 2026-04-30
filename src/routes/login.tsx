@@ -226,7 +226,7 @@ function LoginPage() {
           <img src={sjcLogo} alt="" className="h-20 w-auto object-contain drop-shadow-2xl opacity-90" />
         </div>
         <div className="absolute bottom-0 left-0 right-0 p-12 text-white">
-          <blockquote className="max-w-md font-display text-2xl font-light leading-snug italic">« Une démarche simple et rassurante pour équiper nos élèves chaque rentrée. »</blockquote>
+          <blockquote className="max-w-md font-display text-2xl font-light leading-snug italic">«&nbsp;Une démarche simple et rassurante pour équiper nos élèves chaque&nbsp;rentrée.&nbsp;»</blockquote>
           <p className="mt-4 text-sm text-white/80">— Direction du Groupe Saint-Jacques de Compostelle</p>
         </div>
       </div>
