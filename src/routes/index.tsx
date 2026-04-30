@@ -111,13 +111,13 @@ function Index() {
                   className="aspect-[4/5] w-full rounded-3xl object-cover"
                   loading="eager"
                 />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 rounded-b-3xl bg-gradient-to-t from-primary-deep/85 via-primary-deep/30 to-transparent p-6">
-                  {/* Blason en arrière-plan, derrière les textes */}
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-b-3xl bg-gradient-to-t from-primary-deep/85 via-primary-deep/30 to-transparent p-6">
+                  {/* Blason en arrière-plan, parfaitement centré dans la zone */}
                   <img
                     src={schoolLogo}
                     alt=""
                     aria-hidden="true"
-                    className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[22rem] w-[22rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-30 animate-[float_6s_ease-in-out_infinite]"
+                    className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[22rem] w-[22rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-50 mix-blend-screen drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)] animate-[float_6s_ease-in-out_infinite]"
                   />
                   <div className="font-medium uppercase tracking-[0.22em] text-white/75 text-base">
                     <span className="relative inline-block">
