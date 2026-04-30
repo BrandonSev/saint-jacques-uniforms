@@ -129,7 +129,7 @@ function PanierPage() {
               </dl>
               <div className="my-5 h-px bg-border" />
               <div className="rounded-xl bg-secondary/60 p-3 text-xs text-foreground/75">
-                <p className="font-semibold text-foreground">Phase actuelle : prépayé par votre établissement</p>
+                <p className="font-semibold text-foreground">Phase actuelle : prépayée par votre établissement</p>
               </div>
               <div className="mt-4 flex items-baseline justify-between">
                 <span className="text-sm font-semibold text-foreground">Montant total à régler à l'établissement</span>
