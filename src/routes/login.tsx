@@ -115,10 +115,10 @@ function LoginPage() {
           <ShellMotif className="absolute -left-40 top-20 h-[520px] w-[520px]" opacity={0.045} />
         </div>
         <header className="flex items-center justify-between px-6 py-5 lg:px-10">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
+          <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary text-left rounded-none">
             <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
           </Link>
-          <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Saint-Jacques · Dax</span>
+          <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Saint-Jacques de Compostelle · Dax</span>
         </header>
 
         <div className="relative flex flex-1 items-center justify-center px-6 py-10 lg:px-10">
