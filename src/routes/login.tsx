@@ -7,7 +7,6 @@ import sjcLogo from "@/assets/saint-jacques-logo-full.png";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/login")({
@@ -87,14 +86,6 @@ function LoginPage() {
       return;
     }
     toast.success("Espace famille créé !");
-    navigate({ to: "/niveau" });
-  };
-
-  const handleGoogle = async () => {
-    setLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}/niveau` });
-    if (result.error) { toast.error("Connexion Google impossible"); setLoading(false); return; }
-    if (result.redirected) return;
     navigate({ to: "/niveau" });
   };
 
@@ -183,16 +174,6 @@ function LoginPage() {
               </form>
             )}
 
-            <div className="mt-6 flex items-center gap-3">
-              <div className="h-px flex-1 bg-border" />
-              <span className="text-xs uppercase tracking-wider text-muted-foreground">ou</span>
-              <div className="h-px flex-1 bg-border" />
-            </div>
-            <button type="button" onClick={handleGoogle} disabled={loading}
-              className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-border bg-card text-sm font-medium text-foreground hover:bg-muted disabled:opacity-60">
-              <GoogleIcon /> Continuer avec Google
-            </button>
-
             <p className="mt-6 text-center text-xs text-muted-foreground">
               En continuant, vous acceptez les <span className="text-[var(--teal-deep)]">CGU</span> et notre{" "}
               <span className="text-[var(--teal-deep)]">politique de confidentialité</span>.
@@ -228,13 +209,5 @@ function Field({ label, icon, children }: { label: string; icon: React.ReactNode
         {children}
       </div>
     </div>
-  );
-}
-
-function GoogleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
-      <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.24 1.4-1.66 4.1-5.5 4.1-3.31 0-6-2.74-6-6.1s2.69-6.1 6-6.1c1.88 0 3.15.8 3.87 1.49l2.64-2.55C16.93 3.36 14.7 2.4 12 2.4 6.92 2.4 2.8 6.52 2.8 11.6S6.92 20.8 12 20.8c6.93 0 9.2-4.86 9.2-7.4 0-.5-.05-.88-.13-1.2H12z" />
-    </svg>
   );
 }
