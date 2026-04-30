@@ -336,9 +336,28 @@ function DateOfBirthPicker({ label, value, onChange }: { label: string; value: s
     }
   };
 
+  const computeAge = () => {
+    if (!y || !m || !d) return null;
+    const birth = new Date(Number(y), Number(m) - 1, Number(d));
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const mDiff = today.getMonth() - birth.getMonth();
+    if (mDiff < 0 || (mDiff === 0 && today.getDate() < birth.getDate())) age--;
+    if (age < 0 || age > 120) return null;
+    return age;
+  };
+  const age = computeAge();
+
   return (
     <div className="block sm:col-span-2">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+        {age !== null && (
+          <span className="text-[11px] font-semibold text-primary">
+            {age === 0 ? "Moins d'un an" : `${age} an${age > 1 ? "s" : ""}`}
+          </span>
+        )}
+      </div>
       <div className="mt-1 grid grid-cols-3 gap-2">
         <select value={d} onChange={(e) => update(y, m, e.target.value)} className="h-10 w-full rounded-lg border border-border bg-background px-2 text-sm">
           <option value="">Jour</option>
