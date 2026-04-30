@@ -229,7 +229,13 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
   };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
-      <form onClick={(e) => e.stopPropagation()} onSubmit={submit} className="w-full max-w-lg rounded-2xl bg-card p-6 shadow-xl">
+      <form
+        onClick={(e) => e.stopPropagation()}
+        onSubmit={submit}
+        className={`w-full max-w-lg rounded-2xl p-6 shadow-xl transition-colors ${
+          genre === "Fille" ? "bg-pink-100" : genre === "Garçon" ? "bg-sky-100" : "bg-card"
+        }`}
+      >
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">{("id" in initial) ? "Modifier l'enfant" : "Ajouter un enfant"}</h2>
           <button type="button" onClick={onClose} className="rounded-lg p-1.5 hover:bg-muted"><X className="h-4 w-4" /></button>
