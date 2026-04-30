@@ -137,7 +137,7 @@ function PanierPage() {
               </button>
               <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground whitespace-pre-line">
                 Le paiement en ligne sera disponible prochainement.{"\n\n"}
-                En attendant vous devez régler l'école directement lors de la remise du trousseau.
+                En attendant vous devez régler l'école directement lors de la remise du trousseau. 
               </p>
 
               <div className="mt-6 rounded-xl bg-secondary p-4 text-xs leading-relaxed text-foreground/75">
