@@ -28,9 +28,9 @@ const empty: ChildForm = { prenom: "", nom: "", naissance: "", classe: "", secti
 
 const classesBySection: Record<string, string[]> = {
   Maternelle: ["PS", "MS", "GS"],
-  Élémentaire: ["CP", "CE1", "CE2", "CM1", "CM2"],
-  Collège: ["6e", "5e", "4e", "3e"],
-  Lycée: ["2nde", "1re", "Terminale"],
+  Élémentaire: ["CP", "CE1", "CE2", "CM1"],
+  Collège: ["CM2", "6e", "5e", "4e"],
+  Lycée: ["3e", "2nde", "1re", "Terminale"],
 };
 
 function EnfantsPage() {
