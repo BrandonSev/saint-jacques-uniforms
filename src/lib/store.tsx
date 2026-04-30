@@ -196,6 +196,13 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
     }
   }, [user, loadProfile, loadChildren, loadParents, loadAdmin]);
 
+  const familyDisplayName = profile?.family_name || profile?.nom || "";
+  const displayedChildren = childList.map((c) => {
+    const nom = familyDisplayName || c.nom;
+    const initials = ((c.prenom[0] ?? "") + (nom[0] ?? "")).toUpperCase();
+    return { ...c, nom, initials };
+  });
+
   const value = useMemo<StoreCtx>(() => ({
     user, session, profile, authLoading, isAdmin,
     signOut: async () => { await supabase.auth.signOut(); },
@@ -207,7 +214,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
       if (data) setProfile(data as Profile);
     },
 
-    children: childList,
+    children: displayedChildren,
     addChild: async (c) => {
       if (!user) return;
       const { data, error } = await supabase.from("children").insert({
@@ -320,7 +327,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
       setCart([]);
       return { orderId: order.id, orderNumber: order.order_number };
     },
-  }), [user, session, profile, authLoading, isAdmin, childList, parentList, cart, setCart, loadProfile]);
+  }), [user, session, profile, authLoading, isAdmin, childList, displayedChildren, parentList, cart, setCart, loadProfile]);
 
   return <Ctx.Provider value={value}>{kids}</Ctx.Provider>;
 }
