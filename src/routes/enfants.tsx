@@ -26,6 +26,13 @@ type ChildForm = {
 
 const empty: ChildForm = { prenom: "", nom: "", naissance: "", classe: "", section: "Maternelle", taille: "", hauteur: "", tour: "" };
 
+const classesBySection: Record<string, string[]> = {
+  Maternelle: ["PS", "MS", "GS"],
+  Élémentaire: ["CP", "CE1", "CE2", "CM1", "CM2"],
+  Collège: ["6e", "5e", "4e", "3e"],
+  Lycée: ["2nde", "1re", "Terminale"],
+};
+
 function EnfantsPage() {
   const { user, profile, children, addChild, updateChild, removeChild, authLoading } = useStore();
   const { isAdmin } = useStore();
@@ -245,8 +252,19 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
           <Input label="Prénom *" value={form.prenom} onChange={(v) => setForm({ ...form, prenom: v })} required />
           <Input label="Nom *" value={form.nom} onChange={(v) => setForm({ ...form, nom: v })} required />
           <Input label="Date de naissance *" type="date" value={form.naissance} onChange={(v) => setForm({ ...form, naissance: v })} required />
-          <Select label="Section *" value={form.section} onChange={(v) => setForm({ ...form, section: v })} options={["Maternelle", "Élémentaire", "Collège", "Lycée"]} />
-          <Input label="Classe *" value={form.classe} onChange={(v) => setForm({ ...form, classe: v })} placeholder="ex: CE2, 6e B" required />
+          <Select
+            label="Section *"
+            value={form.section}
+            onChange={(v) => setForm({ ...form, section: v, classe: "" })}
+            options={["Maternelle", "Élémentaire", "Collège", "Lycée"]}
+          />
+          <Select
+            label="Classe *"
+            value={form.classe}
+            onChange={(v) => setForm({ ...form, classe: v })}
+            options={classesBySection[form.section] ?? []}
+            placeholder="Sélectionner une classe"
+          />
           <Input label="Taille recommandée *" value={form.taille} onChange={(v) => setForm({ ...form, taille: v })} placeholder="ex: 8 ans, M" required />
           <Input label="Hauteur *" value={form.hauteur} onChange={(v) => setForm({ ...form, hauteur: v })} placeholder="ex: 128 cm" required />
           <Input label="Tour de poitrine *" value={form.tour} onChange={(v) => setForm({ ...form, tour: v })} placeholder="ex: 62 cm" required />
@@ -269,11 +287,12 @@ function Input({ label, value, onChange, type = "text", placeholder, required }:
   );
 }
 
-function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: string[] }) {
+function Select({ label, value, onChange, options, placeholder }: { label: string; value: string; onChange: (v: string) => void; options: string[]; placeholder?: string }) {
   return (
     <label className="block">
       <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
       <select value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm">
+        {placeholder && <option value="">{placeholder}</option>}
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
     </label>
