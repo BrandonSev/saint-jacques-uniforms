@@ -143,11 +143,12 @@ function ProductCard({ product }: { product: (typeof products)[number] }) {
   const [childId, setChildId] = useState<string>("");
 
   const handleAdd = () => {
-    if (children.length > 0 && !childId) { toast.error("Choisissez un enfant"); return; }
+    if (children.length === 0) { toast.error("Ajoutez d'abord un enfant"); return; }
+    if (!childId) { toast.error("Choisissez un enfant"); return; }
     addToCart({
       productId: product.id, name: product.name, ref: product.ref,
       price: product.price, size, qty, image: product.image,
-      childId: childId || (children[0]?.id ?? ""),
+      childId,
     });
     toast.success(`${product.name} ajouté au panier`);
   };
@@ -204,8 +205,9 @@ function ProductCard({ product }: { product: (typeof products)[number] }) {
             <span className="w-7 text-center text-sm font-semibold">{qty}</span>
             <button onClick={() => setQty(qty + 1)} className="px-3 text-muted-foreground hover:text-foreground">+</button>
           </div>
-          <button onClick={handleAdd} className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
-            Ajouter au panier
+          <button onClick={handleAdd} disabled={children.length === 0 || !childId}
+            className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">
+            {children.length === 0 ? "Ajoutez un enfant" : !childId ? "Choisir un enfant" : "Ajouter au panier"}
           </button>
         </div>
       </div>
