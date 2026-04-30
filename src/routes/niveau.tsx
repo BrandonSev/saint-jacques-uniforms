@@ -6,7 +6,6 @@ import { useStore } from "@/lib/store";
 import maternelle from "@/assets/classe-maternelle-blouses.jpg";
 import college from "@/assets/college-polo-porte.jpg";
 import lycee from "@/assets/lycee-uniformes.jpg";
-import elementaireImg from "@/assets/elementaire-hero.jpg";
 
 export const Route = createFileRoute("/niveau")({
   head: () => ({
