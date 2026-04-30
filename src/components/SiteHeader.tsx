@@ -118,7 +118,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                 <ShoppingBag className="h-4 w-4" />
                 <span className="hidden sm:inline">Panier</span>
                 {count > 0 && (
-                  <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--rouge)] px-1.5 text-[11px] font-semibold text-white">
+                  <span className="absolute -right-1.5 -top-1.5 inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-[var(--rouge)] px-1.5 text-[12px] font-bold text-white shadow-md ring-2 ring-white">
                     {count}
                   </span>
                 )}
