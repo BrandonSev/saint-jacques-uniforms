@@ -29,6 +29,7 @@ import { Route as AideGuideTaillesRouteImport } from './routes/aide.guide-taille
 import { Route as AideContactRouteImport } from './routes/aide.contact'
 import { Route as AideConfidentialiteRouteImport } from './routes/aide.confidentialite'
 import { Route as AideCguRouteImport } from './routes/aide.cgu'
+import { Route as EnfantsChildIdHistoriqueRouteImport } from './routes/enfants.$childId.historique'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -130,6 +131,12 @@ const AideCguRoute = AideCguRouteImport.update({
   path: '/aide/cgu',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EnfantsChildIdHistoriqueRoute =
+  EnfantsChildIdHistoriqueRouteImport.update({
+    id: '/$childId/historique',
+    path: '/$childId/historique',
+    getParentRoute: () => EnfantsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -138,7 +145,7 @@ export interface FileRoutesByFullPath {
   '/boutique': typeof BoutiqueRoute
   '/college': typeof CollegeRoute
   '/commandes': typeof CommandesRoute
-  '/enfants': typeof EnfantsRoute
+  '/enfants': typeof EnfantsRouteWithChildren
   '/famille': typeof FamilleRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
@@ -152,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/aide/guide-tailles': typeof AideGuideTaillesRoute
   '/aide/livraison': typeof AideLivraisonRoute
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
+  '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -160,7 +168,7 @@ export interface FileRoutesByTo {
   '/boutique': typeof BoutiqueRoute
   '/college': typeof CollegeRoute
   '/commandes': typeof CommandesRoute
-  '/enfants': typeof EnfantsRoute
+  '/enfants': typeof EnfantsRouteWithChildren
   '/famille': typeof FamilleRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
@@ -174,6 +182,7 @@ export interface FileRoutesByTo {
   '/aide/guide-tailles': typeof AideGuideTaillesRoute
   '/aide/livraison': typeof AideLivraisonRoute
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
+  '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -183,7 +192,7 @@ export interface FileRoutesById {
   '/boutique': typeof BoutiqueRoute
   '/college': typeof CollegeRoute
   '/commandes': typeof CommandesRoute
-  '/enfants': typeof EnfantsRoute
+  '/enfants': typeof EnfantsRouteWithChildren
   '/famille': typeof FamilleRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
@@ -197,6 +206,7 @@ export interface FileRoutesById {
   '/aide/guide-tailles': typeof AideGuideTaillesRoute
   '/aide/livraison': typeof AideLivraisonRoute
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
+  '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/aide/guide-tailles'
     | '/aide/livraison'
     | '/aide/mentions-legales'
+    | '/enfants/$childId/historique'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -243,6 +254,7 @@ export interface FileRouteTypes {
     | '/aide/guide-tailles'
     | '/aide/livraison'
     | '/aide/mentions-legales'
+    | '/enfants/$childId/historique'
   id:
     | '__root__'
     | '/'
@@ -265,6 +277,7 @@ export interface FileRouteTypes {
     | '/aide/guide-tailles'
     | '/aide/livraison'
     | '/aide/mentions-legales'
+    | '/enfants/$childId/historique'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -274,7 +287,7 @@ export interface RootRouteChildren {
   BoutiqueRoute: typeof BoutiqueRoute
   CollegeRoute: typeof CollegeRoute
   CommandesRoute: typeof CommandesRoute
-  EnfantsRoute: typeof EnfantsRoute
+  EnfantsRoute: typeof EnfantsRouteWithChildren
   FamilleRoute: typeof FamilleRoute
   LoginRoute: typeof LoginRoute
   LyceeRoute: typeof LyceeRoute
@@ -432,8 +445,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AideCguRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/enfants/$childId/historique': {
+      id: '/enfants/$childId/historique'
+      path: '/$childId/historique'
+      fullPath: '/enfants/$childId/historique'
+      preLoaderRoute: typeof EnfantsChildIdHistoriqueRouteImport
+      parentRoute: typeof EnfantsRoute
+    }
   }
 }
+
+interface EnfantsRouteChildren {
+  EnfantsChildIdHistoriqueRoute: typeof EnfantsChildIdHistoriqueRoute
+}
+
+const EnfantsRouteChildren: EnfantsRouteChildren = {
+  EnfantsChildIdHistoriqueRoute: EnfantsChildIdHistoriqueRoute,
+}
+
+const EnfantsRouteWithChildren =
+  EnfantsRoute._addFileChildren(EnfantsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -442,7 +473,7 @@ const rootRouteChildren: RootRouteChildren = {
   BoutiqueRoute: BoutiqueRoute,
   CollegeRoute: CollegeRoute,
   CommandesRoute: CommandesRoute,
-  EnfantsRoute: EnfantsRoute,
+  EnfantsRoute: EnfantsRouteWithChildren,
   FamilleRoute: FamilleRoute,
   LoginRoute: LoginRoute,
   LyceeRoute: LyceeRoute,
