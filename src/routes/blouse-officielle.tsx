@@ -39,7 +39,7 @@ function MaternellePage() {
     if (!childId) { toast.error("Choisissez un enfant"); return; }
     addToCart({
       productId: "blouse-officielle", name: "Blouse scolaire officielle",
-      ref: "SJC-BLS-2025", price: 25, size, qty, image: blouseProduct,
+      ref: "BLSE-FU-001", price: 25, size, qty, image: blouseProduct,
       childId,
     });
     toast.success("Blouse ajoutée au panier");
@@ -99,7 +99,7 @@ function MaternellePage() {
               Blouse scolaire officielle
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Réf. SJC-BLS-2025 · Maternelle & Élémentaire
+              Réf. BLSE-FU-001 · Maternelle & Élémentaire
             </p>
 
             <div className="mt-6 flex items-baseline gap-3">

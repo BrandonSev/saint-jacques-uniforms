@@ -29,7 +29,7 @@ const products = [
   {
     id: "blouse-officielle",
     name: "Blouse scolaire officielle",
-    ref: "SJC-BLS-2025",
+    ref: "BLSE-FU-001",
     price: 25,
     image: blouseProduct,
     tag: "Officielle",
