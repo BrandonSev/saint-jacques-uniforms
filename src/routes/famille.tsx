@@ -88,7 +88,7 @@ function FamillePage() {
             <Home className="h-4 w-4 text-primary" /> Nom de la famille
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            Ce nom apparaît en titre. Il peut être différent du nom des parents (ex. Dupont-Martin).
+            Ce nom apparaît en titre. Il représente votre famille.
           </p>
           <div className="mt-4 flex flex-col gap-3 sm:flex-row">
             <input
