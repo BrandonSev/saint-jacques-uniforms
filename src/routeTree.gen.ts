@@ -19,6 +19,7 @@ import { Route as CommandesRouteImport } from './routes/commandes'
 import { Route as CollegeRouteImport } from './routes/college'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MaternelleBlouseRouteImport } from './routes/maternelle.blouse'
 
 const PanierRoute = PanierRouteImport.update({
   id: '/panier',
@@ -70,6 +71,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MaternelleBlouseRoute = MaternelleBlouseRouteImport.update({
+  id: '/blouse',
+  path: '/blouse',
+  getParentRoute: () => MaternelleRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -79,9 +85,10 @@ export interface FileRoutesByFullPath {
   '/enfants': typeof EnfantsRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
-  '/maternelle': typeof MaternelleRoute
+  '/maternelle': typeof MaternelleRouteWithChildren
   '/niveau': typeof NiveauRoute
   '/panier': typeof PanierRoute
+  '/maternelle/blouse': typeof MaternelleBlouseRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -91,9 +98,10 @@ export interface FileRoutesByTo {
   '/enfants': typeof EnfantsRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
-  '/maternelle': typeof MaternelleRoute
+  '/maternelle': typeof MaternelleRouteWithChildren
   '/niveau': typeof NiveauRoute
   '/panier': typeof PanierRoute
+  '/maternelle/blouse': typeof MaternelleBlouseRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -104,9 +112,10 @@ export interface FileRoutesById {
   '/enfants': typeof EnfantsRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
-  '/maternelle': typeof MaternelleRoute
+  '/maternelle': typeof MaternelleRouteWithChildren
   '/niveau': typeof NiveauRoute
   '/panier': typeof PanierRoute
+  '/maternelle/blouse': typeof MaternelleBlouseRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/maternelle'
     | '/niveau'
     | '/panier'
+    | '/maternelle/blouse'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/maternelle'
     | '/niveau'
     | '/panier'
+    | '/maternelle/blouse'
   id:
     | '__root__'
     | '/'
@@ -145,6 +156,7 @@ export interface FileRouteTypes {
     | '/maternelle'
     | '/niveau'
     | '/panier'
+    | '/maternelle/blouse'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -155,7 +167,7 @@ export interface RootRouteChildren {
   EnfantsRoute: typeof EnfantsRoute
   LoginRoute: typeof LoginRoute
   LyceeRoute: typeof LyceeRoute
-  MaternelleRoute: typeof MaternelleRoute
+  MaternelleRoute: typeof MaternelleRouteWithChildren
   NiveauRoute: typeof NiveauRoute
   PanierRoute: typeof PanierRoute
 }
@@ -232,8 +244,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/maternelle/blouse': {
+      id: '/maternelle/blouse'
+      path: '/blouse'
+      fullPath: '/maternelle/blouse'
+      preLoaderRoute: typeof MaternelleBlouseRouteImport
+      parentRoute: typeof MaternelleRoute
+    }
   }
 }
+
+interface MaternelleRouteChildren {
+  MaternelleBlouseRoute: typeof MaternelleBlouseRoute
+}
+
+const MaternelleRouteChildren: MaternelleRouteChildren = {
+  MaternelleBlouseRoute: MaternelleBlouseRoute,
+}
+
+const MaternelleRouteWithChildren = MaternelleRoute._addFileChildren(
+  MaternelleRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -243,7 +274,7 @@ const rootRouteChildren: RootRouteChildren = {
   EnfantsRoute: EnfantsRoute,
   LoginRoute: LoginRoute,
   LyceeRoute: LyceeRoute,
-  MaternelleRoute: MaternelleRoute,
+  MaternelleRoute: MaternelleRouteWithChildren,
   NiveauRoute: NiveauRoute,
   PanierRoute: PanierRoute,
 }
