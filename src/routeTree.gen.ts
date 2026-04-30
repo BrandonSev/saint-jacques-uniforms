@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PanierRouteImport } from './routes/panier'
 import { Route as NiveauRouteImport } from './routes/niveau'
+import { Route as MaternelleRouteImport } from './routes/maternelle'
 import { Route as LyceeRouteImport } from './routes/lycee'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as EnfantsRouteImport } from './routes/enfants'
@@ -28,6 +29,11 @@ const PanierRoute = PanierRouteImport.update({
 const NiveauRoute = NiveauRouteImport.update({
   id: '/niveau',
   path: '/niveau',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MaternelleRoute = MaternelleRouteImport.update({
+  id: '/maternelle',
+  path: '/maternelle',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LyceeRoute = LyceeRouteImport.update({
@@ -66,9 +72,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const MaternelleBlouseRoute = MaternelleBlouseRouteImport.update({
-  id: '/maternelle/blouse',
-  path: '/maternelle/blouse',
-  getParentRoute: () => rootRouteImport,
+  id: '/blouse',
+  path: '/blouse',
+  getParentRoute: () => MaternelleRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/enfants': typeof EnfantsRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
+  '/maternelle': typeof MaternelleRouteWithChildren
   '/niveau': typeof NiveauRoute
   '/panier': typeof PanierRoute
   '/maternelle/blouse': typeof MaternelleBlouseRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/enfants': typeof EnfantsRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
+  '/maternelle': typeof MaternelleRouteWithChildren
   '/niveau': typeof NiveauRoute
   '/panier': typeof PanierRoute
   '/maternelle/blouse': typeof MaternelleBlouseRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/enfants': typeof EnfantsRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
+  '/maternelle': typeof MaternelleRouteWithChildren
   '/niveau': typeof NiveauRoute
   '/panier': typeof PanierRoute
   '/maternelle/blouse': typeof MaternelleBlouseRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/enfants'
     | '/login'
     | '/lycee'
+    | '/maternelle'
     | '/niveau'
     | '/panier'
     | '/maternelle/blouse'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/enfants'
     | '/login'
     | '/lycee'
+    | '/maternelle'
     | '/niveau'
     | '/panier'
     | '/maternelle/blouse'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/enfants'
     | '/login'
     | '/lycee'
+    | '/maternelle'
     | '/niveau'
     | '/panier'
     | '/maternelle/blouse'
@@ -155,9 +167,9 @@ export interface RootRouteChildren {
   EnfantsRoute: typeof EnfantsRoute
   LoginRoute: typeof LoginRoute
   LyceeRoute: typeof LyceeRoute
+  MaternelleRoute: typeof MaternelleRouteWithChildren
   NiveauRoute: typeof NiveauRoute
   PanierRoute: typeof PanierRoute
-  MaternelleBlouseRoute: typeof MaternelleBlouseRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -174,6 +186,13 @@ declare module '@tanstack/react-router' {
       path: '/niveau'
       fullPath: '/niveau'
       preLoaderRoute: typeof NiveauRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/maternelle': {
+      id: '/maternelle'
+      path: '/maternelle'
+      fullPath: '/maternelle'
+      preLoaderRoute: typeof MaternelleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lycee': {
@@ -227,13 +246,25 @@ declare module '@tanstack/react-router' {
     }
     '/maternelle/blouse': {
       id: '/maternelle/blouse'
-      path: '/maternelle/blouse'
+      path: '/blouse'
       fullPath: '/maternelle/blouse'
       preLoaderRoute: typeof MaternelleBlouseRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof MaternelleRoute
     }
   }
 }
+
+interface MaternelleRouteChildren {
+  MaternelleBlouseRoute: typeof MaternelleBlouseRoute
+}
+
+const MaternelleRouteChildren: MaternelleRouteChildren = {
+  MaternelleBlouseRoute: MaternelleBlouseRoute,
+}
+
+const MaternelleRouteWithChildren = MaternelleRoute._addFileChildren(
+  MaternelleRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -243,9 +274,9 @@ const rootRouteChildren: RootRouteChildren = {
   EnfantsRoute: EnfantsRoute,
   LoginRoute: LoginRoute,
   LyceeRoute: LyceeRoute,
+  MaternelleRoute: MaternelleRouteWithChildren,
   NiveauRoute: NiveauRoute,
   PanierRoute: PanierRoute,
-  MaternelleBlouseRoute: MaternelleBlouseRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
