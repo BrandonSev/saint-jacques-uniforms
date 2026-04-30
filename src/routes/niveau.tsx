@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
-import { ShellMotif } from "@/components/SchoolMotif";
+import { ShellMotif, WaveMotif } from "@/components/SchoolMotif";
 import maternelle from "@/assets/classe-maternelle-blouses.jpg";
 import college from "@/assets/college-polo-porte.jpg";
 import lycee from "@/assets/lycee-uniformes.jpg";
@@ -57,17 +57,18 @@ function NiveauPage() {
 
       <section className="relative overflow-hidden border-b border-border" style={{ background: "var(--gradient-soft)" }}>
         <div className="pointer-events-none absolute inset-0 text-primary">
-          <ShellMotif className="absolute -left-32 -top-20 h-[500px] w-[500px]" opacity={0.05} />
-          <ShellMotif className="absolute -right-40 -bottom-40 h-[600px] w-[600px]" opacity={0.04} />
+          <ShellMotif className="absolute -left-32 -top-20 h-[500px] w-[500px]" opacity={0.04} />
+          <ShellMotif className="absolute -right-40 -bottom-40 h-[600px] w-[600px]" opacity={0.03} />
         </div>
         <div className="relative mx-auto max-w-7xl px-4 py-16 text-center sm:px-6 lg:px-8">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-white px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-primary shadow-sm">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--teal)]/30 bg-white px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--teal-deep)] shadow-sm">
             <Sparkles className="h-3 w-3" /> Rentrée 2026-2027
           </span>
           <h1 className="mt-5 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
             Choisissez le niveau de votre enfant
           </h1>
-          <div className="mx-auto mt-4 h-px w-16 bg-gold" />
+          <p className="mt-2 text-sm italic text-muted-foreground">Boutique officielle Saint-Jacques de Compostelle</p>
+          <div className="mx-auto mt-5 h-1 w-16 rounded-full bg-[var(--rouge)]" />
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
             Chaque niveau dispose d'une sélection d'uniformes validée par l'établissement.
             Cliquez sur la carte correspondante pour découvrir les produits disponibles.
