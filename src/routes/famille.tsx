@@ -186,7 +186,7 @@ function FamillePage() {
 
           <aside className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Users className="h-4 w-4 text-primary" /> Mes enfants
+              <Users className="h-4 w-4 text-primary" /> {parents.length >= 2 ? "Nos enfants" : "Mes enfants"}
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
               {children.length === 0
