@@ -311,7 +311,14 @@ function Select({ label, value, onChange, options, placeholder }: { label: strin
 }
 
 function DateOfBirthPicker({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
-  const [y, m, d] = value ? value.split("-") : ["", "", ""];
+  const [parts, setParts] = useState<{ y: string; m: string; d: string }>(() => {
+    if (value) {
+      const [yy, mm, dd] = value.split("-");
+      return { y: yy ?? "", m: mm ?? "", d: dd ?? "" };
+    }
+    return { y: "", m: "", d: "" };
+  });
+  const { y, m, d } = parts;
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 19 }, (_, i) => String(currentYear - i));
   const months = [
@@ -327,9 +334,13 @@ function DateOfBirthPicker({ label, value, onChange }: { label: string; value: s
   const days = Array.from({ length: daysInMonth(y, m) }, (_, i) => String(i + 1).padStart(2, "0"));
 
   const update = (ny: string, nm: string, nd: string) => {
+    let safeDay = nd;
     if (ny && nm && nd) {
       const max = daysInMonth(ny, nm);
-      const safeDay = Number(nd) > max ? String(max).padStart(2, "0") : nd;
+      if (Number(nd) > max) safeDay = String(max).padStart(2, "0");
+    }
+    setParts({ y: ny, m: nm, d: safeDay });
+    if (ny && nm && safeDay) {
       onChange(`${ny}-${nm}-${safeDay}`);
     } else {
       onChange("");
