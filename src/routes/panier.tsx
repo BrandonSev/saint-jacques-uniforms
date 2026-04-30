@@ -100,7 +100,6 @@ function PanierPage() {
               <dl className="mt-5 space-y-3 text-sm">
                 <Row label={`Articles`} value={`${cartCount}`} />
                 <Row label="Enfants concernés" value={`${groups.length}`} />
-                <Row label="Livraison à l'établissement" value="Incluse" valueClass="text-primary" />
               </dl>
               <div className="my-5 h-px bg-border" />
               <div className="flex items-baseline justify-between">

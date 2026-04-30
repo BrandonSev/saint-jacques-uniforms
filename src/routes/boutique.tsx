@@ -71,7 +71,7 @@ function NiveauPage() {
           <h1 className="mt-5 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
             Choisissez le niveau de votre enfant
           </h1>
-          <p className="mt-2 text-sm italic text-muted-foreground">Boutique officielle Saint-Jacques de Compostelle</p>
+          <p className="mt-2 text-sm italic text-muted-foreground">Boutique officielle du groupe scolaire de Saint-Jacques-de-Compostelle</p>
           <div className="mx-auto mt-5 h-1 w-16 rounded-full bg-[var(--rouge)]" />
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
             Chaque niveau dispose d'une sélection d'uniformes validée par l'établissement.
