@@ -252,8 +252,19 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
           <Input label="Prénom *" value={form.prenom} onChange={(v) => setForm({ ...form, prenom: v })} required />
           <Input label="Nom *" value={form.nom} onChange={(v) => setForm({ ...form, nom: v })} required />
           <Input label="Date de naissance *" type="date" value={form.naissance} onChange={(v) => setForm({ ...form, naissance: v })} required />
-          <Select label="Section *" value={form.section} onChange={(v) => setForm({ ...form, section: v })} options={["Maternelle", "Élémentaire", "Collège", "Lycée"]} />
-          <Input label="Classe *" value={form.classe} onChange={(v) => setForm({ ...form, classe: v })} placeholder="ex: CE2, 6e B" required />
+          <Select
+            label="Section *"
+            value={form.section}
+            onChange={(v) => setForm({ ...form, section: v, classe: "" })}
+            options={["Maternelle", "Élémentaire", "Collège", "Lycée"]}
+          />
+          <Select
+            label="Classe *"
+            value={form.classe}
+            onChange={(v) => setForm({ ...form, classe: v })}
+            options={classesBySection[form.section] ?? []}
+            placeholder="Sélectionner une classe"
+          />
           <Input label="Taille recommandée *" value={form.taille} onChange={(v) => setForm({ ...form, taille: v })} placeholder="ex: 8 ans, M" required />
           <Input label="Hauteur *" value={form.hauteur} onChange={(v) => setForm({ ...form, hauteur: v })} placeholder="ex: 128 cm" required />
           <Input label="Tour de poitrine *" value={form.tour} onChange={(v) => setForm({ ...form, tour: v })} placeholder="ex: 62 cm" required />
