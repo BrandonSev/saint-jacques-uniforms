@@ -113,6 +113,15 @@ function EnfantsPage() {
               }
             }} />
           ))}
+          {children.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setCreating(true)}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-card px-6 py-6 text-sm font-medium text-muted-foreground transition-colors hover:border-primary hover:bg-muted hover:text-primary"
+            >
+              <Plus className="h-5 w-5" /> Ajouter un autre enfant
+            </button>
+          )}
         </div>
       </section>
 
