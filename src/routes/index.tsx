@@ -47,17 +47,16 @@ function Index() {
           <ShellMotif className="absolute -left-40 -top-32 h-[700px] w-[700px]" opacity={0.1} />
           <ShellMotif className="absolute -right-48 -bottom-48 h-[700px] w-[700px]" opacity={0.08} />
         </div>
+        {/* Blason en filigrane plein arrière-plan (watermark global) */}
+        <img
+          src={schoolLogo}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[55rem] w-[55rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-[0.07] mix-blend-screen lg:left-[58%] lg:h-[65rem] lg:w-[65rem]"
+        />
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr]">
-            <div className="relative text-center lg:text-left">
-              {/* Blason en filigrane derrière le titre, centré côté DAX */}
-              <img
-                src={schoolLogo}
-                alt=""
-                aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 top-1/2 z-0 hidden h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-[0.08] mix-blend-screen lg:block lg:left-[26%] lg:top-[55%]"
-              />
-              <div className="relative z-10">
+            <div className="relative z-10 text-center lg:text-left">
               <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-white backdrop-blur">
                 <ShieldCheck className="h-3.5 w-3.5" /> Espace familles officiel
               </span>
