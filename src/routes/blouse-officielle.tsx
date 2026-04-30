@@ -76,7 +76,7 @@ function MaternellePage() {
               <img
                 src={gallery[activeImg]}
                 alt="Blouse scolaire officielle"
-                className="aspect-square w-full object-cover"
+                className="aspect-square w-full object-cover -rotate-90"
                 loading="eager"
               />
             </div>
