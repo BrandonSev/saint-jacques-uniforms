@@ -291,9 +291,9 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
 
 function Input({ label, value, onChange, type = "text", placeholder, required, suffix }: { label: string; value: string; onChange: (v: string) => void; type?: string; placeholder?: string; required?: boolean; suffix?: string }) {
   return (
-    <label className="block">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
-      <div className="relative mt-1">
+    <label className="flex flex-col">
+      <span className="line-clamp-2 min-h-[2rem] text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+      <div className="relative mt-auto">
         <input
           type={type}
           value={value}
