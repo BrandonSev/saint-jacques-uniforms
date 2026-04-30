@@ -159,7 +159,15 @@ function EnfantsPage() {
 
 function EnfantCard({ enfant, onEdit, onDelete }: { enfant: Child; onEdit: () => void; onDelete: () => void }) {
   return (
-    <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]">
+    <article
+      className={`overflow-hidden rounded-2xl border border-border shadow-[var(--shadow-card)] ${
+        enfant.genre === "Fille"
+          ? "bg-pink-50"
+          : enfant.genre === "Garçon"
+          ? "bg-sky-50"
+          : "bg-card"
+      }`}
+    >
       <div className="grid gap-0 lg:grid-cols-[280px_1fr]">
         <div
           className={`relative flex flex-col justify-between bg-gradient-to-br p-6 ${
