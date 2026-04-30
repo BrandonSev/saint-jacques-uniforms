@@ -156,6 +156,11 @@ function LoginPage() {
                 <button type="submit" disabled={loading} className={primaryBtn}>
                   {loading ? "Connexion…" : "Accéder à la boutique"}
                 </button>
+                <div className="text-right">
+                  <Link to="/mot-de-passe-oublie" className="text-xs font-medium text-[var(--teal-deep)] hover:text-primary hover:underline">
+                    Mot de passe oublié ?
+                  </Link>
+                </div>
               </form>
             ) : (
               <form onSubmit={handleSignUp} className="mt-6 space-y-4">

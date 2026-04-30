@@ -9,7 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PanierRouteImport } from './routes/panier'
+import { Route as MotDePasseOublieRouteImport } from './routes/mot-de-passe-oublie'
 import { Route as MaternelleRouteImport } from './routes/maternelle'
 import { Route as LyceeRouteImport } from './routes/lycee'
 import { Route as LoginRouteImport } from './routes/login'
@@ -27,9 +29,19 @@ import { Route as AideContactRouteImport } from './routes/aide.contact'
 import { Route as AideConfidentialiteRouteImport } from './routes/aide.confidentialite'
 import { Route as AideCguRouteImport } from './routes/aide.cgu'
 
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PanierRoute = PanierRouteImport.update({
   id: '/panier',
   path: '/panier',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MotDePasseOublieRoute = MotDePasseOublieRouteImport.update({
+  id: '/mot-de-passe-oublie',
+  path: '/mot-de-passe-oublie',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MaternelleRoute = MaternelleRouteImport.update({
@@ -124,7 +136,9 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
   '/maternelle': typeof MaternelleRoute
+  '/mot-de-passe-oublie': typeof MotDePasseOublieRoute
   '/panier': typeof PanierRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/aide/cgu': typeof AideCguRoute
   '/aide/confidentialite': typeof AideConfidentialiteRoute
   '/aide/contact': typeof AideContactRoute
@@ -143,7 +157,9 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
   '/maternelle': typeof MaternelleRoute
+  '/mot-de-passe-oublie': typeof MotDePasseOublieRoute
   '/panier': typeof PanierRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/aide/cgu': typeof AideCguRoute
   '/aide/confidentialite': typeof AideConfidentialiteRoute
   '/aide/contact': typeof AideContactRoute
@@ -163,7 +179,9 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
   '/maternelle': typeof MaternelleRoute
+  '/mot-de-passe-oublie': typeof MotDePasseOublieRoute
   '/panier': typeof PanierRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/aide/cgu': typeof AideCguRoute
   '/aide/confidentialite': typeof AideConfidentialiteRoute
   '/aide/contact': typeof AideContactRoute
@@ -184,7 +202,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/lycee'
     | '/maternelle'
+    | '/mot-de-passe-oublie'
     | '/panier'
+    | '/reset-password'
     | '/aide/cgu'
     | '/aide/confidentialite'
     | '/aide/contact'
@@ -203,7 +223,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/lycee'
     | '/maternelle'
+    | '/mot-de-passe-oublie'
     | '/panier'
+    | '/reset-password'
     | '/aide/cgu'
     | '/aide/confidentialite'
     | '/aide/contact'
@@ -222,7 +244,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/lycee'
     | '/maternelle'
+    | '/mot-de-passe-oublie'
     | '/panier'
+    | '/reset-password'
     | '/aide/cgu'
     | '/aide/confidentialite'
     | '/aide/contact'
@@ -242,7 +266,9 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   LyceeRoute: typeof LyceeRoute
   MaternelleRoute: typeof MaternelleRoute
+  MotDePasseOublieRoute: typeof MotDePasseOublieRoute
   PanierRoute: typeof PanierRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   AideCguRoute: typeof AideCguRoute
   AideConfidentialiteRoute: typeof AideConfidentialiteRoute
   AideContactRoute: typeof AideContactRoute
@@ -253,11 +279,25 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/panier': {
       id: '/panier'
       path: '/panier'
       fullPath: '/panier'
       preLoaderRoute: typeof PanierRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mot-de-passe-oublie': {
+      id: '/mot-de-passe-oublie'
+      path: '/mot-de-passe-oublie'
+      fullPath: '/mot-de-passe-oublie'
+      preLoaderRoute: typeof MotDePasseOublieRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/maternelle': {
@@ -386,7 +426,9 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   LyceeRoute: LyceeRoute,
   MaternelleRoute: MaternelleRoute,
+  MotDePasseOublieRoute: MotDePasseOublieRoute,
   PanierRoute: PanierRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   AideCguRoute: AideCguRoute,
   AideConfidentialiteRoute: AideConfidentialiteRoute,
   AideContactRoute: AideContactRoute,
