@@ -195,24 +195,32 @@ function FamillePage() {
             </p>
             {children.length > 0 && (
               <ul className="mt-4 space-y-2">
-                {children.map((c) => (
-                  <li
-                    key={c.id}
-                    className="flex items-center gap-3 rounded-xl border border-border bg-background px-3 py-2"
-                  >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-                      {c.initials}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-medium text-foreground">
-                        {c.prenom} {c.nom}
+                {children.map((c) => {
+                  const tone =
+                    c.genre === "Fille"
+                      ? { border: "border-pink-300", badge: "bg-pink-500 text-white", name: "text-pink-700" }
+                      : c.genre === "Garçon"
+                      ? { border: "border-sky-300", badge: "bg-sky-500 text-white", name: "text-sky-700" }
+                      : { border: "border-border", badge: "bg-primary/10 text-primary", name: "text-foreground" };
+                  return (
+                    <li
+                      key={c.id}
+                      className={`flex items-center gap-3 rounded-xl border ${tone.border} bg-background px-3 py-2`}
+                    >
+                      <span className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-semibold ${tone.badge}`}>
+                        {c.initials}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className={`truncate text-sm font-semibold ${tone.name}`}>
+                          {c.prenom} {c.nom}
+                        </div>
+                        <div className="truncate text-xs text-muted-foreground">
+                          {c.section || "—"} {c.classe ? `· ${c.classe}` : ""}
+                        </div>
                       </div>
-                      <div className="truncate text-xs text-muted-foreground">
-                        {c.section || "—"} {c.classe ? `· ${c.classe}` : ""}
-                      </div>
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             )}
             <Link
