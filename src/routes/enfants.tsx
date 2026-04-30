@@ -328,7 +328,7 @@ function DateOfBirthPicker({ label, value, onChange }: { label: string; value: s
   };
 
   return (
-    <div className="block">
+    <div className="block sm:col-span-2">
       <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
       <div className="mt-1 grid grid-cols-3 gap-2">
         <select value={d} onChange={(e) => update(y, m, e.target.value)} className="h-10 w-full rounded-lg border border-border bg-background px-2 text-sm">
