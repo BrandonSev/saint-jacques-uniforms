@@ -25,20 +25,11 @@ export const Route = createFileRoute("/niveau")({
 const levels = [
   {
     id: "maternelle",
-    title: "Maternelle",
-    subtitle: "Maternelle",
-    range: "PS · MS · GS",
+    title: "Maternelle & Élémentaire",
+    subtitle: "Maternelle & Élémentaire",
+    range: "PS · MS · GS · CP · CE1 · CE2 · CM1",
     image: maternelle,
     href: "/maternelle" as const,
-    accent: "Blouse quotidienne officielle",
-  },
-  {
-    id: "elementaire",
-    title: "Élémentaire",
-    subtitle: "Élémentaire",
-    range: "CP · CE1 · CE2 · CM1",
-    image: elementaireImg,
-    href: "/elementaire" as const,
     accent: "Blouse quotidienne officielle",
   },
   {
