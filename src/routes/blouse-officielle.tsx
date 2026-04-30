@@ -24,7 +24,7 @@ export const Route = createFileRoute("/blouse-officielle")({
   component: MaternellePage,
 });
 
-const sizes = ["3 ans", "4 ans", "5 ans", "6 ans", "7 ans", "8 ans", "9 ans", "10 ans"];
+const sizes = ["3 ans", "4 ans", "5 ans", "6 ans", "7 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans"];
 
 function MaternellePage() {
   const { addToCart, children } = useStore();
@@ -39,7 +39,7 @@ function MaternellePage() {
     if (!childId) { toast.error("Choisissez un enfant"); return; }
     addToCart({
       productId: "blouse-officielle", name: "Blouse scolaire officielle",
-      ref: "SJC-BLS-2025", price: 30, size, qty, image: blouseProduct,
+      ref: "SJC-BLS-2025", price: 25, size, qty, image: blouseProduct,
       childId,
     });
     toast.success("Blouse ajoutée au panier");
@@ -103,7 +103,7 @@ function MaternellePage() {
             </p>
 
             <div className="mt-6 flex items-baseline gap-3">
-              <span className="text-3xl font-semibold text-foreground">30,00 €</span>
+              <span className="text-3xl font-semibold text-foreground">25,00 €</span>
               <span className="rounded-md bg-[var(--school-yellow)]/30 px-2 py-0.5 text-xs font-medium text-foreground">
                 Tarif famille
               </span>
