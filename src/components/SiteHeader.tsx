@@ -69,7 +69,7 @@ export function SiteHeader({ schoolName, cartCount = 0, showAccount = true }: Si
             <ShoppingBag className="h-4 w-4" />
             <span className="hidden sm:inline">Panier</span>
             {cartCount > 0 && (
-              <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gold px-1.5 text-[11px] font-semibold text-primary-deep">
+              <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--rouge)] px-1.5 text-[11px] font-semibold text-white">
                 {cartCount}
               </span>
             )}
@@ -88,15 +88,22 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 text-white sm:px-6 lg:grid-cols-4 lg:px-8">
         <div className="lg:col-span-2">
           <div className="flex items-center gap-4">
-            <img src={sjcLogo} alt="Saint-Jacques de Compostelle" className="h-14 w-auto object-contain drop-shadow" />
-            <div className="h-10 w-px bg-white/25" />
-            <img src={logo} alt="France Uniformes" className="h-10 w-10 rounded-md object-cover" />
+            <img src={sjcLogo} alt="Saint-Jacques de Compostelle" className="h-16 w-auto object-contain drop-shadow" />
+            <div>
+              <div className="text-base font-semibold">Saint-Jacques de Compostelle</div>
+              <div className="mt-0.5 text-xs text-white/70">Groupe scolaire catholique · Dax</div>
+            </div>
           </div>
           <p className="mt-5 max-w-md text-sm leading-relaxed text-white/80">
-            Fabricant français d'uniformes scolaires. Nous accompagnons les établissements
-            privés dans la confection et la distribution de tenues pensées pour le quotidien
-            des élèves.
+            Boutique officielle des uniformes du groupe Saint-Jacques de Compostelle.
+            Tenues validées par l'établissement, confectionnées avec soin pour le quotidien
+            des élèves de la maternelle au collège.
           </p>
+          <div className="mt-5 flex items-center gap-3 text-xs text-white/60">
+            <span>Confectionné par</span>
+            <img src={logo} alt="France Uniformes" className="h-7 w-7 rounded-md object-cover" />
+            <span>France Uniformes · Fabrication française</span>
+          </div>
         </div>
         <div>
           <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Famille</h4>
