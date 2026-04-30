@@ -196,7 +196,7 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-2 text-sm text-white/85">
             <li>
               <Link to="/aide/livraison" className="hover:text-white hover:underline">
-                Livraison & retours
+                Livraisons
               </Link>
             </li>
             <li>
