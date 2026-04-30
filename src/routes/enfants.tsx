@@ -202,7 +202,10 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
   const [saving, setSaving] = useState(false);
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.prenom || !form.nom) return;
+    if (!form.prenom || !form.nom || !form.naissance || !form.classe || !form.section || !form.taille || !form.hauteur || !form.tour) {
+      toast.error("Merci de remplir tous les champs");
+      return;
+    }
     setSaving(true);
     await onSave(form);
     setSaving(false);
@@ -215,14 +218,14 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
           <button type="button" onClick={onClose} className="rounded-lg p-1.5 hover:bg-muted"><X className="h-4 w-4" /></button>
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          <Input label="Prénom *" value={form.prenom} onChange={(v) => setForm({ ...form, prenom: v })} />
-          <Input label="Nom *" value={form.nom} onChange={(v) => setForm({ ...form, nom: v })} />
-          <Input label="Date de naissance" type="date" value={form.naissance} onChange={(v) => setForm({ ...form, naissance: v })} />
-          <Select label="Section" value={form.section} onChange={(v) => setForm({ ...form, section: v })} options={["Maternelle", "Élémentaire", "Collège", "Lycée"]} />
-          <Input label="Classe" value={form.classe} onChange={(v) => setForm({ ...form, classe: v })} placeholder="ex: CE2, 6e B" />
-          <Input label="Taille recommandée" value={form.taille} onChange={(v) => setForm({ ...form, taille: v })} placeholder="ex: 8 ans, M" />
-          <Input label="Hauteur" value={form.hauteur} onChange={(v) => setForm({ ...form, hauteur: v })} placeholder="ex: 128 cm" />
-          <Input label="Tour de poitrine" value={form.tour} onChange={(v) => setForm({ ...form, tour: v })} placeholder="ex: 62 cm" />
+          <Input label="Prénom *" value={form.prenom} onChange={(v) => setForm({ ...form, prenom: v })} required />
+          <Input label="Nom *" value={form.nom} onChange={(v) => setForm({ ...form, nom: v })} required />
+          <Input label="Date de naissance *" type="date" value={form.naissance} onChange={(v) => setForm({ ...form, naissance: v })} required />
+          <Select label="Section *" value={form.section} onChange={(v) => setForm({ ...form, section: v })} options={["Maternelle", "Élémentaire", "Collège", "Lycée"]} />
+          <Input label="Classe *" value={form.classe} onChange={(v) => setForm({ ...form, classe: v })} placeholder="ex: CE2, 6e B" required />
+          <Input label="Taille recommandée *" value={form.taille} onChange={(v) => setForm({ ...form, taille: v })} placeholder="ex: 8 ans, M" required />
+          <Input label="Hauteur *" value={form.hauteur} onChange={(v) => setForm({ ...form, hauteur: v })} placeholder="ex: 128 cm" required />
+          <Input label="Tour de poitrine *" value={form.tour} onChange={(v) => setForm({ ...form, tour: v })} placeholder="ex: 62 cm" required />
         </div>
         <div className="mt-6 flex justify-end gap-2">
           <button type="button" onClick={onClose} className="h-10 rounded-lg border border-border bg-card px-4 text-sm font-medium hover:bg-muted">Annuler</button>
@@ -233,11 +236,11 @@ function ChildDialog({ initial, onClose, onSave }: { initial: ChildForm | Child;
   );
 }
 
-function Input({ label, value, onChange, type = "text", placeholder }: { label: string; value: string; onChange: (v: string) => void; type?: string; placeholder?: string }) {
+function Input({ label, value, onChange, type = "text", placeholder, required }: { label: string; value: string; onChange: (v: string) => void; type?: string; placeholder?: string; required?: boolean }) {
   return (
     <label className="block">
       <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
-      <input type={type} value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm" />
+      <input type={type} value={value} placeholder={placeholder} required={required} onChange={(e) => onChange(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm" />
     </label>
   );
 }
