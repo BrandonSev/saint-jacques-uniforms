@@ -47,13 +47,25 @@ function Index() {
           <ShellMotif className="absolute -left-40 -top-32 h-[700px] w-[700px]" opacity={0.1} />
           <ShellMotif className="absolute -right-48 -bottom-48 h-[700px] w-[700px]" opacity={0.08} />
         </div>
-        {/* Blason en filigrane plein arrière-plan (watermark global), au-dessus des overlays mais derrière le contenu */}
-        <img
-          src={schoolLogo}
-          alt=""
+        {/* Blason en filigrane plein arrière-plan (watermark global).
+            Confiné à la section hero via masque vertical doux pour garantir
+            une continuité visuelle aux bords (zones blanches en haut/bas). */}
+        <div
           aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[55rem] w-[55rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-[0.08] mix-blend-screen lg:left-[58%] lg:h-[65rem] lg:w-[65rem]"
-        />
+          className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+          style={{
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)",
+            maskImage:
+              "linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)",
+          }}
+        >
+          <img
+            src={schoolLogo}
+            alt=""
+            className="absolute left-1/2 top-1/2 h-[55rem] w-[55rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-[0.10] mix-blend-soft-light lg:left-[58%] lg:h-[65rem] lg:w-[65rem]"
+          />
+        </div>
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr]">
             <div className="relative z-10 text-center lg:text-left">
