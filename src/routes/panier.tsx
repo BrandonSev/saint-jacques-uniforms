@@ -20,6 +20,27 @@ export const Route = createFileRoute("/panier")({
 
 type Group = { child: Child | null; items: CartItem[] };
 
+/** Format EUR : pas de décimales si entier, virgule sinon. */
+function formatEUR(amount: number): string {
+  const rounded = Math.round(amount * 100) / 100;
+  if (Number.isInteger(rounded)) return `${rounded} €`;
+  return `${rounded.toFixed(2).replace(".", ",")} €`;
+}
+
+/** Résumé des produits du panier d'un enfant : "Blouse" / "Blouses" / "Blouses, Chemises" */
+function summarizeItems(items: CartItem[]): string {
+  const counts = new Map<string, number>();
+  for (const it of items) {
+    // Première moitié du nom = type de vêtement (souvent : "Blouse officielle", "Chemise blanche", ...)
+    const baseRaw = it.name.split(/[\s,—-]/)[0] || it.name;
+    const base = baseRaw.charAt(0).toUpperCase() + baseRaw.slice(1).toLowerCase();
+    counts.set(base, (counts.get(base) ?? 0) + it.qty);
+  }
+  return Array.from(counts.entries())
+    .map(([name, qty]) => (qty > 1 ? `${name}s` : name))
+    .join(", ");
+}
+
 function PanierPage() {
   const { user, profile, cart, children, cartCount, updateQty, removeFromCart, checkout } = useStore();
   const navigate = useNavigate();
