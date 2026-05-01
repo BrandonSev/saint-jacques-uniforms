@@ -1,4 +1,4 @@
-import sjcLogo from "@/assets/saint-jacques-logo-full.png";
+import schoolLogo from "@/assets/saint-jacques-blason.png";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
 import { ShellMotif } from "@/components/SchoolMotif";
 
@@ -20,10 +20,10 @@ export function AuthHeroBackground() {
         <ShellMotif className="absolute -right-48 -bottom-48 h-[700px] w-[700px]" opacity={0.08} />
       </div>
       <img
-        src={sjcLogo}
+        src={schoolLogo}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[40rem] w-[40rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-[0.18] mix-blend-screen drop-shadow-2xl"
+        className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[55rem] w-[55rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-[0.08] mix-blend-screen lg:left-[58%] lg:h-[65rem] lg:w-[65rem]"
       />
     </>
   );
