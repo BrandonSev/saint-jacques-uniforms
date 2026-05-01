@@ -49,7 +49,7 @@ function ConfidentialitePage() {
             <h2 className="text-base font-semibold text-foreground">Vos droits</h2>
             <p className="mt-2">
               Conformément au RGPD, vous pouvez accéder, rectifier ou supprimer vos données en
-              contactant : <a href="mailto:rgpd@france-uniformes.fr" className="text-primary hover:underline">rgpd@france-uniformes.fr</a>.
+              contactant : <a href="mailto:info@franceuniformes.fr" className="text-primary hover:underline">info@franceuniformes.fr</a>.
             </p>
           </section>
         </div>
