@@ -138,6 +138,7 @@ function EnfantsPage() {
       </section>
 
       <AddChildDialog
+        key={editing?.id ?? (creating ? "create" : "closed")}
         open={creating || !!editing}
         initial={editing ?? undefined}
         onClose={() => { setCreating(false); setEditing(null); }}
