@@ -269,7 +269,7 @@ function ConfirmModal({
                 disabled={!sizeConfirmed || processing}
                 className="h-10 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {processing ? "Envoi…" : "Confirmer et envoyer"}
+                {processing ? "Envoi…" : "Confirmer ma commande définitivement"}
               </button>
             </div>
           </div>
