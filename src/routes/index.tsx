@@ -166,7 +166,7 @@ function Index() {
           <ShellMotif className="absolute -right-32 -top-32 h-[420px] w-[420px]" opacity={0.05} />
         </div>
         <div className="relative mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-          <div className="grid items-center justify-center gap-10 md:grid-cols-[auto,1fr] md:gap-12">
+          <div className="grid items-center justify-center place-items-center gap-10 md:grid-cols-[auto,1fr] md:gap-12">
             <div className="mx-auto md:mx-0">
               <div className="relative h-40 w-40 overflow-hidden rounded-full border-4 border-card shadow-[var(--shadow-card)] ring-1 ring-primary/15 sm:h-48 sm:w-48">
                 <img
