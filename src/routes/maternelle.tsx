@@ -63,7 +63,7 @@ function MaternelleListPage() {
         </div>
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold uppercase tracking-wider text-sm text-lime-400 bg-red-500">
+            <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold uppercase tracking-wider text-sm text-lime-400 bg-red-500 text-center text-3xl">
               <ShieldCheck className="h-3 w-3" /> SÉLECTION EN COURS D'ETUDE PAR L'ÉTABLISSEMENT
             </span>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">

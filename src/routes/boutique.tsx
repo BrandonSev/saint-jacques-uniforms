@@ -81,7 +81,7 @@ function NiveauPage() {
           <p className="mt-2 text-sm italic text-muted-foreground">Boutique officielle du groupe scolaire de Saint-Jacques-de-Compostelle</p>
           <div className="mx-auto mt-5 h-1 w-16 rounded-full bg-[var(--rouge)]" />
           <div className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            Chaque niveau dispose d'une <span className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-semibold uppercase tracking-wider text-[10px] text-lime-400 bg-red-500">SÉLECTION EN COURS D'ETUDE PAR L'ÉTABLISSEMENT</span>.
+            Chaque niveau dispose d'une <span className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-semibold uppercase tracking-wider text-[10px] text-lime-400 bg-red-500 text-center text-3xl">SÉLECTION EN COURS D'ETUDE PAR L'ÉTABLISSEMENT</span>.
             Cliquez sur la carte correspondante pour découvrir les produits disponibles.
           </div>
           <div className="mt-6 flex justify-center">
