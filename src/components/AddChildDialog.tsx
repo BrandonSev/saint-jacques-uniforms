@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { Info, X } from "lucide-react";
 import { toast } from "sonner";
-import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useStore, type Child } from "@/lib/store";
 
 export type ChildForm = {
@@ -94,7 +95,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
 
   const genre = form.genre;
 
-  return (
+  const node = (
     <div
       className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4"
       onClick={onClose}
@@ -120,24 +121,42 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             <legend className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Genre *
             </legend>
-            <div className="mt-2 flex gap-6">
-              <label className="inline-flex items-center gap-2 text-sm font-medium text-foreground cursor-pointer">
-                <Checkbox
-                  checked={genre === "Fille"}
-                  onCheckedChange={() => setGenre("Fille")}
-                  className="data-[state=checked]:bg-pink-500 data-[state=checked]:border-pink-500"
+            <RadioGroup
+              value={genre || ""}
+              onValueChange={(v) => setGenre(v as ChildForm["genre"])}
+              className="mt-2 grid grid-cols-2 gap-2"
+            >
+              <label
+                htmlFor="genre-fille"
+                className={`flex cursor-pointer items-center gap-2.5 rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all ${
+                  genre === "Fille"
+                    ? "border-pink-400 bg-pink-50 text-pink-700"
+                    : "border-border bg-card text-foreground hover:border-pink-200"
+                }`}
+              >
+                <RadioGroupItem
+                  id="genre-fille"
+                  value="Fille"
+                  className="border-pink-400 text-pink-500 data-[state=checked]:border-pink-500"
                 />
                 Fille
               </label>
-              <label className="inline-flex items-center gap-2 text-sm font-medium text-foreground cursor-pointer">
-                <Checkbox
-                  checked={genre === "Garçon"}
-                  onCheckedChange={() => setGenre("Garçon")}
-                  className="data-[state=checked]:bg-sky-500 data-[state=checked]:border-sky-500"
+              <label
+                htmlFor="genre-garcon"
+                className={`flex cursor-pointer items-center gap-2.5 rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all ${
+                  genre === "Garçon"
+                    ? "border-sky-400 bg-sky-50 text-sky-700"
+                    : "border-border bg-card text-foreground hover:border-sky-200"
+                }`}
+              >
+                <RadioGroupItem
+                  id="genre-garcon"
+                  value="Garçon"
+                  className="border-sky-400 text-sky-500 data-[state=checked]:border-sky-500"
                 />
                 Garçon
               </label>
-            </div>
+            </RadioGroup>
           </fieldset>
 
           <Input label="Prénom *" value={form.prenom} onChange={(v) => setForm({ ...form, prenom: v })} required />
@@ -189,6 +208,9 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
       </form>
     </div>
   );
+
+  if (typeof document === "undefined") return node;
+  return createPortal(node, document.body);
 }
 
 export { empty as emptyChildForm };

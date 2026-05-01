@@ -23,7 +23,7 @@ export function AuthHeroBackground() {
         src={sjcLogo}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[55rem] w-[55rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-[0.07] mix-blend-screen"
+        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[40rem] w-[40rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-[0.18] mix-blend-screen drop-shadow-2xl"
       />
     </>
   );
