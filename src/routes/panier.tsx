@@ -60,7 +60,7 @@ function PanierPage() {
   }, [cart, children]);
 
   const subtotal = cart.reduce((s, i) => s + i.qty * i.price, 0);
-  const total = 0;
+  const total = subtotal;
 
   const openConfirm = () => {
     if (!user) { navigate({ to: "/login" }); return; }
