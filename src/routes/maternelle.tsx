@@ -90,45 +90,41 @@ function MaternelleListPage() {
         </div>
       </section>
 
-      {/* Bannière illustrée */}
-      <section className="relative overflow-hidden border-b border-border bg-card">
-        <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-card)]">
+      {/* Products */}
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,420px)_1fr]">
+          <div>
+            {products.map((p) => (
+              <ProductCard
+                key={p.id}
+                product={p}
+                sizes={sizes}
+                defaultSize="6 ans"
+                childFilter={(c) => c.section === "Maternelle" || c.section === "Élémentaire"}
+              />
+            ))}
+          </div>
+          <div className="relative hidden overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-card)] lg:block">
             <img
               src={courMaternelle}
               alt="Élèves de maternelle en blouse SJDC dans la cour de récréation"
-              className="h-72 w-full object-cover sm:h-96 lg:h-[28rem]"
+              className="h-full w-full object-cover"
               loading="lazy"
             />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/40 via-transparent to-transparent" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/50 via-transparent to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-card/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary backdrop-blur">
                 École maternelle
               </span>
-              <h2 className="mt-2 max-w-2xl text-2xl font-semibold tracking-tight text-white drop-shadow sm:text-3xl">
-                La blouse officielle, portée fièrement chaque jour
-                </h2>
-              <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/90 drop-shadow">
+              <h2 className="mt-2 max-w-md text-2xl font-semibold tracking-tight text-white drop-shadow">
+                Portée fièrement chaque jour
+              </h2>
+              <p className="mt-2 max-w-md text-sm leading-relaxed text-white/90 drop-shadow">
                 Confort, identité et sentiment d'appartenance — pensée pour accompagner
                 les enfants de la PS au CM1.
               </p>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Products */}
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-8 [grid-template-columns:repeat(auto-fill,minmax(320px,1fr))]">
-          {products.map((p) => (
-            <ProductCard
-              key={p.id}
-              product={p}
-              sizes={sizes}
-              defaultSize="6 ans"
-              childFilter={(c) => c.section === "Maternelle" || c.section === "Élémentaire"}
-            />
-          ))}
         </div>
       </section>
 
