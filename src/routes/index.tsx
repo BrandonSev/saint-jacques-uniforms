@@ -144,7 +144,7 @@ function Index() {
           <TrustItem
             icon={<ShieldCheck className="h-5 w-5" />}
             title="Tenues validées par l'établissement"
-            text="Chaque produit est référencé en accord avec la direction de l'école."
+            text="Chaque produit est référencé en accord avec la direction de l'école et l'association des parents d'élèves."
           />
           <TrustItem
             icon={<Truck className="h-5 w-5" />}
