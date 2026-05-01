@@ -43,9 +43,13 @@ function LivraisonPage() {
             commande (frais d'emballage et frais d'expédition).
           </Block>
           <Block title="Retours et échanges">
-            En cas de problème de taille, aucun vêtement ne pourra être retourné ni échangé dès lors
-            qu'il a été porté. Le vêtement doit être propre, non porté et dans son emballage d'origine.
-            Contactez-nous via la page Contact pour organiser l'échange.
+            En cas de problème (malfaçon, erreur d'envoi, article manquant…), rendez-vous dans
+            <strong> Mes commandes</strong>, ouvrez la commande concernée et cliquez sur
+            <strong> « Déclarer un incident »</strong> à côté de l'article concerné. Vous pouvez
+            sélectionner la quantité concernée (ex. 1 blouse sur 2), choisir le type d'incident
+            puis décrire le problème. Selon le motif, votre demande pourra être prise en charge ou
+            non. Aucun vêtement porté ne peut être retourné ni échangé. Dans tous les cas, les
+            frais de retour sont à la charge de l'expéditeur.
           </Block>
         </div>
 
