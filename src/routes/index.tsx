@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
-import { ArrowRight, MapPin, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, CreditCard, MapPin, ShieldCheck, Truck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { DirectorQuote } from "@/components/DirectorQuote";
@@ -107,6 +107,12 @@ function Index() {
                 >
                   Découvrir la boutique
                 </Link>
+              </div>
+
+              <div className="mt-6 flex items-center justify-center gap-2 lg:justify-start">
+                <span className="inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary shadow-sm">
+                  <CreditCard className="h-3.5 w-3.5" /> Paiement en ligne sécurisé
+                </span>
               </div>
             </div>
 
