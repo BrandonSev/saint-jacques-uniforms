@@ -101,18 +101,6 @@ function Index() {
                 >
                   Accéder à mon espace famille <ArrowRight className="h-4 w-4" />
                 </Link>
-                <Link
-                  to="/boutique"
-                  className="inline-flex h-12 items-center gap-2 rounded-full border border-white/30 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur transition-colors hover:bg-white/20"
-                >
-                  Découvrir la boutique
-                </Link>
-              </div>
-
-              <div className="mt-6 flex items-center justify-center gap-2 lg:justify-start">
-                <span className="inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary shadow-sm">
-                  <CreditCard className="h-3.5 w-3.5" /> Paiement en ligne sécurisé
-                </span>
               </div>
             </div>
 
@@ -146,7 +134,7 @@ function Index() {
 
       {/* Trust strip */}
       <section className="border-t border-border bg-card">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:grid-cols-3 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
           <TrustItem
             icon={<ShieldCheck className="h-5 w-5" />}
             title="Tenues validées par l'établissement"
@@ -161,6 +149,11 @@ function Index() {
             icon={<MapPin className="h-5 w-5" />}
             title="Fabrication française"
             text="Dans nos ateliers répartis partout en France."
+          />
+          <TrustItem
+            icon={<CreditCard className="h-5 w-5" />}
+            title="Paiement en ligne sécurisé"
+            text="Réglez vos commandes en toute confiance par carte bancaire via notre prestataire certifié."
           />
         </div>
       </section>
