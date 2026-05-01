@@ -137,30 +137,30 @@ export function SiteFooter() {
   const { isAdmin } = useStore();
   return (
     <footer className="mt-auto border-t border-border" style={{ background: "var(--gradient-hero)" }}>
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 text-white sm:px-6 lg:grid-cols-4 lg:px-8">
-        <div className="lg:col-span-2">
-          <div className="flex items-center gap-4">
-            <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-16 w-auto object-contain drop-shadow" />
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-8 text-white sm:px-6 sm:py-14 sm:gap-8 lg:grid-cols-4 lg:px-8">
+        <div className="col-span-2 lg:col-span-2">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-12 w-auto object-contain drop-shadow sm:h-16" />
             <div>
-              <div className="text-base font-semibold">Saint-Jacques-de-Compostelle</div>
-              <div className="mt-0.5 text-xs text-white/70">Groupe scolaire catholique · Dax</div>
+              <div className="text-sm font-semibold sm:text-base">Saint-Jacques-de-Compostelle</div>
+              <div className="mt-0.5 text-[11px] text-white/70 sm:text-xs">Groupe scolaire catholique · Dax</div>
             </div>
           </div>
-          <p className="mt-5 max-w-md text-sm leading-relaxed text-white/80">
+          <p className="mt-4 hidden max-w-md text-sm leading-relaxed text-white/80 sm:mt-5 sm:block">
             Boutique officielle des uniformes du groupe scolaire Saint-Jacques-de-Compostelle. Tenues validées par
             l'établissement, confectionnées avec soin pour le quotidien des élèves de la maternelle au collège.
           </p>
-          <div className="mt-6 flex flex-col items-start gap-2">
-            <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/60">Confectionné par</span>
-            <img src={logoWhite} alt="France Uniformes" className="h-8 w-auto object-contain" loading="lazy" />
-            <span className="text-[11px] uppercase tracking-[0.2em] text-white/60">Fabrication française</span>
+          <div className="mt-4 flex flex-row items-center gap-3 sm:mt-6 sm:flex-col sm:items-start sm:gap-2">
+            <span className="hidden text-[11px] font-medium uppercase tracking-[0.2em] text-white/60 sm:inline">Confectionné par</span>
+            <img src={logoWhite} alt="France Uniformes" className="h-6 w-auto object-contain sm:h-8" loading="lazy" />
+            <span className="text-[10px] uppercase tracking-[0.2em] text-white/60 sm:text-[11px]">Fabrication française</span>
           </div>
         </div>
         <div>
-          <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
+          <h4 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70 sm:text-xs">
             {isAdmin ? "Administration" : "Famille"}
           </h4>
-          <ul className="mt-4 space-y-2 text-sm text-white/85">
+          <ul className="mt-3 space-y-1.5 text-sm text-white/85 sm:mt-4 sm:space-y-2">
             {isAdmin ? (
               <li>
                 <Link to="/admin" className="hover:text-white hover:underline">
@@ -194,8 +194,8 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Aide</h4>
-          <ul className="mt-4 space-y-2 text-sm text-white/85">
+          <h4 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70 sm:text-xs">Aide</h4>
+          <ul className="mt-3 space-y-1.5 text-sm text-white/85 sm:mt-4 sm:space-y-2">
             <li>
               <Link to="/aide/livraison" className="hover:text-white hover:underline">
                 Livraisons
@@ -225,8 +225,8 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-white/15">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-white/70 sm:flex-row sm:px-6 lg:px-8">
-          <span>© {new Date().getFullYear()} France Uniformes · Tous droits réservés · Fabrication française</span>
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-1 px-4 py-3 text-[11px] text-white/70 sm:flex-row sm:gap-2 sm:px-6 sm:py-5 sm:text-xs lg:px-8">
+          <span className="text-center">© {new Date().getFullYear()} France Uniformes · Tous droits réservés</span>
           <span>Paiement sécurisé</span>
         </div>
       </div>
