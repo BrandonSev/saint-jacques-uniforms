@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { LogOut, ShieldCheck, ShoppingBag, User } from "lucide-react";
 import logo from "@/assets/france-uniformes-logo-blue.jpeg";
+import logoWhite from "@/assets/france-uniformes-logo-white.png";
 import sjcLogo from "@/assets/saint-jacques-logo-full.png";
 import { SchoolIdentityBar } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
@@ -149,10 +150,15 @@ export function SiteFooter() {
             Boutique officielle des uniformes du groupe Saint-Jacques-de-Compostelle. Tenues validées par
             l'établissement, confectionnées avec soin pour le quotidien des élèves de la maternelle au collège.
           </p>
-          <div className="mt-5 flex items-center gap-3 text-xs text-white/60">
-            <span>Confectionné par</span>
-            <img src={logo} alt="France Uniformes" className="h-7 w-7 rounded-md object-cover" />
-            <span>France Uniformes · Fabrication française</span>
+          <div className="mt-6 flex flex-col gap-2">
+            <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/60">Confectionné par</span>
+            <img
+              src={logoWhite}
+              alt="France Uniformes"
+              className="h-12 w-auto object-contain"
+              loading="lazy"
+            />
+            <span className="text-xs text-white/60">Fabrication française</span>
           </div>
         </div>
         <div>
