@@ -29,7 +29,7 @@ function LivraisonPage() {
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
           <Card icon={<Truck className="h-5 w-5" />} title="Délai" text="10 à 12 semaines après validation de la commande." />
           <Card icon={<Package className="h-5 w-5" />} title="Remise" text="Les tenues sont remises à votre enfant via l'établissement." />
-          <Card icon={<RefreshCw className="h-5 w-5" />} title="Échange" text="Échange de taille gratuit pendant 30 jours." />
+          <Card icon={<RefreshCw className="h-5 w-5" />} title="Échange" text="SAV possible les 30 premiers jours. " />
         </div>
 
         <div className="mt-10 space-y-6 text-sm leading-relaxed text-foreground/80">
