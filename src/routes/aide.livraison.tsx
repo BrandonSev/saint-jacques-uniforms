@@ -34,8 +34,8 @@ function LivraisonPage() {
 
         <div className="mt-10 space-y-6 text-sm leading-relaxed text-foreground/80">
           <Block title="Mode de livraison">
-            La livraison s'effectue exclusivement à l'établissement scolaire. Les commandes sont remises
-            par notre équipe au secrétariat puis transmises aux familles par l'intermédiaire de l'école.
+            La livraison s'effectue soit à l'établissement scolaire. Les commandes sont remises
+            par notre équipe à l'APEL puis transmises aux familles par l'intermédiaire de l'école.
           </Block>
           <Block title="Frais de livraison">
             La livraison à l'établissement est <strong>incluse</strong> pour toutes les commandes.
