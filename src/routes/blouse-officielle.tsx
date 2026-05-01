@@ -85,7 +85,7 @@ function MaternellePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       {/* Breadcrumb */}

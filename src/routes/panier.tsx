@@ -84,7 +84,7 @@ function PanierPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       <section className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">

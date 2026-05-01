@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Mail, MapPin, Phone, User, Users, Plus, Trash2, Home, Truck } from "lucide-react";
+import { Mail, MapPin, Phone, User, Users, Plus, Trash2, Home, Truck, KeyRound, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { RequireAuth } from "@/components/RequireAuth";
@@ -67,7 +67,7 @@ function FamillePage() {
   const displayedFamilyName = profile?.family_name || profile?.nom || "";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
       <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-2">
@@ -105,6 +105,26 @@ function FamillePage() {
             >
               {savingName ? "Enregistrement…" : "Enregistrer"}
             </button>
+          </div>
+        </div>
+
+        {/* Boîte indépendante : Code établissement (lecture seule) */}
+        <div className="mt-6 rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
+          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <KeyRound className="h-4 w-4 text-primary" /> Code établissement
+            <Lock className="ml-1 h-3 w-3 text-muted-foreground" />
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Code transmis par l'école au moment de l'inscription. Cette information est en lecture seule. Pour toute
+            modification, contactez le secrétariat de l'établissement.
+          </p>
+          <div className="mt-4">
+            <input
+              value={profile?.code_etablissement || "—"}
+              readOnly
+              disabled
+              className="h-11 w-full max-w-sm rounded-lg border border-dashed border-border bg-muted/40 px-3 text-sm font-mono tracking-wider text-foreground"
+            />
           </div>
         </div>
 

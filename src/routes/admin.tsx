@@ -112,12 +112,12 @@ function AdminPage() {
   };
 
   if (authLoading) {
-    return <div className="min-h-screen bg-background"><SiteHeader schoolName={SCHOOL_LABEL} /></div>;
+    return <div className="flex min-h-screen flex-col bg-background"><SiteHeader schoolName={SCHOOL_LABEL} /></div>;
   }
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <SiteHeader schoolName={SCHOOL_LABEL} />
         <section className="mx-auto max-w-3xl px-4 py-20 text-center">
           <ShieldCheck className="mx-auto h-10 w-10 text-muted-foreground" />
@@ -134,7 +134,7 @@ function AdminPage() {
   const totalCA = rows.reduce((s, r) => s + r.line_total, 0);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader schoolName={SCHOOL_LABEL} />
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-end justify-between gap-4">

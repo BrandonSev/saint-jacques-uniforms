@@ -1,13 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Lock, Mail, MapPin, ShieldCheck, User as UserIcon, Phone } from "lucide-react";
+import { ArrowLeft, KeyRound, Lock, Mail, MapPin, ShieldCheck, User as UserIcon, Phone, HelpCircle } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import sjcLogo from "@/assets/saint-jacques-logo-full.png";
-import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
-import { ShellMotif } from "@/components/SchoolMotif";
+import { AuthHeroBackground } from "@/components/AuthHeroBackground";
+import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
+import { verifyEstablishmentCode } from "@/server/establishment.functions";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -34,6 +35,7 @@ const signupSchema = z.object({
   code_postal: z.string().trim().min(4, "Code postal requis").max(10),
   ville: z.string().trim().min(1, "Ville requise").max(100),
   password: z.string().min(8, "Mot de passe : 8 caractères minimum").max(128),
+  code_etablissement: z.string().trim().min(1, "Code établissement requis").max(64),
 });
 
 function LoginPage() {
@@ -55,6 +57,7 @@ function LoginPage() {
   const [codePostal, setCodePostal] = useState("");
   const [ville, setVille] = useState("");
   const [password, setPassword] = useState("");
+  const [codeEtablissement, setCodeEtablissement] = useState("");
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,9 +73,26 @@ function LoginPage() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    const parsed = signupSchema.safeParse({ civilite, prenom, nom, email, telephone, adresse, code_postal: codePostal, ville, password });
+    const parsed = signupSchema.safeParse({ civilite, prenom, nom, email, telephone, adresse, code_postal: codePostal, ville, password, code_etablissement: codeEtablissement });
     if (!parsed.success) { toast.error(parsed.error.issues[0].message); return; }
     setLoading(true);
+    // Validation serveur du code établissement
+    try {
+      const check = await verifyEstablishmentCode({ data: { code: parsed.data.code_etablissement } });
+      if (!check.valid) {
+        setLoading(false);
+        toast.error(
+          check.reason === "not_configured"
+            ? "La validation du code établissement est temporairement indisponible. Contactez l'établissement."
+            : "Code établissement invalide. Contactez l'établissement si vous n'en avez pas reçu.",
+        );
+        return;
+      }
+    } catch {
+      setLoading(false);
+      toast.error("Impossible de vérifier le code établissement. Réessayez.");
+      return;
+    }
     const { error } = await supabase.auth.signUp({
       email: parsed.data.email,
       password: parsed.data.password,
@@ -86,6 +106,7 @@ function LoginPage() {
           adresse: parsed.data.adresse,
           code_postal: parsed.data.code_postal,
           ville: parsed.data.ville,
+          code_etablissement: parsed.data.code_etablissement,
         },
       },
     });
@@ -102,6 +123,7 @@ function LoginPage() {
         code_postal: parsed.data.code_postal,
         ville: parsed.data.ville,
         telephone: parsed.data.telephone || null,
+        code_etablissement: parsed.data.code_etablissement,
       }).eq("id", u.id);
     }
     toast.success("Espace famille créé !");
@@ -110,24 +132,7 @@ function LoginPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-primary">
-      {/* Fond bleu marine façon hero */}
-      <div className="absolute inset-0 -z-10" style={{ background: "var(--gradient-hero)" }} />
-      <div className="absolute inset-0 -z-10 opacity-25 mix-blend-overlay">
-        <img src={classeBlouses} alt="" className="h-full w-full object-cover" loading="lazy" />
-      </div>
-      <div className="absolute inset-0 -z-10 bg-primary-deep/70" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-primary-deep/80 via-primary-deep/60 to-primary-deep/85" />
-      <div className="pointer-events-none absolute inset-0 -z-10 text-white">
-        <ShellMotif className="absolute -left-40 -top-32 h-[700px] w-[700px]" opacity={0.1} />
-        <ShellMotif className="absolute -right-48 -bottom-48 h-[700px] w-[700px]" opacity={0.08} />
-      </div>
-      {/* Blason en filigrane */}
-      <img
-        src={sjcLogo}
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[55rem] w-[55rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-[0.07] mix-blend-screen"
-      />
+      <AuthHeroBackground />
 
       <div className="relative flex min-h-screen flex-col">
         <header className="flex items-center justify-between px-6 py-5 lg:px-10">
@@ -206,7 +211,17 @@ function LoginPage() {
                   <input type="tel" value={telephone} onChange={(e) => setTelephone(e.target.value)} maxLength={30} placeholder="06 12 34 56 78" className={inputCls} />
                 </Field>
                 <Field label="Adresse postale" icon={<MapPin className="h-4 w-4" />}>
-                  <input type="text" required value={adresse} onChange={(e) => setAdresse(e.target.value)} maxLength={200} placeholder="12 rue des Écoles" className={inputCls} />
+                  <AddressAutocomplete
+                    value={adresse}
+                    onChange={setAdresse}
+                    onSelect={({ adresse: a, code_postal, ville: v }) => {
+                      setAdresse(a);
+                      setCodePostal(code_postal);
+                      setVille(v);
+                    }}
+                    required
+                    className={inputCls}
+                  />
                 </Field>
                 <div className="grid grid-cols-[120px_1fr] gap-3">
                   <Field label="Code postal" icon={<MapPin className="h-4 w-4" />}>
@@ -219,6 +234,37 @@ function LoginPage() {
                 <Field label="Mot de passe (8 car. min.)" icon={<Lock className="h-4 w-4" />}>
                   <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} minLength={8} className={inputCls} />
                 </Field>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      Code établissement
+                    </label>
+                    <span
+                      className="group relative inline-flex cursor-help items-center text-muted-foreground"
+                      tabIndex={0}
+                    >
+                      <HelpCircle className="h-3.5 w-3.5" />
+                      <span className="pointer-events-none absolute right-0 top-5 z-30 w-64 rounded-lg border border-border bg-card p-3 text-left text-[11px] leading-snug text-foreground opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus:opacity-100">
+                        Le code établissement vous a été transmis par l'école. Si vous ne l'avez pas reçu, contactez le secrétariat de Saint-Jacques-de-Compostelle.
+                      </span>
+                    </span>
+                  </div>
+                  <div className="relative mt-1.5">
+                    <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      <KeyRound className="h-4 w-4" />
+                    </span>
+                    <input
+                      type="text"
+                      required
+                      value={codeEtablissement}
+                      onChange={(e) => setCodeEtablissement(e.target.value)}
+                      maxLength={64}
+                      placeholder="Code transmis par l'établissement"
+                      className={inputCls}
+                      autoComplete="off"
+                    />
+                  </div>
+                </div>
                 <button type="submit" disabled={loading} className={primaryBtn}>
                   {loading ? "Création…" : "Créer mon espace famille"}
                 </button>

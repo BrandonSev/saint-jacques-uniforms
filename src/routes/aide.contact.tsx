@@ -14,7 +14,7 @@ export const Route = createFileRoute("/aide/contact")({
 
 function ContactPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
       <section className="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
         <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">

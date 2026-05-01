@@ -61,7 +61,7 @@ function NiveauPage() {
   if (authLoading) return null;
   if (isAdmin) return <Navigate to="/admin" />;
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" cartCount={0} />
 
       <section className="relative overflow-hidden border-b border-border" style={{ background: "var(--gradient-soft)" }}>
