@@ -39,12 +39,12 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
           <Link to="/" className="flex items-center gap-3">
             {schoolName ? (
               <>
-                <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-10 w-auto object-contain" />
-                <div className="hidden flex-col leading-tight lg:flex">
+                <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-10 w-auto shrink-0 object-contain" />
+                <div className="hidden min-w-0 flex-col leading-tight xl:flex">
                   <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                     Espace familles
                   </span>
-                  <span className="text-sm font-semibold tracking-tight text-primary">
+                  <span className="truncate text-sm font-semibold tracking-tight text-primary">
                     Saint-Jacques-de-Compostelle
                   </span>
                 </div>
@@ -60,7 +60,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
           </Link>
 
           {schoolName && user && (
-            <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground lg:flex">
+            <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground xl:flex">
               {isAdmin ? (
                 <Link
                   to="/admin"
@@ -102,7 +102,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
               <Link
                 to="/famille"
                 title="Voir et modifier les coordonnées de la famille"
-                className="hidden h-10 items-center gap-2 rounded-full border border-border bg-slate-200 px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted lg:inline-flex"
+                className="hidden h-10 items-center gap-2 rounded-full border border-border bg-slate-200 px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted xl:inline-flex"
                 activeProps={{ className: "ring-2 ring-primary/40" }}
               >
                 <User className="h-4 w-4" />
@@ -114,7 +114,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                 type="button"
                 onClick={handleSignOut}
                 title="Se déconnecter"
-                className="hidden h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-muted-foreground hover:text-[var(--rouge)] hover:bg-muted lg:inline-flex"
+                className="hidden h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-muted-foreground hover:text-[var(--rouge)] hover:bg-muted xl:inline-flex"
               >
                 <LogOut className="h-4 w-4" />
               </button>
@@ -125,7 +125,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                 className="relative inline-flex h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground shadow-[var(--shadow-card)] transition-colors hover:bg-primary/90"
               >
                 <ShoppingBag className="h-4 w-4" />
-                <span className="hidden lg:inline">Panier</span>
+                <span className="hidden xl:inline">Panier</span>
                 {count > 0 && (
                   <span className="absolute -right-1.5 -top-1.5 inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-[var(--rouge)] px-1.5 text-[12px] font-bold text-white shadow-md ring-2 ring-white">
                     {count}
@@ -149,7 +149,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                 onClick={() => setMenuOpen((v) => !v)}
                 aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
                 aria-expanded={menuOpen}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground hover:bg-muted lg:hidden"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground hover:bg-muted xl:hidden"
               >
                 {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
@@ -158,7 +158,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
         </div>
 
         {schoolName && user && menuOpen && (
-          <div className="border-t border-border bg-background/95 backdrop-blur-md lg:hidden">
+          <div className="border-t border-border bg-background/95 backdrop-blur-md xl:hidden">
             <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3 text-sm font-medium sm:px-6">
               {isAdmin ? (
                 <MenuLink to="/admin" onClick={() => setMenuOpen(false)} icon={<ShieldCheck className="h-4 w-4" />}>
