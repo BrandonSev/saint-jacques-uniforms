@@ -32,8 +32,8 @@ function LyceePage() {
         <div className="mx-auto mb-10 max-w-3xl overflow-hidden rounded-3xl border border-border">
           <img src={lycee} alt="Lycéens en uniforme" className="aspect-[16/9] w-full object-cover" loading="lazy" />
         </div>
-        <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 font-semibold uppercase tracking-wider text-sm text-lime-400 bg-red-500">
-          <ShieldCheck className="h-4 w-4" /> SÉLECTION EN COURS D'ETUDE PAR L'ÉTABLISSEMENT
+        <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold uppercase tracking-wider text-sm text-lime-400 bg-red-500 text-center text-3xl">
+          <ShieldCheck className="h-3 w-3" /> SÉLECTION EN COURS D'ETUDE PAR L'ÉTABLISSEMENT
         </span>
         <div className="mt-3 flex justify-center">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--teal)]/30 bg-[var(--teal)]/10 px-3 py-1.5 text-xs font-semibold text-[var(--teal-deep)]">
