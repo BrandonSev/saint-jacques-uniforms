@@ -39,12 +39,12 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
           <Link to="/" className="flex items-center gap-3">
             {schoolName ? (
               <>
-                <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-10 w-auto object-contain" />
-                <div className="hidden flex-col leading-tight lg:flex">
+                <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-10 w-auto shrink-0 object-contain" />
+                <div className="hidden min-w-0 flex-col leading-tight lg:flex">
                   <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                     Espace familles
                   </span>
-                  <span className="text-sm font-semibold tracking-tight text-primary">
+                  <span className="truncate text-sm font-semibold tracking-tight text-primary">
                     Saint-Jacques-de-Compostelle
                   </span>
                 </div>
