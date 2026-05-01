@@ -5,7 +5,6 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useStore } from "@/lib/store";
 import {
-import { PageWatermark } from "@/components/PageWatermark";
   fetchChildPurchaseHistory,
   formatAge,
   formatDateFR,
@@ -14,6 +13,7 @@ import { PageWatermark } from "@/components/PageWatermark";
   shouldReplace,
   type PurchasedItem,
 } from "@/lib/purchaseHistory";
+import { PageWatermark } from "@/components/PageWatermark";
 
 export const Route = createFileRoute("/enfants/$childId/historique")({
   head: () => ({
