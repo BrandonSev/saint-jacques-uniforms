@@ -86,7 +86,7 @@ function Index() {
               </h1>
               <div className="mt-6 flex items-center gap-3 justify-center lg:justify-start">
                 <span className="h-px w-10 bg-gold" />
-                <span className="text-[10px] font-medium uppercase tracking-[0.32em] text-white/70">Depuis 1875</span>
+                <span className="text-[10px] font-medium uppercase tracking-[0.32em] text-white/70">Depuis 2003</span>
                 <span className="h-px w-10 bg-gold" />
               </div>
               <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg mx-auto lg:mx-0">
