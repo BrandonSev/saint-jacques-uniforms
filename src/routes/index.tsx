@@ -177,20 +177,15 @@ function Index() {
                 />
               </div>
             </div>
-            <div className="text-center">
-              <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-primary">
+            <div class="text-center">
+              <span class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-primary">
                 Le mot du chef d'établissement
               </span>
-              <figure className="mt-6">
-                <svg
-                  aria-hidden="true"
-                  className="mx-auto h-9 w-9 text-gold/70 md:mx-0"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M7.17 6C4.32 6 2 8.32 2 11.17V18h6.83v-6.83H5.17C5.17 9.42 6.42 8.17 8.17 8.17V6h-1zm10 0c-2.85 0-5.17 2.32-5.17 5.17V18h6.83v-6.83h-3.66c0-1.75 1.25-3 3-3V6h-1z" />
+              <figure class="mt-8">
+                <svg aria-hidden="true" class="mx-auto h-10 w-10 text-gold/70" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M7.17 6C4.32 6 2 8.32 2 11.17V18h6.83v-6.83H5.17C5.17 9.42 6.42 8.17 8.17 8.17V6h-1zm10 0c-2.85 0-5.17 2.32-5.17 5.17V18h6.83v-6.83h-3.66c0-1.75 1.25-3 3-3V6h-1z"></path>
                 </svg>
-                <blockquote className="mt-5 font-display text-lg leading-relaxed text-foreground sm:text-xl">
+                <blockquote class="mt-6 font-display text-xl leading-relaxed text-foreground sm:text-2xl">
                   <p>
                     « Toutes les actions menées dans notre Groupe scolaire ont pour finalité essentielle de contribuer à
                     l'épanouissement et à la réussite du Jeune. La tenue de Saint-Jacques-de-Compostelle s'inscrit
@@ -198,10 +193,10 @@ function Index() {
                     notre communauté et l'attention quotidienne portée à chaque élève. »
                   </p>
                 </blockquote>
-                <figcaption className="mt-6 flex flex-col items-center gap-1 md:items-start">
-                  <span className="h-px w-12 bg-gold" />
-                  <span className="mt-3 text-sm font-semibold tracking-wide text-foreground">Emmanuel ORTOLO</span>
-                  <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                <figcaption class="mt-8 flex flex-col items-center gap-1">
+                  <span class="h-px w-12 bg-gold"></span>
+                  <span class="mt-3 text-sm font-semibold tracking-wide text-foreground">Emmanuel ORTOLO</span>
+                  <span class="text-xs uppercase tracking-[0.18em] text-muted-foreground">
                     Chef d'établissement · Coordinateur du Groupe Scolaire
                   </span>
                 </figcaption>
