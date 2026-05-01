@@ -131,26 +131,25 @@ function PanierPage() {
               <dl className="mt-5 space-y-3 text-sm">
                 <Row label={`Articles`} value={`${cartCount}`} />
                 <Row label="Enfants concernés" value={`${groups.length}`} />
+                <Row label="Sous-total" value={formatEUR(subtotal)} />
+                <Row label="Livraison" value="Calculée à l'étape suivante" />
               </dl>
               <div className="my-5 h-px bg-border" />
-              <div className="rounded-xl bg-secondary/60 p-3 text-xs text-foreground/75">
-                <p className="font-semibold text-foreground">Phase actuelle : prépayée par votre établissement</p>
-              </div>
-              <div className="mt-4 flex items-baseline justify-between">
-                <span className="text-sm font-semibold text-foreground">Montant total à régler à l'établissement</span>
+              <div className="flex items-baseline justify-between">
+                <span className="text-sm font-semibold text-foreground">Total à régler</span>
                 <span className="text-2xl font-semibold text-foreground">{formatEUR(total)}</span>
               </div>
               <button onClick={openConfirm} disabled={processing} className="mt-6 inline-flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] hover:bg-primary/90 disabled:opacity-60">
                 {user ? "Confirmer ma commande" : "Se connecter pour commander"}
               </button>
               <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground whitespace-pre-line">
-                Rien à payer aujourd'hui.{"\n\n"}
-                Le règlement se fera selon les modalités choisies par votre établissement.
+                Paiement en ligne sécurisé par carte bancaire.{"\n"}
+                Vos articles sont préparés dès réception du règlement.
               </p>
 
               <div className="mt-6 rounded-xl bg-secondary p-4 text-xs leading-relaxed text-foreground/75">
                 <p className="font-semibold text-foreground">Commande transmise à l'établissement</p>
-                <p className="mt-1">Votre commande sera enregistrée et préparée. Aucun paiement n'est requis pour le moment.</p>
+                <p className="mt-1">Après validation de votre paiement, votre commande est enregistrée et préparée par notre atelier.</p>
               </div>
             </div>
           </aside>
