@@ -191,7 +191,7 @@ function ConfirmModal({
         <header className="flex items-center justify-between border-b border-border px-6 py-4">
           <div>
             <h2 className="text-lg font-semibold tracking-tight text-foreground">Confirmer ma commande</h2>
-            <p className="mt-0.5 text-xs text-muted-foreground">Vérifiez les tailles avant de valider — les échanges sont possibles sous 30 jours.</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">Vérifiez les tailles avant de valider</p>
           </div>
           <button type="button" onClick={onClose} disabled={processing} className="rounded-lg p-1.5 hover:bg-muted disabled:opacity-50">
             <X className="h-4 w-4" />
