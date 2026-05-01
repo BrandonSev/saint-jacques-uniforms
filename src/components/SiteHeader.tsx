@@ -136,7 +136,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
 export function SiteFooter() {
   const { isAdmin } = useStore();
   return (
-    <footer className="border-t border-border" style={{ background: "var(--gradient-hero)" }}>
+    <footer className="mt-auto border-t border-border" style={{ background: "var(--gradient-hero)" }}>
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 text-white sm:px-6 lg:grid-cols-4 lg:px-8">
         <div className="lg:col-span-2">
           <div className="flex items-center gap-4">

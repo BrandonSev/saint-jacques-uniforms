@@ -69,7 +69,7 @@ function EnfantsPage() {
 
   if (isAdmin) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
         <section className="mx-auto max-w-xl px-4 py-20 text-center">
           <h1 className="text-2xl font-semibold">Espace administrateur</h1>
@@ -82,7 +82,7 @@ function EnfantsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
         <section className="mx-auto max-w-xl px-4 py-20 text-center">
           <h1 className="text-2xl font-semibold">Espace réservé aux familles</h1>
@@ -94,7 +94,7 @@ function EnfantsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       <section className="relative mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">

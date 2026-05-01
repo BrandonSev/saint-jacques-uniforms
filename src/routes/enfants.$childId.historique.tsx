@@ -55,7 +55,7 @@ function HistoriquePage() {
       : "text-primary";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
       <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
         <Link
