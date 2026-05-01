@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import sjcLogo from "@/assets/saint-jacques-logo-full.png";
 import { ShellMotif } from "@/components/SchoolMotif";
-import { supabase } from "@/integrations/supabase/client";
+import { sendCustomPasswordReset } from "@/server/email.functions";
 
 export const Route = createFileRoute("/mot-de-passe-oublie")({
   head: () => ({
@@ -31,11 +31,12 @@ function ForgotPasswordPage() {
     const parsed = schema.safeParse({ email });
     if (!parsed.success) { toast.error(parsed.error.issues[0].message); return; }
     setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
+    try {
+      await sendCustomPasswordReset({
+        data: { email: parsed.data.email, redirectTo: `${window.location.origin}/reset-password` },
+      });
+    } catch {}
     setLoading(false);
-    if (error) { toast.error(error.message); return; }
     setSent(true);
     toast.success("Email envoyé !");
   };
