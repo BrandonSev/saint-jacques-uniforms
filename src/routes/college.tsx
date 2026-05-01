@@ -53,7 +53,7 @@ const products = [
   },
   {
     id: "chemise",
-    name: "Chemise Candice — Garçon",
+    name: "Pull col V",
     ref: "CHE-FU-002G",
     price: 26.4,
     image: chemise,
