@@ -71,7 +71,7 @@ function MaternelleListPage() {
               Portée au quotidien par tous les élèves.
             </p>
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">1 produit</span>
+               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Blouse</span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles 4 → 18 ans</span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison à l'établissement</span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison à domicile</span>
