@@ -326,49 +326,49 @@ function ChildGroup({ group, onQty, onRemove }: { group: Group; onQty: (id: stri
   const summary = summarizeItems(group.items) || "Articles";
   return (
     <section className={`overflow-hidden rounded-3xl border ${tone.card} bg-card`}>
-      <header className={`flex items-center justify-between border-b ${tone.header} px-6 py-4`}>
-        <div className="flex items-center gap-3">
-          <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold ${tone.badge}`}>
+      <header className={`flex flex-wrap items-center justify-between gap-2 border-b ${tone.header} px-4 py-3 sm:px-6 sm:py-4`}>
+        <div className="flex min-w-0 items-center gap-3">
+          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${tone.badge}`}>
             {group.child?.initials ?? "—"}
           </div>
-          <div>
-            <h3 className={`text-base font-semibold tracking-tight ${tone.name}`}>
+          <div className="min-w-0">
+            <h3 className={`truncate text-base font-semibold tracking-tight ${tone.name}`}>
               Pour {group.child ? `${group.child.prenom} ${group.child.nom}` : "—"}
             </h3>
-            <p className="text-xs text-muted-foreground">{group.child ? [group.child.classe, group.child.section].filter(Boolean).join(" · ") || "—" : "Enfant non défini"}</p>
+            <p className="truncate text-xs text-muted-foreground">{group.child ? [group.child.classe, group.child.section].filter(Boolean).join(" · ") || "—" : "Enfant non défini"}</p>
           </div>
         </div>
-        <span className={`rounded-full px-3 py-1 text-xs font-medium ${tone.chip}`}>
+        <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${tone.chip}`}>
           {summary}
         </span>
       </header>
 
       <ul className="divide-y divide-border">
         {group.items.map((item) => (
-          <li key={item.id} className="flex items-center gap-4 px-6 py-5">
-            <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-border bg-secondary">
+          <li key={item.id} className="flex items-center gap-3 px-4 py-4 sm:gap-4 sm:px-6 sm:py-5">
+            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-border bg-secondary sm:h-20 sm:w-20">
               <img src={item.image} alt={item.name} className="h-full w-full object-cover" loading="lazy" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start justify-between gap-2 sm:gap-3">
                 <div className="min-w-0">
-                  <h4 className="truncate text-sm font-semibold text-foreground">{item.name}</h4>
+                  <h4 className="text-sm font-semibold leading-tight text-foreground sm:truncate">{item.name}</h4>
                   <p className="mt-0.5 text-xs text-muted-foreground">Réf. {item.ref}</p>
                   <p className="mt-2 text-xs text-foreground/80">
                     Taille <span className="font-semibold">{item.size}</span>
                   </p>
                   {group.child && (
-                    <p className="mt-1 text-[11px] text-muted-foreground">
+                    <p className="mt-1 hidden text-[11px] text-muted-foreground sm:block">
                       Pour <span className="font-medium text-foreground">{group.child.prenom} {group.child.nom}</span>
                       {group.child.classe && <> · classe {group.child.classe}</>}
                     </p>
                   )}
                 </div>
                 <div className="shrink-0 text-right">
-                  <div className="text-base font-semibold text-foreground">
+                  <div className="text-sm font-semibold text-foreground sm:text-base">
                     {formatEUR(item.qty * item.price)}
                   </div>
-                  <div className="text-xs text-muted-foreground">{formatEUR(item.price)} l'unité</div>
+                  <div className="text-[11px] text-muted-foreground sm:text-xs">{formatEUR(item.price)} l'unité</div>
                 </div>
               </div>
               <div className="mt-3 flex items-center justify-between">
