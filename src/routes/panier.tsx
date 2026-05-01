@@ -229,14 +229,23 @@ function ConfirmModal({
                     <li key={item.id} className="flex items-center justify-between gap-4 px-4 py-3 text-xs">
                       <div className="min-w-0">
                         <p className="truncate font-medium text-foreground">{item.name}</p>
-                        <p className="mt-0.5 text-muted-foreground">Réf. {item.ref} · Qté {item.qty}</p>
+                        <p className="mt-0.5 text-muted-foreground">Réf. {item.ref} · Qté {item.qty} · {formatEUR(item.price)}/u</p>
                       </div>
-                      <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
-                        Taille {item.size}
-                      </span>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
+                          Taille {item.size}
+                        </span>
+                        <span className="text-[11px] font-semibold text-foreground">{formatEUR(item.price * item.qty)}</span>
+                      </div>
                     </li>
                   ))}
                 </ul>
+                <div className="flex items-center justify-between border-t border-border px-4 py-2 text-[11px]">
+                  <span className="text-muted-foreground">Sous-total {group.child?.prenom ?? ""}</span>
+                  <span className="font-semibold text-foreground">
+                    {formatEUR(group.items.reduce((s, it) => s + it.price * it.qty, 0))}
+                  </span>
+                </div>
               </li>
             ))}
           </ul>
@@ -255,10 +264,18 @@ function ConfirmModal({
             </span>
           </label>
 
-          <div className="mt-4 flex items-center justify-between gap-3">
-            <div className="text-xs text-muted-foreground">
-              Sous-total indicatif : <span className="font-semibold text-foreground">{formatEUR(subtotal)}</span>
+          <div className="mt-4 flex items-center justify-between rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+            <div>
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Total de la commande</div>
+              <div className="text-xs text-muted-foreground">
+                {groups.reduce((s, g) => s + g.items.reduce((ss, it) => ss + it.qty, 0), 0)} article(s) ·
+                {" "}{groups.length} enfant(s)
+              </div>
             </div>
+            <div className="text-xl font-semibold text-primary">{formatEUR(subtotal)}</div>
+          </div>
+
+          <div className="mt-3 flex items-center justify-end gap-2">
             <div className="flex gap-2">
               <button type="button" onClick={onClose} disabled={processing} className="h-10 rounded-lg border border-border bg-card px-4 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-50">
                 Modifier
