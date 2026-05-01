@@ -33,14 +33,28 @@ function LivraisonPage() {
         </div>
 
         <div className="mt-10 space-y-6 text-sm leading-relaxed text-foreground/80">
-          <Block title="Mode de livraison">
-            La livraison s'effectue soit à l'établissement scolaire. Les commandes sont remises
-            par notre équipe à l'APEL puis transmises aux familles par l'intermédiaire de l'école.
+          <Block title="Modes de commande et de livraison">
+            Toutes les tenues sont fabriquées en France. Deux modes de commande sont possibles :
+            <br /><br />
+            <strong>1. Commande groupée par l'établissement.</strong> Les familles enregistrent
+            leur commande sur la plateforme. La commande est transmise à l'établissement et le
+            règlement s'effectue selon les modalités définies par l'école. Les tenues sont
+            livrées en lot à l'établissement puis remises aux familles via l'APEL.
+            <br /><br />
+            <strong>2. Commande individuelle.</strong> Les familles enregistrent et règlent leur
+            commande directement en ligne. Deux options de retrait :
+            <br />
+            • <strong>Retrait à l'établissement</strong> lors de la prochaine livraison groupée
+            (sans frais supplémentaires) ;
+            <br />
+            • <strong>Expédition individuelle au domicile</strong>, qui engage des frais
+            supplémentaires d'emballage et de port.
           </Block>
           <Block title="Frais de livraison">
-            La livraison à l'établissement est <strong>incluse</strong> pour toutes les commandes.
-            En revanche, les livraisons individuelles engagent un <strong>surcoût</strong> pour chaque
-            commande (frais d'emballage et frais d'expédition).
+            La livraison à l'établissement est <strong>incluse</strong> pour toutes les commandes
+            (groupées ou individuelles avec retrait sur place). Seules les expéditions
+            individuelles au domicile engagent un <strong>surcoût</strong> de port et d'emballage,
+            calculé au moment de la commande.
           </Block>
           <Block title="Retours et échanges">
             En cas de problème (malfaçon, erreur d'envoi, article manquant…), rendez-vous dans
