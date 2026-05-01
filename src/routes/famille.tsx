@@ -225,7 +225,14 @@ function FamillePage() {
             )}
             <Link
               to="/enfants"
-              className="mt-5 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-4 text-sm font-semibold text-primary hover:bg-primary/10"
+              search={{ add: 1 } as any}
+              className="mt-5 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+            >
+              <Plus className="h-4 w-4" /> Ajouter un enfant
+            </Link>
+            <Link
+              to="/enfants"
+              className="mt-2 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-4 text-sm font-semibold text-primary hover:bg-primary/10"
             >
               Gérer mes enfants
             </Link>
