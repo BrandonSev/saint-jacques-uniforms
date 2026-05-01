@@ -114,6 +114,7 @@ function CollegePage() {
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">5 produits</span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles 10 → 18 ans</span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison à l'établissement</span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison à domicile</span>
             </div>
           </div>
