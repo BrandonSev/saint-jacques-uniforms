@@ -110,29 +110,29 @@ function Index() {
               </div>
             </div>
 
-            <div className="relative hidden lg:block">
+            <div className="relative block mt-10 lg:mt-0">
               <div className="relative z-20 rounded-xl border border-white/20 shadow-2xl">
                 <img
                   src={classeBlouses}
                   alt="Élèves en blouse"
-                  className="aspect-[4/5] w-full rounded-xl object-cover"
+                  className="aspect-[4/5] w-full rounded-xl object-cover sm:aspect-[16/10] lg:aspect-[4/5]"
                   loading="eager"
                 />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex min-h-[22rem] flex-col justify-end overflow-visible rounded-b-xl bg-gradient-to-t from-primary-deep/85 via-primary-deep/30 to-transparent p-6">
-                  <div className="relative font-medium uppercase tracking-[0.22em] text-white/75 text-base">
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex min-h-[14rem] flex-col justify-end overflow-visible rounded-b-xl bg-gradient-to-t from-primary-deep/85 via-primary-deep/30 to-transparent p-5 sm:min-h-[18rem] sm:p-6 lg:min-h-[22rem]">
+                  <div className="relative font-medium uppercase tracking-[0.22em] text-white/75 text-xs sm:text-sm lg:text-base">
                     {/* Rond jaune décoratif — débordant hors de l'image, centré sur le R */}
                     <span
                       aria-hidden="true"
-                      className="pointer-events-none absolute -left-8 top-1/2 z-0 h-24 w-24 -translate-y-1/2 rounded-full bg-gold/80 shadow-lg"
+                      className="pointer-events-none absolute -left-6 top-1/2 z-0 h-16 w-16 -translate-y-1/2 rounded-full bg-gold/80 shadow-lg sm:-left-8 sm:h-24 sm:w-24"
                     />
                     <span className="relative z-10">Rentrée 2026-2027</span>
                   </div>
-                  <div className="relative z-10 mt-1 font-semibold text-white text-3xl">
+                  <div className="relative z-10 mt-1 font-semibold text-white text-xl sm:text-2xl lg:text-3xl">
                     Tenues officielles validées par l'établissement
                   </div>
                 </div>
               </div>
-              <div className="absolute -right-4 -top-4 z-0 h-20 w-20 rounded-lg border-2 border-gold/70 bg-white/10 backdrop-blur" />
+              <div className="absolute -right-4 -top-4 z-0 hidden h-20 w-20 rounded-lg border-2 border-gold/70 bg-white/10 backdrop-blur lg:block" />
             </div>
           </div>
         </div>
