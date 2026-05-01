@@ -253,12 +253,12 @@ function MaternellePage() {
           </div>
         </div>
 
-        <DirectorQuote
-          variant="card"
-          className="mt-12"
-          quote="Notre mission première d'Éducation se construit et se renforce jour après jour, au service du Jeune. Porter la blouse de Saint-Jacques-de-Compostelle, c'est rejoindre cette communauté qui travaille avec attachement et dévotion à former des adultes responsables, équilibrés, épanouis et confiants en leur avenir."
-        />
       </section>
+
+      <DirectorQuote
+        variant="hero"
+        quote="Notre mission première d'Éducation se construit et se renforce jour après jour, au service du Jeune. Porter la blouse de Saint-Jacques-de-Compostelle, c'est rejoindre cette communauté qui travaille avec attachement et dévotion à former des adultes responsables, équilibrés, épanouis et confiants en leur avenir."
+      />
 
       <SiteFooter />
     </div>
