@@ -110,8 +110,8 @@ function EnfantsPage() {
               Mes enfants
             </h1>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              Retrouvez ici les profils de vos enfants scolarisés à Saint-Jacques de
-              Compostelle. Mettez à jour leurs mensurations pour des tailles toujours
+              Retrouvez ici les profils de vos enfants scolarisés à
+              Saint-Jacques-de-Compostelle. Mettez à jour leurs mensurations pour des tailles toujours
               adaptées.
             </p>
           </div>

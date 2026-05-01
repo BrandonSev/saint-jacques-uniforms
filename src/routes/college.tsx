@@ -108,8 +108,8 @@ function CollegePage() {
             <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
               Sélection d'uniformes validée par l'établissement pour les classes
               de CM2, 6ᵉ, 5ᵉ et 4ᵉ. Commande simple pour les familles : tous les
-              produits ci-dessous sont autorisés au collège Saint-Jacques de
-              Compostelle.
+              produits ci-dessous sont autorisés au collège
+              Saint-Jacques-de-Compostelle.
             </p>
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">5 produits</span>
