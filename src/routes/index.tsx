@@ -10,16 +10,17 @@ import directorPhoto from "@/assets/emmanuel-ortolo.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Boutique Saint-Jacques-de-Compostelle — Dax" },
+      { title: "Boutique groupe scolaire Saint-Jacques-de-Compostelle — Dax" },
       {
         name: "description",
         content:
-          "Espace familles officiel du Groupe Saint-Jacques-de-Compostelle de Dax. Commandez les uniformes scolaires de la maternelle au lycée.",
+          "Espace familles officiel du Groupe scolaire Saint-Jacques-de-Compostelle de Dax. Commandez les uniformes scolaires de la maternelle au lycée.",
       },
-      { property: "og:title", content: "Boutique Saint-Jacques-de-Compostelle — Dax" },
+      { property: "og:title", content: "Boutique groupe scolaire Saint-Jacques-de-Compostelle — Dax" },
       {
         property: "og:description",
-        content: "Espace familles officiel — commandez les uniformes du Groupe Saint-Jacques-de-Compostelle, Dax.",
+        content:
+          "Espace familles officiel — commandez les uniformes du Groupe scolaire Saint-Jacques-de-Compostelle, Dax.",
       },
     ],
   }),
@@ -89,8 +90,8 @@ function Index() {
                 <span className="h-px w-10 bg-gold" />
               </div>
               <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg mx-auto lg:mx-0">
-                Bienvenue sur l'espace familles du Groupe Saint-Jacques-de-Compostelle de Dax. Commandez les tenues
-                officielles de la maternelle au lycée en quelques clics.
+                Bienvenue sur l'espace familles du Groupe scolaire Saint-Jacques-de-Compostelle de Dax. Commandez les
+                tenues officielles de la maternelle au lycée en quelques clics.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
@@ -176,7 +177,7 @@ function Index() {
                 />
               </div>
             </div>
-            <div className="text-center md:text-left">
+            <div className="text-center">
               <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-primary">
                 Le mot du chef d'établissement
               </span>
