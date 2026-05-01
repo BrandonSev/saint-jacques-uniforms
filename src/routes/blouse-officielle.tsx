@@ -10,6 +10,7 @@ import { useStore } from "@/lib/store";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import bloussePliee from "@/assets/blouse-pliee.jpeg";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
+import directorPhoto from "@/assets/emmanuel-ortolo.jpg";
 
 export const Route = createFileRoute("/blouse-officielle")({
   head: () => ({
@@ -254,26 +255,40 @@ function MaternellePage() {
 
         {/* Mot du chef d'établissement */}
         <figure className="mt-12 rounded-3xl border border-border bg-card p-8 sm:p-12">
-          <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
-            Le mot du chef d'établissement
-          </span>
-          <blockquote className="mt-5 font-display text-lg leading-relaxed text-foreground sm:text-xl">
-            <p>
-              « Notre mission première d'Éducation se construit et se renforce jour après jour, au service du
-              Jeune. Porter la blouse de Saint-Jacques-de-Compostelle, c'est rejoindre cette communauté qui
-              travaille avec attachement et dévotion à former des adultes responsables, équilibrés, épanouis
-              et confiants en leur avenir. »
-            </p>
-          </blockquote>
-          <figcaption className="mt-6 flex items-center gap-3">
-            <span className="h-px w-10 bg-gold" />
-            <div>
-              <div className="text-sm font-semibold text-foreground">Emmanuel ORTOLO</div>
-              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                Chef d'établissement · Coordinateur du Groupe Scolaire
+          <div className="grid items-center gap-8 md:grid-cols-[auto,1fr] md:gap-10">
+            <div className="mx-auto md:mx-0">
+              <div className="relative h-32 w-32 overflow-hidden rounded-full border-4 border-card shadow-[var(--shadow-card)] ring-1 ring-primary/15 sm:h-40 sm:w-40">
+                <img
+                  src={directorPhoto}
+                  alt="Emmanuel ORTOLO, Chef d'établissement"
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
               </div>
             </div>
-          </figcaption>
+            <div>
+              <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
+                Le mot du chef d'établissement
+              </span>
+              <blockquote className="mt-5 font-display text-lg leading-relaxed text-foreground sm:text-xl">
+                <p>
+                  « Notre mission première d'Éducation se construit et se renforce jour après jour, au service du
+                  Jeune. Porter la blouse de Saint-Jacques-de-Compostelle, c'est rejoindre cette communauté qui
+                  travaille avec attachement et dévotion à former des adultes responsables, équilibrés, épanouis
+                  et confiants en leur avenir. »
+                </p>
+              </blockquote>
+              <figcaption className="mt-6 flex items-center gap-3">
+                <span className="h-px w-10 bg-gold" />
+                <div>
+                  <div className="text-sm font-semibold text-foreground">Emmanuel ORTOLO</div>
+                  <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                    Chef d'établissement · Coordinateur du Groupe Scolaire
+                  </div>
+                </div>
+              </figcaption>
+            </div>
+          </div>
         </figure>
       </section>
 
