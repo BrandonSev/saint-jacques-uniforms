@@ -10,6 +10,7 @@ import tshirt from "@/assets/tshirt-valery.jpg";
 import chemise from "@/assets/chemise-candice.jpg";
 import chemiseFille from "@/assets/chemise-candice-fille.png";
 import poloPorte from "@/assets/college-polo-porte.jpg";
+import { PageWatermark } from "@/components/PageWatermark";
 
 export const Route = createFileRoute("/college")({
   head: () => ({
@@ -81,7 +82,8 @@ const products = [
 
 function CollegePage() {
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="relative flex min-h-screen flex-col bg-background/80">
+      <PageWatermark />
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       <div className="border-b border-border bg-card">

@@ -6,6 +6,7 @@ import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { PageWatermark } from "@/components/PageWatermark";
 
 export const Route = createFileRoute("/commandes")({
   head: () => ({ meta: [{ title: "Mes commandes — Espace familles" }] }),
@@ -72,7 +73,8 @@ function CommandesPage() {
 
   if (!user) {
     return (
-      <div className="flex min-h-screen flex-col bg-background">
+      <div className="relative flex min-h-screen flex-col bg-background/80">
+      <PageWatermark />
         <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
         <section className="mx-auto max-w-xl px-4 py-20 text-center">
           <h1 className="text-2xl font-semibold">Espace réservé aux familles</h1>

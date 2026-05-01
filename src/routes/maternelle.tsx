@@ -6,6 +6,7 @@ import { ShellMotif } from "@/components/SchoolMotif";
 import { ProductCard } from "@/components/ProductCard";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import classeBlouses from "@/assets/elementaire-hero.jpg";
+import { PageWatermark } from "@/components/PageWatermark";
 
 export const Route = createFileRoute("/maternelle")({
   head: () => ({
@@ -42,7 +43,8 @@ const products = [
 
 function MaternelleListPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="relative flex min-h-screen flex-col bg-background/80">
+      <PageWatermark />
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       <div className="border-b border-border bg-card">

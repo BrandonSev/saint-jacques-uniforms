@@ -7,6 +7,7 @@ import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore, type Child } from "@/lib/store";
 import { PurchaseHistoryPreview } from "@/components/PurchaseHistoryPreview";
 import { AddChildDialog } from "@/components/AddChildDialog";
+import { PageWatermark } from "@/components/PageWatermark";
 
 export const Route = createFileRoute("/enfants")({
   head: () => ({
@@ -49,7 +50,8 @@ function EnfantsPage() {
 
   if (isAdmin) {
     return (
-      <div className="flex min-h-screen flex-col bg-background">
+      <div className="relative flex min-h-screen flex-col bg-background/80">
+      <PageWatermark />
         <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
         <section className="mx-auto max-w-xl px-4 py-20 text-center">
           <h1 className="text-2xl font-semibold">Espace administrateur</h1>

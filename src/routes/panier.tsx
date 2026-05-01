@@ -7,6 +7,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore, type CartItem, type Child } from "@/lib/store";
 import { sendOrderEmails } from "@/server/email.functions";
+import { PageWatermark } from "@/components/PageWatermark";
 
 export const Route = createFileRoute("/panier")({
   head: () => ({
@@ -87,7 +88,8 @@ function PanierPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="relative flex min-h-screen flex-col bg-background/80">
+      <PageWatermark />
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       <section className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">

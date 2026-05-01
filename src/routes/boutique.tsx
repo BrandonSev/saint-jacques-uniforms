@@ -7,6 +7,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import maternelle from "@/assets/classe-maternelle-blouses.jpg";
 import college from "@/assets/college-polo-porte.jpg";
 import lycee from "@/assets/lycee-uniformes.jpg";
+import { PageWatermark } from "@/components/PageWatermark";
 
 export const Route = createFileRoute("/boutique")({
   head: () => ({
@@ -61,7 +62,8 @@ function NiveauPage() {
   if (authLoading) return null;
   if (isAdmin) return <Navigate to="/admin" />;
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="relative flex min-h-screen flex-col bg-background/80">
+      <PageWatermark />
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" cartCount={0} />
 
       <section className="relative overflow-hidden border-b border-border" style={{ background: "var(--gradient-soft)" }}>

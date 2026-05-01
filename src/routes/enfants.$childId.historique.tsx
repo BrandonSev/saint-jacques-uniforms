@@ -5,6 +5,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useStore } from "@/lib/store";
 import {
+import { PageWatermark } from "@/components/PageWatermark";
   fetchChildPurchaseHistory,
   formatAge,
   formatDateFR,
@@ -55,7 +56,8 @@ function HistoriquePage() {
       : "text-primary";
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="relative flex min-h-screen flex-col bg-background/80">
+      <PageWatermark />
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
       <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
         <Link
