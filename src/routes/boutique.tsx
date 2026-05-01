@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, CreditCard, Sparkles } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif, WaveMotif } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
@@ -82,6 +82,11 @@ function NiveauPage() {
             Chaque niveau dispose d'une sélection d'uniformes validée par l'établissement.
             Cliquez sur la carte correspondante pour découvrir les produits disponibles.
           </p>
+          <div className="mt-6 flex justify-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary shadow-sm">
+              <CreditCard className="h-3.5 w-3.5" /> Paiement en ligne sécurisé
+            </span>
+          </div>
         </div>
       </section>
 
