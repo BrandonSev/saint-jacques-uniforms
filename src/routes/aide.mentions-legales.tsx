@@ -26,7 +26,7 @@ function MentionsPage() {
             <h2 className="text-base font-semibold text-foreground">Éditeur du site</h2>
             <p className="mt-2">
               France Uniformes — Société par actions simplifiée<br />
-              Siège social : France<br />
+              Siège social : 2 Rue Percheronne, 28000 Chartres<br />
               Email : <a href="mailto:info@franceuniformes.fr" className="text-primary hover:underline">info@franceuniformes.fr</a>
             </p>
           </section>
