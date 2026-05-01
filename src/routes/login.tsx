@@ -109,20 +109,36 @@ function LoginPage() {
   };
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
-      <div className="relative flex flex-col bg-background">
-        <div className="pointer-events-none absolute inset-0 text-primary">
-          <ShellMotif className="absolute -left-40 top-20 h-[520px] w-[520px]" opacity={0.045} />
-        </div>
+    <div className="relative min-h-screen overflow-hidden bg-primary">
+      {/* Fond bleu marine façon hero */}
+      <div className="absolute inset-0 -z-10" style={{ background: "var(--gradient-hero)" }} />
+      <div className="absolute inset-0 -z-10 opacity-25 mix-blend-overlay">
+        <img src={classeBlouses} alt="" className="h-full w-full object-cover" loading="lazy" />
+      </div>
+      <div className="absolute inset-0 -z-10 bg-primary-deep/70" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-primary-deep/80 via-primary-deep/60 to-primary-deep/85" />
+      <div className="pointer-events-none absolute inset-0 -z-10 text-white">
+        <ShellMotif className="absolute -left-40 -top-32 h-[700px] w-[700px]" opacity={0.1} />
+        <ShellMotif className="absolute -right-48 -bottom-48 h-[700px] w-[700px]" opacity={0.08} />
+      </div>
+      {/* Blason en filigrane */}
+      <img
+        src={sjcLogo}
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[55rem] w-[55rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-[0.07] mix-blend-screen"
+      />
+
+      <div className="relative flex min-h-screen flex-col">
         <header className="flex items-center justify-between px-6 py-5 lg:px-10">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary text-left rounded-none">
+          <Link to="/" className="inline-flex items-center gap-2 text-sm text-white/80 hover:text-white">
             <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
           </Link>
-          <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Saint-Jacques-de-Compostelle · Dax</span>
+          <span className="hidden text-xs uppercase tracking-[0.2em] text-white/70 font-semibold sm:inline">Saint-Jacques-de-Compostelle · Dax</span>
         </header>
 
-        <div className="relative flex flex-1 items-center justify-center px-6 py-10 lg:px-10">
-          <div className="w-full max-w-md">
+        <div className="relative flex flex-1 items-center justify-center px-4 py-8 sm:px-6 sm:py-12 lg:px-10">
+          <div className="w-full max-w-md rounded-2xl border border-white/15 bg-card/95 p-6 shadow-[var(--shadow-elegant)] backdrop-blur-md sm:p-8">
             <div className="flex flex-col items-center text-center">
               <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-24 w-auto object-contain drop-shadow-sm" />
               <div className="mt-4 h-1 w-12 rounded-full bg-[var(--rouge)]" />
@@ -217,18 +233,13 @@ function LoginPage() {
             </p>
           </div>
         </div>
-      </div>
 
-      <div className="relative hidden lg:block">
-        <img src={classeBlouses} alt="Élèves en classe" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
-        <div className="absolute inset-0 bg-gradient-to-tr from-primary-deep/90 via-primary/50 to-transparent" />
-        <div className="absolute top-10 right-10">
-          <img src={sjcLogo} alt="" className="h-20 w-auto object-contain drop-shadow-2xl opacity-90" />
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 p-12 text-white">
-          <blockquote className="max-w-md font-display text-2xl font-light leading-snug italic">«&nbsp;Une démarche simple et rassurante pour équiper nos élèves chaque&nbsp;rentrée.&nbsp;»</blockquote>
-          <p className="mt-4 text-sm text-white/80">— Direction du Groupe Saint-Jacques-de-Compostelle</p>
-        </div>
+        <footer className="relative px-6 pb-8 text-center lg:px-10">
+          <blockquote className="mx-auto max-w-xl font-display text-base font-light italic leading-snug text-white/85 sm:text-lg">
+            «&nbsp;Une démarche simple et rassurante pour équiper nos élèves chaque&nbsp;rentrée.&nbsp;»
+          </blockquote>
+          <p className="mt-2 text-xs text-white/60">— Direction du Groupe Saint-Jacques-de-Compostelle</p>
+        </footer>
       </div>
     </div>
   );
