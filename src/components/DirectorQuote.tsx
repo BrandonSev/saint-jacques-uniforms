@@ -86,8 +86,8 @@ export function DirectorQuote({ quote, variant = "hero", className = "" }: Props
               </blockquote>
               <figcaption className="mt-8 flex flex-col items-center gap-1">
                 <span className="h-px w-12 bg-gold"></span>
-                <span className="mt-3 font-semibold tracking-wide text-foreground text-lg">Emmanuel ORTOLO</span>
-                <span className="uppercase tracking-[0.18em] text-muted-foreground text-sm">
+                <span className="mt-3 text-sm font-semibold tracking-wide text-foreground">Emmanuel ORTOLO</span>
+                <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
                   Chef d'établissement · Coordinateur du Groupe Scolaire
                 </span>
               </figcaption>

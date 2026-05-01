@@ -67,15 +67,15 @@ function Index() {
                   Boutique des uniformes scolaires
                 </span>
                 <span
-                  className="mt-3 block text-4xl tracking-tight sm:text-5xl lg:leading-[1.02] animate-fade-in lg:text-xl font-medium"
+                  className="mt-3 block text-4xl font-semibold tracking-tight sm:text-5xl lg:text-[3.6rem] lg:leading-[1.02] animate-fade-in"
                   style={{ animationDelay: "120ms", animationFillMode: "both" }}
                 >
-                  Groupe Scolaire Catholique{" "}
+                  Groupe Scolaire{" "}
                   <span className="relative inline-block bg-gradient-to-r from-white via-cream to-gold bg-clip-text text-transparent">
                     Saint-Jacques
                     <span className="absolute -bottom-1 left-0 h-[3px] w-full origin-left rounded-full bg-gradient-to-r from-gold via-gold/70 to-transparent" />
                   </span>{" "}
-                  {"\n"}de Compostelle
+                  de Compostelle
                 </span>
                 <span
                   className="mt-2 block text-2xl font-light tracking-[0.18em] text-white/80 sm:text-3xl animate-fade-in"
@@ -90,7 +90,7 @@ function Index() {
                 <span className="h-px w-10 bg-gold" />
               </div>
               <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg mx-auto lg:mx-0">
-                Bienvenue sur l'espace familles du Groupe scolaire de Saint-Jacques-de-Compostelle de Dax. Commandez les
+                Bienvenue sur l'espace familles du Groupe scolaire Saint-Jacques-de-Compostelle de Dax. Commandez les
                 tenues officielles de la maternelle au lycée en quelques clics.
               </p>
 
