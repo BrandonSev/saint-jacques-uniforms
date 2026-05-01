@@ -1,11 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Info, Plus, Ruler, Trash2, X } from "lucide-react";
+import { Info, Plus, Ruler, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore, type Child } from "@/lib/store";
 import { PurchaseHistoryPreview } from "@/components/PurchaseHistoryPreview";
+import { AddChildDialog } from "@/components/AddChildDialog";
 
 export const Route = createFileRoute("/enfants")({
   head: () => ({
@@ -16,27 +17,6 @@ export const Route = createFileRoute("/enfants")({
   }),
   component: EnfantsPage,
 });
-
-type ChildForm = {
-  prenom: string;
-  nom: string;
-  naissance: string;
-  classe: string;
-  section: string;
-  taille: string;
-  hauteur: string;
-  tour: string;
-  genre: "" | "Fille" | "Garçon";
-};
-
-const empty: ChildForm = { prenom: "", nom: "", naissance: "", classe: "", section: "Maternelle", taille: "", hauteur: "", tour: "", genre: "" };
-
-const classesBySection: Record<string, string[]> = {
-  Maternelle: ["PS", "MS", "GS"],
-  Élémentaire: ["CP", "CE1", "CE2", "CM1"],
-  Collège: ["CM2", "6e", "5e", "4e"],
-  Lycée: ["3e", "2nde", "1re", "Terminale"],
-};
 
 function computeAgeFromISO(iso: string): number | null {
   if (!iso) return null;
