@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useStore, type FamilyParent } from "@/lib/store";
+import { PageWatermark } from "@/components/PageWatermark";
 
 export const Route = createFileRoute("/famille")({
   head: () => ({
@@ -67,7 +68,8 @@ function FamillePage() {
   const displayedFamilyName = profile?.family_name || profile?.nom || "";
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="relative flex min-h-screen flex-col bg-background/80">
+      <PageWatermark />
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
       <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-2">

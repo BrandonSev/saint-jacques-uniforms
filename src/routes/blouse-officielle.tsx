@@ -11,6 +11,7 @@ import { useStore } from "@/lib/store";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import bloussePliee from "@/assets/blouse-pliee.jpeg";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
+import { PageWatermark } from "@/components/PageWatermark";
 
 export const Route = createFileRoute("/blouse-officielle")({
   head: () => ({
@@ -85,7 +86,8 @@ function MaternellePage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="relative flex min-h-screen flex-col bg-background/80">
+      <PageWatermark />
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       {/* Breadcrumb */}
