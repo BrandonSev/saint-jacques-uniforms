@@ -217,11 +217,11 @@ function Index() {
 
 function TrustItem({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
   return (
-    <div className="flex gap-4">
+    <div className="flex flex-col items-center gap-4">
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
         {icon}
       </div>
-      <div>
+      <div className="text-center">
         <h4 className="text-sm font-semibold text-foreground">{title}</h4>
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{text}</p>
       </div>
