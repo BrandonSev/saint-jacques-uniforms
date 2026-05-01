@@ -23,7 +23,7 @@ export function AuthHeroBackground() {
         src={schoolLogo}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[55rem] w-[55rem] -translate-x-1/2 -translate-y-1/2 object-scale-down opacity-[0.08] mix-blend-screen lg:h-[65rem] lg:w-[65rem]"
+        className="pointer-events-none absolute left-1/2 z-0 h-[34rem] w-[34rem] -translate-x-1/2 object-scale-down opacity-[0.14] mix-blend-screen top-auto bottom-[-6rem] sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2 sm:h-[55rem] sm:w-[55rem] sm:opacity-[0.08] lg:h-[65rem] lg:w-[65rem]"
       />
     </>
   );
