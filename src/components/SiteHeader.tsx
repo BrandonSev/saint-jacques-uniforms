@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { LogOut, ShieldCheck, ShoppingBag, User } from "lucide-react";
-import logo from "@/assets/france-uniformes-logo-new.png";
+import logo from "@/assets/france-uniformes-logo-blue.jpeg";
 import logoWhite from "@/assets/france-uniformes-logo-white.png";
 import sjcLogo from "@/assets/saint-jacques-logo-new.png";
 import { SchoolIdentityBar } from "@/components/SchoolMotif";
