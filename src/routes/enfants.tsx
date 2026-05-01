@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Info, Plus, Ruler, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
@@ -10,6 +10,9 @@ import { PurchaseHistoryPreview } from "@/components/PurchaseHistoryPreview";
 export const Route = createFileRoute("/enfants")({
   head: () => ({
     meta: [{ title: "Mes enfants — Espace familles" }],
+  }),
+  validateSearch: (search: Record<string, unknown>): { add?: 1 } => ({
+    add: search.add === 1 || search.add === "1" ? 1 : undefined,
   }),
   component: EnfantsPage,
 });
@@ -52,6 +55,15 @@ function EnfantsPage() {
   const { isAdmin } = useStore();
   const [editing, setEditing] = useState<Child | null>(null);
   const [creating, setCreating] = useState(false);
+  const search = Route.useSearch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (search.add === 1 && user && !isAdmin) {
+      setCreating(true);
+      navigate({ to: "/enfants", search: {} as any, replace: true });
+    }
+  }, [search.add, user, isAdmin, navigate]);
 
   if (authLoading) return null;
 
