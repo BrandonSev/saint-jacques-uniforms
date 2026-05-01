@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore, type CartItem, type Child } from "@/lib/store";
+import { sendOrderEmails } from "@/server/email.functions";
 
 export const Route = createFileRoute("/panier")({
   head: () => ({
@@ -72,8 +73,10 @@ function PanierPage() {
   const onCheckout = async () => {
     setProcessing(true);
     try {
-      const { orderNumber } = await checkout();
+      const { orderId, orderNumber } = await checkout();
       toast.success(`Commande ${orderNumber} enregistrée !`);
+      // Envoi des emails (best-effort, non bloquant)
+      sendOrderEmails({ data: { orderId } }).catch(() => {});
       setConfirmOpen(false);
       navigate({ to: "/enfants" });
     } catch (err: any) {

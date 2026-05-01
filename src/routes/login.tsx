@@ -9,6 +9,7 @@ import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { verifyEstablishmentCode } from "@/server/establishment.functions";
+import { sendWelcome } from "@/server/email.functions";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -125,6 +126,8 @@ function LoginPage() {
         telephone: parsed.data.telephone || null,
         code_etablissement: parsed.data.code_etablissement,
       }).eq("id", u.id);
+      // Email de bienvenue (best-effort)
+      try { await sendWelcome({ data: { email: parsed.data.email, prenom: parsed.data.prenom } }); } catch {}
     }
     toast.success("Espace famille créé !");
     navigate({ to: "/boutique" });
