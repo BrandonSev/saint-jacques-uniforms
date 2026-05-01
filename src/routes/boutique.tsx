@@ -80,10 +80,10 @@ function NiveauPage() {
           </h1>
           <p className="mt-2 text-sm italic text-muted-foreground">Boutique officielle du groupe scolaire de Saint-Jacques-de-Compostelle</p>
           <div className="mx-auto mt-5 h-1 w-16 rounded-full bg-[var(--rouge)]" />
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            Chaque niveau dispose d'une sélection d'uniformes validée par l'établissement.
+          <div className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
+            Chaque niveau dispose d'une <span className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-semibold uppercase tracking-wider text-[10px] text-lime-400 bg-red-500">SÉLECTION EN COURS D'ETUDE PAR L'ÉTABLISSEMENT</span>.
             Cliquez sur la carte correspondante pour découvrir les produits disponibles.
-          </p>
+          </div>
           <div className="mt-6 flex justify-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary shadow-sm">
               <CreditCard className="h-3.5 w-3.5" /> Paiement en ligne sécurisé
