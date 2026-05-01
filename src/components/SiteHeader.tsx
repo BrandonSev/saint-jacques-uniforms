@@ -150,8 +150,8 @@ export function SiteFooter() {
             Boutique officielle des uniformes du groupe scolaire Saint-Jacques-de-Compostelle. Tenues validées par
             l'établissement, confectionnées avec soin pour le quotidien des élèves de la maternelle au collège.
           </p>
-          <div className="mt-4 flex flex-row items-center gap-3 sm:mt-6 sm:flex-col sm:items-start sm:gap-2">
-            <span className="hidden text-[11px] font-medium uppercase tracking-[0.2em] text-white/60 sm:inline">Confectionné par</span>
+          <div className="mt-4 flex flex-col items-start gap-1.5 sm:mt-6 sm:gap-2">
+            <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/60 sm:text-[11px]">Confectionné par</span>
             <img src={logoWhite} alt="France Uniformes" className="h-6 w-auto object-contain sm:h-8" loading="lazy" />
             <span className="text-[10px] uppercase tracking-[0.2em] text-white/60 sm:text-[11px]">Fabrication française</span>
           </div>
