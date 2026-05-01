@@ -139,6 +139,7 @@ function CommandesPage() {
                             <th className="pb-2">Taille</th>
                             <th className="pb-2 text-right">Qté</th>
                             <th className="pb-2 text-right">Total</th>
+                            <th className="pb-2 text-right">Action</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
