@@ -50,7 +50,7 @@ export function ChildPicker({
   if (list.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-border bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">
-        Vous n'avez aucun enfant concerné par cette section.{" "}
+        Vous n'avez aucun&nbsp;enfant concerné par cette section.{" "}
         <Link to="/enfants" className="font-semibold text-primary hover:underline">
           Modifier
         </Link>
