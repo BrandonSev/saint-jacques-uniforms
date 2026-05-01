@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Plus, UserPlus } from "lucide-react";
 import { useStore, type Child } from "@/lib/store";
+import { AddChildDialog } from "@/components/AddChildDialog";
 
 export function ChildPicker({
   value,
@@ -13,6 +15,7 @@ export function ChildPicker({
 }) {
   const { children, user } = useStore();
   const list = filter ? children.filter(filter) : children;
+  const [openAdd, setOpenAdd] = useState(false);
 
   if (!user) {
     return (
@@ -27,12 +30,20 @@ export function ChildPicker({
 
   if (children.length === 0) {
     return (
-      <Link
-        to="/enfants"
-        className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-primary/40 bg-primary/5 px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/10"
-      >
-        <UserPlus className="h-3.5 w-3.5" /> Ajouter un enfant d'abord
-      </Link>
+      <>
+        <button
+          type="button"
+          onClick={() => setOpenAdd(true)}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-primary/40 bg-primary/5 px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/10"
+        >
+          <UserPlus className="h-3.5 w-3.5" /> Ajouter un enfant d'abord
+        </button>
+        <AddChildDialog
+          open={openAdd}
+          onClose={() => setOpenAdd(false)}
+          onCreated={(c) => onChange(c.id)}
+        />
+      </>
     );
   }
 
@@ -48,6 +59,7 @@ export function ChildPicker({
   }
 
   return (
+    <>
     <div className="flex flex-wrap gap-1.5">
       {list.map((c: Child) => (
         <button
@@ -69,14 +81,21 @@ export function ChildPicker({
           {c.prenom}
         </button>
       ))}
-      <Link
-        to="/enfants"
+      <button
+        type="button"
+        onClick={() => setOpenAdd(true)}
         title="Ajouter un nouvel enfant"
         aria-label="Ajouter un nouvel enfant"
         className="inline-flex items-center gap-1 rounded-full border border-dashed border-primary/40 bg-primary/5 px-3 py-1.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
       >
         <Plus className="h-4 w-4" />
-      </Link>
+      </button>
     </div>
+    <AddChildDialog
+      open={openAdd}
+      onClose={() => setOpenAdd(false)}
+      onCreated={(c) => onChange(c.id)}
+    />
+    </>
   );
 }
