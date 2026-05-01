@@ -90,7 +90,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
           )}
 
           <div className="flex items-center gap-2">
-            {showAccount && user && (
+            {showAccount && user && !isAdmin && (
               <Link
                 to="/famille"
                 title="Voir et modifier les coordonnées de la famille"
