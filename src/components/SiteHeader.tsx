@@ -2,7 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { LogOut, ShieldCheck, ShoppingBag, User } from "lucide-react";
 import logo from "@/assets/france-uniformes-logo-blue.jpeg";
 import logoWhite from "@/assets/france-uniformes-logo-white.png";
-import sjcLogo from "@/assets/saint-jacques-logo-full.png";
+import sjcLogo from "@/assets/saint-jacques-logo-new.png";
 import { SchoolIdentityBar } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
@@ -152,12 +152,7 @@ export function SiteFooter() {
           </p>
           <div className="mt-6 flex flex-col gap-2">
             <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/60">Confectionné par</span>
-            <img
-              src={logoWhite}
-              alt="France Uniformes"
-              className="h-12 w-auto object-contain"
-              loading="lazy"
-            />
+            <img src={logoWhite} alt="France Uniformes" className="h-12 w-auto object-contain" loading="lazy" />
             <span className="text-xs text-white/60">Fabrication française</span>
           </div>
         </div>
