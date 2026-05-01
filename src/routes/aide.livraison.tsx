@@ -39,10 +39,12 @@ function LivraisonPage() {
           </Block>
           <Block title="Frais de livraison">
             La livraison à l'établissement est <strong>incluse</strong> pour toutes les commandes.
+            En revanche, les livraisons individuelles engagent un <strong>surcoût</strong> pour chaque
+            commande (frais d'emballage et frais d'expédition).
           </Block>
           <Block title="Retours et échanges">
-            En cas de problème de taille, un échange gratuit est possible dans les 30 jours suivant la
-            réception. Le vêtement doit être propre, non porté et dans son emballage d'origine.
+            En cas de problème de taille, aucun vêtement ne pourra être retourné ni échangé dès lors
+            qu'il a été porté. Le vêtement doit être propre, non porté et dans son emballage d'origine.
             Contactez-nous via la page Contact pour organiser l'échange.
           </Block>
         </div>
