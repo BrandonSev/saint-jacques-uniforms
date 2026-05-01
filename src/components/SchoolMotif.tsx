@@ -2,7 +2,7 @@ import logo from "@/assets/saint-jacques-logo-full.png";
 
 /**
  * Motif circulaire concentrique — accent décoratif sobre,
- * évoquant les cercles du blason Saint-Jacques de Compostelle.
+ * évoquant les cercles du blason Saint-Jacques-de-Compostelle.
  */
 export function ShellMotif({ className = "", opacity = 0.07 }: { className?: string; opacity?: number }) {
   return (
@@ -67,7 +67,7 @@ export function SchoolIdentityBar() {
       </div>
       <div className="relative mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white p-0.5 shadow-sm">
-          <img src={logo} alt="Saint-Jacques de Compostelle" className="h-full w-full object-contain" />
+          <img src={logo} alt="Saint-Jacques-de-Compostelle" className="h-full w-full object-contain" />
         </div>
         <div className="min-w-0 flex-1 leading-tight text-white">
           <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">

@@ -14,11 +14,11 @@ import poloPorte from "@/assets/college-polo-porte.jpg";
 export const Route = createFileRoute("/college")({
   head: () => ({
     meta: [
-      { title: "Uniformes collège — Saint-Jacques de Compostelle" },
+      { title: "Uniformes collège — Saint-Jacques-de-Compostelle" },
       {
         name: "description",
         content:
-          "Polos, pulls et t-shirts validés par l'établissement pour les collégiens du Groupe Saint-Jacques de Compostelle.",
+          "Polos, pulls et t-shirts validés par l'établissement pour les collégiens du Groupe Saint-Jacques-de-Compostelle.",
       },
     ],
   }),
@@ -82,7 +82,7 @@ const products = [
 function CollegePage() {
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       <div className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
@@ -108,8 +108,8 @@ function CollegePage() {
             <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
               Sélection d'uniformes validée par l'établissement pour les classes
               de CM2, 6ᵉ, 5ᵉ et 4ᵉ. Commande simple pour les familles : tous les
-              produits ci-dessous sont autorisés au collège Saint-Jacques de
-              Compostelle.
+              produits ci-dessous sont autorisés au collège
+              Saint-Jacques-de-Compostelle.
             </p>
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">5 produits</span>

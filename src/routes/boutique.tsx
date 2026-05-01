@@ -11,7 +11,7 @@ import lycee from "@/assets/lycee-uniformes.jpg";
 export const Route = createFileRoute("/boutique")({
   head: () => ({
     meta: [
-      { title: "Choisir le niveau — Boutique Saint-Jacques de Compostelle" },
+      { title: "Choisir le niveau — Boutique Saint-Jacques-de-Compostelle" },
       {
         name: "description",
         content:
@@ -62,7 +62,7 @@ function NiveauPage() {
   if (isAdmin) return <Navigate to="/admin" />;
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" cartCount={0} />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" cartCount={0} />
 
       <section className="relative overflow-hidden border-b border-border" style={{ background: "var(--gradient-soft)" }}>
         <div className="pointer-events-none absolute inset-0 text-primary">

@@ -75,7 +75,7 @@
 
 :root {
   --radius: 0.625rem;
-  /* Palette Saint-Jacques de Compostelle : bleu profond du blason,
+  /* Palette Saint-Jacques-de-Compostelle : bleu profond du blason,
      bleu lagon (rayons), crème "coquille" et accent doré pèlerin */
   --background: oklch(0.985 0.008 230);
   --foreground: oklch(0.20 0.06 240);

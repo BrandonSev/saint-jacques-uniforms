@@ -12,7 +12,7 @@ import { useStore } from "@/lib/store";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Espace familles — Saint-Jacques de Compostelle" },
+      { title: "Espace familles — Saint-Jacques-de-Compostelle" },
       { name: "description", content: "Connectez-vous ou créez votre espace famille." },
     ],
   }),
@@ -118,13 +118,13 @@ function LoginPage() {
           <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary text-left rounded-none">
             <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
           </Link>
-          <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Saint-Jacques de Compostelle · Dax</span>
+          <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Saint-Jacques-de-Compostelle · Dax</span>
         </header>
 
         <div className="relative flex flex-1 items-center justify-center px-6 py-10 lg:px-10">
           <div className="w-full max-w-md">
             <div className="flex flex-col items-center text-center">
-              <img src={sjcLogo} alt="Saint-Jacques de Compostelle" className="h-24 w-auto object-contain drop-shadow-sm" />
+              <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-24 w-auto object-contain drop-shadow-sm" />
               <div className="mt-4 h-1 w-12 rounded-full bg-[var(--rouge)]" />
               <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[var(--teal)]/15 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--teal-deep)]">
                 <ShieldCheck className="h-3 w-3" /> Espace sécurisé
@@ -227,7 +227,7 @@ function LoginPage() {
         </div>
         <div className="absolute bottom-0 left-0 right-0 p-12 text-white">
           <blockquote className="max-w-md font-display text-2xl font-light leading-snug italic">«&nbsp;Une démarche simple et rassurante pour équiper nos élèves chaque&nbsp;rentrée.&nbsp;»</blockquote>
-          <p className="mt-4 text-sm text-white/80">— Direction du Groupe Saint-Jacques de Compostelle</p>
+          <p className="mt-4 text-sm text-white/80">— Direction du Groupe Saint-Jacques-de-Compostelle</p>
         </div>
       </div>
     </div>

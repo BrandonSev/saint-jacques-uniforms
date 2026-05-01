@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 
-const SCHOOL_LABEL = "Saint-Jacques de Compostelle — Dax";
+const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
 
 export const Route = createFileRoute("/admin")({

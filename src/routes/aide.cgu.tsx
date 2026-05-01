@@ -4,7 +4,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 export const Route = createFileRoute("/aide/cgu")({
   head: () => ({
     meta: [
-      { title: "Conditions générales — Saint-Jacques de Compostelle" },
+      { title: "Conditions générales — Saint-Jacques-de-Compostelle" },
       { name: "description", content: "Conditions générales d'utilisation et de vente de la boutique d'uniformes." },
     ],
   }),
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/aide/cgu")({
 function CguPage() {
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
       <article className="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
         <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
           <span className="h-px w-6 bg-gold" /> Légal
@@ -26,7 +26,7 @@ function CguPage() {
           <h2 className="mt-8 text-lg font-semibold text-foreground">1. Objet</h2>
           <p className="mt-2 text-sm leading-relaxed">
             Les présentes conditions générales régissent l'utilisation de la boutique en ligne des
-            uniformes du Groupe scolaire Saint-Jacques de Compostelle, exploitée par France Uniformes.
+            uniformes du Groupe scolaire Saint-Jacques-de-Compostelle, exploitée par France Uniformes.
           </p>
 
           <h2 className="mt-6 text-lg font-semibold text-foreground">2. Espace famille</h2>
