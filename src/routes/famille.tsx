@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { Mail, MapPin, Phone, User, Users, Plus, Trash2, Home, Truck, KeyRound, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
@@ -29,7 +30,14 @@ function FamillePage() {
     updateParent,
     removeParent,
     authLoading,
+    isAdmin,
   } = useStore();
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (isAdmin) navigate({ to: "/admin" });
+  }, [isAdmin, navigate]);
+  if (isAdmin) return null;
 
   const [familyName, setFamilyName] = useState("");
   const [savingName, setSavingName] = useState(false);
