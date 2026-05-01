@@ -326,7 +326,7 @@ function ChildGroup({ group, onQty, onRemove }: { group: Group; onQty: (id: stri
   const summary = summarizeItems(group.items) || "Articles";
   return (
     <section className={`overflow-hidden rounded-3xl border ${tone.card} bg-card`}>
-      <header className={`flex flex-wrap items-center justify-between gap-2 border-b ${tone.header} px-4 py-3 sm:px-6 sm:py-4`}>
+      <header className={`flex flex-wrap items-center justify-between gap-2 border-b ${tone.header} px-4 py-3 lg:px-6 lg:py-4`}>
         <div className="flex min-w-0 items-center gap-3">
           <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${tone.badge}`}>
             {group.child?.initials ?? "—"}
@@ -345,30 +345,30 @@ function ChildGroup({ group, onQty, onRemove }: { group: Group; onQty: (id: stri
 
       <ul className="divide-y divide-border">
         {group.items.map((item) => (
-          <li key={item.id} className="flex items-center gap-3 px-4 py-4 sm:gap-4 sm:px-6 sm:py-5">
-            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-border bg-secondary sm:h-20 sm:w-20">
+          <li key={item.id} className="flex items-center gap-3 px-4 py-4 lg:gap-4 lg:px-6 lg:py-5">
+            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-border bg-secondary lg:h-20 lg:w-20">
               <img src={item.image} alt={item.name} className="h-full w-full object-cover" loading="lazy" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="flex items-start justify-between gap-2 sm:gap-3">
+              <div className="flex items-start justify-between gap-2 lg:gap-3">
                 <div className="min-w-0">
-                  <h4 className="text-sm font-semibold leading-tight text-foreground sm:truncate">{item.name}</h4>
+                  <h4 className="text-sm font-semibold leading-tight text-foreground lg:truncate">{item.name}</h4>
                   <p className="mt-0.5 text-xs text-muted-foreground">Réf. {item.ref}</p>
                   <p className="mt-2 text-xs text-foreground/80">
                     Taille <span className="font-semibold">{item.size}</span>
                   </p>
                   {group.child && (
-                    <p className="mt-1 hidden text-[11px] text-muted-foreground sm:block">
+                    <p className="mt-1 hidden text-[11px] text-muted-foreground lg:block">
                       Pour <span className="font-medium text-foreground">{group.child.prenom} {group.child.nom}</span>
                       {group.child.classe && <> · classe {group.child.classe}</>}
                     </p>
                   )}
                 </div>
                 <div className="shrink-0 text-right">
-                  <div className="text-sm font-semibold text-foreground sm:text-base">
+                  <div className="text-sm font-semibold text-foreground lg:text-base">
                     {formatEUR(item.qty * item.price)}
                   </div>
-                  <div className="text-[11px] text-muted-foreground sm:text-xs">{formatEUR(item.price)} l'unité</div>
+                  <div className="text-[11px] text-muted-foreground lg:text-xs">{formatEUR(item.price)} l'unité</div>
                 </div>
               </div>
               <div className="mt-3 flex items-center justify-between">
