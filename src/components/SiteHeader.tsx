@@ -37,7 +37,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                     Espace familles
                   </span>
                   <span className="text-sm font-semibold tracking-tight text-primary">
-                    Saint-Jacques-de-Compostelle
+                    Groupe scolaire Saint-Jacques-de-Compostelle
                   </span>
                 </div>
               </>
