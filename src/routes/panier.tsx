@@ -122,7 +122,7 @@ function PanierPage() {
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
-              <h2 className="text-lg font-semibold tracking-tight text-foreground">Récapitulatif</h2>
+              <h2 className="text-lg font-semibold tracking-tight text-foreground">Récapitulatif de votre commande</h2>
               <dl className="mt-5 space-y-3 text-sm">
                 <Row label={`Articles`} value={`${cartCount}`} />
                 <Row label="Enfants concernés" value={`${groups.length}`} />
