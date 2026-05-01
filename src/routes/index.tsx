@@ -85,9 +85,7 @@ function Index() {
               </h1>
               <div className="mt-6 flex items-center gap-3 justify-center lg:justify-start">
                 <span className="h-px w-10 bg-gold" />
-                <span className="text-[10px] font-medium uppercase tracking-[0.32em] text-white/70">
-                  Depuis 1875
-                </span>
+                <span className="text-[10px] font-medium uppercase tracking-[0.32em] text-white/70">Depuis 1875</span>
                 <span className="h-px w-10 bg-gold" />
               </div>
               <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg mx-auto lg:mx-0">
@@ -166,7 +164,7 @@ function Index() {
           <ShellMotif className="absolute -left-32 -bottom-32 h-[420px] w-[420px]" opacity={0.05} />
           <ShellMotif className="absolute -right-32 -top-32 h-[420px] w-[420px]" opacity={0.05} />
         </div>
-        <div className="relative mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 text-center">
+        <div className="relative mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <div className="grid items-center justify-center gap-10 md:grid-cols-[auto,1fr] md:gap-12">
             <div className="mx-auto md:mx-0">
               <div className="relative h-40 w-40 overflow-hidden rounded-full border-4 border-card shadow-[var(--shadow-card)] ring-1 ring-primary/15 sm:h-48 sm:w-48">
@@ -193,10 +191,10 @@ function Index() {
                 </svg>
                 <blockquote className="mt-5 font-display text-lg leading-relaxed text-foreground sm:text-xl">
                   <p>
-                    « Toutes les actions menées dans notre Groupe scolaire ont pour finalité essentielle de
-                    contribuer à l'épanouissement et à la réussite du Jeune. La tenue de Saint-Jacques-de-Compostelle
-                    s'inscrit pleinement dans ce projet : elle incarne notre Éducation Intégrale, le sens de
-                    l'appartenance à notre communauté et l'attention quotidienne portée à chaque élève. »
+                    « Toutes les actions menées dans notre Groupe scolaire ont pour finalité essentielle de contribuer à
+                    l'épanouissement et à la réussite du Jeune. La tenue de Saint-Jacques-de-Compostelle s'inscrit
+                    pleinement dans ce projet : elle incarne notre Éducation Intégrale, le sens de l'appartenance à
+                    notre communauté et l'attention quotidienne portée à chaque élève. »
                   </p>
                 </blockquote>
                 <figcaption className="mt-6 flex flex-col items-center gap-1 md:items-start">
