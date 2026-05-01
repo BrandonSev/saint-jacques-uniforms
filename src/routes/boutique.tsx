@@ -44,7 +44,7 @@ const levels = [
     range: "CM2 · 6e · 5e · 4e",
     image: college,
     href: "/college" as const,
-    accent: "Polos, pulls, chemises, tee-shirts",
+    accent: "Polo, pull, chemise, tee-shirt",
   },
   {
     id: "lycee",
