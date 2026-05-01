@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { LogIn, LogOut, ShieldCheck, ShoppingBag, User } from "lucide-react";
+import { LogIn, LogOut, Menu, ShieldCheck, ShoppingBag, User, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import logo from "@/assets/france-uniformes-logo-blue.jpeg";
 import logoWhite from "@/assets/france-uniformes-logo-white.svg";
 import sjcLogo from "@/assets/saint-jacques-logo-new.png";
@@ -19,6 +20,13 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
   const navigate = useNavigate();
   const famName = profile?.family_name || profile?.nom;
   const familyLabel = famName ? `Famille ${famName}` : (user?.email ?? "Mon compte");
+  const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
   const handleSignOut = async () => {
     await signOut();
     toast.success("Déconnecté");
@@ -32,7 +40,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
             {schoolName ? (
               <>
                 <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-10 w-auto object-contain" />
-                <div className="hidden flex-col leading-tight sm:flex">
+                <div className="hidden flex-col leading-tight lg:flex">
                   <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                     Espace familles
                   </span>
@@ -52,7 +60,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
           </Link>
 
           {schoolName && user && (
-            <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
+            <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground lg:flex">
               {isAdmin ? (
                 <Link
                   to="/admin"
@@ -94,7 +102,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
               <Link
                 to="/famille"
                 title="Voir et modifier les coordonnées de la famille"
-                className="hidden h-10 items-center gap-2 rounded-full border border-border bg-slate-200 px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted sm:inline-flex"
+                className="hidden h-10 items-center gap-2 rounded-full border border-border bg-slate-200 px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted lg:inline-flex"
                 activeProps={{ className: "ring-2 ring-primary/40" }}
               >
                 <User className="h-4 w-4" />
@@ -106,7 +114,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                 type="button"
                 onClick={handleSignOut}
                 title="Se déconnecter"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-muted-foreground hover:text-[var(--rouge)] hover:bg-muted"
+                className="hidden h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-muted-foreground hover:text-[var(--rouge)] hover:bg-muted lg:inline-flex"
               >
                 <LogOut className="h-4 w-4" />
               </button>
@@ -117,7 +125,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                 className="relative inline-flex h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground shadow-[var(--shadow-card)] transition-colors hover:bg-primary/90"
               >
                 <ShoppingBag className="h-4 w-4" />
-                <span className="hidden sm:inline">Panier</span>
+                <span className="hidden lg:inline">Panier</span>
                 {count > 0 && (
                   <span className="absolute -right-1.5 -top-1.5 inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-[var(--rouge)] px-1.5 text-[12px] font-bold text-white shadow-md ring-2 ring-white">
                     {count}
@@ -135,11 +143,67 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                 <span className="hidden sm:inline">Connexion</span>
               </Link>
             )}
+            {schoolName && user && (
+              <button
+                type="button"
+                onClick={() => setMenuOpen((v) => !v)}
+                aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+                aria-expanded={menuOpen}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground hover:bg-muted lg:hidden"
+              >
+                {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
+            )}
           </div>
         </div>
+
+        {schoolName && user && menuOpen && (
+          <div className="border-t border-border bg-background/95 backdrop-blur-md lg:hidden">
+            <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3 text-sm font-medium sm:px-6">
+              {isAdmin ? (
+                <MenuLink to="/admin" onClick={() => setMenuOpen(false)} icon={<ShieldCheck className="h-4 w-4" />}>
+                  Administration
+                </MenuLink>
+              ) : (
+                <>
+                  <MenuLink to="/boutique" onClick={() => setMenuOpen(false)}>Boutique</MenuLink>
+                  <MenuLink to="/enfants" onClick={() => setMenuOpen(false)}>Mes enfants</MenuLink>
+                  <MenuLink to="/commandes" onClick={() => setMenuOpen(false)}>Mes commandes</MenuLink>
+                  <div className="my-2 h-px bg-border" />
+                  <MenuLink to="/famille" onClick={() => setMenuOpen(false)} icon={<User className="h-4 w-4" />}>
+                    {familyLabel}
+                  </MenuLink>
+                </>
+              )}
+              <button
+                type="button"
+                onClick={() => { setMenuOpen(false); handleSignOut(); }}
+                className="mt-1 inline-flex h-11 items-center gap-2 rounded-lg px-3 text-left text-foreground hover:bg-muted hover:text-[var(--rouge)]"
+              >
+                <LogOut className="h-4 w-4" /> Se déconnecter
+              </button>
+            </nav>
+          </div>
+        )}
       </header>
       {/* SchoolIdentityBar retiré : faisait doublon avec le header */}
     </>
+  );
+}
+
+function MenuLink({
+  to, onClick, icon, children,
+}: { to: string; onClick: () => void; icon?: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      className="inline-flex h-11 items-center gap-2 rounded-lg px-3 text-foreground hover:bg-muted"
+      activeProps={{ className: "bg-primary/10 text-primary" }}
+    >
+      {icon}
+      <span className="truncate">{children}</span>
+    </Link>
   );
 }
 
