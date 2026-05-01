@@ -55,11 +55,6 @@ export function ProductCard({ product, sizes, defaultSize, childFilter }: Props)
         className="h-full w-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.03]"
         loading="lazy"
       />
-      {product.tag && (
-        <span className="absolute left-4 top-4 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary backdrop-blur">
-          {product.tag}
-        </span>
-      )}
     </div>
   );
 

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
-import { ChevronRight, ShieldCheck } from "lucide-react";
+import { ChevronRight, CreditCard, ShieldCheck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { ProductCard } from "@/components/ProductCard";
@@ -75,6 +75,9 @@ function MaternelleListPage() {
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles 4 → 18 ans</span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison à l'établissement</span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison à domicile</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--teal)]/30 bg-[var(--teal)]/10 px-3 py-1.5 font-semibold text-[var(--teal-deep)]">
+                <CreditCard className="h-3 w-3" /> Paiement en ligne sécurisé
+              </span>
             </div>
           </div>
           <div className="relative h-64 overflow-hidden rounded-3xl border border-border lg:h-80">
