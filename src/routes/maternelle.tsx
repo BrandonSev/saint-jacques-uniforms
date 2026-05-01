@@ -6,6 +6,7 @@ import { ShellMotif } from "@/components/SchoolMotif";
 import { ProductCard } from "@/components/ProductCard";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import classeBlouses from "@/assets/elementaire-hero.jpg";
+import courMaternelle from "@/assets/maternelle-cour-blouses.jpg";
 import { PageWatermark } from "@/components/PageWatermark";
 
 export const Route = createFileRoute("/maternelle")({
@@ -83,8 +84,35 @@ function MaternelleListPage() {
             </div>
           </div>
           <div className="relative h-64 overflow-hidden rounded-3xl border border-border lg:h-80">
-            <img src={classeBlouses} alt="Élèves en blouse" className="h-full w-full object-cover" loading="lazy" />
+            <img src={courMaternelle} alt="Enfants de maternelle en blouse officielle dans la cour de l'école Saint-Jacques-de-Compostelle" className="h-full w-full object-cover" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/40 to-transparent" />
+          </div>
+        </div>
+      </section>
+
+      {/* Bannière illustrée */}
+      <section className="relative overflow-hidden border-b border-border bg-card">
+        <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="relative overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-card)]">
+            <img
+              src={courMaternelle}
+              alt="Élèves de maternelle en blouse SJDC dans la cour de récréation"
+              className="h-72 w-full object-cover sm:h-96 lg:h-[28rem]"
+              loading="lazy"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/40 via-transparent to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-card/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary backdrop-blur">
+                École maternelle
+              </span>
+              <h2 className="mt-2 max-w-2xl text-2xl font-semibold tracking-tight text-white drop-shadow sm:text-3xl">
+                La blouse officielle, portée fièrement chaque jour
+                </h2>
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/90 drop-shadow">
+                Confort, identité et sentiment d'appartenance — pensée pour accompagner
+                les enfants de la PS au CM1.
+              </p>
+            </div>
           </div>
         </div>
       </section>
