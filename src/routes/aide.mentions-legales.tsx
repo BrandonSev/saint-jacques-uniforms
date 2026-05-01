@@ -27,7 +27,7 @@ function MentionsPage() {
             <p className="mt-2">
               France Uniformes — Société par actions simplifiée<br />
               Siège social : France<br />
-              Email : <a href="mailto:contact@france-uniformes.fr" className="text-primary hover:underline">contact@france-uniformes.fr</a>
+              Email : <a href="mailto:info@franceuniformes.fr" className="text-primary hover:underline">info@franceuniformes.fr</a>
             </p>
           </section>
           <section>
