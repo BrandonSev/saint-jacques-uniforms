@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
-import { ChevronRight, ShieldCheck } from "lucide-react";
+import { ChevronRight, CreditCard, ShieldCheck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import lycee from "@/assets/lycee-uniformes.jpg";
 
@@ -33,6 +33,11 @@ function LyceePage() {
         <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
           <ShieldCheck className="h-3 w-3" /> Prochainement !
         </span>
+        <div className="mt-3 flex justify-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--teal)]/30 bg-[var(--teal)]/10 px-3 py-1.5 text-xs font-semibold text-[var(--teal-deep)]">
+            <CreditCard className="h-3 w-3" /> Paiement en ligne sécurisé
+          </span>
+        </div>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Lycée — Prochainement !
         </h1>
