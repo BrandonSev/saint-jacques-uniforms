@@ -28,6 +28,7 @@ export type Profile = {
   code_postal: string | null;
   ville: string | null;
   family_name: string | null;
+  code_etablissement: string | null;
 };
 
 export type FamilyParent = {
