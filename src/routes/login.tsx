@@ -9,6 +9,7 @@ import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { verifyEstablishmentCode } from "@/server/establishment.functions";
+import { sendWelcome } from "@/server/email.functions";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
