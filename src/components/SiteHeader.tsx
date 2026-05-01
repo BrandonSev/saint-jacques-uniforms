@@ -147,7 +147,7 @@ export function SiteFooter() {
             </div>
           </div>
           <p className="mt-5 max-w-md text-sm leading-relaxed text-white/80">
-            Boutique officielle des uniformes du groupe Saint-Jacques-de-Compostelle. Tenues validées par
+            Boutique officielle des uniformes du groupe scolaire Saint-Jacques-de-Compostelle. Tenues validées par
             l'établissement, confectionnées avec soin pour le quotidien des élèves de la maternelle au collège.
           </p>
           <div className="mt-6 flex flex-col items-start gap-2">
