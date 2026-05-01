@@ -11,6 +11,7 @@ import { useStore } from "@/lib/store";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import bloussePliee from "@/assets/blouse-pliee.jpeg";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
+import margueritePortrait from "@/assets/marguerite-de-perignon.jpg";
 import { PageWatermark } from "@/components/PageWatermark";
 
 export const Route = createFileRoute("/blouse-officielle")({
@@ -254,6 +255,41 @@ function MaternellePage() {
             </div>
           </div>
         </div>
+
+        {/* Mot de la cheffe d'établissement du 1er degré */}
+        <figure className="mt-12 overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-card)]">
+          <div className="grid items-stretch gap-0 md:grid-cols-[auto,1fr]">
+            <div className="relative h-64 w-full md:h-full md:w-64">
+              <img
+                src={margueritePortrait}
+                alt="Marguerite de Pérignon, Cheffe d'établissement du 1er degré"
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div className="flex flex-col justify-center p-8 sm:p-10">
+              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
+                Le mot de la cheffe d'établissement — 1er degré
+              </span>
+              <blockquote className="mt-5 font-display text-lg leading-relaxed text-foreground sm:text-xl">
+                <p>
+                  « J'ai choisi avec soin la couleur bleu Riviera et chaque détail de cette
+                  blouse pour qu'elle accompagne nos élèves avec élégance et fierté, dans la
+                  douceur du quotidien comme dans les grands moments de leur scolarité. »
+                </p>
+              </blockquote>
+              <figcaption className="mt-6 flex items-center gap-3">
+                <span className="h-px w-10 bg-gold" />
+                <div>
+                  <div className="text-sm font-semibold text-foreground">Marguerite de Pérignon</div>
+                  <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                    Cheffe d'établissement · 1er degré
+                  </div>
+                </div>
+              </figcaption>
+            </div>
+          </div>
+        </figure>
 
       </section>
 
