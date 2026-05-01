@@ -84,7 +84,7 @@ function MaternelleListPage() {
             </div>
           </div>
           <div className="relative h-64 overflow-hidden rounded-3xl border border-border lg:h-80">
-            <img src={courMaternelle} alt="Enfants de maternelle en blouse officielle dans la cour de l'école Saint-Jacques-de-Compostelle" className="h-full w-full object-cover" loading="lazy" />
+            <img src={classeBlouses} alt="Élèves en blouse" className="h-full w-full object-cover" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/40 to-transparent" />
           </div>
         </div>
