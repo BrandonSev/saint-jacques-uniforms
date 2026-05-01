@@ -11,7 +11,7 @@ export const Route = createFileRoute("/enfants")({
   head: () => ({
     meta: [{ title: "Mes enfants — Espace familles" }],
   }),
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): { add?: 1 } => ({
     add: search.add === 1 || search.add === "1" ? 1 : undefined,
   }),
   component: EnfantsPage,
