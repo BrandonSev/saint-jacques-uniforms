@@ -5,7 +5,7 @@ import { Ruler } from "lucide-react";
 export const Route = createFileRoute("/aide/guide-tailles")({
   head: () => ({
     meta: [
-      { title: "Guide des tailles — Saint-Jacques de Compostelle" },
+      { title: "Guide des tailles — Saint-Jacques-de-Compostelle" },
       { name: "description", content: "Tableau des tailles et conseils de mesure pour les uniformes." },
     ],
   }),
@@ -27,7 +27,7 @@ const rows = [
 function GuideTaillesPage() {
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
       <section className="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
         <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
           <span className="h-px w-6 bg-gold" /> Aide

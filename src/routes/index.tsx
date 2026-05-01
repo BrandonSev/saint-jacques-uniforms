@@ -9,16 +9,16 @@ import schoolLogo from "@/assets/saint-jacques-blason.png";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Boutique Saint-Jacques de Compostelle — Dax" },
+      { title: "Boutique Saint-Jacques-de-Compostelle — Dax" },
       {
         name: "description",
         content:
-          "Espace familles officiel du Groupe Saint-Jacques de Compostelle de Dax. Commandez les uniformes scolaires de la maternelle au lycée.",
+          "Espace familles officiel du Groupe Saint-Jacques-de-Compostelle de Dax. Commandez les uniformes scolaires de la maternelle au lycée.",
       },
-      { property: "og:title", content: "Boutique Saint-Jacques de Compostelle — Dax" },
+      { property: "og:title", content: "Boutique Saint-Jacques-de-Compostelle — Dax" },
       {
         property: "og:description",
-        content: "Espace familles officiel — commandez les uniformes du Groupe Saint-Jacques de Compostelle, Dax.",
+        content: "Espace familles officiel — commandez les uniformes du Groupe Saint-Jacques-de-Compostelle, Dax.",
       },
     ],
   }),
@@ -33,7 +33,7 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary">
@@ -90,7 +90,7 @@ function Index() {
                 <span className="h-px w-10 bg-gold" />
               </div>
               <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg mx-auto lg:mx-0">
-                Bienvenue sur l'espace familles du Groupe Saint-Jacques de Compostelle de Dax. Commandez les tenues
+                Bienvenue sur l'espace familles du Groupe Saint-Jacques-de-Compostelle de Dax. Commandez les tenues
                 officielles de la maternelle au lycée en quelques clics.
               </p>
 

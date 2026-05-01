@@ -85,7 +85,7 @@ function PanierPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       <section className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="pointer-events-none absolute -top-10 left-0 -z-0 h-80 w-80 text-primary">

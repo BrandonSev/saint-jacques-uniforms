@@ -5,7 +5,7 @@ import { Mail, Phone, MapPin, Clock, Globe } from "lucide-react";
 export const Route = createFileRoute("/aide/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Saint-Jacques de Compostelle" },
+      { title: "Contact — Saint-Jacques-de-Compostelle" },
       { name: "description", content: "Coordonnées de contact de l'établissement et de la boutique d'uniformes." },
     ],
   }),
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/aide/contact")({
 function ContactPage() {
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
       <section className="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
         <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
           <span className="h-px w-6 bg-gold" /> Aide

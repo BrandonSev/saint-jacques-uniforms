@@ -4,7 +4,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 export const Route = createFileRoute("/aide/mentions-legales")({
   head: () => ({
     meta: [
-      { title: "Mentions légales — Saint-Jacques de Compostelle" },
+      { title: "Mentions légales — Saint-Jacques-de-Compostelle" },
       { name: "description", content: "Informations légales relatives à l'éditeur et à l'hébergeur du site." },
     ],
   }),
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/aide/mentions-legales")({
 function MentionsPage() {
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
       <article className="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
         <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
           <span className="h-px w-6 bg-gold" /> Légal

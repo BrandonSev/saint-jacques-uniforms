@@ -30,13 +30,13 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
           <Link to="/" className="flex items-center gap-3">
             {schoolName ? (
               <>
-                <img src={sjcLogo} alt="Saint-Jacques de Compostelle" className="h-10 w-auto object-contain" />
+                <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-10 w-auto object-contain" />
                 <div className="hidden flex-col leading-tight sm:flex">
                   <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                     Espace familles
                   </span>
                   <span className="text-sm font-semibold tracking-tight text-primary">
-                    Saint-Jacques de Compostelle
+                    Saint-Jacques-de-Compostelle
                   </span>
                 </div>
               </>
@@ -139,14 +139,14 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 text-white sm:px-6 lg:grid-cols-4 lg:px-8">
         <div className="lg:col-span-2">
           <div className="flex items-center gap-4">
-            <img src={sjcLogo} alt="Saint-Jacques de Compostelle" className="h-16 w-auto object-contain drop-shadow" />
+            <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-16 w-auto object-contain drop-shadow" />
             <div>
-              <div className="text-base font-semibold">Saint-Jacques de Compostelle</div>
+              <div className="text-base font-semibold">Saint-Jacques-de-Compostelle</div>
               <div className="mt-0.5 text-xs text-white/70">Groupe scolaire catholique · Dax</div>
             </div>
           </div>
           <p className="mt-5 max-w-md text-sm leading-relaxed text-white/80">
-            Boutique officielle des uniformes du groupe Saint-Jacques de Compostelle. Tenues validées par
+            Boutique officielle des uniformes du groupe Saint-Jacques-de-Compostelle. Tenues validées par
             l'établissement, confectionnées avec soin pour le quotidien des élèves de la maternelle au collège.
           </p>
           <div className="mt-5 flex items-center gap-3 text-xs text-white/60">

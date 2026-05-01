@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/reset-password")({
   head: () => ({
     meta: [
-      { title: "Nouveau mot de passe — Saint-Jacques de Compostelle" },
+      { title: "Nouveau mot de passe — Saint-Jacques-de-Compostelle" },
       { name: "description", content: "Définissez un nouveau mot de passe pour votre espace famille." },
     ],
   }),
@@ -72,7 +72,7 @@ function ResetPasswordPage() {
       <div className="relative flex flex-1 items-center justify-center px-6 py-10 lg:px-10">
         <div className="w-full max-w-md">
           <div className="flex flex-col items-center text-center">
-            <img src={sjcLogo} alt="Saint-Jacques de Compostelle" className="h-24 w-auto object-contain drop-shadow-sm" />
+            <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-24 w-auto object-contain drop-shadow-sm" />
             <div className="mt-4 h-1 w-12 rounded-full bg-[var(--rouge)]" />
             <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[var(--teal)]/15 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--teal-deep)]">
               <ShieldCheck className="h-3 w-3" /> Réinitialisation

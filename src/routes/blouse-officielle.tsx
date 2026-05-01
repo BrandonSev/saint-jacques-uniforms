@@ -18,7 +18,7 @@ export const Route = createFileRoute("/blouse-officielle")({
       {
         name: "description",
         content:
-          "Blouse scolaire officielle du Groupe Saint-Jacques de Compostelle, portée au quotidien par les élèves.",
+          "Blouse scolaire officielle du Groupe Saint-Jacques-de-Compostelle, portée au quotidien par les élèves.",
       },
     ],
   }),
@@ -85,7 +85,7 @@ function MaternellePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       {/* Breadcrumb */}
       <div className="border-b border-border bg-card">
@@ -240,7 +240,7 @@ function MaternellePage() {
             </div>
             <div className="space-y-4 text-sm leading-relaxed text-foreground/80 lg:col-span-2">
               <p>
-                La blouse de Saint-Jacques de Compostelle est portée par tous les élèves de maternelle et d'élémentaire. Sa coupe à la fois ajustée et ample, permet une grande liberté de mouvement tout en offrant une apparence harmonieuse. 
+                La blouse de Saint-Jacques-de-Compostelle est portée par tous les élèves de maternelle et d'élémentaire. Sa coupe à la fois ajustée et ample, permet une grande liberté de mouvement tout en offrant une apparence harmonieuse. 
               </p>
               <p>
                 Elle protège les vêtements pendant les activités du quotidien.

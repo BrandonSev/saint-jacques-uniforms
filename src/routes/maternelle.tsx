@@ -10,7 +10,7 @@ import classeBlouses from "@/assets/elementaire-hero.jpg";
 export const Route = createFileRoute("/maternelle")({
   head: () => ({
     meta: [
-      { title: "Uniformes Maternelle & Élémentaire — Saint-Jacques de Compostelle" },
+      { title: "Uniformes Maternelle & Élémentaire — Saint-Jacques-de-Compostelle" },
       {
         name: "description",
         content:
@@ -43,7 +43,7 @@ const products = [
 function MaternelleListPage() {
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       <div className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">

@@ -6,7 +6,7 @@ import lycee from "@/assets/lycee-uniformes.jpg";
 
 export const Route = createFileRoute("/lycee")({
   head: () => ({
-    meta: [{ title: "Uniformes lycée — Saint-Jacques de Compostelle" }],
+    meta: [{ title: "Uniformes lycée — Saint-Jacques-de-Compostelle" }],
   }),
   component: () => (
     <RequireAuth>
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/lycee")({
 function LyceePage() {
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader schoolName="Saint-Jacques de Compostelle — Dax" />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
       <div className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
           <Link to="/boutique" className="hover:text-primary">Boutique</Link>
