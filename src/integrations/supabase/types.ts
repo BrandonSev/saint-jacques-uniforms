@@ -134,6 +134,48 @@ export type Database = {
         }
         Relationships: []
       }
+      order_incidents: {
+        Row: {
+          created_at: string
+          description: string
+          eligible: boolean
+          id: string
+          incident_type: string
+          order_id: string
+          order_item_id: string
+          quantity: number
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          eligible?: boolean
+          id?: string
+          incident_type: string
+          order_id: string
+          order_item_id: string
+          quantity?: number
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          eligible?: boolean
+          id?: string
+          incident_type?: string
+          order_id?: string
+          order_item_id?: string
+          quantity?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           child_classe: string | null
