@@ -105,30 +105,31 @@ function MaternelleListPage() {
               />
             ))}
           </div>
-          <div className="relative hidden overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-card)] lg:block aspect-[16/7]">
-            <img
-              src={courMaternelle}
-              alt="Élèves de maternelle en blouse SJDC dans la cour de récréation"
-              className="h-full w-full"
-              loading="lazy"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/50 via-transparent to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-card/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary backdrop-blur">
-                École maternelle
-              </span>
-              <h2 className="mt-2 max-w-md text-2xl font-semibold tracking-tight text-white drop-shadow">
-                Portée fièrement chaque jour
-              </h2>
-              <p className="mt-2 max-w-md text-sm leading-relaxed text-white/90 drop-shadow">
-                Confort, identité et sentiment d'appartenance — pensée pour accompagner
-                les enfants de la PS au CM1.
-              </p>
+          <div className="hidden flex-col gap-6 lg:flex">
+            <div className="relative overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-card)] aspect-[16/7]">
+              <img
+                src={courMaternelle}
+                alt="Élèves de maternelle en blouse SJDC dans la cour de récréation"
+                className="h-full w-full"
+                loading="lazy"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/50 via-transparent to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-card/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary backdrop-blur">
+                  École maternelle
+                </span>
+                <h2 className="mt-2 max-w-md text-2xl font-semibold tracking-tight text-white drop-shadow">
+                  Portée fièrement chaque jour
+                </h2>
+                <p className="mt-2 max-w-md text-sm leading-relaxed text-white/90 drop-shadow">
+                  Confort, identité et sentiment d'appartenance — pensée pour accompagner
+                  les enfants de la PS au CM1.
+                </p>
+              </div>
             </div>
-          </div>
 
-          {/* Mot de la cheffe d'établissement — condensé */}
-          <figure className="lg:col-span-2 overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]">
+            {/* Mot de la cheffe d'établissement — condensé */}
+            <figure className="overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]">
             <div className="flex flex-col gap-0 sm:flex-row sm:items-stretch">
               <img
                 src={margueritePortrait}
@@ -155,7 +156,8 @@ function MaternelleListPage() {
                 </figcaption>
               </div>
             </div>
-          </figure>
+            </figure>
+          </div>
         </div>
       </section>
 
