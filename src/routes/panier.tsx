@@ -2,10 +2,11 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useMemo, useState } from "react";
 import { AlertTriangle, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
-import { useStore, type CartItem, type Child } from "@/lib/store";
+import { useStore, type CartItem, type Child, type Profile } from "@/lib/store";
 import { sendOrderEmails } from "@/server/email.functions";
 import { PageWatermark } from "@/components/PageWatermark";
 
@@ -163,6 +164,7 @@ function PanierPage() {
           subtotal={subtotal}
           processing={processing}
           sizeConfirmed={sizeConfirmed}
+          profile={profile}
           onToggleSize={() => setSizeConfirmed((v) => !v)}
           onClose={() => !processing && setConfirmOpen(false)}
           onConfirm={onCheckout}
@@ -175,16 +177,20 @@ function PanierPage() {
 }
 
 function ConfirmModal({
-  groups, subtotal, processing, sizeConfirmed, onToggleSize, onClose, onConfirm,
+  groups, subtotal, processing, sizeConfirmed, profile, onToggleSize, onClose, onConfirm,
 }: {
   groups: Group[];
   subtotal: number;
   processing: boolean;
   sizeConfirmed: boolean;
+  profile: Profile | null;
   onToggleSize: () => void;
   onClose: () => void;
   onConfirm: () => void;
 }) {
+  const fullName = profile ? `${profile.civilite ?? ""} ${profile.prenom ?? ""} ${profile.nom ?? ""}`.trim() : "";
+  const cityLine = [profile?.code_postal, profile?.ville].filter(Boolean).join(" ");
+  const hasAddress = Boolean(profile?.adresse || cityLine);
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
       <div onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl overflow-hidden rounded-2xl bg-card shadow-2xl">
@@ -199,6 +205,25 @@ function ConfirmModal({
         </header>
 
         <div className="max-h-[55vh] overflow-y-auto px-6 py-5">
+          <div className="mb-4 flex items-start gap-3 rounded-xl border border-border bg-secondary/40 px-4 py-3 text-xs text-foreground">
+            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <div className="min-w-0">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Adresse de livraison</p>
+              {hasAddress ? (
+                <div className="mt-1 leading-relaxed">
+                  {fullName && <p className="font-semibold text-foreground">{fullName}</p>}
+                  {profile?.adresse && <p>{profile.adresse}</p>}
+                  {cityLine && <p>{cityLine}</p>}
+                </div>
+              ) : (
+                <p className="mt-1 text-muted-foreground">
+                  Aucune adresse renseignée.{" "}
+                  <Link to="/famille" className="font-semibold text-primary hover:underline">Ajouter une adresse</Link>
+                </p>
+              )}
+            </div>
+          </div>
+
           <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <div>
