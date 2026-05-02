@@ -35,7 +35,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
   return (
     <>
       <header className="sticky top-0 z-40 w-full border-b border-border bg-background/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-16 w-full items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link to="/" className="flex items-center gap-3">
             {schoolName ? (
               <>
@@ -159,7 +159,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
 
         {schoolName && user && menuOpen && (
           <div className="border-t border-border bg-background/95 backdrop-blur-md xl:hidden">
-            <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3 text-sm font-medium sm:px-6">
+            <nav className="mx-auto flex w-full flex-col gap-1 px-4 py-3 text-sm font-medium sm:px-6">
               {isAdmin ? (
                 <MenuLink to="/admin" onClick={() => setMenuOpen(false)} icon={<ShieldCheck className="h-4 w-4" />}>
                   Administration
@@ -211,7 +211,7 @@ export function SiteFooter() {
   const { isAdmin } = useStore();
   return (
     <footer className="mt-auto border-t border-border" style={{ background: "var(--gradient-hero)" }}>
-      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-8 text-white sm:px-6 sm:py-14 sm:gap-8 lg:grid-cols-4 lg:px-8">
+      <div className="mx-auto grid w-full grid-cols-2 gap-6 px-4 py-8 text-white sm:px-6 sm:py-14 sm:gap-8 lg:grid-cols-4 lg:px-8">
         <div className="col-span-2 lg:col-span-2">
           <div className="flex items-center gap-3 sm:gap-4">
             <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-12 w-auto object-contain drop-shadow sm:h-16" />
@@ -299,7 +299,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-white/15">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-1 px-4 py-3 text-[11px] text-white/70 sm:flex-row sm:gap-2 sm:px-6 sm:py-5 sm:text-xs lg:px-8">
+        <div className="mx-auto flex w-full flex-col items-center justify-between gap-1 px-4 py-3 text-[11px] text-white/70 sm:flex-row sm:gap-2 sm:px-6 sm:py-5 sm:text-xs lg:px-8">
           <span className="text-center">© {new Date().getFullYear()} France Uniformes · Tous droits réservés</span>
           <span>Paiement sécurisé</span>
         </div>

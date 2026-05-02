@@ -65,7 +65,7 @@ export function SchoolIdentityBar() {
       <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 text-white">
         <ShellMotif className="absolute -right-20 -top-10 h-[280px] w-[280px]" opacity={0.18} />
       </div>
-      <div className="relative mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
+      <div className="relative mx-auto flex w-full items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white p-0.5 shadow-sm">
           <img src={logo} alt="Saint-Jacques-de-Compostelle" className="h-full w-full object-contain" />
         </div>

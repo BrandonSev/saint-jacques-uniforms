@@ -71,7 +71,7 @@ function NiveauPage() {
           <ShellMotif className="absolute -left-32 -top-20 h-[500px] w-[500px]" opacity={0.04} />
           <ShellMotif className="absolute -right-40 -bottom-40 h-[600px] w-[600px]" opacity={0.03} />
         </div>
-        <div className="relative mx-auto max-w-7xl px-4 py-16 text-center sm:px-6 lg:px-8">
+        <div className="relative mx-auto w-full px-4 py-16 text-center sm:px-6 lg:px-8">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--teal)]/30 bg-white px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--teal-deep)] shadow-sm">
             <Sparkles className="h-3 w-3" /> Rentrée 2026-2027
           </span>
@@ -92,7 +92,7 @@ function NiveauPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <section className="mx-auto w-full px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto grid grid-cols-1 justify-center gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:max-w-5xl">
           {levels.map((level, idx) => (
             <LevelCard key={level.id} level={level} priority={idx === 0} />

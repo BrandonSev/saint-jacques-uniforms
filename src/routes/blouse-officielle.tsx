@@ -93,7 +93,7 @@ function MaternellePage() {
 
       {/* Breadcrumb */}
       <div className="border-b border-border bg-card">
-        <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
+        <div className="mx-auto flex w-full items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
           <Link to="/boutique" className="hover:text-primary">Boutique</Link>
           <ChevronRight className="h-3 w-3" />
           <Link to="/maternelle" className="hover:text-primary">Maternelle & Élémentaire</Link>
@@ -102,7 +102,7 @@ function MaternellePage() {
         </div>
       </div>
 
-      <section className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <section className="relative mx-auto w-full px-4 py-10 sm:px-6 lg:px-8">
         <div className="pointer-events-none absolute right-0 top-0 -z-0 h-96 w-96 text-primary">
           <ShellMotif className="h-full w-full" opacity={0.04} />
         </div>
