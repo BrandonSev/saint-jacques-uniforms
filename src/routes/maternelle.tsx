@@ -64,8 +64,8 @@ function MaternelleListPage() {
         </div>
         <div className="relative mx-auto grid w-full items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold uppercase tracking-wider text-sm text-lime-400 bg-red-500">
-              <ShieldCheck className="h-3 w-3" /> SÉLECTION EN COURS D'ETUDE PAR L'ÉTABLISSEMENT
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+              <ShieldCheck className="h-3 w-3" /> Tenue officielle de l'établissement
             </span>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               Maternelle & Élémentaire
