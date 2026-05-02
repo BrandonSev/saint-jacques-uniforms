@@ -104,11 +104,11 @@ function MaternelleListPage() {
               />
             ))}
           </div>
-          <div className="relative hidden overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-card)] lg:block">
+          <div className="relative hidden overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-card)] lg:block aspect-[16/7]">
             <img
               src={courMaternelle}
               alt="Élèves de maternelle en blouse SJDC dans la cour de récréation"
-              className="h-full w-full object-cover"
+              className="h-full w-full"
               loading="lazy"
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/50 via-transparent to-transparent" />
