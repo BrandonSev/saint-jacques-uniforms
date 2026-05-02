@@ -41,6 +41,7 @@ const products = [
     image: polo,
     tag: "Best-seller",
     desc: "Polo blanc en piqué de coton, écusson brodé du groupe scolaire et liseré tricolore.",
+    genre: "Unisexe" as const,
   },
   {
     id: "pull",
@@ -50,6 +51,7 @@ const products = [
     image: pull,
     tag: "Hiver",
     desc: "Pull col V bleu marine, maille jacquard, écusson brodé poitrine.",
+    genre: "Unisexe" as const,
   },
   {
     id: "chemise",
@@ -59,6 +61,7 @@ const products = [
     image: chemise,
     tag: "Cérémonie",
     desc: "Chemise blanche manches longues, coton tissé, écusson brodé poitrine.",
+    genre: "Garçon" as const,
   },
   {
     id: "chemise-fille",
@@ -68,6 +71,7 @@ const products = [
     image: chemiseFille,
     tag: "Fille",
     desc: "Chemise blanche manches longues, coupe cintrée (pinces poitrine & dos), 50% polyester / 50% coton.",
+    genre: "Fille" as const,
   },
   {
     id: "tshirt",
@@ -77,6 +81,7 @@ const products = [
     image: tshirt,
     tag: "Sport",
     desc: "Tee-shirt blanc col rond, coton souple, écusson brodé et finition tricolore.",
+    genre: "Unisexe" as const,
   },
 ];
 
