@@ -49,7 +49,7 @@ function MaternelleListPage() {
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       <div className="border-b border-border bg-card">
-        <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
+        <div className="mx-auto flex w-full items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
           <Link to="/boutique" className="hover:text-primary">Boutique</Link>
           <ChevronRight className="h-3 w-3" />
           <span className="text-foreground">Maternelle & Élémentaire (PS · MS · GS · CP · CE1 · CE2 · CM1)</span>
@@ -61,7 +61,7 @@ function MaternelleListPage() {
         <div className="pointer-events-none absolute inset-0 text-primary">
           <ShellMotif className="absolute -left-32 -bottom-32 h-[480px] w-[480px]" opacity={0.05} />
         </div>
-        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
+        <div className="relative mx-auto grid w-full items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold uppercase tracking-wider text-sm text-lime-400 bg-red-500">
               <ShieldCheck className="h-3 w-3" /> SÉLECTION EN COURS D'ETUDE PAR L'ÉTABLISSEMENT
@@ -91,7 +91,7 @@ function MaternelleListPage() {
       </section>
 
       {/* Products */}
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <section className="mx-auto w-full px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,420px)_1fr]">
           <div>
             {products.map((p) => (
