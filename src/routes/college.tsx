@@ -145,6 +145,8 @@ function CollegePage() {
               sizes={sizes}
               defaultSize="14 ans"
               childFilter={(c) => c.section === "Collège" || c.section === "Lycée"}
+              disabled
+              disabledLabel="Sélection en cours d'étude"
             />
           ))}
         </div>
