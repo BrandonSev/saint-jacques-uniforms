@@ -42,6 +42,12 @@ function MaternellePage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const gallery = [blouseProduct, classeBlouses, bloussePliee];
 
+  // Blouse officielle = Unisexe : aucun blocage par genre.
+  const productGenre: "Fille" | "Garçon" | "Unisexe" = "Unisexe";
+  const selectedChild = children.find((c) => c.id === childId);
+  const genreMismatch =
+    !!selectedChild && productGenre !== "Unisexe" && selectedChild.genre !== productGenre;
+
   const FAV_KEY = "sjc.favorites";
   const PRODUCT_ID = "blouse-officielle";
 
