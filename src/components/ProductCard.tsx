@@ -24,9 +24,13 @@ type Props = {
   sizes: string[];
   defaultSize?: string;
   childFilter?: (c: Child) => boolean;
+  /** Désactive l'ajout au panier (ex: sélection en cours d'étude par l'établissement). */
+  disabled?: boolean;
+  /** Message affiché lorsque le produit est désactivé. */
+  disabledLabel?: string;
 };
 
-export function ProductCard({ product, sizes, defaultSize, childFilter }: Props) {
+export function ProductCard({ product, sizes, defaultSize, childFilter, disabled, disabledLabel }: Props) {
   const { addToCart, children } = useStore();
   const [size, setSize] = useState(defaultSize ?? sizes[0]);
   const [qty, setQty] = useState(1);
@@ -45,6 +49,10 @@ export function ProductCard({ product, sizes, defaultSize, childFilter }: Props)
     !!selectedChild && productGenre !== "Unisexe" && selectedChild.genre !== productGenre;
 
   const handleAdd = () => {
+    if (disabled) {
+      toast.error(disabledLabel ?? "Ce produit n'est pas encore disponible à la commande.");
+      return;
+    }
     if (children.length === 0) { toast.error("Ajoutez d'abord un enfant"); return; }
     if (!childId) { toast.error("Choisissez un enfant"); return; }
     if (genreMismatch) {
@@ -128,9 +136,11 @@ export function ProductCard({ product, sizes, defaultSize, childFilter }: Props)
             <span className="w-7 text-center text-sm font-semibold">{qty}</span>
             <button onClick={() => setQty(qty + 1)} className="px-3 text-muted-foreground hover:text-foreground">+</button>
           </div>
-          <button onClick={handleAdd} disabled={children.length === 0 || !childId || genreMismatch}
+          <button onClick={handleAdd} disabled={disabled || children.length === 0 || !childId || genreMismatch}
             className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">
-            {children.length === 0
+            {disabled
+              ? (disabledLabel ?? "Bientôt disponible")
+              : children.length === 0
               ? "Ajoutez un enfant"
               : !childId
               ? "Choisir un enfant"
