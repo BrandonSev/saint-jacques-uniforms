@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Package, ChevronDown, ChevronUp, AlertTriangle, X } from "lucide-react";
+import { Package, ChevronDown, ChevronUp, AlertTriangle, X, ImagePlus, Trash2 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
@@ -189,7 +189,54 @@ function IncidentModal({ item, userId, onClose }: { item: OrderItem; userId: str
   const [type, setType] = useState(INCIDENT_TYPES[0].value);
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [photos, setPhotos] = useState<{ path: string; preview: string }[]>([]);
+  const [uploading, setUploading] = useState(false);
   const selected = INCIDENT_TYPES.find((t) => t.value === type)!;
+
+  const MAX_PHOTOS = 5;
+  const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+
+  const handleFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const slots = MAX_PHOTOS - photos.length;
+    if (slots <= 0) {
+      toast.error(`Maximum ${MAX_PHOTOS} photos.`);
+      return;
+    }
+    setUploading(true);
+    const uploaded: { path: string; preview: string }[] = [];
+    for (const file of Array.from(files).slice(0, slots)) {
+      if (!file.type.startsWith("image/")) {
+        toast.error(`${file.name} n'est pas une image.`);
+        continue;
+      }
+      if (file.size > MAX_SIZE) {
+        toast.error(`${file.name} dépasse 5 Mo.`);
+        continue;
+      }
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `${userId}/${item.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error } = await supabase.storage.from("incident-photos").upload(path, file, {
+        contentType: file.type,
+        upsert: false,
+      });
+      if (error) {
+        toast.error(`Échec de l'upload : ${file.name}`);
+        continue;
+      }
+      const { data: signed } = await supabase.storage
+        .from("incident-photos")
+        .createSignedUrl(path, 3600);
+      uploaded.push({ path, preview: signed?.signedUrl || "" });
+    }
+    setPhotos((p) => [...p, ...uploaded]);
+    setUploading(false);
+  };
+
+  const removePhoto = async (path: string) => {
+    await supabase.storage.from("incident-photos").remove([path]);
+    setPhotos((p) => p.filter((x) => x.path !== path));
+  };
 
   const submit = async () => {
     if (description.trim().length < 10) {
@@ -206,6 +253,7 @@ function IncidentModal({ item, userId, onClose }: { item: OrderItem; userId: str
       description: description.trim(),
       eligible: selected.eligible,
       status: selected.eligible ? "À traiter" : "Non éligible",
+      photos: photos.map((p) => p.path),
     });
     setSubmitting(false);
     if (error) { toast.error("Erreur lors de l'envoi"); return; }
@@ -215,7 +263,7 @@ function IncidentModal({ item, userId, onClose }: { item: OrderItem; userId: str
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
-      <div className="w-full max-w-md rounded-2xl bg-card p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+      <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-card p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-start justify-between gap-4">
           <div>
             <h3 className="text-base font-semibold text-foreground">Déclarer un incident</h3>
@@ -258,13 +306,57 @@ function IncidentModal({ item, userId, onClose }: { item: OrderItem; userId: str
               className="mt-1 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm" />
           </div>
 
+          <div>
+            <label className="text-xs font-medium text-foreground">
+              Photos <span className="text-muted-foreground">({photos.length}/{MAX_PHOTOS})</span>
+            </label>
+            <p className="mt-0.5 text-[11px] text-muted-foreground">
+              Joignez jusqu'à {MAX_PHOTOS} photos pour illustrer le problème (5 Mo max par image).
+            </p>
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              {photos.map((p) => (
+                <div key={p.path} className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-muted">
+                  {p.preview && (
+                    <img src={p.preview} alt="Photo incident" className="h-full w-full object-cover" />
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => removePhoto(p.path)}
+                    className="absolute right-1 top-1 rounded-md bg-black/60 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                    aria-label="Supprimer la photo"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+              {photos.length < MAX_PHOTOS && (
+                <label
+                  className={`flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border bg-card text-[10px] text-muted-foreground hover:border-primary hover:text-primary ${uploading ? "pointer-events-none opacity-60" : ""}`}
+                >
+                  <ImagePlus className="h-4 w-4" />
+                  <span>{uploading ? "Envoi…" : "Ajouter"}</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => {
+                      handleFiles(e.target.files);
+                      e.target.value = "";
+                    }}
+                  />
+                </label>
+              )}
+            </div>
+          </div>
+
           <div className="rounded-lg bg-secondary/60 p-3 text-[11px] leading-relaxed text-muted-foreground">
             Les frais de retour sont à la charge de l'expéditeur dans tous les cas.
           </div>
 
           <div className="flex gap-2">
             <button onClick={onClose} className="flex-1 rounded-lg border border-border bg-card py-2 text-sm font-medium hover:bg-muted">Annuler</button>
-            <button onClick={submit} disabled={submitting} className="flex-1 rounded-lg bg-primary py-2 text-sm font-semibold text-primary-foreground disabled:opacity-60">
+            <button onClick={submit} disabled={submitting || uploading} className="flex-1 rounded-lg bg-primary py-2 text-sm font-semibold text-primary-foreground disabled:opacity-60">
               {submitting ? "Envoi…" : "Envoyer la déclaration"}
             </button>
           </div>
