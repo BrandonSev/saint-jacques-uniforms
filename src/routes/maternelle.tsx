@@ -7,6 +7,7 @@ import { ProductCard } from "@/components/ProductCard";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import classeBlouses from "@/assets/elementaire-hero.jpg";
 import courMaternelle from "@/assets/maternelle-cour-blouses.jpg";
+import margueritePortrait from "@/assets/marguerite-de-perignon.jpg";
 import { PageWatermark } from "@/components/PageWatermark";
 
 export const Route = createFileRoute("/maternelle")({
@@ -125,6 +126,36 @@ function MaternelleListPage() {
               </p>
             </div>
           </div>
+
+          {/* Mot de la cheffe d'établissement — condensé */}
+          <figure className="lg:col-span-2 overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]">
+            <div className="flex flex-col gap-0 sm:flex-row sm:items-stretch">
+              <img
+                src={margueritePortrait}
+                alt="Marguerite de Pérignon, Cheffe d'établissement du 1er degré"
+                className="h-40 w-full object-cover sm:h-auto sm:w-40 sm:shrink-0"
+                loading="lazy"
+              />
+              <div className="flex flex-col justify-center gap-3 p-5 sm:p-6">
+                <span className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.16em] text-primary">
+                  Mot de la cheffe d'établissement — 1er degré
+                </span>
+                <blockquote className="font-display text-sm leading-relaxed text-foreground sm:text-base">
+                  « J'ai choisi avec soin la couleur bleu Riviera et chaque détail de cette
+                  blouse pour qu'elle accompagne nos élèves avec élégance et fierté. »
+                </blockquote>
+                <figcaption className="flex items-center gap-2.5">
+                  <span className="h-px w-8 bg-gold" />
+                  <div>
+                    <div className="text-xs font-semibold text-foreground">Marguerite de Pérignon</div>
+                    <div className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                      Cheffe d'établissement · 1er degré
+                    </div>
+                  </div>
+                </figcaption>
+              </div>
+            </div>
+          </figure>
         </div>
       </section>
 
