@@ -143,6 +143,7 @@ export type Database = {
           incident_type: string
           order_id: string
           order_item_id: string
+          photos: string[]
           quantity: number
           status: string
           updated_at: string
@@ -156,6 +157,7 @@ export type Database = {
           incident_type: string
           order_id: string
           order_item_id: string
+          photos?: string[]
           quantity?: number
           status?: string
           updated_at?: string
@@ -169,6 +171,7 @@ export type Database = {
           incident_type?: string
           order_id?: string
           order_item_id?: string
+          photos?: string[]
           quantity?: number
           status?: string
           updated_at?: string
