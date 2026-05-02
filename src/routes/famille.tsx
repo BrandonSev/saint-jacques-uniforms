@@ -7,6 +7,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useStore, type FamilyParent } from "@/lib/store";
 import { PageWatermark } from "@/components/PageWatermark";
+import { AddChildDialog } from "@/components/AddChildDialog";
 
 export const Route = createFileRoute("/famille")({
   head: () => ({
@@ -41,6 +42,7 @@ function FamillePage() {
 
   const [familyName, setFamilyName] = useState("");
   const [savingName, setSavingName] = useState(false);
+  const [openAddChild, setOpenAddChild] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -218,13 +220,13 @@ function FamillePage() {
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Users className="h-4 w-4 text-primary" /> {parents.length >= 2 ? "Nos enfants" : "Mes enfants"}
             </div>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-1 text-xs text-muted-foreground">
               {children.length === 0
                 ? "Aucun enfant enregistré pour le moment."
                 : `${children.length} enfant${children.length > 1 ? "s" : ""} dans votre famille.`}
             </p>
             {children.length > 0 && (
-              <ul className="mt-4 space-y-2">
+              <ul className="mt-3 space-y-1.5">
                 {children.map((c) => {
                   const tone =
                     c.genre === "Fille"
@@ -235,16 +237,16 @@ function FamillePage() {
                   return (
                     <li
                       key={c.id}
-                      className={`flex items-center gap-3 rounded-xl border ${tone.border} bg-background px-3 py-2`}
+                      className={`flex items-center gap-2.5 rounded-lg border ${tone.border} bg-background px-2.5 py-1.5`}
                     >
-                      <span className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-semibold ${tone.badge}`}>
+                      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold ${tone.badge}`}>
                         {c.initials}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <div className={`truncate text-lg font-extrabold ${tone.name}`}>
+                        <div className={`truncate text-sm font-semibold ${tone.name}`}>
                           {c.prenom} {c.nom}
                         </div>
-                        <div className="truncate text-xs text-muted-foreground">
+                        <div className="truncate text-[11px] text-muted-foreground">
                           {c.section || "—"} {c.classe ? `· ${c.classe}` : ""}
                         </div>
                       </div>
@@ -253,22 +255,27 @@ function FamillePage() {
                 })}
               </ul>
             )}
-            <Link
-              to="/enfants"
-              search={{ add: 1 } as any}
-              className="mt-5 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+            <button
+              type="button"
+              onClick={() => setOpenAddChild(true)}
+              className="mt-4 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-primary/90"
             >
-              <Plus className="h-4 w-4" /> Ajouter un enfant
-            </Link>
+              <Plus className="h-3.5 w-3.5" /> Ajouter un enfant
+            </button>
             <Link
               to="/enfants"
-              className="mt-2 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-4 text-sm font-semibold text-primary hover:bg-primary/10"
+              className="mt-2 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-primary/30 bg-primary/5 px-3 text-xs font-semibold text-primary hover:bg-primary/10"
             >
               Gérer mes enfants
             </Link>
           </aside>
         </div>
       </section>
+      <AddChildDialog
+        open={openAddChild}
+        onClose={() => setOpenAddChild(false)}
+        onCreated={() => toast.success("Enfant ajouté")}
+      />
       <SiteFooter />
     </div>
   );
