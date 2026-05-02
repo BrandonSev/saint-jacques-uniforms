@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { ChildPicker } from "@/components/ChildPicker";
 import { useStore, type Child } from "@/lib/store";
 
+export type ProductGenre = "Fille" | "Garçon" | "Unisexe";
+
 export type ProductCardData = {
   id: string;
   name: string;
@@ -13,6 +15,8 @@ export type ProductCardData = {
   tag?: string;
   desc?: string;
   href?: string;
+  /** Genre(s) auquel le vêtement est destiné. Par défaut : Unisexe. */
+  genre?: ProductGenre;
 };
 
 type Props = {
@@ -28,9 +32,25 @@ export function ProductCard({ product, sizes, defaultSize, childFilter }: Props)
   const [qty, setQty] = useState(1);
   const [childId, setChildId] = useState<string>("");
 
+  const productGenre: ProductGenre = product.genre ?? "Unisexe";
+  const genreFilter = (c: Child) => {
+    if (productGenre === "Unisexe") return true;
+    return c.genre === productGenre;
+  };
+  const combinedFilter = (c: Child) =>
+    (childFilter ? childFilter(c) : true) && genreFilter(c);
+
+  const selectedChild = children.find((c) => c.id === childId);
+  const genreMismatch =
+    !!selectedChild && productGenre !== "Unisexe" && selectedChild.genre !== productGenre;
+
   const handleAdd = () => {
     if (children.length === 0) { toast.error("Ajoutez d'abord un enfant"); return; }
     if (!childId) { toast.error("Choisissez un enfant"); return; }
+    if (genreMismatch) {
+      toast.error(`Ce modèle est réservé aux ${productGenre === "Fille" ? "filles" : "garçons"}.`);
+      return;
+    }
     addToCart({
       productId: product.id, name: product.name, ref: product.ref,
       price: product.price, size, qty, image: product.image,
@@ -68,11 +88,19 @@ export function ProductCard({ product, sizes, defaultSize, childFilter }: Props)
           <span className="whitespace-nowrap text-lg font-semibold text-foreground">{product.price} €</span>
         </div>
         <p className="mt-1 text-xs text-muted-foreground">Réf. {product.ref}</p>
+        <div className="mt-2">
+          <GenreBadge genre={productGenre} />
+        </div>
         {product.desc && <p className="mt-3 text-sm leading-relaxed text-foreground/75">{product.desc}</p>}
 
         <div className="mt-5">
           <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Pour quel enfant ?</div>
-          <div className="mt-2"><ChildPicker value={childId} onChange={setChildId} filter={childFilter} /></div>
+          <div className="mt-2"><ChildPicker value={childId} onChange={setChildId} filter={combinedFilter} /></div>
+          {genreMismatch && (
+            <p className="mt-2 text-[11px] font-medium text-destructive">
+              Cet enfant ne correspond pas au genre de ce modèle.
+            </p>
+          )}
         </div>
 
         <div className="mt-4">
@@ -100,12 +128,34 @@ export function ProductCard({ product, sizes, defaultSize, childFilter }: Props)
             <span className="w-7 text-center text-sm font-semibold">{qty}</span>
             <button onClick={() => setQty(qty + 1)} className="px-3 text-muted-foreground hover:text-foreground">+</button>
           </div>
-          <button onClick={handleAdd} disabled={children.length === 0 || !childId}
+          <button onClick={handleAdd} disabled={children.length === 0 || !childId || genreMismatch}
             className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">
-            {children.length === 0 ? "Ajoutez un enfant" : !childId ? "Choisir un enfant" : "Ajouter au panier"}
+            {children.length === 0
+              ? "Ajoutez un enfant"
+              : !childId
+              ? "Choisir un enfant"
+              : genreMismatch
+              ? "Genre non compatible"
+              : "Ajouter au panier"}
           </button>
         </div>
       </div>
     </article>
+  );
+}
+
+function GenreBadge({ genre }: { genre: ProductGenre }) {
+  const styles =
+    genre === "Fille"
+      ? "border-pink-300 bg-pink-50 text-pink-700"
+      : genre === "Garçon"
+      ? "border-sky-300 bg-sky-50 text-sky-700"
+      : "border-border bg-secondary text-muted-foreground";
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${styles}`}
+    >
+      {genre}
+    </span>
   );
 }

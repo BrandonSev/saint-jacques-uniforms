@@ -40,6 +40,7 @@ const products = [
     tag: "Officielle",
     desc: "Blouse de couleur bleu Riviera, boutons pressions jaunes, col biais, écusson brodé sur le coeur.",
     href: "/blouse-officielle" as const,
+    genre: "Unisexe" as const,
   },
 ];
 
