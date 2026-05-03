@@ -30,6 +30,7 @@ import { Route as AideContactRouteImport } from './routes/aide.contact'
 import { Route as AideConfidentialiteRouteImport } from './routes/aide.confidentialite'
 import { Route as AideCguRouteImport } from './routes/aide.cgu'
 import { Route as EnfantsChildIdHistoriqueRouteImport } from './routes/enfants.$childId.historique'
+import { Route as ApiPublicPayplugWebhookRouteImport } from './routes/api/public/payplug-webhook'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -137,6 +138,11 @@ const EnfantsChildIdHistoriqueRoute =
     path: '/$childId/historique',
     getParentRoute: () => EnfantsRoute,
   } as any)
+const ApiPublicPayplugWebhookRoute = ApiPublicPayplugWebhookRouteImport.update({
+  id: '/api/public/payplug-webhook',
+  path: '/api/public/payplug-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -159,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/aide/guide-tailles': typeof AideGuideTaillesRoute
   '/aide/livraison': typeof AideLivraisonRoute
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
+  '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
 }
 export interface FileRoutesByTo {
@@ -182,6 +189,7 @@ export interface FileRoutesByTo {
   '/aide/guide-tailles': typeof AideGuideTaillesRoute
   '/aide/livraison': typeof AideLivraisonRoute
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
+  '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
 }
 export interface FileRoutesById {
@@ -206,6 +214,7 @@ export interface FileRoutesById {
   '/aide/guide-tailles': typeof AideGuideTaillesRoute
   '/aide/livraison': typeof AideLivraisonRoute
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
+  '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
 }
 export interface FileRouteTypes {
@@ -231,6 +240,7 @@ export interface FileRouteTypes {
     | '/aide/guide-tailles'
     | '/aide/livraison'
     | '/aide/mentions-legales'
+    | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -254,6 +264,7 @@ export interface FileRouteTypes {
     | '/aide/guide-tailles'
     | '/aide/livraison'
     | '/aide/mentions-legales'
+    | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
   id:
     | '__root__'
@@ -277,6 +288,7 @@ export interface FileRouteTypes {
     | '/aide/guide-tailles'
     | '/aide/livraison'
     | '/aide/mentions-legales'
+    | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
   fileRoutesById: FileRoutesById
 }
@@ -301,6 +313,7 @@ export interface RootRouteChildren {
   AideGuideTaillesRoute: typeof AideGuideTaillesRoute
   AideLivraisonRoute: typeof AideLivraisonRoute
   AideMentionsLegalesRoute: typeof AideMentionsLegalesRoute
+  ApiPublicPayplugWebhookRoute: typeof ApiPublicPayplugWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -452,6 +465,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EnfantsChildIdHistoriqueRouteImport
       parentRoute: typeof EnfantsRoute
     }
+    '/api/public/payplug-webhook': {
+      id: '/api/public/payplug-webhook'
+      path: '/api/public/payplug-webhook'
+      fullPath: '/api/public/payplug-webhook'
+      preLoaderRoute: typeof ApiPublicPayplugWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -487,6 +507,7 @@ const rootRouteChildren: RootRouteChildren = {
   AideGuideTaillesRoute: AideGuideTaillesRoute,
   AideLivraisonRoute: AideLivraisonRoute,
   AideMentionsLegalesRoute: AideMentionsLegalesRoute,
+  ApiPublicPayplugWebhookRoute: ApiPublicPayplugWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
