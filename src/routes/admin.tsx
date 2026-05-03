@@ -373,6 +373,12 @@ function AdminPage() {
             Commandes
           </button>
           <button
+            onClick={() => setTab("tracking")}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${tab === "tracking" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            Suivi & expédition
+          </button>
+          <button
             onClick={() => setTab("incidents")}
             className={`relative rounded-lg px-4 py-2 text-sm font-medium transition-colors ${tab === "incidents" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
           >
