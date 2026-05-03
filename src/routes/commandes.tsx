@@ -559,7 +559,7 @@ function IncidentModal({
       return;
     }
     setSubmitting(true);
-    const { error } = await supabase.from("order_incidents").insert({
+    const { data: inserted, error } = await supabase.from("order_incidents").insert({
       order_id: item.order_id,
       order_item_id: item.id,
       user_id: userId,
@@ -569,11 +569,14 @@ function IncidentModal({
       eligible: selected.eligible,
       status: selected.eligible ? "À traiter" : "Non éligible",
       photos: photos.map((p) => p.path),
-    });
+    }).select("id").single();
     setSubmitting(false);
     if (error) {
       toast.error("Erreur lors de l'envoi");
       return;
+    }
+    if (inserted?.id) {
+      sendIncidentNotifications({ data: { incidentId: inserted.id } }).catch(() => {});
     }
     toast.success(
       selected.eligible
