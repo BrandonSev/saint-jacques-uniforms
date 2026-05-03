@@ -1,13 +1,15 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
-import { MapPin } from "lucide-react";
+import { MapPin, Home, Store, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
-import { useStore, type CartItem, type Child, type Profile } from "@/lib/store";
+import { useStore, type CartItem, type Child, type Profile, type ShippingChoice, type FamilyParent } from "@/lib/store";
 import { sendOrderEmails } from "@/server/email.functions";
+import { createOrderPayment } from "@/server/payplug.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { PageWatermark } from "@/components/PageWatermark";
 
 export const Route = createFileRoute("/panier")({
@@ -45,11 +47,25 @@ function summarizeItems(items: CartItem[]): string {
 }
 
 function PanierPage() {
-  const { user, profile, cart, children, cartCount, updateQty, removeFromCart, checkout } = useStore();
+  const { user, profile, cart, children, cartCount, updateQty, removeFromCart, checkout, parents } = useStore();
   const navigate = useNavigate();
   const [processing, setProcessing] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [sizeConfirmed, setSizeConfirmed] = useState(false);
+  const [deliveryOptions, setDeliveryOptions] = useState<{ code: string; label: string; description: string | null }[]>([
+    { code: "home", label: "Livraison à domicile", description: null },
+  ]);
+
+  useEffect(() => {
+    supabase
+      .from("delivery_options")
+      .select("code, label, description, active, position")
+      .eq("active", true)
+      .order("position", { ascending: true })
+      .then(({ data }) => {
+        if (data && data.length) setDeliveryOptions(data.map((d: any) => ({ code: d.code, label: d.label, description: d.description })));
+      });
+  }, []);
 
   const groups = useMemo<Group[]>(() => {
     const map = new Map<string, Group>();
@@ -78,15 +94,22 @@ function PanierPage() {
     setConfirmOpen(true);
   };
 
-  const onCheckout = async () => {
+  const onCheckout = async (shipping: ShippingChoice) => {
     setProcessing(true);
     try {
-      const { orderId, orderNumber } = await checkout();
-      toast.success(`Commande ${orderNumber} enregistrée !`);
-      // Envoi des emails (best-effort, non bloquant)
+      const { orderId, orderNumber } = await checkout(shipping);
+      toast.success(`Commande ${orderNumber} créée — redirection vers le paiement…`);
+      // Notification admin (best-effort)
       sendOrderEmails({ data: { orderId } }).catch(() => {});
-      setConfirmOpen(false);
-      navigate({ to: "/enfants" });
+      // Création paiement PayPlug
+      const res = await createOrderPayment({ data: { orderId } });
+      if (!res.ok || !("paymentUrl" in res)) {
+        toast.error("Impossible de créer le paiement. Vous pouvez réessayer depuis vos commandes.");
+        navigate({ to: "/commandes" });
+        return;
+      }
+      // Redirection vers la page de paiement hébergée PayPlug
+      window.location.href = res.paymentUrl;
     } catch (err: any) {
       toast.error(err.message || "Erreur lors du paiement");
     } finally {
@@ -189,6 +212,8 @@ function PanierPage() {
           processing={processing}
           sizeConfirmed={sizeConfirmed}
           profile={profile}
+          parents={parents}
+          deliveryOptions={deliveryOptions}
           onToggleSize={() => setSizeConfirmed((v) => !v)}
           onClose={() => !processing && setConfirmOpen(false)}
           onConfirm={onCheckout}
@@ -206,6 +231,8 @@ function ConfirmModal({
   processing,
   sizeConfirmed,
   profile,
+  parents,
+  deliveryOptions,
   onToggleSize,
   onClose,
   onConfirm,
@@ -215,13 +242,86 @@ function ConfirmModal({
   processing: boolean;
   sizeConfirmed: boolean;
   profile: Profile | null;
+  parents: FamilyParent[];
+  deliveryOptions: { code: string; label: string; description: string | null }[];
   onToggleSize: () => void;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (shipping: ShippingChoice) => void;
 }) {
-  const fullName = profile ? `${profile.civilite ?? ""} ${profile.prenom ?? ""} ${profile.nom ?? ""}`.trim() : "";
-  const cityLine = [profile?.code_postal, profile?.ville].filter(Boolean).join(" ");
-  const hasAddress = Boolean(profile?.adresse || cityLine);
+  // Construit la liste des adresses disponibles
+  type AddressOption = { id: string; label: string; recipient: string; address: string; postal: string; city: string };
+  const addresses: AddressOption[] = [];
+  if (profile?.adresse && profile?.code_postal && profile?.ville) {
+    addresses.push({
+      id: "profile",
+      label: "Adresse principale",
+      recipient: `${profile.civilite ?? ""} ${profile.prenom} ${profile.nom}`.trim(),
+      address: profile.adresse,
+      postal: profile.code_postal,
+      city: profile.ville,
+    });
+  }
+  parents.forEach((p) => {
+    // Adresse principale du parent
+    if (p.adresse && p.code_postal && p.ville) {
+      addresses.push({
+        id: `parent-${p.id}`,
+        label: p.role || "Parent",
+        recipient: `${p.civilite} ${p.prenom} ${p.nom}`.trim(),
+        address: p.adresse,
+        postal: p.code_postal,
+        city: p.ville,
+      });
+    }
+    // Adresse alternative de livraison
+    if (p.has_alt_shipping && p.shipping_adresse && p.shipping_code_postal && p.shipping_ville) {
+      addresses.push({
+        id: `parent-${p.id}-alt`,
+        label: p.shipping_label || `${p.role} (autre)`,
+        recipient: `${p.civilite} ${p.prenom} ${p.nom}`.trim(),
+        address: p.shipping_adresse,
+        postal: p.shipping_code_postal,
+        city: p.shipping_ville,
+      });
+    }
+  });
+
+  // Dédoublonnage simple par adresse complète
+  const seen = new Set<string>();
+  const uniqueAddresses = addresses.filter((a) => {
+    const k = `${a.address}|${a.postal}|${a.city}`;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+
+  const homeOption = deliveryOptions.find((d) => d.code === "home");
+  const pickupOption = deliveryOptions.find((d) => d.code === "pickup");
+  const initialMode: "home" | "pickup" = homeOption ? "home" : pickupOption ? "pickup" : "home";
+
+  const [mode, setMode] = useState<"home" | "pickup">(initialMode);
+  const [selectedAddrId, setSelectedAddrId] = useState<string>(uniqueAddresses[0]?.id ?? "");
+  const selected = uniqueAddresses.find((a) => a.id === selectedAddrId);
+
+  const handleConfirm = () => {
+    if (mode === "home") {
+      if (!selected) {
+        toast.error("Veuillez sélectionner une adresse de livraison.");
+        return;
+      }
+      onConfirm({
+        mode: "home",
+        label: homeOption?.label ?? "Livraison à domicile",
+        recipient: selected.recipient,
+        address: selected.address,
+        postal: selected.postal,
+        city: selected.city,
+      });
+    } else {
+      onConfirm({ mode: "pickup", label: pickupOption?.label ?? "Retrait à l'établissement" });
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
       <div
@@ -244,28 +344,81 @@ function ConfirmModal({
         </header>
 
         <div className="max-h-[55vh] overflow-y-auto px-6 py-5">
-          <div className="mb-4 flex items-start gap-3 rounded-xl border border-border bg-secondary/40 px-4 py-3 text-xs text-foreground">
-            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-            <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Adresse de livraison
-              </p>
-              {hasAddress ? (
-                <div className="mt-1 leading-relaxed">
-                  {fullName && <p className="font-semibold text-foreground">{fullName}</p>}
-                  {profile?.adresse && <p>{profile.adresse}</p>}
-                  {cityLine && <p>{cityLine}</p>}
-                </div>
-              ) : (
-                <p className="mt-1 text-muted-foreground">
-                  Aucune adresse renseignée.{" "}
-                  <Link to="/famille" className="font-semibold text-primary hover:underline">
-                    Ajouter une adresse
-                  </Link>
-                </p>
+          {/* Mode de livraison */}
+          <div className="mb-4">
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Mode de livraison</p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {homeOption && (
+                <button
+                  type="button"
+                  onClick={() => setMode("home")}
+                  className={`flex items-start gap-3 rounded-xl border-2 p-3 text-left transition ${mode === "home" ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"}`}
+                >
+                  <Home className={`mt-0.5 h-4 w-4 shrink-0 ${mode === "home" ? "text-primary" : "text-muted-foreground"}`} />
+                  <div>
+                    <div className="text-sm font-semibold text-foreground">{homeOption.label}</div>
+                    {homeOption.description && <div className="mt-0.5 text-[11px] text-muted-foreground">{homeOption.description}</div>}
+                  </div>
+                </button>
+              )}
+              {pickupOption && (
+                <button
+                  type="button"
+                  onClick={() => setMode("pickup")}
+                  className={`flex items-start gap-3 rounded-xl border-2 p-3 text-left transition ${mode === "pickup" ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"}`}
+                >
+                  <Store className={`mt-0.5 h-4 w-4 shrink-0 ${mode === "pickup" ? "text-primary" : "text-muted-foreground"}`} />
+                  <div>
+                    <div className="text-sm font-semibold text-foreground">{pickupOption.label}</div>
+                    {pickupOption.description && <div className="mt-0.5 text-[11px] text-muted-foreground">{pickupOption.description}</div>}
+                  </div>
+                </button>
               )}
             </div>
           </div>
+
+          {/* Sélecteur d'adresse si livraison à domicile */}
+          {mode === "home" && (
+            <div className="mb-4 rounded-xl border border-border bg-secondary/40 px-4 py-3">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-primary" />
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Adresse de livraison</p>
+              </div>
+              {uniqueAddresses.length === 0 ? (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Aucune adresse enregistrée.{" "}
+                  <Link to="/famille" className="font-semibold text-primary hover:underline">Ajouter une adresse</Link>
+                </p>
+              ) : (
+                <div className="mt-2 space-y-1.5">
+                  {uniqueAddresses.map((a) => (
+                    <label key={a.id} className={`flex cursor-pointer items-start gap-2.5 rounded-lg border p-2.5 text-xs transition ${selectedAddrId === a.id ? "border-primary bg-card" : "border-border bg-card/50 hover:border-primary/40"}`}>
+                      <input
+                        type="radio"
+                        name="ship_addr"
+                        value={a.id}
+                        checked={selectedAddrId === a.id}
+                        onChange={() => setSelectedAddrId(a.id)}
+                        className="mt-0.5 accent-primary"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[10px] font-semibold uppercase tracking-wider text-primary">{a.label}</div>
+                        <div className="mt-0.5 font-semibold text-foreground">{a.recipient}</div>
+                        <div className="text-muted-foreground">{a.address} · {a.postal} {a.city}</div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {mode === "pickup" && pickupOption && (
+            <div className="mb-4 rounded-xl border border-border bg-secondary/40 px-4 py-3 text-xs">
+              <p className="font-semibold text-foreground">Retrait à l'établissement</p>
+              <p className="mt-1 text-muted-foreground">Vous serez prévenu(e) par email dès que la commande sera disponible au secrétariat.</p>
+            </div>
+          )}
 
           <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
@@ -366,11 +519,13 @@ function ConfirmModal({
               </button>
               <button
                 type="button"
-                onClick={onConfirm}
-                disabled={!sizeConfirmed || processing}
+                onClick={handleConfirm}
+                disabled={!sizeConfirmed || processing || (mode === "home" && uniqueAddresses.length === 0)}
                 className="h-10 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {processing ? "Envoi…" : "Confirmer ma commande définitivement"}
+                {processing ? (
+                  <span className="inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" />Préparation du paiement…</span>
+                ) : "Payer ma commande"}
               </button>
             </div>
           </div>
