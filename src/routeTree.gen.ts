@@ -23,6 +23,7 @@ import { Route as BoutiqueRouteImport } from './routes/boutique'
 import { Route as BlouseOfficielleRouteImport } from './routes/blouse-officielle'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CommandesRetourPaiementRouteImport } from './routes/commandes.retour-paiement'
 import { Route as AideMentionsLegalesRouteImport } from './routes/aide.mentions-legales'
 import { Route as AideLivraisonRouteImport } from './routes/aide.livraison'
 import { Route as AideGuideTaillesRouteImport } from './routes/aide.guide-tailles'
@@ -102,6 +103,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommandesRetourPaiementRoute = CommandesRetourPaiementRouteImport.update({
+  id: '/retour-paiement',
+  path: '/retour-paiement',
+  getParentRoute: () => CommandesRoute,
+} as any)
 const AideMentionsLegalesRoute = AideMentionsLegalesRouteImport.update({
   id: '/aide/mentions-legales',
   path: '/aide/mentions-legales',
@@ -150,7 +156,7 @@ export interface FileRoutesByFullPath {
   '/blouse-officielle': typeof BlouseOfficielleRoute
   '/boutique': typeof BoutiqueRoute
   '/college': typeof CollegeRoute
-  '/commandes': typeof CommandesRoute
+  '/commandes': typeof CommandesRouteWithChildren
   '/enfants': typeof EnfantsRouteWithChildren
   '/famille': typeof FamilleRoute
   '/login': typeof LoginRoute
@@ -165,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/aide/guide-tailles': typeof AideGuideTaillesRoute
   '/aide/livraison': typeof AideLivraisonRoute
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
+  '/commandes/retour-paiement': typeof CommandesRetourPaiementRoute
   '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
 }
@@ -174,7 +181,7 @@ export interface FileRoutesByTo {
   '/blouse-officielle': typeof BlouseOfficielleRoute
   '/boutique': typeof BoutiqueRoute
   '/college': typeof CollegeRoute
-  '/commandes': typeof CommandesRoute
+  '/commandes': typeof CommandesRouteWithChildren
   '/enfants': typeof EnfantsRouteWithChildren
   '/famille': typeof FamilleRoute
   '/login': typeof LoginRoute
@@ -189,6 +196,7 @@ export interface FileRoutesByTo {
   '/aide/guide-tailles': typeof AideGuideTaillesRoute
   '/aide/livraison': typeof AideLivraisonRoute
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
+  '/commandes/retour-paiement': typeof CommandesRetourPaiementRoute
   '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
 }
@@ -199,7 +207,7 @@ export interface FileRoutesById {
   '/blouse-officielle': typeof BlouseOfficielleRoute
   '/boutique': typeof BoutiqueRoute
   '/college': typeof CollegeRoute
-  '/commandes': typeof CommandesRoute
+  '/commandes': typeof CommandesRouteWithChildren
   '/enfants': typeof EnfantsRouteWithChildren
   '/famille': typeof FamilleRoute
   '/login': typeof LoginRoute
@@ -214,6 +222,7 @@ export interface FileRoutesById {
   '/aide/guide-tailles': typeof AideGuideTaillesRoute
   '/aide/livraison': typeof AideLivraisonRoute
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
+  '/commandes/retour-paiement': typeof CommandesRetourPaiementRoute
   '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
 }
@@ -240,6 +249,7 @@ export interface FileRouteTypes {
     | '/aide/guide-tailles'
     | '/aide/livraison'
     | '/aide/mentions-legales'
+    | '/commandes/retour-paiement'
     | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
   fileRoutesByTo: FileRoutesByTo
@@ -264,6 +274,7 @@ export interface FileRouteTypes {
     | '/aide/guide-tailles'
     | '/aide/livraison'
     | '/aide/mentions-legales'
+    | '/commandes/retour-paiement'
     | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
   id:
@@ -288,6 +299,7 @@ export interface FileRouteTypes {
     | '/aide/guide-tailles'
     | '/aide/livraison'
     | '/aide/mentions-legales'
+    | '/commandes/retour-paiement'
     | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
   fileRoutesById: FileRoutesById
@@ -298,7 +310,7 @@ export interface RootRouteChildren {
   BlouseOfficielleRoute: typeof BlouseOfficielleRoute
   BoutiqueRoute: typeof BoutiqueRoute
   CollegeRoute: typeof CollegeRoute
-  CommandesRoute: typeof CommandesRoute
+  CommandesRoute: typeof CommandesRouteWithChildren
   EnfantsRoute: typeof EnfantsRouteWithChildren
   FamilleRoute: typeof FamilleRoute
   LoginRoute: typeof LoginRoute
@@ -416,6 +428,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/commandes/retour-paiement': {
+      id: '/commandes/retour-paiement'
+      path: '/retour-paiement'
+      fullPath: '/commandes/retour-paiement'
+      preLoaderRoute: typeof CommandesRetourPaiementRouteImport
+      parentRoute: typeof CommandesRoute
+    }
     '/aide/mentions-legales': {
       id: '/aide/mentions-legales'
       path: '/aide/mentions-legales'
@@ -475,6 +494,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface CommandesRouteChildren {
+  CommandesRetourPaiementRoute: typeof CommandesRetourPaiementRoute
+}
+
+const CommandesRouteChildren: CommandesRouteChildren = {
+  CommandesRetourPaiementRoute: CommandesRetourPaiementRoute,
+}
+
+const CommandesRouteWithChildren = CommandesRoute._addFileChildren(
+  CommandesRouteChildren,
+)
+
 interface EnfantsRouteChildren {
   EnfantsChildIdHistoriqueRoute: typeof EnfantsChildIdHistoriqueRoute
 }
@@ -492,7 +523,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlouseOfficielleRoute: BlouseOfficielleRoute,
   BoutiqueRoute: BoutiqueRoute,
   CollegeRoute: CollegeRoute,
-  CommandesRoute: CommandesRoute,
+  CommandesRoute: CommandesRouteWithChildren,
   EnfantsRoute: EnfantsRouteWithChildren,
   FamilleRoute: FamilleRoute,
   LoginRoute: LoginRoute,
