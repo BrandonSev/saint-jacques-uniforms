@@ -35,7 +35,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
   return (
     <>
       <header className="sticky top-0 z-40 w-full border-b border-border bg-background/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 w-full items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl flex h-16 w-full items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link to="/" className="flex items-center gap-3">
             {schoolName ? (
               <>
@@ -166,9 +166,15 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                 </MenuLink>
               ) : (
                 <>
-                  <MenuLink to="/boutique" onClick={() => setMenuOpen(false)}>Boutique</MenuLink>
-                  <MenuLink to="/enfants" onClick={() => setMenuOpen(false)}>Mes enfants</MenuLink>
-                  <MenuLink to="/commandes" onClick={() => setMenuOpen(false)}>Mes commandes</MenuLink>
+                  <MenuLink to="/boutique" onClick={() => setMenuOpen(false)}>
+                    Boutique
+                  </MenuLink>
+                  <MenuLink to="/enfants" onClick={() => setMenuOpen(false)}>
+                    Mes enfants
+                  </MenuLink>
+                  <MenuLink to="/commandes" onClick={() => setMenuOpen(false)}>
+                    Mes commandes
+                  </MenuLink>
                   <div className="my-2 h-px bg-border" />
                   <MenuLink to="/famille" onClick={() => setMenuOpen(false)} icon={<User className="h-4 w-4" />}>
                     {familyLabel}
@@ -177,7 +183,10 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
               )}
               <button
                 type="button"
-                onClick={() => { setMenuOpen(false); handleSignOut(); }}
+                onClick={() => {
+                  setMenuOpen(false);
+                  handleSignOut();
+                }}
                 className="mt-1 inline-flex h-11 items-center gap-2 rounded-lg px-3 text-left text-foreground hover:bg-muted hover:text-[var(--rouge)]"
               >
                 <LogOut className="h-4 w-4" /> Se déconnecter
@@ -192,8 +201,16 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
 }
 
 function MenuLink({
-  to, onClick, icon, children,
-}: { to: string; onClick: () => void; icon?: React.ReactNode; children: React.ReactNode }) {
+  to,
+  onClick,
+  icon,
+  children,
+}: {
+  to: string;
+  onClick: () => void;
+  icon?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
     <Link
       to={to}
@@ -214,7 +231,11 @@ export function SiteFooter() {
       <div className="mx-auto grid w-full grid-cols-2 gap-6 px-4 py-8 text-white sm:px-6 sm:py-14 sm:gap-8 lg:grid-cols-4 lg:px-8">
         <div className="col-span-2 lg:col-span-2">
           <div className="flex items-center gap-3 sm:gap-4">
-            <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-12 w-auto object-contain drop-shadow sm:h-16" />
+            <img
+              src={sjcLogo}
+              alt="Saint-Jacques-de-Compostelle"
+              className="h-12 w-auto object-contain drop-shadow sm:h-16"
+            />
             <div>
               <div className="text-sm font-semibold sm:text-base">Saint-Jacques-de-Compostelle</div>
               <div className="mt-0.5 text-[11px] text-white/70 sm:text-xs">Groupe scolaire catholique · Dax</div>
@@ -225,9 +246,13 @@ export function SiteFooter() {
             l'établissement, confectionnées avec soin pour le quotidien des élèves de la maternelle au collège.
           </p>
           <div className="mt-4 flex flex-col items-start gap-1.5 sm:mt-6 sm:gap-2">
-            <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/60 sm:text-[11px]">Confectionné par</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/60 sm:text-[11px]">
+              Confectionné par
+            </span>
             <img src={logoWhite} alt="France Uniformes" className="h-6 w-auto object-contain sm:h-8" loading="lazy" />
-            <span className="text-[10px] uppercase tracking-[0.2em] text-white/60 sm:text-[11px]">Fabrication française</span>
+            <span className="text-[10px] uppercase tracking-[0.2em] text-white/60 sm:text-[11px]">
+              Fabrication française
+            </span>
           </div>
         </div>
         <div>
