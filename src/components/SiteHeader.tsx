@@ -324,7 +324,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-white/15">
-        <div className="mx-auto flex w-full flex-col items-center justify-between gap-1 px-4 py-3 text-[11px] text-white/70 sm:flex-row sm:gap-2 sm:px-6 sm:py-5 sm:text-xs lg:px-8">
+        <div className="mx-auto max-w-6xl flex w-full flex-col items-center justify-between gap-1 px-4 py-3 text-[11px] text-white/70 sm:flex-row sm:gap-2 sm:px-6 sm:py-5 sm:text-xs lg:px-8">
           <span className="text-center">© {new Date().getFullYear()} France Uniformes · Tous droits réservés</span>
           <span>Paiement sécurisé</span>
         </div>
