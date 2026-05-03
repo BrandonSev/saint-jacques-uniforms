@@ -228,7 +228,7 @@ export function SiteFooter() {
   const { isAdmin } = useStore();
   return (
     <footer className="mt-auto border-t border-border" style={{ background: "var(--gradient-hero)" }}>
-      <div className="mx-auto grid w-full grid-cols-2 gap-6 px-4 py-8 text-white sm:px-6 sm:py-14 sm:gap-8 lg:grid-cols-4 lg:px-8">
+      <div className="mx-auto max-w-6xl grid w-full grid-cols-2 gap-6 px-4 py-8 text-white sm:px-6 sm:py-14 sm:gap-8 lg:grid-cols-4 lg:px-8">
         <div className="col-span-2 lg:col-span-2">
           <div className="flex items-center gap-3 sm:gap-4">
             <img

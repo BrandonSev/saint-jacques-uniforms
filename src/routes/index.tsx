@@ -134,7 +134,7 @@ function Index() {
 
       {/* Trust strip */}
       <section className="border-t border-border bg-card">
-        <div className="mx-auto grid w-full gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
+        <div className="mx-auto max-w-6xl grid w-full gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
           <TrustItem
             icon={<ShieldCheck className="h-5 w-5" />}
             title="Tenues validées par l'établissement"
