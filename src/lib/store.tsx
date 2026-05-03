@@ -64,6 +64,15 @@ export type CartItem = {
   childId: string;
 };
 
+export type ShippingChoice = {
+  mode: "home" | "pickup";
+  recipient?: string;
+  address?: string;
+  postal?: string;
+  city?: string;
+  label?: string;
+};
+
 const COLORS = [
   "from-primary/15 to-primary/5",
   "from-gold/25 to-gold/5",
@@ -118,7 +127,7 @@ type StoreCtx = {
   removeFromCart: (id: string) => void;
   clearCart: () => void;
   cartCount: number;
-  checkout: () => Promise<{ orderId: string; orderNumber: string }>;
+  checkout: (shipping: ShippingChoice) => Promise<{ orderId: string; orderNumber: string }>;
 };
 
 const Ctx = createContext<StoreCtx | null>(null);
@@ -294,19 +303,25 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
     removeFromCart: (id) => setCart((prev) => prev.filter((i) => i.id !== id)),
     clearCart: () => setCart([]),
     cartCount: cart.reduce((s, i) => s + i.qty, 0),
-    checkout: async () => {
+    checkout: async (shipping) => {
       if (!user || !profile) throw new Error("Non connecté");
       if (cart.length === 0) throw new Error("Panier vide");
       const total = cart.reduce((s, i) => s + i.qty * i.price, 0);
       const { data: order, error: oErr } = await supabase.from("orders").insert({
         user_id: user.id,
-        status: "Envoyée",
+        status: "En attente paiement",
         total_amount: total,
         family_civilite: profile.civilite,
         family_nom: profile.nom,
         family_prenom: profile.prenom,
         family_email: profile.email,
         family_telephone: profile.telephone,
+        shipping_mode: shipping.mode,
+        shipping_label: shipping.label ?? null,
+        shipping_recipient: shipping.recipient ?? null,
+        shipping_address: shipping.address ?? null,
+        shipping_postal: shipping.postal ?? null,
+        shipping_city: shipping.city ?? null,
       }).select().single();
       if (oErr) throw oErr;
       const items = cart.map((i) => {

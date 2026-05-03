@@ -101,3 +101,106 @@ export async function sendPasswordResetEmail(to: string, link: string) {
   `);
   await send(to, "Réinitialisation de votre mot de passe", html);
 }
+
+// ----------------------------------------------------------------------------
+// Notifications de changement de statut commande
+// ----------------------------------------------------------------------------
+
+const STATUS_LABELS: Record<string, { title: string; body: string }> = {
+  "En attente paiement": { title: "Commande enregistrée — paiement en attente", body: "Votre commande est enregistrée. Vous pouvez finaliser le paiement à tout moment depuis votre espace." },
+  "Paiement validé": { title: "Paiement reçu", body: "Nous avons bien reçu votre règlement. Votre commande passe en préparation." },
+  "Paiement échoué": { title: "Paiement échoué", body: "Le règlement n'a pas abouti. Vous pouvez relancer le paiement depuis votre espace commandes." },
+  "En préparation": { title: "Commande en préparation", body: "Votre commande est en cours de préparation par notre atelier." },
+  "Prête": { title: "Commande prête", body: "Votre commande est prête. Elle vous sera transmise très prochainement." },
+  "Expédiée": { title: "Commande expédiée", body: "Votre commande vient de partir. Vous pouvez suivre son acheminement avec le numéro fourni." },
+  "Disponible au retrait": { title: "Commande disponible", body: "Votre commande est disponible au secrétariat de l'établissement." },
+  "Livrée": { title: "Commande livrée", body: "Votre commande a bien été livrée. Merci de votre confiance !" },
+  "Retirée": { title: "Commande retirée", body: "Votre commande a bien été retirée. Merci !" },
+  "Annulée": { title: "Commande annulée", body: "Votre commande a été annulée." },
+};
+
+export async function sendOrderStatusEmail(
+  to: string,
+  prenom: string,
+  orderNumber: string,
+  status: string,
+  extras: { trackingNumber?: string | null; trackingCarrier?: string | null; note?: string | null } = {},
+) {
+  const map = STATUS_LABELS[status] ?? { title: `Mise à jour : ${status}`, body: `Votre commande est désormais au statut « ${status} ».` };
+  const tracking =
+    extras.trackingNumber
+      ? `<p style="margin-top:16px;">Numéro de suivi : <strong>${escape(extras.trackingCarrier ?? "")} ${escape(extras.trackingNumber)}</strong></p>`
+      : "";
+  const note = extras.note ? `<p style="margin-top:12px;color:#555;font-style:italic;">${escape(extras.note)}</p>` : "";
+  const html = layout(map.title, `
+    <p>Bonjour ${escape(prenom)},</p>
+    <p>Votre commande <strong>${escape(orderNumber)}</strong> a évolué :</p>
+    <p>${escape(map.body)}</p>
+    ${tracking}
+    ${note}
+    <p style="margin-top:24px;"><a href="https://saint-jacques.lovable.app/commandes" style="display:inline-block;background:#0f3a5f;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;">Voir mes commandes</a></p>
+  `);
+  await send(to, `${map.title} — ${orderNumber}`, html);
+}
+
+// ----------------------------------------------------------------------------
+// Notifications incidents
+// ----------------------------------------------------------------------------
+
+const INCIDENT_LABELS: Record<string, string> = {
+  malfacon: "Malfaçon / défaut",
+  erreur_envoi: "Erreur d'envoi",
+  article_manquant: "Article manquant",
+  taille_inadaptee: "Taille inadaptée",
+  usure_normale: "Usure normale",
+  autre: "Autre",
+};
+
+export async function sendIncidentOpenedFamily(to: string, prenom: string, orderNumber: string, productName: string, type: string, eligible: boolean) {
+  const html = layout("Incident enregistré", `
+    <p>Bonjour ${escape(prenom)},</p>
+    <p>Nous avons bien reçu votre déclaration d'incident concernant la commande <strong>${escape(orderNumber)}</strong>.</p>
+    <ul>
+      <li><strong>Article :</strong> ${escape(productName)}</li>
+      <li><strong>Motif :</strong> ${escape(INCIDENT_LABELS[type] ?? type)}</li>
+      <li><strong>Éligibilité :</strong> ${eligible ? "Éligible à étude — réponse sous 5 jours ouvrés." : "Motif a priori non éligible à une prise en charge."}</li>
+    </ul>
+    <p>Vous pouvez suivre l'avancement depuis votre espace commandes.</p>
+    <p style="margin-top:24px;"><a href="https://saint-jacques.lovable.app/commandes" style="display:inline-block;background:#0f3a5f;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;">Voir mes commandes</a></p>
+  `);
+  await send(to, `Incident enregistré — Commande ${orderNumber}`, html);
+}
+
+export async function sendIncidentOpenedAdmin(to: string, orderNumber: string, family: string, productName: string, type: string, description: string) {
+  const html = layout("Nouvel incident déclaré", `
+    <p>Une famille vient de déclarer un incident :</p>
+    <ul>
+      <li><strong>Commande :</strong> ${escape(orderNumber)}</li>
+      <li><strong>Famille :</strong> ${escape(family)}</li>
+      <li><strong>Article :</strong> ${escape(productName)}</li>
+      <li><strong>Motif :</strong> ${escape(INCIDENT_LABELS[type] ?? type)}</li>
+    </ul>
+    <p style="margin-top:12px;color:#555;font-style:italic;">${escape(description)}</p>
+    <p style="margin-top:24px;"><a href="https://saint-jacques.lovable.app/admin" style="display:inline-block;background:#0f3a5f;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;">Traiter l'incident</a></p>
+  `);
+  await send(to, `Incident — Commande ${orderNumber}`, html);
+}
+
+export async function sendIncidentResolutionFamily(to: string, prenom: string, orderNumber: string, status: string, productName: string) {
+  const map: Record<string, { title: string; body: string }> = {
+    "Résolu": { title: "Votre incident a été résolu", body: "Notre équipe a traité votre incident. Une solution vous sera communiquée si ce n'est déjà fait." },
+    "Refusé": { title: "Incident refusé", body: "Après étude, votre incident n'a pas pu être pris en charge." },
+    "Non éligible": { title: "Incident non éligible", body: "Le motif déclaré n'ouvre pas droit à une prise en charge." },
+    "En cours de traitement": { title: "Incident en cours", body: "Votre incident est en cours de traitement par notre équipe." },
+    "À traiter": { title: "Incident reçu", body: "Votre incident est enregistré, nous l'étudions." },
+    "En attente": { title: "Incident en attente", body: "Votre incident est en attente d'éléments complémentaires." },
+  };
+  const m = map[status] ?? { title: `Incident — ${status}`, body: `Votre incident a évolué au statut « ${status} ».` };
+  const html = layout(m.title, `
+    <p>Bonjour ${escape(prenom)},</p>
+    <p>Mise à jour concernant l'incident sur votre commande <strong>${escape(orderNumber)}</strong> (article : ${escape(productName)}) :</p>
+    <p>${escape(m.body)}</p>
+    <p style="margin-top:24px;"><a href="https://saint-jacques.lovable.app/commandes" style="display:inline-block;background:#0f3a5f;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;">Voir mes commandes</a></p>
+  `);
+  await send(to, `${m.title} — ${orderNumber}`, html);
+}

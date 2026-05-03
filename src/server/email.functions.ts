@@ -7,6 +7,10 @@ import {
   sendOrderConfirmation,
   sendAdminOrderNotification,
   sendPasswordResetEmail,
+  sendOrderStatusEmail,
+  sendIncidentOpenedFamily,
+  sendIncidentOpenedAdmin,
+  sendIncidentResolutionFamily,
   type OrderEmailItem,
 } from "./email.server";
 
@@ -76,5 +80,100 @@ export const sendCustomPasswordReset = createServerFn({ method: "POST" })
     } catch (e) {
       console.error("sendCustomPasswordReset:", e);
       return { ok: true }; // toujours ok pour ne pas leak
+    }
+  });
+
+// Notification de changement de statut commande (admin → famille)
+export const sendOrderStatusUpdate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ orderId: z.string().uuid(), note: z.string().max(500).optional() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { data: order } = await supabase
+      .from("orders")
+      .select("order_number, status, family_email, family_prenom, tracking_number, tracking_carrier")
+      .eq("id", data.orderId)
+      .maybeSingle();
+    if (!order || !order.family_email) return { ok: false, error: "no_recipient" as const };
+    try {
+      await sendOrderStatusEmail(order.family_email, order.family_prenom ?? "", order.order_number, order.status, {
+        trackingNumber: order.tracking_number,
+        trackingCarrier: order.tracking_carrier,
+        note: data.note ?? null,
+      });
+      return { ok: true };
+    } catch (e) {
+      console.error("sendOrderStatusUpdate:", e);
+      return { ok: false, error: "send_failed" as const };
+    }
+  });
+
+// Notification d'ouverture d'incident (famille → famille + admin)
+export const sendIncidentNotifications = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ incidentId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: inc } = await supabase
+      .from("order_incidents")
+      .select("id, order_id, order_item_id, incident_type, description, eligible, user_id")
+      .eq("id", data.incidentId)
+      .maybeSingle();
+    if (!inc || inc.user_id !== userId) return { ok: false, error: "not_found" as const };
+    const { data: order } = await supabase
+      .from("orders")
+      .select("order_number, family_email, family_prenom, family_nom")
+      .eq("id", inc.order_id)
+      .maybeSingle();
+    const { data: item } = await supabase
+      .from("order_items")
+      .select("product_name")
+      .eq("id", inc.order_item_id)
+      .maybeSingle();
+    if (!order) return { ok: false, error: "order_not_found" as const };
+    try {
+      if (order.family_email) {
+        await sendIncidentOpenedFamily(order.family_email, order.family_prenom ?? "", order.order_number, item?.product_name ?? "—", inc.incident_type, inc.eligible);
+      }
+      const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.SMTP_USER;
+      if (adminEmail) {
+        await sendIncidentOpenedAdmin(adminEmail, order.order_number, `${order.family_prenom ?? ""} ${order.family_nom ?? ""}`.trim(), item?.product_name ?? "—", inc.incident_type, inc.description);
+      }
+      return { ok: true };
+    } catch (e) {
+      console.error("sendIncidentNotifications:", e);
+      return { ok: false, error: "send_failed" as const };
+    }
+  });
+
+// Notification de mise à jour d'incident (admin → famille)
+export const sendIncidentUpdate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ incidentId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { data: inc } = await supabase
+      .from("order_incidents")
+      .select("status, order_id, order_item_id")
+      .eq("id", data.incidentId)
+      .maybeSingle();
+    if (!inc) return { ok: false, error: "not_found" as const };
+    const { data: order } = await supabase
+      .from("orders")
+      .select("order_number, family_email, family_prenom")
+      .eq("id", inc.order_id)
+      .maybeSingle();
+    const { data: item } = await supabase
+      .from("order_items")
+      .select("product_name")
+      .eq("id", inc.order_item_id)
+      .maybeSingle();
+    if (!order || !order.family_email) return { ok: false, error: "no_recipient" as const };
+    try {
+      await sendIncidentResolutionFamily(order.family_email, order.family_prenom ?? "", order.order_number, inc.status, item?.product_name ?? "—");
+      return { ok: true };
+    } catch (e) {
+      console.error("sendIncidentUpdate:", e);
+      return { ok: false, error: "send_failed" as const };
     }
   });
