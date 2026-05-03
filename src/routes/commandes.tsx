@@ -1,6 +1,17 @@
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Package, ChevronDown, ChevronUp, AlertTriangle, X, ImagePlus, Trash2, CheckCircle2, Clock, XCircle } from "lucide-react";
+import {
+  Package,
+  ChevronDown,
+  ChevronUp,
+  AlertTriangle,
+  X,
+  ImagePlus,
+  Trash2,
+  CheckCircle2,
+  Clock,
+  XCircle,
+} from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
@@ -78,9 +89,7 @@ function IncidentAlert({ status, createdAt }: { status: string; createdAt: strin
   const Icon = config.Icon;
   const date = new Date(createdAt).toLocaleDateString("fr-FR", { day: "2-digit", month: "short" });
   return (
-    <div
-      className={`mt-2 flex items-start gap-2 rounded-lg border px-2.5 py-2 text-[11px] font-medium ${config.wrap}`}
-    >
+    <div className={`mt-2 flex items-start gap-2 rounded-lg border px-2.5 py-2 text-[11px] font-medium ${config.wrap}`}>
       <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${config.icon}`}>
         <Icon className="h-3.5 w-3.5" />
       </span>
@@ -266,36 +275,36 @@ function CommandesPage() {
                           {oItems.map((i) => {
                             const itemIncidents = oIncidents.filter((x) => x.order_item_id === i.id);
                             return (
-                            <tr key={i.id}>
-                              <td className="py-2.5 text-foreground">
-                                {i.child_prenom} {i.child_nom}
-                                <div className="text-[11px] text-muted-foreground">
-                                  {[i.child_section, i.child_classe].filter(Boolean).join(" · ")}
-                                </div>
-                              </td>
-                              <td className="py-2.5">
-                                {i.product_name}
-                                <div className="text-[11px] text-muted-foreground">Réf. {i.product_ref}</div>
-                                {itemIncidents.length > 0 && (
-                                  <div className="space-y-1.5">
-                                    {itemIncidents.map((inc) => (
-                                      <IncidentAlert key={inc.id} status={inc.status} createdAt={inc.created_at} />
-                                    ))}
+                              <tr key={i.id}>
+                                <td className="py-2.5 text-foreground">
+                                  {i.child_prenom} {i.child_nom}
+                                  <div className="text-[11px] text-muted-foreground">
+                                    {[i.child_section, i.child_classe].filter(Boolean).join(" · ")}
                                   </div>
-                                )}
-                              </td>
-                              <td className="py-2.5">{i.size}</td>
-                              <td className="py-2.5 text-right">{i.quantity}</td>
-                              <td className="py-2.5 text-right font-semibold">{Number(i.line_total).toFixed(2)} €</td>
-                              <td className="py-2.5 text-right">
-                                <button
-                                  onClick={() => setIncidentItem(i)}
-                                  className="inline-flex items-center gap-1 rounded-lg border border-border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground hover:border-destructive/40 hover:text-destructive"
-                                >
-                                  <AlertTriangle className="h-3 w-3" /> Déclarer un incident
-                                </button>
-                              </td>
-                            </tr>
+                                </td>
+                                <td className="py-2.5">
+                                  {i.product_name}
+                                  <div className="text-[11px] text-muted-foreground">Réf. {i.product_ref}</div>
+                                  {itemIncidents.length > 0 && (
+                                    <div className="max-w-fit space-y-1.5">
+                                      {itemIncidents.map((inc) => (
+                                        <IncidentAlert key={inc.id} status={inc.status} createdAt={inc.created_at} />
+                                      ))}
+                                    </div>
+                                  )}
+                                </td>
+                                <td className="py-2.5">{i.size}</td>
+                                <td className="py-2.5 text-right">{i.quantity}</td>
+                                <td className="py-2.5 text-right font-semibold">{Number(i.line_total).toFixed(2)} €</td>
+                                <td className="py-2.5 text-right">
+                                  <button
+                                    onClick={() => setIncidentItem(i)}
+                                    className="inline-flex items-center gap-1 rounded-lg border border-border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground hover:border-destructive/40 hover:text-destructive"
+                                  >
+                                    <AlertTriangle className="h-3 w-3" /> Déclarer un incident
+                                  </button>
+                                </td>
+                              </tr>
                             );
                           })}
                         </tbody>
