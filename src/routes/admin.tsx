@@ -114,7 +114,9 @@ function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [incidentsLoading, setIncidentsLoading] = useState(true);
-  const [tab, setTab] = useState<"orders" | "incidents">("orders");
+  const [tab, setTab] = useState<"orders" | "tracking" | "incidents">("orders");
+  const [orderRows, setOrderRows] = useState<OrderRow[]>([]);
+  const [orderRowsLoading, setOrderRowsLoading] = useState(true);
   const [openIncident, setOpenIncident] = useState<Incident | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
@@ -122,8 +124,22 @@ function AdminPage() {
     if (!isAdmin) {
       setLoading(false);
       setIncidentsLoading(false);
+      setOrderRowsLoading(false);
       return;
     }
+    (async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, shipping_mode, tracking_number, tracking_carrier")
+        .order("created_at", { ascending: false });
+      if (error) {
+        toast.error(error.message);
+        setOrderRowsLoading(false);
+        return;
+      }
+      setOrderRows((data ?? []) as OrderRow[]);
+      setOrderRowsLoading(false);
+    })();
     (async () => {
       const { data, error } = await supabase
         .from("order_items")
@@ -232,7 +248,27 @@ function AdminPage() {
     }
     setIncidents((prev) => prev.map((i) => (i.id === incident.id ? { ...i, status } : i)));
     if (openIncident?.id === incident.id) setOpenIncident({ ...openIncident, status });
+    sendIncidentUpdate({ data: { incidentId: incident.id } }).catch(() => {});
     toast.success("Statut mis à jour");
+  };
+
+  const updateOrder = async (
+    orderId: string,
+    patch: Partial<Pick<OrderRow, "status" | "tracking_number" | "tracking_carrier">>,
+    notify: boolean,
+  ) => {
+    const update: any = { ...patch };
+    if (patch.status === "Livrée") update.delivered_at = new Date().toISOString();
+    const { error } = await supabase.from("orders").update(update).eq("id", orderId);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setOrderRows((prev) => prev.map((o) => (o.id === orderId ? { ...o, ...patch } : o)));
+    if (notify) {
+      sendOrderStatusUpdate({ data: { orderId } }).catch(() => {});
+    }
+    toast.success("Commande mise à jour");
   };
 
   const getSignedPhotoUrl = async (path: string): Promise<string | null> => {
