@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
-import { Download, ShieldCheck, AlertTriangle, X, ImageIcon } from "lucide-react";
+import { Download, ShieldCheck, AlertTriangle, X, ImageIcon, Truck, Save } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { RequireAuth } from "@/components/RequireAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
+import { sendOrderStatusUpdate, sendIncidentUpdate } from "@/server/email.functions";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
@@ -84,13 +85,38 @@ const INCIDENT_STATUSES = [
   "Refusé",
 ] as const;
 
+const ORDER_STATUSES = [
+  "En attente",
+  "Paiement validé",
+  "En préparation",
+  "Expédiée",
+  "Livrée",
+  "Annulée",
+] as const;
+
+type OrderRow = {
+  id: string;
+  order_number: string;
+  created_at: string;
+  status: string;
+  total_amount: number;
+  family_prenom: string;
+  family_nom: string;
+  family_email: string;
+  shipping_mode: string;
+  tracking_number: string | null;
+  tracking_carrier: string | null;
+};
+
 function AdminPage() {
   const { isAdmin, authLoading } = useStore();
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [incidentsLoading, setIncidentsLoading] = useState(true);
-  const [tab, setTab] = useState<"orders" | "incidents">("orders");
+  const [tab, setTab] = useState<"orders" | "tracking" | "incidents">("orders");
+  const [orderRows, setOrderRows] = useState<OrderRow[]>([]);
+  const [orderRowsLoading, setOrderRowsLoading] = useState(true);
   const [openIncident, setOpenIncident] = useState<Incident | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
@@ -98,8 +124,22 @@ function AdminPage() {
     if (!isAdmin) {
       setLoading(false);
       setIncidentsLoading(false);
+      setOrderRowsLoading(false);
       return;
     }
+    (async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, shipping_mode, tracking_number, tracking_carrier")
+        .order("created_at", { ascending: false });
+      if (error) {
+        toast.error(error.message);
+        setOrderRowsLoading(false);
+        return;
+      }
+      setOrderRows((data ?? []) as OrderRow[]);
+      setOrderRowsLoading(false);
+    })();
     (async () => {
       const { data, error } = await supabase
         .from("order_items")
@@ -208,7 +248,27 @@ function AdminPage() {
     }
     setIncidents((prev) => prev.map((i) => (i.id === incident.id ? { ...i, status } : i)));
     if (openIncident?.id === incident.id) setOpenIncident({ ...openIncident, status });
+    sendIncidentUpdate({ data: { incidentId: incident.id } }).catch(() => {});
     toast.success("Statut mis à jour");
+  };
+
+  const updateOrder = async (
+    orderId: string,
+    patch: Partial<Pick<OrderRow, "status" | "tracking_number" | "tracking_carrier">>,
+    notify: boolean,
+  ) => {
+    const update: any = { ...patch };
+    if (patch.status === "Livrée") update.delivered_at = new Date().toISOString();
+    const { error } = await supabase.from("orders").update(update).eq("id", orderId);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setOrderRows((prev) => prev.map((o) => (o.id === orderId ? { ...o, ...patch } : o)));
+    if (notify) {
+      sendOrderStatusUpdate({ data: { orderId } }).catch(() => {});
+    }
+    toast.success("Commande mise à jour");
   };
 
   const getSignedPhotoUrl = async (path: string): Promise<string | null> => {
@@ -313,6 +373,12 @@ function AdminPage() {
             Commandes
           </button>
           <button
+            onClick={() => setTab("tracking")}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${tab === "tracking" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            Suivi & expédition
+          </button>
+          <button
             onClick={() => setTab("incidents")}
             className={`relative rounded-lg px-4 py-2 text-sm font-medium transition-colors ${tab === "incidents" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
           >
@@ -382,6 +448,14 @@ function AdminPage() {
             </table>
           </div>
         </div>
+        )}
+
+        {tab === "tracking" && (
+          <TrackingPanel
+            orders={orderRows}
+            loading={orderRowsLoading}
+            onUpdate={updateOrder}
+          />
         )}
 
         {tab === "incidents" && (
@@ -630,6 +704,129 @@ function Field({ label, value }: { label: string; value: string }) {
     <div>
       <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="mt-1 text-sm text-foreground">{value}</div>
+    </div>
+  );
+}
+
+function TrackingPanel({
+  orders,
+  loading,
+  onUpdate,
+}: {
+  orders: OrderRow[];
+  loading: boolean;
+  onUpdate: (
+    orderId: string,
+    patch: Partial<Pick<OrderRow, "status" | "tracking_number" | "tracking_carrier">>,
+    notify: boolean,
+  ) => Promise<void>;
+}) {
+  const [drafts, setDrafts] = useState<Record<string, { tracking_number: string; tracking_carrier: string }>>({});
+
+  const draftFor = (o: OrderRow) =>
+    drafts[o.id] ?? {
+      tracking_number: o.tracking_number ?? "",
+      tracking_carrier: o.tracking_carrier ?? "",
+    };
+
+  const setDraft = (id: string, patch: Partial<{ tracking_number: string; tracking_carrier: string }>) =>
+    setDrafts((prev) => ({ ...prev, [id]: { ...draftFor(orders.find((o) => o.id === id)!), ...patch } }));
+
+  return (
+    <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-secondary text-left text-xs uppercase tracking-wider text-muted-foreground">
+            <tr>
+              <th className="px-4 py-3">Commande</th>
+              <th className="px-4 py-3">Famille</th>
+              <th className="px-4 py-3">Mode</th>
+              <th className="px-4 py-3">Statut</th>
+              <th className="px-4 py-3">Transporteur</th>
+              <th className="px-4 py-3">N° de suivi</th>
+              <th className="px-4 py-3 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {loading && (
+              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">Chargement…</td></tr>
+            )}
+            {!loading && orders.length === 0 && (
+              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">Aucune commande.</td></tr>
+            )}
+            {orders.map((o) => {
+              const d = draftFor(o);
+              return (
+                <tr key={o.id} className="hover:bg-muted/30">
+                  <td className="px-4 py-3 font-medium text-foreground">
+                    {o.order_number}
+                    <div className="text-[11px] text-muted-foreground">
+                      {new Date(o.created_at).toLocaleDateString("fr-FR")} · {Number(o.total_amount).toFixed(2)} €
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    {o.family_prenom} {o.family_nom}
+                    <div className="text-[11px] text-muted-foreground">{o.family_email}</div>
+                  </td>
+                  <td className="px-4 py-3 text-xs">
+                    {o.shipping_mode === "pickup" ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5">Retrait</span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5">
+                        <Truck className="h-3 w-3" /> Domicile
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={o.status}
+                      onChange={(e) => onUpdate(o.id, { status: e.target.value }, true)}
+                      className="h-8 rounded-md border border-border bg-background px-2 text-xs"
+                    >
+                      {ORDER_STATUSES.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </td>
+                  <td className="px-4 py-3">
+                    <input
+                      value={d.tracking_carrier}
+                      onChange={(e) => setDraft(o.id, { tracking_carrier: e.target.value })}
+                      placeholder="Colissimo, Chronopost…"
+                      className="h-8 w-32 rounded-md border border-border bg-background px-2 text-xs"
+                    />
+                  </td>
+                  <td className="px-4 py-3">
+                    <input
+                      value={d.tracking_number}
+                      onChange={(e) => setDraft(o.id, { tracking_number: e.target.value })}
+                      placeholder="N° de suivi"
+                      className="h-8 w-40 rounded-md border border-border bg-background px-2 text-xs font-mono"
+                    />
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <button
+                      onClick={() =>
+                        onUpdate(
+                          o.id,
+                          {
+                            tracking_number: d.tracking_number || null,
+                            tracking_carrier: d.tracking_carrier || null,
+                          },
+                          true,
+                        )
+                      }
+                      className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90"
+                    >
+                      <Save className="h-3 w-3" /> Enregistrer
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
