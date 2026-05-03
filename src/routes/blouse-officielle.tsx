@@ -101,7 +101,7 @@ function MaternellePage() {
 
       {/* Breadcrumb */}
       <div className="border-b border-border bg-card">
-        <div className="mx-auto flex w-full items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl flex w-full items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
           <Link to="/boutique" className="hover:text-primary">
             Boutique
           </Link>
