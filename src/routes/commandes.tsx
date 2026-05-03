@@ -11,6 +11,8 @@ import {
   CheckCircle2,
   Clock,
   XCircle,
+  FileDown,
+  Truck,
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
@@ -18,6 +20,8 @@ import { useStore } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { PageWatermark } from "@/components/PageWatermark";
+import { downloadOrderPdf, type PdfOrder } from "@/lib/orderPdf";
+import { sendIncidentNotifications } from "@/server/email.functions";
 
 export const Route = createFileRoute("/commandes")({
   head: () => ({ meta: [{ title: "Mes commandes — Espace familles" }] }),
@@ -30,6 +34,20 @@ type Order = {
   status: string;
   total_amount: number;
   created_at: string;
+  shipping_mode?: string | null;
+  shipping_label?: string | null;
+  shipping_recipient?: string | null;
+  shipping_address?: string | null;
+  shipping_postal?: string | null;
+  shipping_city?: string | null;
+  tracking_number?: string | null;
+  tracking_carrier?: string | null;
+  paid_at?: string | null;
+  family_civilite?: string | null;
+  family_prenom?: string;
+  family_nom?: string;
+  family_email?: string;
+  family_telephone?: string | null;
 };
 
 type OrderItem = {
@@ -56,6 +74,61 @@ type Incident = {
   eligible: boolean;
   created_at: string;
 };
+
+type StatusHistory = {
+  id: string;
+  order_id: string;
+  status: string;
+  created_at: string;
+  note: string | null;
+};
+
+const TIMELINE_STEPS = [
+  "En attente",
+  "Paiement validé",
+  "En préparation",
+  "Expédiée",
+  "Livrée",
+] as const;
+
+function OrderTimeline({ history, currentStatus }: { history: StatusHistory[]; currentStatus: string }) {
+  const passed = new Set<string>();
+  history.forEach((h) => passed.add(h.status));
+  passed.add(currentStatus);
+  const lastIdx = TIMELINE_STEPS.findIndex((s) => s === currentStatus);
+  return (
+    <div className="mb-4 rounded-xl border border-border bg-background/60 p-4">
+      <div className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <Truck className="h-3.5 w-3.5" /> Suivi de la commande
+      </div>
+      <ol className="flex flex-wrap items-center gap-2">
+        {TIMELINE_STEPS.map((step, idx) => {
+          const reached = passed.has(step) || (lastIdx >= 0 && idx <= lastIdx);
+          const isCurrent = step === currentStatus;
+          return (
+            <li key={step} className="flex items-center gap-2">
+              <span
+                className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-semibold ${
+                  isCurrent
+                    ? "bg-primary text-primary-foreground ring-2 ring-primary/30"
+                    : reached
+                      ? "bg-emerald-500 text-white"
+                      : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {reached ? "✓" : idx + 1}
+              </span>
+              <span className={`text-xs ${isCurrent ? "font-semibold text-foreground" : reached ? "text-foreground" : "text-muted-foreground"}`}>
+                {step}
+              </span>
+              {idx < TIMELINE_STEPS.length - 1 && <span className="mx-1 text-muted-foreground">›</span>}
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
 
 function statusKind(status: string): "open" | "done" | "rejected" {
   if (["Résolu"].includes(status)) return "done";
@@ -115,6 +188,7 @@ function CommandesPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [items, setItems] = useState<OrderItem[]>([]);
   const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [history, setHistory] = useState<StatusHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<string | null>(null);
   const [incidentItem, setIncidentItem] = useState<OrderItem | null>(null);
@@ -122,7 +196,7 @@ function CommandesPage() {
   const reload = async () => {
     const { data: o } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
     const ids = (o ?? []).map((x: any) => x.id);
-    const [{ data: it }, { data: inc }] = await Promise.all([
+    const [{ data: it }, { data: inc }, { data: hist }] = await Promise.all([
       ids.length
         ? supabase.from("order_items").select("*").in("order_id", ids)
         : Promise.resolve({ data: [] as OrderItem[] }),
@@ -132,11 +206,57 @@ function CommandesPage() {
             .select("id, order_id, order_item_id, status, incident_type, eligible, created_at")
             .in("order_id", ids)
         : Promise.resolve({ data: [] as Incident[] }),
+      ids.length
+        ? supabase
+            .from("order_status_history")
+            .select("id, order_id, status, created_at, note")
+            .in("order_id", ids)
+            .order("created_at", { ascending: true })
+        : Promise.resolve({ data: [] as StatusHistory[] }),
     ]);
     setOrders((o ?? []) as Order[]);
     setItems((it ?? []) as OrderItem[]);
     setIncidents((inc ?? []) as Incident[]);
+    setHistory((hist ?? []) as StatusHistory[]);
     setLoading(false);
+  };
+
+  const handleDownloadPdf = (o: Order) => {
+    const oItems = items.filter((i) => i.order_id === o.id);
+    const pdfData: PdfOrder = {
+      orderNumber: o.order_number,
+      createdAt: o.created_at,
+      status: o.status,
+      totalAmount: Number(o.total_amount),
+      family: {
+        civilite: o.family_civilite ?? profile?.civilite ?? null,
+        prenom: o.family_prenom ?? profile?.prenom ?? "",
+        nom: o.family_nom ?? profile?.nom ?? "",
+        email: o.family_email ?? profile?.email ?? "",
+        telephone: o.family_telephone ?? profile?.telephone ?? null,
+      },
+      shipping: {
+        mode: o.shipping_mode ?? "home",
+        label: o.shipping_label,
+        recipient: o.shipping_recipient,
+        address: o.shipping_address,
+        postal: o.shipping_postal,
+        city: o.shipping_city,
+      },
+      items: oItems.map((i) => ({
+        child: `${i.child_prenom} ${i.child_nom}`.trim(),
+        productName: i.product_name,
+        productRef: i.product_ref,
+        size: i.size,
+        quantity: i.quantity,
+        unitPrice: Number(i.unit_price),
+        lineTotal: Number(i.line_total),
+      })),
+      trackingNumber: o.tracking_number,
+      trackingCarrier: o.tracking_carrier,
+      paidAt: o.paid_at,
+    };
+    downloadOrderPdf(pdfData);
   };
 
   useEffect(() => {
