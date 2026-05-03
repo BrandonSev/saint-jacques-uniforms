@@ -380,6 +380,47 @@ function CommandesPage() {
                   </button>
                   {isOpen && (
                     <div className="border-t border-border bg-secondary/40 px-6 py-5">
+                      <OrderTimeline
+                        history={history.filter((h) => h.order_id === o.id)}
+                        currentStatus={o.status}
+                      />
+                      {(o.tracking_number || o.shipping_address) && (
+                        <div className="mb-4 grid gap-3 sm:grid-cols-2">
+                          {o.shipping_mode === "home" && o.shipping_address && (
+                            <div className="rounded-lg border border-border bg-card p-3 text-xs">
+                              <div className="font-semibold text-foreground">Livraison à domicile</div>
+                              <div className="mt-1 text-muted-foreground">
+                                {o.shipping_recipient && <div>{o.shipping_recipient}</div>}
+                                <div>{o.shipping_address}</div>
+                                <div>{[o.shipping_postal, o.shipping_city].filter(Boolean).join(" ")}</div>
+                              </div>
+                            </div>
+                          )}
+                          {o.shipping_mode === "pickup" && (
+                            <div className="rounded-lg border border-border bg-card p-3 text-xs">
+                              <div className="font-semibold text-foreground">Retrait à l'établissement</div>
+                              <div className="mt-1 text-muted-foreground">Secrétariat — Saint-Jacques</div>
+                            </div>
+                          )}
+                          {o.tracking_number && (
+                            <div className="rounded-lg border border-border bg-card p-3 text-xs">
+                              <div className="font-semibold text-foreground">Numéro de suivi</div>
+                              <div className="mt-1 text-muted-foreground">
+                                {o.tracking_carrier ? `${o.tracking_carrier} · ` : ""}
+                                <span className="font-mono">{o.tracking_number}</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <div className="mb-4 flex justify-end">
+                        <button
+                          onClick={() => handleDownloadPdf(o)}
+                          className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:border-primary hover:text-primary"
+                        >
+                          <FileDown className="h-3.5 w-3.5" /> Télécharger le récap PDF
+                        </button>
+                      </div>
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="text-left text-[11px] uppercase tracking-wider text-muted-foreground">
