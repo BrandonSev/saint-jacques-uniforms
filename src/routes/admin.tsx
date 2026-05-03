@@ -450,6 +450,14 @@ function AdminPage() {
         </div>
         )}
 
+        {tab === "tracking" && (
+          <TrackingPanel
+            orders={orderRows}
+            loading={orderRowsLoading}
+            onUpdate={updateOrder}
+          />
+        )}
+
         {tab === "incidents" && (
           <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
             <div className="overflow-x-auto">
