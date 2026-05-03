@@ -104,7 +104,7 @@ function FamillePage() {
               onChange={(e) => setFamilyName(e.target.value)}
               placeholder="Nom de la famille"
               maxLength={80}
-              className="h-11 flex-1 rounded-lg border border-border bg-background px-3 text-sm"
+              className="h-11 md:flex-1 rounded-lg border border-border bg-background px-3 text-sm"
             />
             <button
               onClick={handleSaveName}
