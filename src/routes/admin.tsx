@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
-import { Download, ShieldCheck, AlertTriangle, X, ImageIcon } from "lucide-react";
+import { Download, ShieldCheck, AlertTriangle, X, ImageIcon, Truck, Save } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { RequireAuth } from "@/components/RequireAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
+import { sendOrderStatusUpdate, sendIncidentUpdate } from "@/server/email.functions";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
@@ -83,6 +84,29 @@ const INCIDENT_STATUSES = [
   "Non éligible",
   "Refusé",
 ] as const;
+
+const ORDER_STATUSES = [
+  "En attente",
+  "Paiement validé",
+  "En préparation",
+  "Expédiée",
+  "Livrée",
+  "Annulée",
+] as const;
+
+type OrderRow = {
+  id: string;
+  order_number: string;
+  created_at: string;
+  status: string;
+  total_amount: number;
+  family_prenom: string;
+  family_nom: string;
+  family_email: string;
+  shipping_mode: string;
+  tracking_number: string | null;
+  tracking_carrier: string | null;
+};
 
 function AdminPage() {
   const { isAdmin, authLoading } = useStore();
