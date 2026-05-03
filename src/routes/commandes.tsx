@@ -52,21 +52,43 @@ function statusKind(status: string): "open" | "done" | "rejected" {
   return "open";
 }
 
-function StatusPill({ status }: { status: string }) {
+function IncidentAlert({ status, createdAt }: { status: string; createdAt: string }) {
   const kind = statusKind(status);
-  const cls =
+  const config =
     kind === "done"
-      ? "bg-emerald-100 text-emerald-700"
+      ? {
+          wrap: "border-emerald-300 bg-emerald-50 text-emerald-800",
+          icon: "bg-emerald-500 text-white",
+          Icon: CheckCircle2,
+          title: "Incident résolu",
+        }
       : kind === "rejected"
-        ? "bg-rose-100 text-rose-700"
-        : "bg-amber-100 text-amber-700";
-  const Icon = kind === "done" ? CheckCircle2 : kind === "rejected" ? XCircle : Clock;
+        ? {
+            wrap: "border-rose-300 bg-rose-50 text-rose-800",
+            icon: "bg-rose-500 text-white",
+            Icon: XCircle,
+            title: status === "Non éligible" ? "Incident non pris en charge" : "Incident refusé",
+          }
+        : {
+            wrap: "border-amber-300 bg-amber-50 text-amber-900",
+            icon: "bg-amber-500 text-white",
+            Icon: AlertTriangle,
+            title: status === "À traiter" ? "Incident ouvert — en attente de traitement" : `Incident — ${status}`,
+          };
+  const Icon = config.Icon;
+  const date = new Date(createdAt).toLocaleDateString("fr-FR", { day: "2-digit", month: "short" });
   return (
-    <span
-      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${cls}`}
+    <div
+      className={`mt-2 flex items-start gap-2 rounded-lg border px-2.5 py-2 text-[11px] font-medium ${config.wrap}`}
     >
-      <Icon className="h-3 w-3" /> {status}
-    </span>
+      <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${config.icon}`}>
+        <Icon className="h-3.5 w-3.5" />
+      </span>
+      <div className="flex-1">
+        <div className="text-[12px] font-semibold leading-tight">{config.title}</div>
+        <div className="mt-0.5 text-[10px] opacity-80">Déclaré le {date}</div>
+      </div>
+    </div>
   );
 }
 
@@ -255,9 +277,9 @@ function CommandesPage() {
                                 {i.product_name}
                                 <div className="text-[11px] text-muted-foreground">Réf. {i.product_ref}</div>
                                 {itemIncidents.length > 0 && (
-                                  <div className="mt-1 flex flex-wrap gap-1">
+                                  <div className="space-y-1.5">
                                     {itemIncidents.map((inc) => (
-                                      <StatusPill key={inc.id} status={inc.status} />
+                                      <IncidentAlert key={inc.id} status={inc.status} createdAt={inc.created_at} />
                                     ))}
                                   </div>
                                 )}
