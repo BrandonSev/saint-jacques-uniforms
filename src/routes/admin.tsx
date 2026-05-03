@@ -76,9 +76,11 @@ const INCIDENT_TYPE_LABELS: Record<string, string> = {
 };
 
 const INCIDENT_STATUSES = [
+  "À traiter",
   "En attente",
   "En cours de traitement",
   "Résolu",
+  "Non éligible",
   "Refusé",
 ] as const;
 
@@ -141,20 +143,33 @@ function AdminPage() {
     (async () => {
       const { data, error } = await supabase
         .from("order_incidents")
-        .select(
-          `
-          id, order_id, order_item_id, user_id, incident_type, description, quantity, eligible, status, photos, created_at, updated_at,
-          orders!inner ( order_number, family_nom, family_prenom, family_email ),
-          order_items!inner ( product_name, product_ref, size, child_prenom, child_nom )
-        `,
-        )
+        .select("*")
         .order("created_at", { ascending: false });
       if (error) {
         toast.error(error.message);
         setIncidentsLoading(false);
         return;
       }
-      const flat: Incident[] = (data ?? []).map((r: any) => ({
+      const rawIncidents = (data ?? []) as any[];
+      const orderIds = Array.from(new Set(rawIncidents.map((r) => r.order_id)));
+      const itemIds = Array.from(new Set(rawIncidents.map((r) => r.order_item_id)));
+      const [{ data: ordersData }, { data: itemsData }] = await Promise.all([
+        orderIds.length
+          ? supabase
+              .from("orders")
+              .select("id, order_number, family_nom, family_prenom, family_email")
+              .in("id", orderIds)
+          : Promise.resolve({ data: [] as any[] }),
+        itemIds.length
+          ? supabase
+              .from("order_items")
+              .select("id, product_name, product_ref, size, child_prenom, child_nom")
+              .in("id", itemIds)
+          : Promise.resolve({ data: [] as any[] }),
+      ]);
+      const ordersMap = new Map<string, any>((ordersData ?? []).map((o: any) => [o.id, o]));
+      const itemsMap = new Map<string, any>((itemsData ?? []).map((it: any) => [it.id, it]));
+      const flat: Incident[] = rawIncidents.map((r: any) => ({
         id: r.id,
         order_id: r.order_id,
         order_item_id: r.order_item_id,
@@ -167,15 +182,15 @@ function AdminPage() {
         photos: r.photos ?? [],
         created_at: r.created_at,
         updated_at: r.updated_at,
-        order_number: r.orders?.order_number,
-        family_nom: r.orders?.family_nom,
-        family_prenom: r.orders?.family_prenom,
-        family_email: r.orders?.family_email,
-        product_name: r.order_items?.product_name,
-        product_ref: r.order_items?.product_ref,
-        size: r.order_items?.size,
-        child_prenom: r.order_items?.child_prenom,
-        child_nom: r.order_items?.child_nom,
+        order_number: ordersMap.get(r.order_id)?.order_number,
+        family_nom: ordersMap.get(r.order_id)?.family_nom,
+        family_prenom: ordersMap.get(r.order_id)?.family_prenom,
+        family_email: ordersMap.get(r.order_id)?.family_email,
+        product_name: itemsMap.get(r.order_item_id)?.product_name,
+        product_ref: itemsMap.get(r.order_item_id)?.product_ref,
+        size: itemsMap.get(r.order_item_id)?.size,
+        child_prenom: itemsMap.get(r.order_item_id)?.child_prenom,
+        child_nom: itemsMap.get(r.order_item_id)?.child_nom,
       }));
       setIncidents(flat);
       setIncidentsLoading(false);
@@ -257,7 +272,9 @@ function AdminPage() {
   const totalCommandes = new Set(rows.map((r) => r.order_number)).size;
   const totalArticles = rows.reduce((s, r) => s + r.quantity, 0);
   const totalCA = rows.reduce((s, r) => s + r.line_total, 0);
-  const incidentsEnAttente = incidents.filter((i) => i.status === "En attente").length;
+  const incidentsEnAttente = incidents.filter((i) =>
+    ["À traiter", "En attente"].includes(i.status),
+  ).length;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Package, ChevronDown, ChevronUp, AlertTriangle, X, ImagePlus, Trash2 } from "lucide-react";
+import { Package, ChevronDown, ChevronUp, AlertTriangle, X, ImagePlus, Trash2, CheckCircle2, Clock, XCircle } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
@@ -36,6 +36,40 @@ type OrderItem = {
   child_section: string | null;
 };
 
+type Incident = {
+  id: string;
+  order_id: string;
+  order_item_id: string;
+  status: string;
+  incident_type: string;
+  eligible: boolean;
+  created_at: string;
+};
+
+function statusKind(status: string): "open" | "done" | "rejected" {
+  if (["Résolu"].includes(status)) return "done";
+  if (["Refusé", "Non éligible"].includes(status)) return "rejected";
+  return "open";
+}
+
+function StatusPill({ status }: { status: string }) {
+  const kind = statusKind(status);
+  const cls =
+    kind === "done"
+      ? "bg-emerald-100 text-emerald-700"
+      : kind === "rejected"
+        ? "bg-rose-100 text-rose-700"
+        : "bg-amber-100 text-amber-700";
+  const Icon = kind === "done" ? CheckCircle2 : kind === "rejected" ? XCircle : Clock;
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${cls}`}
+    >
+      <Icon className="h-3 w-3" /> {status}
+    </span>
+  );
+}
+
 const INCIDENT_TYPES: { value: string; label: string; eligible: boolean }[] = [
   { value: "malfacon", label: "Malfaçon / défaut de fabrication", eligible: true },
   { value: "erreur_envoi", label: "Erreur d'envoi (mauvais produit ou taille)", eligible: true },
@@ -49,22 +83,34 @@ function CommandesPage() {
   const { user, profile, authLoading, isAdmin } = useStore();
   const [orders, setOrders] = useState<Order[]>([]);
   const [items, setItems] = useState<OrderItem[]>([]);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<string | null>(null);
   const [incidentItem, setIncidentItem] = useState<OrderItem | null>(null);
 
+  const reload = async () => {
+    const { data: o } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
+    const ids = (o ?? []).map((x: any) => x.id);
+    const [{ data: it }, { data: inc }] = await Promise.all([
+      ids.length
+        ? supabase.from("order_items").select("*").in("order_id", ids)
+        : Promise.resolve({ data: [] as OrderItem[] }),
+      ids.length
+        ? supabase
+            .from("order_incidents")
+            .select("id, order_id, order_item_id, status, incident_type, eligible, created_at")
+            .in("order_id", ids)
+        : Promise.resolve({ data: [] as Incident[] }),
+    ]);
+    setOrders((o ?? []) as Order[]);
+    setItems((it ?? []) as OrderItem[]);
+    setIncidents((inc ?? []) as Incident[]);
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (!user) return;
-    (async () => {
-      const { data: o } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
-      const ids = (o ?? []).map((x: any) => x.id);
-      const { data: it } = ids.length
-        ? await supabase.from("order_items").select("*").in("order_id", ids)
-        : { data: [] as OrderItem[] };
-      setOrders((o ?? []) as Order[]);
-      setItems((it ?? []) as OrderItem[]);
-      setLoading(false);
-    })();
+    reload();
   }, [user]);
 
   if (authLoading) return null;
@@ -124,6 +170,10 @@ function CommandesPage() {
           <div className="mt-8 space-y-3">
             {orders.map((o) => {
               const oItems = items.filter((i) => i.order_id === o.id);
+              const oIncidents = incidents.filter((i) => i.order_id === o.id);
+              const openCount = oIncidents.filter((i) => statusKind(i.status) === "open").length;
+              const doneCount = oIncidents.filter((i) => statusKind(i.status) === "done").length;
+              const rejectedCount = oIncidents.filter((i) => statusKind(i.status) === "rejected").length;
               const isOpen = openId === o.id;
               return (
                 <article key={o.id} className="overflow-hidden rounded-2xl border border-border bg-card">
@@ -144,6 +194,25 @@ function CommandesPage() {
                             year: "numeric",
                           })}
                         </div>
+                        {oIncidents.length > 0 && (
+                          <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                            {openCount > 0 && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+                                <Clock className="h-3 w-3" /> {openCount} en cours
+                              </span>
+                            )}
+                            {doneCount > 0 && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                                <CheckCircle2 className="h-3 w-3" /> {doneCount} traité{doneCount > 1 ? "s" : ""}
+                              </span>
+                            )}
+                            {rejectedCount > 0 && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-semibold text-rose-700">
+                                <XCircle className="h-3 w-3" /> {rejectedCount} non pris en charge
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
@@ -172,7 +241,9 @@ function CommandesPage() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
-                          {oItems.map((i) => (
+                          {oItems.map((i) => {
+                            const itemIncidents = oIncidents.filter((x) => x.order_item_id === i.id);
+                            return (
                             <tr key={i.id}>
                               <td className="py-2.5 text-foreground">
                                 {i.child_prenom} {i.child_nom}
@@ -183,6 +254,13 @@ function CommandesPage() {
                               <td className="py-2.5">
                                 {i.product_name}
                                 <div className="text-[11px] text-muted-foreground">Réf. {i.product_ref}</div>
+                                {itemIncidents.length > 0 && (
+                                  <div className="mt-1 flex flex-wrap gap-1">
+                                    {itemIncidents.map((inc) => (
+                                      <StatusPill key={inc.id} status={inc.status} />
+                                    ))}
+                                  </div>
+                                )}
                               </td>
                               <td className="py-2.5">{i.size}</td>
                               <td className="py-2.5 text-right">{i.quantity}</td>
@@ -196,7 +274,8 @@ function CommandesPage() {
                                 </button>
                               </td>
                             </tr>
-                          ))}
+                            );
+                          })}
                         </tbody>
                       </table>
                     </div>
@@ -207,13 +286,30 @@ function CommandesPage() {
           </div>
         )}
       </section>
-      {incidentItem && <IncidentModal item={incidentItem} userId={user!.id} onClose={() => setIncidentItem(null)} />}
+      {incidentItem && (
+        <IncidentModal
+          item={incidentItem}
+          userId={user!.id}
+          onClose={() => setIncidentItem(null)}
+          onSubmitted={reload}
+        />
+      )}
       <SiteFooter />
     </div>
   );
 }
 
-function IncidentModal({ item, userId, onClose }: { item: OrderItem; userId: string; onClose: () => void }) {
+function IncidentModal({
+  item,
+  userId,
+  onClose,
+  onSubmitted,
+}: {
+  item: OrderItem;
+  userId: string;
+  onClose: () => void;
+  onSubmitted?: () => void;
+}) {
   const [qty, setQty] = useState(1);
   const [type, setType] = useState(INCIDENT_TYPES[0].value);
   const [description, setDescription] = useState("");
@@ -292,6 +388,7 @@ function IncidentModal({ item, userId, onClose }: { item: OrderItem; userId: str
         ? "Incident déclaré, nous reviendrons vers vous."
         : "Déclaration enregistrée — non éligible à une prise en charge.",
     );
+    onSubmitted?.();
     onClose();
   };
 
