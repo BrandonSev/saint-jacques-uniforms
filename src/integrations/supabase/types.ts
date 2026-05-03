@@ -62,6 +62,60 @@ export type Database = {
         }
         Relationships: []
       }
+      client_counters: {
+        Row: {
+          client_number: number
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          client_number: number
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          client_number?: number
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      delivery_options: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          is_default: boolean
+          label: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_default?: boolean
+          label: string
+          position?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_default?: boolean
+          label?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       family_parents: {
         Row: {
           adresse: string | null
@@ -244,9 +298,55 @@ export type Database = {
           },
         ]
       }
+      order_sequences: {
+        Row: {
+          last_seq: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          last_seq?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          last_seq?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      order_status_history: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          note: string | null
+          order_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          order_id: string
+          status: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          order_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           created_at: string
+          delivered_at: string | null
           family_civilite: string | null
           family_email: string
           family_nom: string
@@ -254,13 +354,25 @@ export type Database = {
           family_telephone: string | null
           id: string
           order_number: string
+          paid_at: string | null
+          payment_url: string | null
+          payplug_payment_id: string | null
+          shipping_address: string | null
+          shipping_city: string | null
+          shipping_label: string | null
+          shipping_mode: string
+          shipping_postal: string | null
+          shipping_recipient: string | null
           status: string
           total_amount: number
+          tracking_carrier: string | null
+          tracking_number: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          delivered_at?: string | null
           family_civilite?: string | null
           family_email: string
           family_nom: string
@@ -268,13 +380,25 @@ export type Database = {
           family_telephone?: string | null
           id?: string
           order_number?: string
+          paid_at?: string | null
+          payment_url?: string | null
+          payplug_payment_id?: string | null
+          shipping_address?: string | null
+          shipping_city?: string | null
+          shipping_label?: string | null
+          shipping_mode?: string
+          shipping_postal?: string | null
+          shipping_recipient?: string | null
           status?: string
           total_amount?: number
+          tracking_carrier?: string | null
+          tracking_number?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          delivered_at?: string | null
           family_civilite?: string | null
           family_email?: string
           family_nom?: string
@@ -282,8 +406,19 @@ export type Database = {
           family_telephone?: string | null
           id?: string
           order_number?: string
+          paid_at?: string | null
+          payment_url?: string | null
+          payplug_payment_id?: string | null
+          shipping_address?: string | null
+          shipping_city?: string | null
+          shipping_label?: string | null
+          shipping_mode?: string
+          shipping_postal?: string | null
+          shipping_recipient?: string | null
           status?: string
           total_amount?: number
+          tracking_carrier?: string | null
+          tracking_number?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -363,6 +498,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_order_number: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
