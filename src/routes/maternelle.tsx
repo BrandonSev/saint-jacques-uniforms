@@ -52,18 +52,23 @@ function MaternelleListPage() {
 
       <div className="border-b border-border bg-card">
         <div className="mx-auto flex w-full items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
-          <Link to="/boutique" className="hover:text-primary">Boutique</Link>
+          <Link to="/boutique" className="hover:text-primary">
+            Boutique
+          </Link>
           <ChevronRight className="h-3 w-3" />
           <span className="text-foreground">Maternelle & Élémentaire (PS · MS · GS · CP · CE1 · CE2 · CM1)</span>
         </div>
       </div>
 
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border" style={{ background: "var(--gradient-soft)" }}>
+      <section
+        className="relative overflow-hidden border-b border-border"
+        style={{ background: "var(--gradient-soft)" }}
+      >
         <div className="pointer-events-none absolute inset-0 text-primary">
           <ShellMotif className="absolute -left-32 -bottom-32 h-[480px] w-[480px]" opacity={0.05} />
         </div>
-        <div className="relative mx-auto grid w-full items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
+        <div className="relative mx-auto max-w-6xl grid w-full items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
               <ShieldCheck className="h-3 w-3" /> Tenue officielle de l'établissement
@@ -72,14 +77,22 @@ function MaternelleListPage() {
               Maternelle & Élémentaire
             </h1>
             <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
-              Tenue officielle pour les classes de PS, MS, GS, CP, CE1, CE2 et CM1.
-              Portée au quotidien par tous les élèves.
+              Tenue officielle pour les classes de PS, MS, GS, CP, CE1, CE2 et CM1. Portée au quotidien par tous les
+              élèves.
             </p>
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
-               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Blouse</span>
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles 4 → 18 ans</span>
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison à l'établissement</span>
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison à domicile</span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">
+                Blouse
+              </span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">
+                Tailles 4 → 18 ans
+              </span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">
+                Livraison à l'établissement
+              </span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">
+                Livraison à domicile
+              </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--teal)]/30 bg-[var(--teal)]/10 px-3 py-1.5 font-semibold text-[var(--teal-deep)]">
                 <CreditCard className="h-3 w-3" /> Paiement en ligne sécurisé
               </span>
@@ -123,40 +136,39 @@ function MaternelleListPage() {
                   Portée fièrement chaque jour
                 </h2>
                 <p className="mt-2 max-w-md text-sm leading-relaxed text-white/90 drop-shadow">
-                  Confort, identité et sentiment d'appartenance — pensée pour accompagner
-                  les enfants de la PS au CM1.
+                  Confort, identité et sentiment d'appartenance — pensée pour accompagner les enfants de la PS au CM1.
                 </p>
               </div>
             </div>
 
             {/* Mot de la cheffe d'établissement — condensé */}
             <figure className="overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]">
-            <div className="flex flex-col gap-0 sm:flex-row sm:items-stretch">
-              <img
-                src={margueritePortrait}
-                alt="Marguerite de Pérignon, Cheffe d'établissement du 1er degré"
-                className="h-40 w-full object-cover sm:h-auto sm:w-40 sm:shrink-0"
-                loading="lazy"
-              />
-              <div className="flex flex-col justify-center gap-3 p-5 sm:p-6">
-                <span className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.16em] text-primary">
-                  Mot de la cheffe d'établissement — 1er degré
-                </span>
-                <blockquote className="font-display text-sm leading-relaxed text-foreground sm:text-base">
-                  « J'ai choisi avec soin la couleur bleu Riviera et chaque détail de cette
-                  blouse pour qu'elle accompagne nos élèves avec élégance et fierté. »
-                </blockquote>
-                <figcaption className="flex items-center gap-2.5">
-                  <span className="h-px w-8 bg-gold" />
-                  <div>
-                    <div className="text-xs font-semibold text-foreground">Marguerite de Pérignon</div>
-                    <div className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-                      Cheffe d'établissement · 1er degré
+              <div className="flex flex-col gap-0 sm:flex-row sm:items-stretch">
+                <img
+                  src={margueritePortrait}
+                  alt="Marguerite de Pérignon, Cheffe d'établissement du 1er degré"
+                  className="h-40 w-full object-cover sm:h-auto sm:w-40 sm:shrink-0"
+                  loading="lazy"
+                />
+                <div className="flex flex-col justify-center gap-3 p-5 sm:p-6">
+                  <span className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.16em] text-primary">
+                    Mot de la cheffe d'établissement — 1er degré
+                  </span>
+                  <blockquote className="font-display text-sm leading-relaxed text-foreground sm:text-base">
+                    « J'ai choisi avec soin la couleur bleu Riviera et chaque détail de cette blouse pour qu'elle
+                    accompagne nos élèves avec élégance et fierté. »
+                  </blockquote>
+                  <figcaption className="flex items-center gap-2.5">
+                    <span className="h-px w-8 bg-gold" />
+                    <div>
+                      <div className="text-xs font-semibold text-foreground">Marguerite de Pérignon</div>
+                      <div className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                        Cheffe d'établissement · 1er degré
+                      </div>
                     </div>
-                  </div>
-                </figcaption>
+                  </figcaption>
+                </div>
               </div>
-            </div>
             </figure>
           </div>
         </div>

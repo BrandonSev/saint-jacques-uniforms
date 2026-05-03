@@ -74,12 +74,17 @@ function CommandesPage() {
   if (!user) {
     return (
       <div className="relative flex min-h-screen flex-col bg-background/80">
-      <PageWatermark />
+        <PageWatermark />
         <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
         <section className="mx-auto max-w-xl px-4 py-20 text-center">
           <h1 className="text-2xl font-semibold">Espace réservé aux familles</h1>
           <p className="mt-3 text-sm text-muted-foreground">Connectez-vous pour consulter vos commandes.</p>
-          <Link to="/login" className="mt-6 inline-flex h-11 items-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground">Se connecter</Link>
+          <Link
+            to="/login"
+            className="mt-6 inline-flex h-11 items-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground"
+          >
+            Se connecter
+          </Link>
         </section>
       </div>
     );
@@ -88,7 +93,7 @@ function CommandesPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
-      <section className="relative w-full px-4 py-12 sm:px-6 lg:px-8">
+      <section className="relative max-w-6xl w-full px-4 py-12 sm:px-6 lg:px-8">
         <div className="pointer-events-none absolute -top-10 right-0 -z-0 h-72 w-72 text-primary">
           <ShellMotif className="h-full w-full" opacity={0.045} />
         </div>
@@ -97,7 +102,9 @@ function CommandesPage() {
             <span className="h-px w-6 bg-gold" /> Famille {profile?.family_name || profile?.nom || ""}
           </span>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Mes commandes</h1>
-          <p className="mt-2 text-sm text-muted-foreground">{orders.length} commande{orders.length > 1 ? "s" : ""}</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {orders.length} commande{orders.length > 1 ? "s" : ""}
+          </p>
         </div>
 
         {loading ? (
@@ -106,7 +113,12 @@ function CommandesPage() {
           <div className="mt-12 rounded-3xl border border-dashed border-border bg-card p-16 text-center">
             <Package className="mx-auto h-10 w-10 text-muted-foreground" />
             <p className="mt-4 text-sm text-muted-foreground">Aucune commande pour le moment.</p>
-            <Link to="/boutique" className="mt-6 inline-flex h-11 items-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground">Découvrir la boutique</Link>
+            <Link
+              to="/boutique"
+              className="mt-6 inline-flex h-11 items-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground"
+            >
+              Découvrir la boutique
+            </Link>
           </div>
         ) : (
           <div className="mt-8 space-y-3">
@@ -115,20 +127,35 @@ function CommandesPage() {
               const isOpen = openId === o.id;
               return (
                 <article key={o.id} className="overflow-hidden rounded-2xl border border-border bg-card">
-                  <button onClick={() => setOpenId(isOpen ? null : o.id)} className="flex w-full items-center justify-between gap-4 px-6 py-4 text-left hover:bg-muted/30">
+                  <button
+                    onClick={() => setOpenId(isOpen ? null : o.id)}
+                    className="flex w-full items-center justify-between gap-4 px-6 py-4 text-left hover:bg-muted/30"
+                  >
                     <div className="flex items-center gap-4">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
                         <Package className="h-4 w-4" />
                       </div>
                       <div>
                         <div className="text-sm font-semibold text-foreground">{o.order_number}</div>
-                        <div className="text-xs text-muted-foreground">{new Date(o.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {new Date(o.created_at).toLocaleDateString("fr-FR", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric",
+                          })}
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className="rounded-full bg-secondary px-3 py-1 text-[11px] font-medium text-foreground/80">{o.status}</span>
+                      <span className="rounded-full bg-secondary px-3 py-1 text-[11px] font-medium text-foreground/80">
+                        {o.status}
+                      </span>
                       <span className="text-base font-semibold">{Number(o.total_amount).toFixed(2)} €</span>
-                      {isOpen ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
+                      {isOpen ? (
+                        <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      )}
                     </div>
                   </button>
                   {isOpen && (
@@ -147,8 +174,16 @@ function CommandesPage() {
                         <tbody className="divide-y divide-border">
                           {oItems.map((i) => (
                             <tr key={i.id}>
-                              <td className="py-2.5 text-foreground">{i.child_prenom} {i.child_nom}<div className="text-[11px] text-muted-foreground">{[i.child_section, i.child_classe].filter(Boolean).join(" · ")}</div></td>
-                              <td className="py-2.5">{i.product_name}<div className="text-[11px] text-muted-foreground">Réf. {i.product_ref}</div></td>
+                              <td className="py-2.5 text-foreground">
+                                {i.child_prenom} {i.child_nom}
+                                <div className="text-[11px] text-muted-foreground">
+                                  {[i.child_section, i.child_classe].filter(Boolean).join(" · ")}
+                                </div>
+                              </td>
+                              <td className="py-2.5">
+                                {i.product_name}
+                                <div className="text-[11px] text-muted-foreground">Réf. {i.product_ref}</div>
+                              </td>
                               <td className="py-2.5">{i.size}</td>
                               <td className="py-2.5 text-right">{i.quantity}</td>
                               <td className="py-2.5 text-right font-semibold">{Number(i.line_total).toFixed(2)} €</td>
@@ -172,13 +207,7 @@ function CommandesPage() {
           </div>
         )}
       </section>
-      {incidentItem && (
-        <IncidentModal
-          item={incidentItem}
-          userId={user!.id}
-          onClose={() => setIncidentItem(null)}
-        />
-      )}
+      {incidentItem && <IncidentModal item={incidentItem} userId={user!.id} onClose={() => setIncidentItem(null)} />}
       <SiteFooter />
     </div>
   );
@@ -224,9 +253,7 @@ function IncidentModal({ item, userId, onClose }: { item: OrderItem; userId: str
         toast.error(`Échec de l'upload : ${file.name}`);
         continue;
       }
-      const { data: signed } = await supabase.storage
-        .from("incident-photos")
-        .createSignedUrl(path, 3600);
+      const { data: signed } = await supabase.storage.from("incident-photos").createSignedUrl(path, 3600);
       uploaded.push({ path, preview: signed?.signedUrl || "" });
     }
     setPhotos((p) => [...p, ...uploaded]);
@@ -256,20 +283,34 @@ function IncidentModal({ item, userId, onClose }: { item: OrderItem; userId: str
       photos: photos.map((p) => p.path),
     });
     setSubmitting(false);
-    if (error) { toast.error("Erreur lors de l'envoi"); return; }
-    toast.success(selected.eligible ? "Incident déclaré, nous reviendrons vers vous." : "Déclaration enregistrée — non éligible à une prise en charge.");
+    if (error) {
+      toast.error("Erreur lors de l'envoi");
+      return;
+    }
+    toast.success(
+      selected.eligible
+        ? "Incident déclaré, nous reviendrons vers vous."
+        : "Déclaration enregistrée — non éligible à une prise en charge.",
+    );
     onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
-      <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-card p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-card p-6 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-start justify-between gap-4">
           <div>
             <h3 className="text-base font-semibold text-foreground">Déclarer un incident</h3>
-            <p className="mt-1 text-xs text-muted-foreground">{item.product_name} · Taille {item.size} · {item.child_prenom}</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {item.product_name} · Taille {item.size} · {item.child_prenom}
+            </p>
           </div>
-          <button onClick={onClose} className="rounded-lg p-1 text-muted-foreground hover:bg-muted"><X className="h-4 w-4" /></button>
+          <button onClick={onClose} className="rounded-lg p-1 text-muted-foreground hover:bg-muted">
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
         <div className="mt-5 space-y-4">
@@ -277,48 +318,68 @@ function IncidentModal({ item, userId, onClose }: { item: OrderItem; userId: str
             <label className="text-xs font-medium text-foreground">Quantité concernée</label>
             <div className="mt-1 flex items-center gap-2">
               {Array.from({ length: item.quantity }, (_, k) => k + 1).map((n) => (
-                <button key={n} onClick={() => setQty(n)}
-                  className={`h-9 w-9 rounded-lg border text-sm font-medium ${qty === n ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-muted"}`}>
+                <button
+                  key={n}
+                  onClick={() => setQty(n)}
+                  className={`h-9 w-9 rounded-lg border text-sm font-medium ${qty === n ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:bg-muted"}`}
+                >
                   {n}
                 </button>
               ))}
-              <span className="text-xs text-muted-foreground">/ {item.quantity} commandé{item.quantity > 1 ? "s" : ""}</span>
+              <span className="text-xs text-muted-foreground">
+                / {item.quantity} commandé{item.quantity > 1 ? "s" : ""}
+              </span>
             </div>
           </div>
 
           <div>
             <label className="text-xs font-medium text-foreground">Type d'incident</label>
-            <select value={type} onChange={(e) => setType(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm">
+            <select
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm"
+            >
               {INCIDENT_TYPES.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
+                <option key={t.value} value={t.value}>
+                  {t.label}
+                </option>
               ))}
             </select>
             <p className={`mt-1 text-[11px] ${selected.eligible ? "text-emerald-600" : "text-amber-600"}`}>
-              {selected.eligible ? "✓ Éligible à une prise en charge — étude du dossier sous 5 jours." : "⚠ Ce motif n'ouvre généralement pas droit à prise en charge."}
+              {selected.eligible
+                ? "✓ Éligible à une prise en charge — étude du dossier sous 5 jours."
+                : "⚠ Ce motif n'ouvre généralement pas droit à prise en charge."}
             </p>
           </div>
 
           <div>
             <label className="text-xs font-medium text-foreground">Description</label>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4}
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={4}
               placeholder="Décrivez précisément le problème observé…"
-              className="mt-1 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm" />
+              className="mt-1 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm"
+            />
           </div>
 
           <div>
             <label className="text-xs font-medium text-foreground">
-              Photos <span className="text-muted-foreground">({photos.length}/{MAX_PHOTOS})</span>
+              Photos{" "}
+              <span className="text-muted-foreground">
+                ({photos.length}/{MAX_PHOTOS})
+              </span>
             </label>
             <p className="mt-0.5 text-[11px] text-muted-foreground">
               Joignez jusqu'à {MAX_PHOTOS} photos pour illustrer le problème (5 Mo max par image).
             </p>
             <div className="mt-2 grid grid-cols-3 gap-2">
               {photos.map((p) => (
-                <div key={p.path} className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-muted">
-                  {p.preview && (
-                    <img src={p.preview} alt="Photo incident" className="h-full w-full object-cover" />
-                  )}
+                <div
+                  key={p.path}
+                  className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-muted"
+                >
+                  {p.preview && <img src={p.preview} alt="Photo incident" className="h-full w-full object-cover" />}
                   <button
                     type="button"
                     onClick={() => removePhoto(p.path)}
@@ -355,8 +416,17 @@ function IncidentModal({ item, userId, onClose }: { item: OrderItem; userId: str
           </div>
 
           <div className="flex gap-2">
-            <button onClick={onClose} className="flex-1 rounded-lg border border-border bg-card py-2 text-sm font-medium hover:bg-muted">Annuler</button>
-            <button onClick={submit} disabled={submitting || uploading} className="flex-1 rounded-lg bg-primary py-2 text-sm font-semibold text-primary-foreground disabled:opacity-60">
+            <button
+              onClick={onClose}
+              className="flex-1 rounded-lg border border-border bg-card py-2 text-sm font-medium hover:bg-muted"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={submit}
+              disabled={submitting || uploading}
+              className="flex-1 rounded-lg bg-primary py-2 text-sm font-semibold text-primary-foreground disabled:opacity-60"
+            >
               {submitting ? "Envoi…" : "Envoyer la déclaration"}
             </button>
           </div>

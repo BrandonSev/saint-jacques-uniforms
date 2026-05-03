@@ -23,12 +23,14 @@ function LyceePage() {
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
       <div className="border-b border-border bg-card">
         <div className="mx-auto flex w-full items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
-          <Link to="/boutique" className="hover:text-primary">Boutique</Link>
+          <Link to="/boutique" className="hover:text-primary">
+            Boutique
+          </Link>
           <ChevronRight className="h-3 w-3" />
           <span className="text-foreground">Lycée (3ᵉ → Terminale)</span>
         </div>
       </div>
-      <section className="mx-auto max-w-5xl px-4 py-16 text-center sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6 lg:px-8">
         <div className="mx-auto mb-10 max-w-3xl overflow-hidden rounded-3xl border border-border">
           <img src={lycee} alt="Lycéens en uniforme" className="aspect-[16/9] w-full object-cover" loading="lazy" />
         </div>
@@ -44,9 +46,8 @@ function LyceePage() {
           Lycée — Prochainement !
         </h1>
         <p className="mx-auto mt-4 max-w-xl leading-relaxed text-muted-foreground">
-          Il n'y a pas d'uniformes au lycée actuellement. Les élèves de 3ᵉ sont
-          rattachés à cette section. Les familles seront informées par mail si
-          une sélection venait à être proposée.
+          Il n'y a pas d'uniformes au lycée actuellement. Les élèves de 3ᵉ sont rattachés à cette section. Les familles
+          seront informées par mail si une sélection venait à être proposée.
         </p>
         <Link
           to="/boutique"

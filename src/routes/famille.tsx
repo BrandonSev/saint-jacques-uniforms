@@ -81,16 +81,14 @@ function FamillePage() {
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
-      <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-2">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
-            Espace familles
-          </span>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">Espace familles</span>
           <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
             {displayedFamilyName ? `Famille ${displayedFamilyName}` : "Ma famille"}
           </h1>
           <p className="text-sm text-muted-foreground">
-            Gérez le nom de la famille,  les parents et l'accès à la fiche des enfants.
+            Gérez le nom de la famille, les parents et l'accès à la fiche des enfants.
           </p>
         </div>
 
@@ -99,9 +97,7 @@ function FamillePage() {
           <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <Home className="h-4 w-4 text-primary" /> Nom de la famille
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Ce nom apparaît en titre. Il représente votre famille.
-          </p>
+          <p className="mt-1 text-xs text-muted-foreground">Ce nom apparaît en titre. Il représente votre famille.</p>
           <div className="mt-4 flex flex-col gap-3 sm:flex-row">
             <input
               value={familyName}
@@ -232,14 +228,16 @@ function FamillePage() {
                     c.genre === "Fille"
                       ? { border: "border-pink-300", badge: "bg-pink-500 text-white", name: "text-pink-700" }
                       : c.genre === "Garçon"
-                      ? { border: "border-sky-300", badge: "bg-sky-500 text-white", name: "text-sky-700" }
-                      : { border: "border-border", badge: "bg-primary/10 text-primary", name: "text-foreground" };
+                        ? { border: "border-sky-300", badge: "bg-sky-500 text-white", name: "text-sky-700" }
+                        : { border: "border-border", badge: "bg-primary/10 text-primary", name: "text-foreground" };
                   return (
                     <li
                       key={c.id}
                       className={`flex items-center gap-2.5 rounded-lg border ${tone.border} bg-background px-2.5 py-1.5`}
                     >
-                      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold ${tone.badge}`}>
+                      <span
+                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold ${tone.badge}`}
+                      >
                         {c.initials}
                       </span>
                       <div className="min-w-0 flex-1">
@@ -340,8 +338,7 @@ function ParentCard({
     });
   }, [parent, primaryAddress?.adresse, primaryAddress?.code_postal, primaryAddress?.ville]);
 
-  const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
-    setForm((f) => ({ ...f, [k]: v }));
+  const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm((f) => ({ ...f, [k]: v }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -356,23 +353,20 @@ function ParentCard({
   };
 
   const roleLabels: Record<string, string> = {
-    "Mère": "Mère de famille",
-    "Père": "Père de famille",
-    "Tuteur": "Tuteur légal",
-    "Tutrice": "Tutrice légale",
+    Mère: "Mère de famille",
+    Père: "Père de famille",
+    Tuteur: "Tuteur légal",
+    Tutrice: "Tutrice légale",
     "Beau-père": "Beau-père",
     "Belle-mère": "Belle-mère",
     "Grand-parent": "Grand-parent",
-    "Autre": "Autre membre",
-    "Parent": "Parent",
+    Autre: "Autre membre",
+    Parent: "Parent",
   };
   const title = roleLabels[form.role] || form.role || `Membre ${index + 1}`;
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)]"
-    >
+    <form onSubmit={handleSubmit} className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
           <User className="h-4 w-4 text-primary" /> {title}
@@ -398,7 +392,9 @@ function ParentCard({
             className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
           >
             {ROLE_OPTIONS.map((r) => (
-              <option key={r} value={r}>{r}</option>
+              <option key={r} value={r}>
+                {r}
+              </option>
             ))}
           </select>
         </Field>
@@ -505,12 +501,10 @@ function ParentCard({
               setForm((f) => ({
                 ...f,
                 has_alt_shipping: checked,
-                shipping_adresse:
-                  checked && isSecondary && !f.shipping_adresse ? f.adresse : f.shipping_adresse,
+                shipping_adresse: checked && isSecondary && !f.shipping_adresse ? f.adresse : f.shipping_adresse,
                 shipping_code_postal:
                   checked && isSecondary && !f.shipping_code_postal ? f.code_postal : f.shipping_code_postal,
-                shipping_ville:
-                  checked && isSecondary && !f.shipping_ville ? f.ville : f.shipping_ville,
+                shipping_ville: checked && isSecondary && !f.shipping_ville ? f.ville : f.shipping_ville,
               }));
             }}
             className="mt-0.5 h-4 w-4 rounded border-border accent-primary"
@@ -575,20 +569,10 @@ function ParentCard({
   );
 }
 
-function Field({
-  label,
-  children,
-  full,
-}: {
-  label: string;
-  children: React.ReactNode;
-  full?: boolean;
-}) {
+function Field({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) {
   return (
     <label className={`flex flex-col gap-1.5 ${full ? "sm:col-span-2" : ""}`}>
-      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        {label}
-      </span>
+      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
       {children}
     </label>
   );

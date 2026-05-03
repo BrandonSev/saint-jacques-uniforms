@@ -48,17 +48,26 @@ function AdminPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAdmin) { setLoading(false); return; }
+    if (!isAdmin) {
+      setLoading(false);
+      return;
+    }
     (async () => {
       const { data, error } = await supabase
         .from("order_items")
-        .select(`
+        .select(
+          `
           child_prenom, child_nom, child_classe, child_section,
           product_name, product_ref, size, quantity, unit_price, line_total,
           orders!inner ( order_number, created_at, status, family_civilite, family_nom, family_prenom, family_email, family_telephone )
-        `)
+        `,
+        )
         .order("created_at", { foreignTable: "orders", ascending: false });
-      if (error) { toast.error(error.message); setLoading(false); return; }
+      if (error) {
+        toast.error(error.message);
+        setLoading(false);
+        return;
+      }
       const flat: Row[] = (data ?? []).map((r: any) => ({
         order_number: r.orders.order_number,
         created_at: r.orders.created_at,
@@ -88,18 +97,18 @@ function AdminPage() {
   const exportExcel = () => {
     const data = rows.map((r) => ({
       "N° Commande": r.order_number,
-      "Date": new Date(r.created_at).toLocaleDateString("fr-FR"),
-      "Statut": r.status,
-      "Famille": `${r.family_civilite ?? ""} ${r.family_prenom} ${r.family_nom}`.trim(),
-      "Email": r.family_email,
-      "Téléphone": r.family_telephone ?? "",
-      "Enfant": `${r.child_prenom} ${r.child_nom}`,
-      "Classe": r.child_classe ?? "",
-      "Section": r.child_section ?? "",
-      "Produit": r.product_name,
-      "Référence": r.product_ref,
-      "Taille": r.size,
-      "Quantité": r.quantity,
+      Date: new Date(r.created_at).toLocaleDateString("fr-FR"),
+      Statut: r.status,
+      Famille: `${r.family_civilite ?? ""} ${r.family_prenom} ${r.family_nom}`.trim(),
+      Email: r.family_email,
+      Téléphone: r.family_telephone ?? "",
+      Enfant: `${r.child_prenom} ${r.child_nom}`,
+      Classe: r.child_classe ?? "",
+      Section: r.child_section ?? "",
+      Produit: r.product_name,
+      Référence: r.product_ref,
+      Taille: r.size,
+      Quantité: r.quantity,
       "Prix unitaire (€)": r.unit_price,
       "Total ligne (€)": r.line_total,
     }));
@@ -112,7 +121,11 @@ function AdminPage() {
   };
 
   if (authLoading) {
-    return <div className="flex min-h-screen flex-col bg-background"><SiteHeader schoolName={SCHOOL_LABEL} /></div>;
+    return (
+      <div className="flex min-h-screen flex-col bg-background">
+        <SiteHeader schoolName={SCHOOL_LABEL} />
+      </div>
+    );
   }
 
   if (!isAdmin) {
@@ -122,7 +135,9 @@ function AdminPage() {
         <section className="mx-auto max-w-3xl px-4 py-20 text-center">
           <ShieldCheck className="mx-auto h-10 w-10 text-muted-foreground" />
           <h1 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">Accès réservé</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Cette page est réservée aux administrateurs de l'établissement.</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Cette page est réservée aux administrateurs de l'établissement.
+          </p>
         </section>
         <SiteFooter />
       </div>
@@ -136,13 +151,15 @@ function AdminPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader schoolName={SCHOOL_LABEL} />
-      <section className="mx-auto w-full px-4 py-12 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
               <span className="h-px w-6 bg-gold" /> Espace administrateur
             </span>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Commandes fournisseur</h1>
+            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              Commandes fournisseur
+            </h1>
             <p className="mt-1 text-sm text-muted-foreground">Vue consolidée de toutes les commandes familles.</p>
           </div>
           <button
@@ -178,19 +195,35 @@ function AdminPage() {
               </thead>
               <tbody className="divide-y divide-border">
                 {loading && (
-                  <tr><td colSpan={9} className="px-4 py-6 text-center text-muted-foreground">Chargement…</td></tr>
+                  <tr>
+                    <td colSpan={9} className="px-4 py-6 text-center text-muted-foreground">
+                      Chargement…
+                    </td>
+                  </tr>
                 )}
                 {!loading && rows.length === 0 && (
-                  <tr><td colSpan={9} className="px-4 py-6 text-center text-muted-foreground">Aucune commande pour le moment.</td></tr>
+                  <tr>
+                    <td colSpan={9} className="px-4 py-6 text-center text-muted-foreground">
+                      Aucune commande pour le moment.
+                    </td>
+                  </tr>
                 )}
                 {rows.map((r, i) => (
                   <tr key={i} className="hover:bg-muted/30">
                     <td className="px-4 py-3 font-medium text-foreground">{r.order_number}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{new Date(r.created_at).toLocaleDateString("fr-FR")}</td>
-                    <td className="px-4 py-3">{r.family_prenom} {r.family_nom}</td>
-                    <td className="px-4 py-3">{r.child_prenom} {r.child_nom}</td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {new Date(r.created_at).toLocaleDateString("fr-FR")}
+                    </td>
+                    <td className="px-4 py-3">
+                      {r.family_prenom} {r.family_nom}
+                    </td>
+                    <td className="px-4 py-3">
+                      {r.child_prenom} {r.child_nom}
+                    </td>
                     <td className="px-4 py-3 text-muted-foreground">{r.child_classe ?? "—"}</td>
-                    <td className="px-4 py-3">{r.product_name} <span className="text-xs text-muted-foreground">({r.product_ref})</span></td>
+                    <td className="px-4 py-3">
+                      {r.product_name} <span className="text-xs text-muted-foreground">({r.product_ref})</span>
+                    </td>
                     <td className="px-4 py-3">{r.size}</td>
                     <td className="px-4 py-3 text-right">{r.quantity}</td>
                     <td className="px-4 py-3 text-right font-semibold">{r.line_total.toFixed(2)} €</td>

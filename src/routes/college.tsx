@@ -93,36 +93,45 @@ function CollegePage() {
 
       <div className="border-b border-border bg-card">
         <div className="mx-auto flex w-full items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
-          <Link to="/boutique" className="hover:text-primary">Boutique</Link>
+          <Link to="/boutique" className="hover:text-primary">
+            Boutique
+          </Link>
           <ChevronRight className="h-3 w-3" />
           <span className="text-foreground">Collège (CM2 → 4ᵉ)</span>
         </div>
       </div>
 
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border" style={{ background: "var(--gradient-soft)" }}>
+      <section
+        className="relative overflow-hidden border-b border-border"
+        style={{ background: "var(--gradient-soft)" }}
+      >
         <div className="pointer-events-none absolute inset-0 text-primary">
           <ShellMotif className="absolute -left-32 -bottom-32 h-[480px] w-[480px]" opacity={0.05} />
         </div>
-        <div className="relative mx-auto grid w-full items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
+        <div className="relative mx-auto max-w-6xl grid w-full items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold uppercase tracking-wider text-sm text-lime-400 bg-red-500">
               <ShieldCheck className="h-3 w-3" /> SÉLECTION EN COURS D'ETUDE PAR L'ÉTABLISSEMENT
             </span>
-            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Collège
-            </h1>
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Collège</h1>
             <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
-              Sélection d'uniformes validée par l'établissement pour les classes
-              de CM2, 6ᵉ, 5ᵉ et 4ᵉ. Commande simple pour les familles : tous les
-              produits ci-dessous sont autorisés au collège
-              Saint-Jacques-de-Compostelle.
+              Sélection d'uniformes validée par l'établissement pour les classes de CM2, 6ᵉ, 5ᵉ et 4ᵉ. Commande simple
+              pour les familles : tous les produits ci-dessous sont autorisés au collège Saint-Jacques-de-Compostelle.
             </p>
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">5 produits</span>
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Tailles 10 → 18 ans</span>
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison à l'établissement</span>
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">Livraison à domicile</span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">
+                5 produits
+              </span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">
+                Tailles 10 → 18 ans
+              </span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">
+                Livraison à l'établissement
+              </span>
+              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">
+                Livraison à domicile
+              </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--teal)]/30 bg-[var(--teal)]/10 px-3 py-1.5 font-semibold text-[var(--teal-deep)]">
                 <CreditCard className="h-3 w-3" /> Paiement en ligne sécurisé
               </span>

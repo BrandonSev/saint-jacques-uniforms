@@ -45,8 +45,7 @@ function MaternellePage() {
   // Blouse officielle = Unisexe : aucun blocage par genre.
   const productGenre: "Fille" | "Garçon" | "Unisexe" = "Unisexe";
   const selectedChild = children.find((c) => c.id === childId);
-  const genreMismatch =
-    !!selectedChild && productGenre !== "Unisexe" && selectedChild.genre !== productGenre;
+  const genreMismatch = !!selectedChild && productGenre !== "Unisexe" && selectedChild.genre !== productGenre;
 
   const FAV_KEY = "sjc.favorites";
   const PRODUCT_ID = "blouse-officielle";
@@ -63,9 +62,7 @@ function MaternellePage() {
     try {
       const raw = localStorage.getItem(FAV_KEY);
       const list: string[] = raw ? JSON.parse(raw) : [];
-      const next = list.includes(PRODUCT_ID)
-        ? list.filter((id) => id !== PRODUCT_ID)
-        : [...list, PRODUCT_ID];
+      const next = list.includes(PRODUCT_ID) ? list.filter((id) => id !== PRODUCT_ID) : [...list, PRODUCT_ID];
       localStorage.setItem(FAV_KEY, JSON.stringify(next));
       const nowFav = next.includes(PRODUCT_ID);
       setIsFavorite(nowFav);
@@ -76,8 +73,14 @@ function MaternellePage() {
   };
 
   const handleAdd = () => {
-    if (children.length === 0) { toast.error("Ajoutez d'abord un enfant"); return; }
-    if (!childId) { toast.error("Choisissez un enfant"); return; }
+    if (children.length === 0) {
+      toast.error("Ajoutez d'abord un enfant");
+      return;
+    }
+    if (!childId) {
+      toast.error("Choisissez un enfant");
+      return;
+    }
     addToCart({
       productId: "blouse-officielle",
       name: "Blouse scolaire officielle SJDC",
@@ -99,15 +102,19 @@ function MaternellePage() {
       {/* Breadcrumb */}
       <div className="border-b border-border bg-card">
         <div className="mx-auto flex w-full items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
-          <Link to="/boutique" className="hover:text-primary">Boutique</Link>
+          <Link to="/boutique" className="hover:text-primary">
+            Boutique
+          </Link>
           <ChevronRight className="h-3 w-3" />
-          <Link to="/maternelle" className="hover:text-primary">Maternelle & Élémentaire</Link>
+          <Link to="/maternelle" className="hover:text-primary">
+            Maternelle & Élémentaire
+          </Link>
           <ChevronRight className="h-3 w-3" />
           <span className="text-foreground">Blouse officielle</span>
         </div>
       </div>
 
-      <section className="relative mx-auto w-full px-4 py-10 sm:px-6 lg:px-8">
+      <section className="relative mx-auto max-w-6xl w-full px-4 py-10 sm:px-6 lg:px-8">
         <div className="pointer-events-none absolute right-0 top-0 -z-0 h-96 w-96 text-primary">
           <ShellMotif className="h-full w-full" opacity={0.04} />
         </div>
@@ -145,9 +152,7 @@ function MaternellePage() {
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               Blouse scolaire officielle SJDC
             </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Ref : Riviera Dax · Maternelle & Élémentaire
-            </p>
+            <p className="mt-1 text-sm text-muted-foreground">Ref : Riviera Dax · Maternelle & Élémentaire</p>
 
             <div className="mt-6 flex items-baseline gap-3">
               <span className="text-3xl font-semibold text-foreground">30 €</span>
@@ -157,25 +162,31 @@ function MaternellePage() {
             </div>
 
             <p className="mt-6 leading-relaxed text-foreground/80">
-              Blouse officielle du groupe scolaire — portée au quotidien par les élèves.
-              Coton mélangé de couleur bleu Riviera, fermeture centrale par 5 boutons
-              pressions jaunes, élastiquage léger autour des poignets, col biais, semi
-              contrasté bleu Riviera foncé, écusson du blason de l'école brodé sur le
-              coeur et 1 poche plaquée à gauche au porté. Confectionnée dans nos
-              ateliers français.
+              Blouse officielle du groupe scolaire — portée au quotidien par les élèves. Coton mélangé de couleur bleu
+              Riviera, fermeture centrale par 5 boutons pressions jaunes, élastiquage léger autour des poignets, col
+              biais, semi contrasté bleu Riviera foncé, écusson du blason de l'école brodé sur le coeur et 1 poche
+              plaquée à gauche au porté. Confectionnée dans nos ateliers français.
             </p>
 
             {/* Pour quel enfant — d'abord */}
             <div className="mt-8">
               <label className="text-sm font-semibold text-foreground">Pour quel enfant ?</label>
-              <div className="mt-3"><ChildPicker value={childId} onChange={setChildId} filter={(c) => c.section === "Maternelle" || c.section === "Élémentaire"} /></div>
+              <div className="mt-3">
+                <ChildPicker
+                  value={childId}
+                  onChange={setChildId}
+                  filter={(c) => c.section === "Maternelle" || c.section === "Élémentaire"}
+                />
+              </div>
             </div>
 
             {/* Size */}
             <div className="mt-8">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-semibold text-foreground">Taille</label>
-                <Link to="/aide/guide-tailles" className="text-xs text-primary hover:underline">Guide des tailles</Link>
+                <Link to="/aide/guide-tailles" className="text-xs text-primary hover:underline">
+                  Guide des tailles
+                </Link>
               </div>
               <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8">
                 {sizes.map((s) => (
@@ -211,8 +222,11 @@ function MaternellePage() {
                   <Plus className="h-4 w-4" />
                 </button>
               </div>
-              <button onClick={handleAdd} disabled={children.length === 0 || !childId}
-                className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">
+              <button
+                onClick={handleAdd}
+                disabled={children.length === 0 || !childId}
+                className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+              >
                 {children.length === 0 ? "Ajoutez un enfant" : !childId ? "Choisir un enfant" : "Ajouter au panier"}
               </button>
               <button
@@ -249,18 +263,15 @@ function MaternellePage() {
             </div>
             <div className="space-y-4 text-sm leading-relaxed text-foreground/80 lg:col-span-2">
               <p>
-                La blouse de Saint-Jacques-de-Compostelle est portée par tous les élèves de maternelle et d'élémentaire. Sa coupe à la fois ajustée et ample, permet une grande liberté de mouvement tout en offrant une apparence harmonieuse. 
+                La blouse de Saint-Jacques-de-Compostelle est portée par tous les élèves de maternelle et d'élémentaire.
+                Sa coupe à la fois ajustée et ample, permet une grande liberté de mouvement tout en offrant une
+                apparence harmonieuse.
               </p>
-              <p>
-                Elle protège les vêtements pendant les activités du quotidien.
-              </p>
-              <p>
-                Tissu résistant, lavable en machine à 40°C, détachable facilement et séchage rapide. 
-              </p>
+              <p>Elle protège les vêtements pendant les activités du quotidien.</p>
+              <p>Tissu résistant, lavable en machine à 40°C, détachable facilement et séchage rapide.</p>
             </div>
           </div>
         </div>
-
       </section>
 
       <DirectorQuote
@@ -276,9 +287,7 @@ function MaternellePage() {
 function Bullet({ icon, text }: { icon: React.ReactNode; text: string }) {
   return (
     <div className="flex items-center gap-2.5 text-sm text-foreground">
-      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">
-        {icon}
-      </span>
+      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">{icon}</span>
       {text}
     </div>
   );
