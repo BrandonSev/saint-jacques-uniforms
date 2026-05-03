@@ -707,3 +707,126 @@ function Field({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
+function TrackingPanel({
+  orders,
+  loading,
+  onUpdate,
+}: {
+  orders: OrderRow[];
+  loading: boolean;
+  onUpdate: (
+    orderId: string,
+    patch: Partial<Pick<OrderRow, "status" | "tracking_number" | "tracking_carrier">>,
+    notify: boolean,
+  ) => Promise<void>;
+}) {
+  const [drafts, setDrafts] = useState<Record<string, { tracking_number: string; tracking_carrier: string }>>({});
+
+  const draftFor = (o: OrderRow) =>
+    drafts[o.id] ?? {
+      tracking_number: o.tracking_number ?? "",
+      tracking_carrier: o.tracking_carrier ?? "",
+    };
+
+  const setDraft = (id: string, patch: Partial<{ tracking_number: string; tracking_carrier: string }>) =>
+    setDrafts((prev) => ({ ...prev, [id]: { ...draftFor(orders.find((o) => o.id === id)!), ...patch } }));
+
+  return (
+    <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-secondary text-left text-xs uppercase tracking-wider text-muted-foreground">
+            <tr>
+              <th className="px-4 py-3">Commande</th>
+              <th className="px-4 py-3">Famille</th>
+              <th className="px-4 py-3">Mode</th>
+              <th className="px-4 py-3">Statut</th>
+              <th className="px-4 py-3">Transporteur</th>
+              <th className="px-4 py-3">N° de suivi</th>
+              <th className="px-4 py-3 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {loading && (
+              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">Chargement…</td></tr>
+            )}
+            {!loading && orders.length === 0 && (
+              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">Aucune commande.</td></tr>
+            )}
+            {orders.map((o) => {
+              const d = draftFor(o);
+              return (
+                <tr key={o.id} className="hover:bg-muted/30">
+                  <td className="px-4 py-3 font-medium text-foreground">
+                    {o.order_number}
+                    <div className="text-[11px] text-muted-foreground">
+                      {new Date(o.created_at).toLocaleDateString("fr-FR")} · {Number(o.total_amount).toFixed(2)} €
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    {o.family_prenom} {o.family_nom}
+                    <div className="text-[11px] text-muted-foreground">{o.family_email}</div>
+                  </td>
+                  <td className="px-4 py-3 text-xs">
+                    {o.shipping_mode === "pickup" ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5">Retrait</span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5">
+                        <Truck className="h-3 w-3" /> Domicile
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={o.status}
+                      onChange={(e) => onUpdate(o.id, { status: e.target.value }, true)}
+                      className="h-8 rounded-md border border-border bg-background px-2 text-xs"
+                    >
+                      {ORDER_STATUSES.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </td>
+                  <td className="px-4 py-3">
+                    <input
+                      value={d.tracking_carrier}
+                      onChange={(e) => setDraft(o.id, { tracking_carrier: e.target.value })}
+                      placeholder="Colissimo, Chronopost…"
+                      className="h-8 w-32 rounded-md border border-border bg-background px-2 text-xs"
+                    />
+                  </td>
+                  <td className="px-4 py-3">
+                    <input
+                      value={d.tracking_number}
+                      onChange={(e) => setDraft(o.id, { tracking_number: e.target.value })}
+                      placeholder="N° de suivi"
+                      className="h-8 w-40 rounded-md border border-border bg-background px-2 text-xs font-mono"
+                    />
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <button
+                      onClick={() =>
+                        onUpdate(
+                          o.id,
+                          {
+                            tracking_number: d.tracking_number || null,
+                            tracking_carrier: d.tracking_carrier || null,
+                          },
+                          true,
+                        )
+                      }
+                      className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90"
+                    >
+                      <Save className="h-3 w-3" /> Enregistrer
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
