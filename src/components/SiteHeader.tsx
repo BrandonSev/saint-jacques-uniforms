@@ -102,11 +102,11 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
               <Link
                 to="/famille"
                 title="Voir et modifier les coordonnées de la famille"
-                className="hidden h-10 items-center gap-2 rounded-full border border-border bg-slate-200 px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted xl:inline-flex"
+                className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-slate-200 px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted"
                 activeProps={{ className: "ring-2 ring-primary/40" }}
               >
                 <User className="h-4 w-4" />
-                <span className="max-w-[160px] truncate">{familyLabel}</span>
+                <span className="max-w-[120px] truncate sm:max-w-[160px]">{familyLabel}</span>
               </Link>
             )}
             {showAccount && user && (
