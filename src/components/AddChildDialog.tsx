@@ -202,7 +202,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
           </div>
 
           <div className="sm:col-span-4 grid items-stretch gap-2.5 sm:grid-cols-2">
-            <div className="rounded-xl border border-border bg-background/60 p-2.5">
+            <div className="w-1/2 self-start rounded-xl border border-border bg-background/60 p-2.5 sm:w-auto sm:self-stretch">
               <Input
                 label="Taille portée *"
                 value={form.taille}
