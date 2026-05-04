@@ -164,7 +164,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             </RadioGroup>
           </fieldset>
 
-          <div className="sm:col-span-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          <div className="sm:col-span-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:items-end">
             <Input label="Prénom *" value={form.prenom} onChange={(v) => setForm({ ...form, prenom: v })} required />
             <Input label="Nom *" value={form.nom} onChange={(v) => setForm({ ...form, nom: v })} required />
             <div className="col-span-2 sm:col-span-2">
