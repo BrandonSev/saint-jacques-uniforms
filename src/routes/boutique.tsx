@@ -35,7 +35,7 @@ const levels = [
     range: "PS · MS · GS · CP · CE1 · CE2 · CM1",
     image: maternelle,
     href: "/maternelle" as const,
-    accent: "Blouse quotidienne officielle",
+    accent: "Blouse, Tee-shirt quotidien officiel",
   },
   {
     id: "college",
