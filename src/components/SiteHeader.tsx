@@ -175,10 +175,10 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                   <MenuLink to="/commandes" onClick={() => setMenuOpen(false)}>
                     Mes commandes
                   </MenuLink>
-                  <div className="my-2 h-px bg-border" />
                   <MenuLink to="/famille" onClick={() => setMenuOpen(false)} icon={<User className="h-4 w-4" />}>
                     {familyLabel}
                   </MenuLink>
+                  <div className="my-2 h-px bg-border" />
                 </>
               )}
               <button

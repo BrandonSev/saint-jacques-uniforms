@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Info, X } from "lucide-react";
 import { toast } from "sonner";
@@ -223,13 +223,43 @@ function Input({
   label: string; value: string; onChange: (v: string) => void;
   type?: string; placeholder?: string; required?: boolean; suffix?: string; tooltip?: string;
 }) {
+  const [tipOpen, setTipOpen] = useState(false);
+  const tipRef = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    if (!tipOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (tipRef.current && !tipRef.current.contains(e.target as Node)) setTipOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [tipOpen]);
   return (
     <label className="flex flex-col">
       <span className="line-clamp-2 inline-flex min-h-[2rem] items-start gap-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         <span>{label}</span>
         {tooltip && (
-          <span title={tooltip} className="cursor-help text-primary" aria-label={tooltip}>
-            <Info className="h-3 w-3" />
+          <span ref={tipRef} className="relative inline-flex">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                setTipOpen((v) => !v);
+              }}
+              title={tooltip}
+              aria-label={tooltip}
+              aria-expanded={tipOpen}
+              className="cursor-help text-primary"
+            >
+              <Info className="h-3 w-3" />
+            </button>
+            {tipOpen && (
+              <span
+                role="tooltip"
+                className="absolute left-1/2 top-full z-50 mt-1 w-56 -translate-x-1/2 rounded-md border border-border bg-popover px-2.5 py-2 text-[11px] font-normal normal-case tracking-normal text-popover-foreground shadow-md"
+              >
+                {tooltip}
+              </span>
+            )}
           </span>
         )}
       </span>
