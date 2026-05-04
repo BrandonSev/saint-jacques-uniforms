@@ -244,8 +244,8 @@ function GuideTaillesPage() {
                 </tbody>
               </table>
             </div>
-            <p className="border-t border-border bg-secondary/40 px-3 py-2 text-[11px] text-muted-foreground sm:px-4">
-              Mesures en centimètres. Faites défiler horizontalement si nécessaire.
+            <p className="whitespace-pre-line border-t border-border bg-secondary/40 px-3 py-2 text-[11px] text-muted-foreground sm:px-4">
+              Mesures en centimètres. {"\n"}Faites défiler horizontalement si nécessaire.
             </p>
           </div>
 
