@@ -205,7 +205,7 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
                     <span
                       title={ageInfo.tooltip}
                       aria-label={`Âge : ${ageInfo.tooltip}`}
-                      className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-gradient-to-r from-primary to-primary/80 px-2 py-0.5 text-[10px] font-bold normal-case tracking-normal text-primary-foreground shadow-sm transition-transform hover:scale-105"
+                className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-gradient-to-r from-primary to-primary/80 px-2 py-0.5 normal-case tracking-normal text-primary-foreground shadow-sm transition-transform hover:scale-105 font-medium text-xs"
                     >
                       <Cake className="h-3 w-3" aria-hidden="true" />
                       {ageInfo.label}
