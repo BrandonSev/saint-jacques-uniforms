@@ -142,7 +142,7 @@ function GuideTaillesPage() {
                     .join(" · ")}
                 </span>
                 {!recommendation.consistent && (
-                  <span className="rounded-full px-2 py-0.5 font-semibold text-lime-600 bg-amber-50">
+                  <span className="rounded-full px-2 py-0.5 font-semibold bg-amber-50 text-emerald-500">
                     En cas de mesures discordantes —&gt; la taille la plus enveloppante est retenue dans la recommandation
                   </span>
                 )}
@@ -229,7 +229,7 @@ function GuideTaillesPage() {
                         <span className="inline-flex items-center gap-1.5">
                           {r.age}
                           {recommendation?.idx === i && (
-                            <span className="rounded-full bg-lime-600 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
+                            <span className="rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase text-white bg-emerald-600">
                               Reco
                             </span>
                           )}
