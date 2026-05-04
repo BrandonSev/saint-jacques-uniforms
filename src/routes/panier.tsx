@@ -552,7 +552,7 @@ function ChildGroup({
           header: "border-pink-200 bg-pink-50",
           badge: "bg-pink-500 text-white",
           chip: "bg-white text-pink-700 border border-pink-200",
-          name: "text-pink-800",
+          name: "text-sky-800 text-lg",
         }
       : genre === "Garçon"
         ? {
@@ -582,8 +582,8 @@ function ChildGroup({
             {group.child?.initials ?? "—"}
           </div>
           <div className="min-w-0">
-            <h3 className={`truncate text-base font-semibold tracking-tight ${tone.name}`}>
-              Pour {group.child ? `${group.child.prenom} ${group.child.nom}` : "—"}
+            <h3 className={`truncate font-semibold tracking-tight ${tone.name}`}>
+              {group.child ? `pour ${group.child.prenom} ${group.child.nom}` : "—"}
             </h3>
             <p className="truncate text-xs text-muted-foreground">
               {group.child
