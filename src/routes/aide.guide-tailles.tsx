@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { Ruler } from "lucide-react";
 import { PageWatermark } from "@/components/PageWatermark";
-import mesuresDiagram from "@/assets/guide-tailles-mesures.png";
 
 export const Route = createFileRoute("/aide/guide-tailles")({
   head: () => ({
@@ -131,11 +130,105 @@ function NumberBadge({ n }: { n: number }) {
 
 function MeasureDiagram() {
   return (
-    <img
-      src={mesuresDiagram}
-      alt="Schéma des 4 points de mesure : stature, tour de poitrine, tour de taille, tour de bassin"
-      className="h-80 w-auto object-contain"
-      loading="lazy"
-    />
+    <svg
+      viewBox="0 0 240 360"
+      className="h-80 w-auto"
+      role="img"
+      aria-label="Schéma des 4 points de mesure : stature, tour de poitrine, tour de taille, tour de bassin"
+    >
+      <defs>
+        <linearGradient id="bodyFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="hsl(var(--muted))" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="hsl(var(--muted))" stopOpacity="0.85" />
+        </linearGradient>
+      </defs>
+
+      {/* ---------- Stature axis (1) ---------- */}
+      <g stroke="hsl(var(--primary))" strokeWidth="1.5" fill="none" strokeLinecap="round">
+        <line x1="22" y1="34" x2="22" y2="326" />
+        <polyline points="16,42 22,32 28,42" />
+        <polyline points="16,318 22,328 28,318" />
+      </g>
+      <g>
+        <circle cx="22" cy="180" r="11" fill="hsl(var(--primary))" />
+        <text x="22" y="184" textAnchor="middle" fontSize="12" fontWeight="700" fill="hsl(var(--primary-foreground))">1</text>
+      </g>
+
+      {/* ---------- Child silhouette (front view) ----------
+          Drawn as a single soft outline. Coordinates are tuned so the
+          chest / waist / hip bands sit on the correct anatomical points. */}
+      <g
+        fill="url(#bodyFill)"
+        stroke="hsl(var(--foreground) / 0.55)"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      >
+        {/* Head */}
+        <path d="M120 30
+                 C 100 30, 92 50, 94 68
+                 C 95 80, 102 88, 110 92
+                 L 110 100
+                 C 110 106, 116 110, 120 110
+                 C 124 110, 130 106, 130 100
+                 L 130 92
+                 C 138 88, 145 80, 146 68
+                 C 148 50, 140 30, 120 30 Z" />
+        {/* Body : shoulders → arms → waist → hips → legs */}
+        <path d="M 92 112
+                 C 80 116, 74 128, 72 144
+                 L 68 196
+                 C 66 208, 64 218, 62 226
+                 L 70 230
+                 C 74 222, 78 210, 80 198
+                 L 84 168
+                 L 86 200
+                 C 86 232, 84 262, 86 296
+                 L 100 320
+                 L 112 320
+                 L 114 248
+                 C 114 232, 117 220, 120 218
+                 C 123 220, 126 232, 126 248
+                 L 128 320
+                 L 140 320
+                 L 154 296
+                 C 156 262, 154 232, 154 200
+                 L 156 168
+                 L 160 198
+                 C 162 210, 166 222, 170 230
+                 L 178 226
+                 C 176 218, 174 208, 172 196
+                 L 168 144
+                 C 166 128, 160 116, 148 112
+                 C 142 110, 136 110, 130 110
+                 L 110 110
+                 C 104 110, 98 110, 92 112 Z" />
+      </g>
+
+      {/* ---------- Measurement bands ---------- */}
+      <g stroke="hsl(var(--primary))" fill="none" strokeWidth="2.5" strokeLinecap="round">
+        {/* (2) Poitrine */}
+        <line x1="74" y1="158" x2="166" y2="158" />
+        {/* (3) Taille */}
+        <line x1="80" y1="190" x2="160" y2="190" />
+        {/* (4) Bassin */}
+        <line x1="76" y1="222" x2="164" y2="222" />
+      </g>
+
+      {/* ---------- Numbered badges (centered on body) ---------- */}
+      <g>
+        <circle cx="120" cy="158" r="11" fill="hsl(var(--primary))" stroke="white" strokeWidth="2" />
+        <text x="120" y="162" textAnchor="middle" fontSize="12" fontWeight="700" fill="hsl(var(--primary-foreground))">2</text>
+
+        <circle cx="120" cy="190" r="11" fill="hsl(var(--primary))" stroke="white" strokeWidth="2" />
+        <text x="120" y="194" textAnchor="middle" fontSize="12" fontWeight="700" fill="hsl(var(--primary-foreground))">3</text>
+
+        <circle cx="120" cy="222" r="11" fill="hsl(var(--primary))" stroke="white" strokeWidth="2" />
+        <text x="120" y="226" textAnchor="middle" fontSize="12" fontWeight="700" fill="hsl(var(--primary-foreground))">4</text>
+      </g>
+
+      {/* Ground line */}
+      <line x1="90" y1="330" x2="150" y2="330" stroke="hsl(var(--foreground) / 0.25)" strokeWidth="1" strokeLinecap="round" />
+    </svg>
   );
 }
