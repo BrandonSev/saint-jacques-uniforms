@@ -164,7 +164,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             </RadioGroup>
           </fieldset>
 
-          <div className="sm:col-span-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          <div className="sm:col-span-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:items-end">
             <Input label="Prénom *" value={form.prenom} onChange={(v) => setForm({ ...form, prenom: v })} required />
             <Input label="Nom *" value={form.nom} onChange={(v) => setForm({ ...form, nom: v })} required />
             <div className="col-span-2 sm:col-span-2">
@@ -413,25 +413,40 @@ function DateOfBirthPicker({ label, value, onChange }: { label: string; value: s
     if (!y || !m || !d) return null;
     const birth = new Date(Number(y), Number(m) - 1, Number(d));
     const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    const mDiff = today.getMonth() - birth.getMonth();
-    if (mDiff < 0 || (mDiff === 0 && today.getDate() < birth.getDate())) age--;
-    if (age < 0 || age > 120) return null;
-    return age;
+    let years = today.getFullYear() - birth.getFullYear();
+    let months = today.getMonth() - birth.getMonth();
+    let days = today.getDate() - birth.getDate();
+    if (days < 0) months--;
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+    if (years < 0 || years > 120) return null;
+    return { years, months };
   };
   const age = computeAge();
+  const ageLabel = (() => {
+    if (!age) return null;
+    const { years, months } = age;
+    if (years === 0) {
+      if (months <= 1) return "Nouveau-né";
+      return `${months} mois`;
+    }
+    const half = months >= 6 ? " et demi" : "";
+    return `${years} an${years > 1 ? "s" : ""}${half}`;
+  })();
 
   return (
-    <div className="block">
-      <div className="flex items-center justify-between">
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
-        {age !== null && (
-          <span className="text-[11px] font-semibold text-primary">
-            {age === 0 ? "Moins d'un an" : `${age} ans`}
+    <div className="flex h-full flex-col">
+      <div className="line-clamp-2 inline-flex min-h-[2rem] items-start justify-between gap-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <span>{label}</span>
+        {ageLabel && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold normal-case tracking-normal text-primary">
+            🎂 {ageLabel}
           </span>
         )}
       </div>
-      <div className="mt-1 grid grid-cols-3 gap-2">
+      <div className="mt-auto grid grid-cols-3 gap-2">
         <select value={d} onChange={(e) => update(y, m, e.target.value)} className="h-10 w-full rounded-lg border border-border bg-background px-2 text-sm">
           <option value="">Jour</option>
           {days.map((dd) => <option key={dd} value={dd}>{Number(dd)}</option>)}
