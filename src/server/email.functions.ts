@@ -16,7 +16,6 @@ import {
 
 // Bienvenue après création de compte (appelable par utilisateur authentifié)
 export const sendWelcome = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ email: z.string().email(), prenom: z.string().min(1).max(100) }).parse(d))
   .handler(async ({ data }) => {
     try { await sendWelcomeEmail(data.email, data.prenom); return { ok: true }; }
