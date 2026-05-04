@@ -186,7 +186,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             placeholder="Sélectionner une classe"
           />
 
-          <div className="sm:col-span-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="sm:col-span-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Input
               label="Taille portée *"
               value={form.taille}
@@ -196,8 +196,54 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
               required
               tooltip="A titre d'information, taille que vous avez l'habitude d'acheter pour votre enfant actuellement"
             />
-            <Input label="Hauteur *" value={form.hauteur} onChange={(v) => setForm({ ...form, hauteur: v })} placeholder="ex: 128" suffix="cm" required />
-            <Input label="Tour de poitrine *" value={form.tour} onChange={(v) => setForm({ ...form, tour: v })} placeholder="ex: 62" suffix="cm" required />
+            <Input
+              label="Hauteur (stature) *"
+              value={form.hauteur}
+              onChange={(v) => setForm({ ...form, hauteur: v })}
+              placeholder="ex: 128"
+              suffix="cm"
+              required
+              badge={1}
+            />
+          </div>
+
+          <div className="sm:col-span-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5 text-[11px] leading-relaxed text-foreground/80">
+            <span className="font-semibold text-primary">Conseil :</span> renseignez aussi le tour de poitrine, de taille et de bassin pour fiabiliser le choix de la taille. Les numéros correspondent au{" "}
+            <a
+              href="/aide/guide-tailles"
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-primary underline-offset-2 hover:underline"
+            >
+              guide des tailles
+            </a>.
+          </div>
+
+          <div className="sm:col-span-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <Input
+              label="Tour de poitrine"
+              value={form.tour}
+              onChange={(v) => setForm({ ...form, tour: v })}
+              placeholder="ex: 62"
+              suffix="cm"
+              badge={2}
+            />
+            <Input
+              label="Tour de taille"
+              value={form.tour_taille}
+              onChange={(v) => setForm({ ...form, tour_taille: v })}
+              placeholder="ex: 56"
+              suffix="cm"
+              badge={3}
+            />
+            <Input
+              label="Tour de bassin"
+              value={form.tour_bassin}
+              onChange={(v) => setForm({ ...form, tour_bassin: v })}
+              placeholder="ex: 64"
+              suffix="cm"
+              badge={4}
+            />
           </div>
         </div>
 
