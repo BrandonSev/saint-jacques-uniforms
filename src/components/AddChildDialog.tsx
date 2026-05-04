@@ -201,38 +201,33 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             <span className="h-px flex-1 bg-border" />
           </div>
 
-          <div className="sm:col-span-4 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-[11px] leading-relaxed text-foreground/80">
-            <span className="font-semibold text-primary">Conseil :</span> renseignez aussi le tour de poitrine, de taille et de bassin pour fiabiliser le choix de la taille. Les numéros correspondent au{" "}
-            <a
-              href="/aide/guide-tailles"
-              target="_blank"
-              rel="noreferrer"
-              className="font-semibold text-primary underline-offset-2 hover:underline"
-            >
-              guide des tailles
-            </a>.
+          <div className="sm:col-span-4 grid items-stretch gap-2.5 sm:grid-cols-2">
+            <div className="rounded-xl border border-border bg-background/60 p-2.5">
+              <Input
+                label="Taille portée *"
+                value={form.taille}
+                onChange={(v) => setForm({ ...form, taille: v })}
+                placeholder="ex: 8"
+                suffix="ans"
+                required
+                tooltip="A titre d'information, taille que vous avez l'habitude d'acheter pour votre enfant actuellement"
+              />
+            </div>
+            <div className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-[11px] leading-relaxed text-foreground/80">
+              <span className="font-semibold text-primary">Conseil :</span> renseignez aussi le tour de poitrine, de taille et de bassin pour fiabiliser le choix de la taille. Les numéros correspondent au{" "}
+              <a
+                href="/aide/guide-tailles"
+                target="_blank"
+                rel="noreferrer"
+                className="font-semibold text-primary underline-offset-2 hover:underline"
+              >
+                guide des tailles
+              </a>.
+            </div>
           </div>
-
-          <LiveSizeRecommendation
-            hauteur={form.hauteur}
-            tour={form.tour}
-            tour_taille={form.tour_taille}
-            tour_bassin={form.tour_bassin}
-          />
 
           <div className="sm:col-span-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
             <div className="flex flex-col gap-2.5 sm:self-center">
-              <div className="rounded-xl border border-border bg-background/60 p-2.5">
-                <Input
-                  label="Taille portée *"
-                  value={form.taille}
-                  onChange={(v) => setForm({ ...form, taille: v })}
-                  placeholder="ex: 8"
-                  suffix="ans"
-                  required
-                  tooltip="A titre d'information, taille que vous avez l'habitude d'acheter pour votre enfant actuellement"
-                />
-              </div>
               <div className="grid grid-cols-2 gap-2.5">
                 <Input
                   label="Hauteur (stature) *"
@@ -278,6 +273,13 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
               />
             </div>
           </div>
+
+          <LiveSizeRecommendation
+            hauteur={form.hauteur}
+            tour={form.tour}
+            tour_taille={form.tour_taille}
+            tour_bassin={form.tour_bassin}
+          />
         </div>
 
         <div className="mt-5 flex justify-end gap-2">
@@ -311,7 +313,7 @@ function LiveSizeRecommendation({
 
   if (!reco) {
     return (
-      <div className="sm:col-span-4 flex items-center gap-2 rounded-xl border border-dashed border-border bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground">
+      <div className="sm:col-span-4 mt-1 flex items-center gap-2 rounded-xl border border-dashed border-border bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground">
         <Sparkles className="h-3.5 w-3.5 text-primary/60" />
         Saisissez au moins une mesure pour voir la taille recommandée.
       </div>
@@ -320,20 +322,25 @@ function LiveSizeRecommendation({
 
   return (
     <div
-      className={`sm:col-span-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border px-3 py-2 text-xs ${
+      className={`sm:col-span-4 mt-1 flex flex-wrap items-center justify-between gap-2 rounded-xl border-2 px-3 py-2.5 text-xs shadow-sm ${
         reco.consistent
-          ? "border-primary/30 bg-primary/10"
-          : "border-amber-300/60 bg-amber-50"
+          ? "border-lime-500 bg-lime-200/70 dark:bg-lime-500/20"
+          : "border-amber-400 bg-amber-50"
       }`}
     >
       <div className="flex items-center gap-2">
-        <Sparkles className={`h-4 w-4 ${reco.consistent ? "text-primary" : "text-amber-600"}`} />
+        <Sparkles className={`h-4 w-4 ${reco.consistent ? "text-lime-700" : "text-amber-600"}`} />
         <span className="font-medium text-foreground">
           Taille recommandée :{" "}
-          <span className={`text-base font-bold ${reco.consistent ? "text-primary" : "text-amber-700"}`}>
+          <span className={`text-base font-bold ${reco.consistent ? "text-lime-700" : "text-amber-700"}`}>
             {reco.row.age}
           </span>
         </span>
+        {reco.consistent && (
+          <span className="rounded-full bg-lime-600 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
+            Match
+          </span>
+        )}
       </div>
       <span className="text-[11px] text-muted-foreground">
         {filledCount}/4 mesure{filledCount > 1 ? "s" : ""} renseignée{filledCount > 1 ? "s" : ""}
