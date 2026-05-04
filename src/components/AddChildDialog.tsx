@@ -4,6 +4,7 @@ import { Info, X } from "lucide-react";
 import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useStore, type Child } from "@/lib/store";
+import guideMesuresImg from "@/assets/guide-tailles-mesures.png";
 
 export type ChildForm = {
   prenom: string;
@@ -217,6 +218,15 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             >
               guide des tailles
             </a>.
+          </div>
+
+          <div className="sm:col-span-2 flex justify-center rounded-xl border border-border bg-background/60 p-3">
+            <img
+              src={guideMesuresImg}
+              alt="Schéma des mesures : 1 hauteur, 2 tour de poitrine, 3 tour de taille, 4 tour de bassin"
+              className="h-auto max-h-56 w-auto object-contain"
+              loading="lazy"
+            />
           </div>
 
           <div className="sm:col-span-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
