@@ -283,7 +283,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
         </div>
 
         <div className="mt-5 flex flex-wrap items-center justify-end gap-2 sm:flex-nowrap">
-          <div className="hidden flex-1 sm:block">
+          <div className="hidden sm:block sm:mr-auto sm:w-1/2 sm:max-w-[calc(50%-0.5rem)]">
             <LiveSizeRecommendation
               hauteur={form.hauteur}
               tour={form.tour}
