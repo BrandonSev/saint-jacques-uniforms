@@ -238,28 +238,6 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
                 </p>
               )}
             </div>
-            {(() => {
-              const reco = recommendSize({
-                hauteur: enfant.hauteur,
-                tour: enfant.tour,
-                tour_taille: enfant.tour_taille,
-                tour_bassin: enfant.tour_bassin,
-              });
-              if (!reco) return null;
-              return (
-                <span
-                  title={reco.consistent ? "Toutes les mesures concordent" : "Prise sur la mesure la plus enveloppante"}
-                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold shadow-sm ring-2 ring-inset ${
-                    reco.consistent
-                      ? "bg-lime-200/70 text-lime-800 ring-lime-500 dark:bg-lime-500/20 dark:text-lime-200"
-                      : "bg-emerald-100 text-emerald-800 ring-amber-400"
-                  }`}
-                >
-                  <Sparkles className={`h-3.5 w-3.5 ${reco.consistent ? "text-lime-700 dark:text-lime-300" : "text-amber-600"}`} />
-                  Taille reco&nbsp;: <span className="font-bold">{reco.row.age}</span>
-                </span>
-              );
-            })()}
           </div>
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             <Field
@@ -273,7 +251,45 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
             <Field label="Tour de bassin" value={enfant.tour_bassin ? `${enfant.tour_bassin} cm` : "—"} badge={4} />
           </div>
 
-          <div className="mt-6 flex items-center justify-end gap-2 border-t border-border pt-5">
+          <div className="mt-6 flex flex-wrap items-center justify-end gap-3 border-t border-border pt-5">
+            {(() => {
+              const reco = recommendSize({
+                hauteur: enfant.hauteur,
+                tour: enfant.tour,
+                tour_taille: enfant.tour_taille,
+                tour_bassin: enfant.tour_bassin,
+              });
+              if (!reco) return null;
+              return (
+                <div
+                  title={reco.consistent ? "Toutes les mesures concordent" : "Prise sur la mesure la plus enveloppante"}
+                  className={`mr-auto inline-flex items-center gap-3 rounded-2xl px-4 py-2.5 shadow-sm ring-2 ring-inset ${
+                    reco.consistent
+                      ? "bg-lime-200/70 ring-lime-500 dark:bg-lime-500/20"
+                      : "bg-emerald-100 ring-amber-400"
+                  }`}
+                >
+                  <Sparkles className={`h-5 w-5 ${reco.consistent ? "text-lime-700 dark:text-lime-300" : "text-amber-600"}`} />
+                  <div className="flex flex-col leading-tight">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-foreground/70">
+                      Taille recommandée
+                    </span>
+                    <span className={`text-xl font-bold ${reco.consistent ? "text-lime-800 dark:text-lime-200" : "text-emerald-800"}`}>
+                      {reco.row.age}
+                    </span>
+                  </div>
+                  {reco.consistent ? (
+                    <span className="rounded-full bg-lime-600 px-2 py-0.5 text-[9px] font-bold uppercase text-white">
+                      Reco
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[9px] font-bold uppercase text-white">
+                      Estim.
+                    </span>
+                  )}
+                </div>
+              );
+            })()}
             <button
               onClick={onDelete}
               title="Supprimer la fiche de l'enfant"
