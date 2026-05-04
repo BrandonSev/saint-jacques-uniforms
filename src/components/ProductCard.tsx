@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Sparkles } from "lucide-react";
+import { Ruler, Sparkles } from "lucide-react";
 import { ChildPicker } from "@/components/ChildPicker";
 import { useStore, type Child } from "@/lib/store";
-import { recommendSize } from "@/lib/sizeRecommendation";
+import { recommendSize, sizeRows } from "@/lib/sizeRecommendation";
+import guideMesuresImg from "@/assets/guide-tailles-mesures.png";
 
 export type ProductGenre = "Fille" | "Garçon" | "Unisexe";
 
@@ -134,7 +135,10 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
 
         <div className="mt-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Taille</div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Taille</span>
+              <SizeGuideHover />
+            </div>
             {recommendation && (
               <span
                 title={
@@ -212,6 +216,60 @@ function GenreBadge({ genre }: { genre: ProductGenre }) {
       className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${styles}`}
     >
       {genre}
+    </span>
+  );
+}
+
+function SizeGuideHover() {
+  return (
+    <span className="group/guide relative inline-flex">
+      <Link
+        to="/aide/guide-tailles"
+        className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-primary hover:underline"
+      >
+        <Ruler className="h-3 w-3" />
+        Guide des tailles
+      </Link>
+      <div
+        role="tooltip"
+        className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 hidden w-[28rem] max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-xl border border-border bg-popover p-3 shadow-xl group-hover/guide:block"
+      >
+        <div className="grid gap-3 sm:grid-cols-[8rem_1fr]">
+          <img
+            src={guideMesuresImg}
+            alt="Schéma des mesures"
+            className="h-auto w-full rounded-md object-contain"
+            loading="lazy"
+          />
+          <div className="overflow-hidden rounded-md border border-border">
+            <table className="w-full border-collapse text-[10px]">
+              <thead className="bg-muted/60 text-foreground">
+                <tr>
+                  <th className="px-1.5 py-1 text-left font-semibold">Âge</th>
+                  <th className="px-1.5 py-1 text-right font-semibold">1 H</th>
+                  <th className="px-1.5 py-1 text-right font-semibold">2 P</th>
+                  <th className="px-1.5 py-1 text-right font-semibold">3 T</th>
+                  <th className="px-1.5 py-1 text-right font-semibold">4 B</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sizeRows.map((r) => (
+                  <tr key={r.age} className="border-t border-border">
+                    <td className="px-1.5 py-1 font-semibold text-foreground">{r.age}</td>
+                    <td className="px-1.5 py-1 text-right text-muted-foreground">{r.stature}</td>
+                    <td className="px-1.5 py-1 text-right text-muted-foreground">{r.poitrine}</td>
+                    <td className="px-1.5 py-1 text-right text-muted-foreground">{r.taille}</td>
+                    <td className="px-1.5 py-1 text-right text-muted-foreground">{r.bassin}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p className="mt-2 text-[9px] text-muted-foreground">
+          H : hauteur · P : tour de poitrine · T : tour de taille · B : tour de bassin (cm)
+        </p>
+      </div>
     </span>
   );
 }
