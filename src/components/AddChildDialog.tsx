@@ -322,17 +322,17 @@ function LiveSizeRecommendation({
 
   return (
     <div
-      className={`sm:col-span-4 mt-1 flex flex-wrap items-center justify-between gap-2 rounded-xl border-2 px-3 py-2.5 text-xs shadow-sm ${
+      className={`sm:col-span-4 mt-1 flex flex-wrap items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-xs shadow-sm ${
         reco.consistent
-          ? "border-lime-500 bg-lime-200/70 dark:bg-lime-500/20"
-          : "border-amber-400 bg-amber-50"
+          ? "bg-lime-200/70 ring-2 ring-inset ring-lime-500 dark:bg-lime-500/20"
+          : "bg-amber-50 ring-2 ring-inset ring-amber-400"
       }`}
     >
       <div className="flex items-center gap-2">
-        <Sparkles className={`h-4 w-4 ${reco.consistent ? "text-lime-700" : "text-amber-600"}`} />
+        <Sparkles className={`h-4 w-4 ${reco.consistent ? "text-lime-700 dark:text-lime-300" : "text-amber-600"}`} />
         <span className="font-medium text-foreground">
           Taille recommandée :{" "}
-          <span className={`text-base font-bold ${reco.consistent ? "text-lime-700" : "text-amber-700"}`}>
+          <span className={`text-base font-bold ${reco.consistent ? "text-lime-700 dark:text-lime-300" : "text-amber-700"}`}>
             {reco.row.age}
           </span>
         </span>
