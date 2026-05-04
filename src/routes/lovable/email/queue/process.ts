@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer'
+import { Resend } from 'resend'
 import { createClient } from '@supabase/supabase-js'
 import { createFileRoute } from '@tanstack/react-router'
 
@@ -15,9 +15,8 @@ function isRateLimited(error: unknown): boolean {
   if (error && typeof error === 'object' && 'status' in error) {
     return (error as { status: number }).status === 429
   }
-  if (error && typeof error === 'object' && 'responseCode' in error) {
-    const code = (error as { responseCode: number }).responseCode
-    return code === 421 || code === 450 || code === 451 || code === 452
+  if (error && typeof error === 'object' && 'statusCode' in error) {
+    return (error as { statusCode: number }).statusCode === 429
   }
   return error instanceof Error && error.message.includes('429')
 }
@@ -26,11 +25,12 @@ function isRateLimited(error: unknown): boolean {
 // disabled for this project. Retrying won't help — move straight to DLQ.
 function isForbidden(error: unknown): boolean {
   if (error && typeof error === 'object' && 'status' in error) {
-    return (error as { status: number }).status === 403
+    const s = (error as { status: number }).status
+    return s === 401 || s === 403
   }
-  if (error && typeof error === 'object' && 'responseCode' in error) {
-    const code = (error as { responseCode: number }).responseCode
-    return code === 530 || code === 535 || code === 550 || code === 553 || code === 554
+  if (error && typeof error === 'object' && 'statusCode' in error) {
+    const s = (error as { statusCode: number }).statusCode
+    return s === 401 || s === 403
   }
   return error instanceof Error && error.message.includes('403')
 }
@@ -75,24 +75,18 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
       POST: async ({ request }) => {
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
         const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-        const smtpHost = process.env.SMTP_HOST
-        const smtpPort = Number(process.env.SMTP_PORT || 587)
-        const smtpUser = process.env.SMTP_USER
-        const smtpPassword = process.env.SMTP_PASSWORD
-        const smtpFrom = process.env.SMTP_FROM || process.env.SMTP_USER
-        const smtpSecure = process.env.SMTP_SECURE
-          ? process.env.SMTP_SECURE === 'true'
-          : smtpPort === 465
+        const resendApiKey = process.env.RESEND_API_KEY
+        const resendFrom = process.env.RESEND_FROM
 
         if (!supabaseUrl || !supabaseServiceKey) {
           console.error('Missing Supabase env vars')
           return Response.json({ error: 'Server configuration error' }, { status: 500 })
         }
 
-        if (!smtpHost || !smtpUser || !smtpPassword || !smtpFrom) {
-          console.error('Missing SMTP env vars (need SMTP_HOST, SMTP_USER, SMTP_PASSWORD, SMTP_FROM)')
+        if (!resendApiKey || !resendFrom) {
+          console.error('Missing Resend env vars (need RESEND_API_KEY and RESEND_FROM)')
           return Response.json(
-            { error: 'SMTP configuration missing' },
+            { error: 'Resend configuration missing' },
             { status: 500 }
           )
         }
@@ -111,12 +105,7 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
 
         const supabase: any = createClient(supabaseUrl, supabaseServiceKey)
 
-        const transporter = nodemailer.createTransport({
-          host: smtpHost,
-          port: smtpPort,
-          secure: smtpSecure,
-          auth: { user: smtpUser, pass: smtpPassword },
-        })
+        const resend = new Resend(resendApiKey)
 
         // 1. Check rate-limit cooldown and read queue config
         const { data: state } = await supabase
@@ -249,9 +238,9 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
             }
 
             try {
-              await transporter.sendMail({
-                from: payload.from || smtpFrom,
-                to: payload.to,
+              const { error: sendError } = await resend.emails.send({
+                from: payload.from || resendFrom,
+                to: Array.isArray(payload.to) ? payload.to : [payload.to],
                 replyTo: payload.reply_to,
                 subject: payload.subject,
                 html: payload.html,
@@ -260,6 +249,9 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
                   ? { 'X-Idempotency-Key': String(payload.idempotency_key) }
                   : undefined,
               })
+              if (sendError) {
+                throw sendError
+              }
 
               // Log success
               await supabase.from('email_send_log').insert({
