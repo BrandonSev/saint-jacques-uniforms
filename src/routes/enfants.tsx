@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Info, Plus, Ruler, Trash2 } from "lucide-react";
+import { Cake, Info, Plus, Ruler, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
@@ -19,16 +19,29 @@ export const Route = createFileRoute("/enfants")({
   component: EnfantsPage,
 });
 
-function computeAgeFromISO(iso: string): number | null {
+function computeAgeInfoFromISO(iso: string): { label: string; tooltip: string } | null {
   if (!iso) return null;
   const birth = new Date(iso);
   if (isNaN(birth.getTime())) return null;
   const today = new Date();
-  let age = today.getFullYear() - birth.getFullYear();
-  const mDiff = today.getMonth() - birth.getMonth();
-  if (mDiff < 0 || (mDiff === 0 && today.getDate() < birth.getDate())) age--;
-  if (age < 0 || age > 120) return null;
-  return age;
+  let years = today.getFullYear() - birth.getFullYear();
+  let months = today.getMonth() - birth.getMonth();
+  const days = today.getDate() - birth.getDate();
+  if (days < 0) months--;
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+  const totalMonths = years * 12 + months;
+  if (totalMonths < 0 || years > 120) return null;
+  if (totalMonths < 1) return { label: "Nouveau-né", tooltip: "Moins d'un mois" };
+  if (years === 0) return { label: `${totalMonths} mois`, tooltip: `${totalMonths} mois` };
+  if (years === 1 && months === 0) return { label: "1 an", tooltip: "1 an pile" };
+  const half = months >= 6 ? " et demi" : "";
+  return {
+    label: `${years} an${years > 1 ? "s" : ""}${half}`,
+    tooltip: `${years} an${years > 1 ? "s" : ""} et ${months} mois`,
+  };
 }
 
 function EnfantsPage() {
@@ -181,15 +194,20 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
               <span className="break-words [overflow-wrap:anywhere]">{enfant.nom}</span>
             </h3>
             {enfant.naissance && (() => {
-              const age = computeAgeFromISO(enfant.naissance);
+              const ageInfo = computeAgeInfoFromISO(enfant.naissance);
               return (
                 <div className="mt-1 flex items-baseline gap-2 flex-wrap">
                   <p className="text-xs text-foreground/70">
                     {enfant.genre === "Fille" ? "Née" : enfant.genre === "Garçon" ? "Né" : "Né(e)"} le {new Date(enfant.naissance).toLocaleDateString("fr-FR")}
                   </p>
-                  {age !== null && (
-                    <span className="text-xs font-bold text-foreground/70">
-                      · {age} ans
+                  {ageInfo && (
+                    <span
+                      title={ageInfo.tooltip}
+                      aria-label={`Âge : ${ageInfo.tooltip}`}
+                      className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-gradient-to-r from-primary to-primary/80 px-2 py-0.5 text-[10px] font-bold normal-case tracking-normal text-primary-foreground shadow-sm transition-transform hover:scale-105"
+                    >
+                      <Cake className="h-3 w-3" aria-hidden="true" />
+                      {ageInfo.label}
                     </span>
                   )}
                 </div>
