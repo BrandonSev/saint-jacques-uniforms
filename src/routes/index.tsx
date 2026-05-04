@@ -1,9 +1,8 @@
-import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, CreditCard, MapPin, ShieldCheck, Truck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { DirectorQuote } from "@/components/DirectorQuote";
-import { useStore } from "@/lib/store";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
 import schoolLogo from "@/assets/saint-jacques-blason.png";
 
@@ -28,11 +27,6 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { user, isAdmin, authLoading } = useStore();
-  if (authLoading) return null;
-  if (user && isAdmin) return <Navigate to="/admin" />;
-  if (user) return <Navigate to="/boutique" />;
-
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
