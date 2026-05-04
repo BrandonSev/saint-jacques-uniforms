@@ -220,7 +220,7 @@ function GuideTaillesPage() {
                         scope="row"
                         className={`sticky left-0 z-10 px-2 py-2.5 text-left font-semibold text-foreground sm:px-4 sm:py-3 ${
                           recommendation?.idx === i
-                            ? "bg-lime-200 dark:bg-lime-500/30"
+                            ? "bg-emerald-300"
                             : i % 2 === 1
                             ? "bg-secondary/60"
                             : "bg-card"
