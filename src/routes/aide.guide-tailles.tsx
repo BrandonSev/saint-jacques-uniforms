@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { Ruler } from "lucide-react";
 import { PageWatermark } from "@/components/PageWatermark";
+import mesuresDiagram from "@/assets/guide-tailles-mesures.png";
 
 export const Route = createFileRoute("/aide/guide-tailles")({
   head: () => ({
