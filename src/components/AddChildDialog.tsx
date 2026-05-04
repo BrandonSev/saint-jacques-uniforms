@@ -338,7 +338,7 @@ function LiveSizeRecommendation({
         </span>
         {reco.consistent && (
           <span className="rounded-full bg-lime-600 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
-            Match
+            Reco
           </span>
         )}
       </div>
