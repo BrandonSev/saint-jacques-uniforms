@@ -21,6 +21,7 @@ export const Route = createFileRoute("/enfants")({
 });
 
 function computeAgeInfoFromISO(iso: string): { label: string; tooltip: string } | null {
+  // placeholder kept here intentionally — see currentSchoolYear below
   if (!iso) return null;
   const birth = new Date(iso);
   if (isNaN(birth.getTime())) return null;
