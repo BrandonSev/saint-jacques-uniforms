@@ -176,7 +176,10 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
             {enfant.initials}
           </div>
           <div>
-            <h3 className="text-2xl font-semibold tracking-tight text-foreground">{enfant.prenom} {enfant.nom}</h3>
+            <h3 className="text-2xl font-semibold tracking-tight text-foreground break-words leading-tight">
+              <span>{enfant.prenom}</span>{" "}
+              <span className="break-words">{enfant.nom}</span>
+            </h3>
             {enfant.naissance && (() => {
               const age = computeAgeFromISO(enfant.naissance);
               return (
