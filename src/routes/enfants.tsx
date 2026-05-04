@@ -45,6 +45,14 @@ function computeAgeInfoFromISO(iso: string): { label: string; tooltip: string } 
   };
 }
 
+function currentSchoolYear(): string {
+  const now = new Date();
+  const y = now.getFullYear();
+  // School year in France starts in September.
+  const start = now.getMonth() >= 7 ? y : y - 1;
+  return `${start}/${start + 1}`;
+}
+
 function EnfantsPage() {
   const { user, profile, children, addChild, updateChild, removeChild, authLoading } = useStore();
   const { isAdmin } = useStore();
@@ -215,8 +223,13 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
               );
             })()}
             {(enfant.section || enfant.classe) && (
-              <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-[11px] font-medium text-primary backdrop-blur">
-                {[enfant.section, enfant.classe].filter(Boolean).join(" · ")}
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-[11px] font-medium text-primary backdrop-blur">
+                  {[enfant.section, enfant.classe].filter(Boolean).join(" · ")}
+                </div>
+                <span className="text-[10px] font-medium text-foreground/50">
+                  {currentSchoolYear()}
+                </span>
               </div>
             )}
           </div>
