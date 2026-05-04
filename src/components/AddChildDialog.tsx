@@ -264,25 +264,26 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
                 />
               </div>
             </div>
-            <div className="flex justify-center rounded-xl border border-border bg-background/60 p-2 sm:w-64">
+            <div className="flex justify-center rounded-xl border border-border bg-background/60 p-2 sm:w-[18.4rem]">
               <img
                 src={guideMesuresImg}
                 alt="Schéma des mesures : 1 hauteur, 2 tour de poitrine, 3 tour de taille, 4 tour de bassin"
-                className="h-auto max-h-56 w-auto object-contain sm:max-h-[26rem]"
+                className="h-auto max-h-64 w-auto object-contain sm:max-h-[30rem]"
                 loading="lazy"
               />
             </div>
           </div>
-
-          <LiveSizeRecommendation
-            hauteur={form.hauteur}
-            tour={form.tour}
-            tour_taille={form.tour_taille}
-            tour_bassin={form.tour_bassin}
-          />
         </div>
 
-        <div className="mt-5 flex justify-end gap-2">
+        <div className="mt-5 flex flex-wrap items-center justify-end gap-2">
+          <div className="min-w-0 flex-1">
+            <LiveSizeRecommendation
+              hauteur={form.hauteur}
+              tour={form.tour}
+              tour_taille={form.tour_taille}
+              tour_bassin={form.tour_bassin}
+            />
+          </div>
           <button type="button" onClick={onClose} className="h-10 rounded-lg border border-border bg-card px-4 text-sm font-medium hover:bg-muted">
             Annuler
           </button>
