@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Sparkles } from "lucide-react";
+import { Ruler, Sparkles } from "lucide-react";
 import { ChildPicker } from "@/components/ChildPicker";
 import { useStore, type Child } from "@/lib/store";
-import { recommendSize } from "@/lib/sizeRecommendation";
+import { recommendSize, sizeRows } from "@/lib/sizeRecommendation";
+import guideMesuresImg from "@/assets/guide-tailles-mesures.png";
 
 export type ProductGenre = "Fille" | "Garçon" | "Unisexe";
 
@@ -134,7 +135,10 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
 
         <div className="mt-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Taille</div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Taille</span>
+              <SizeGuideHover />
+            </div>
             {recommendation && (
               <span
                 title={
