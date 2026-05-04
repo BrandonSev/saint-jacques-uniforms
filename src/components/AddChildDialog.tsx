@@ -221,49 +221,53 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
           />
 
           <div className="sm:col-span-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
-            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-2 sm:self-center">
-              <Input
-                label="Taille portée *"
-                value={form.taille}
-                onChange={(v) => setForm({ ...form, taille: v })}
-                placeholder="ex: 8"
-                suffix="ans"
-                required
-                tooltip="A titre d'information, taille que vous avez l'habitude d'acheter pour votre enfant actuellement"
-              />
-              <Input
-                label="Hauteur (stature) *"
-                value={form.hauteur}
-                onChange={(v) => setForm({ ...form, hauteur: v })}
-                placeholder="ex: 128"
-                suffix="cm"
-                required
-                badge={1}
-              />
-              <Input
-                label="Tour de poitrine"
-                value={form.tour}
-                onChange={(v) => setForm({ ...form, tour: v })}
-                placeholder="ex: 62"
-                suffix="cm"
-                badge={2}
-              />
-              <Input
-                label="Tour de taille"
-                value={form.tour_taille}
-                onChange={(v) => setForm({ ...form, tour_taille: v })}
-                placeholder="ex: 56"
-                suffix="cm"
-                badge={3}
-              />
-              <Input
-                label="Tour de bassin"
-                value={form.tour_bassin}
-                onChange={(v) => setForm({ ...form, tour_bassin: v })}
-                placeholder="ex: 64"
-                suffix="cm"
-                badge={4}
-              />
+            <div className="flex flex-col gap-2.5 sm:self-center">
+              <div className="rounded-xl border border-border bg-background/60 p-2.5">
+                <Input
+                  label="Taille portée *"
+                  value={form.taille}
+                  onChange={(v) => setForm({ ...form, taille: v })}
+                  placeholder="ex: 8"
+                  suffix="ans"
+                  required
+                  tooltip="A titre d'information, taille que vous avez l'habitude d'acheter pour votre enfant actuellement"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2.5">
+                <Input
+                  label="Hauteur (stature) *"
+                  value={form.hauteur}
+                  onChange={(v) => setForm({ ...form, hauteur: v })}
+                  placeholder="ex: 128"
+                  suffix="cm"
+                  required
+                  badge={1}
+                />
+                <Input
+                  label="Tour de poitrine"
+                  value={form.tour}
+                  onChange={(v) => setForm({ ...form, tour: v })}
+                  placeholder="ex: 62"
+                  suffix="cm"
+                  badge={2}
+                />
+                <Input
+                  label="Tour de taille"
+                  value={form.tour_taille}
+                  onChange={(v) => setForm({ ...form, tour_taille: v })}
+                  placeholder="ex: 56"
+                  suffix="cm"
+                  badge={3}
+                />
+                <Input
+                  label="Tour de bassin"
+                  value={form.tour_bassin}
+                  onChange={(v) => setForm({ ...form, tour_bassin: v })}
+                  placeholder="ex: 64"
+                  suffix="cm"
+                  badge={4}
+                />
+              </div>
             </div>
             <div className="flex justify-center rounded-xl border border-border bg-background/60 p-2 sm:w-64">
               <img
