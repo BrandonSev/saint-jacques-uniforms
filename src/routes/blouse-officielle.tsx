@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, ChevronRight, Heart, Minus, Plus, ShieldCheck, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
@@ -9,7 +9,6 @@ import { ChildPicker } from "@/components/ChildPicker";
 import { DirectorQuote } from "@/components/DirectorQuote";
 import { useStore } from "@/lib/store";
 import { recommendSize } from "@/lib/sizeRecommendation";
-import { useMemo } from "react";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import bloussePliee from "@/assets/blouse-pliee.jpeg";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
