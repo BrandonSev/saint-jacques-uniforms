@@ -162,6 +162,13 @@ function GuideTaillesPage() {
           <div className="overflow-hidden rounded-2xl border border-border bg-card">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[520px] border-collapse text-xs sm:text-sm">
+                <colgroup>
+                  <col className="w-[20%]" />
+                  <col className="w-[20%]" />
+                  <col className="w-[20%]" />
+                  <col className="w-[20%]" />
+                  <col className="w-[20%]" />
+                </colgroup>
                 <thead>
                   <tr className="bg-secondary text-left text-[10px] uppercase tracking-wider text-muted-foreground sm:text-[11px]">
                     <th scope="col" className="sticky left-0 z-10 bg-secondary px-2 py-2.5 sm:px-4 sm:py-3">
