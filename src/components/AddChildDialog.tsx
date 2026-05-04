@@ -316,7 +316,7 @@ function LiveSizeRecommendation({
 
   if (!reco) {
     return (
-      <div className="flex items-center gap-2 rounded-xl border border-dashed border-border bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground">
+      <div className="flex flex-col items-start gap-1 rounded-xl border border-dashed border-border bg-muted/40 px-3 py-2.5 text-[11px] text-muted-foreground">
         <Sparkles className="h-3.5 w-3.5 text-primary/60" />
         Saisissez au moins une mesure pour voir la taille recommandée.
       </div>
@@ -325,7 +325,7 @@ function LiveSizeRecommendation({
 
   return (
     <div
-      className={`flex flex-wrap items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-xs shadow-sm ${
+      className={`flex flex-col items-start gap-1.5 rounded-xl px-3 py-2.5 text-xs shadow-sm ${
         reco.consistent
           ? "bg-lime-200/70 ring-2 ring-inset ring-lime-500 dark:bg-lime-500/20"
           : "ring-2 ring-inset ring-amber-400 bg-emerald-100 border-emerald-500"
