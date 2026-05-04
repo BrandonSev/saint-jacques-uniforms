@@ -230,7 +230,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             <div className="flex flex-col gap-2.5 sm:self-center">
               <div className="grid grid-cols-2 gap-2.5">
                 <Input
-                  label="Hauteur (stature) *"
+                  label="Hauteur (stature)*"
                   value={form.hauteur}
                   onChange={(v) => setForm({ ...form, hauteur: v })}
                   placeholder="ex: 128"
