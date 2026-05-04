@@ -111,8 +111,8 @@ function CollegePage() {
         </div>
         <div className="relative mx-auto max-w-6xl grid w-full items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold uppercase tracking-wider text-sm text-lime-400 bg-red-500">
-              <ShieldCheck className="h-3 w-3" /> SÉLECTION EN COURS D'ETUDE PAR L'ÉTABLISSEMENT
+            <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold uppercase tracking-wider text-sm text-emerald-50 bg-emerald-700">
+              <ShieldCheck className="h-3 w-3" /> SÉLECTION VALIDÉE PAR L'ÉTABLISSEMENT
             </span>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Collège</h1>
             <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
@@ -154,8 +154,6 @@ function CollegePage() {
               sizes={sizes}
               defaultSize="14 ans"
               childFilter={(c) => c.section === "Collège" || c.section === "Lycée"}
-              disabled
-              disabledLabel="Sélection en cours d'étude"
             />
           ))}
         </div>
