@@ -299,6 +299,11 @@ function ParentCard({
   const initialAdresse = parent.adresse || primaryAddress?.adresse || "";
   const initialCp = parent.code_postal || primaryAddress?.code_postal || "";
   const initialVille = parent.ville || primaryAddress?.ville || "";
+  const initialRoleIsKnown = ROLE_OPTIONS.includes(parent.role || "Parent");
+  const [roleSelect, setRoleSelect] = useState(
+    initialRoleIsKnown ? (parent.role || "Parent") : "Autre",
+  );
+  const [roleCustom, setRoleCustom] = useState(initialRoleIsKnown ? "" : parent.role || "");
   const [form, setForm] = useState({
     role: parent.role || "Parent",
     civilite: parent.civilite || "Mme",
@@ -319,6 +324,9 @@ function ParentCard({
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    const known = ROLE_OPTIONS.includes(parent.role || "Parent");
+    setRoleSelect(known ? (parent.role || "Parent") : "Autre");
+    setRoleCustom(known ? "" : parent.role || "");
     setForm({
       role: parent.role || "Parent",
       civilite: parent.civilite || "Mme",
@@ -387,8 +395,16 @@ function ParentCard({
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <Field label="Rôle">
           <select
-            value={form.role}
-            onChange={(e) => set("role", e.target.value)}
+            value={roleSelect}
+            onChange={(e) => {
+              const v = e.target.value;
+              setRoleSelect(v);
+              if (v === "Autre") {
+                set("role", roleCustom.trim() || "Autre");
+              } else {
+                set("role", v);
+              }
+            }}
             className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
           >
             {ROLE_OPTIONS.map((r) => (
@@ -397,11 +413,14 @@ function ParentCard({
               </option>
             ))}
           </select>
-          {form.role === "Autre" && (
+          {roleSelect === "Autre" && (
             <input
-              value={form.role_custom ?? ""}
-              onChange={(e) => set("role_custom" as any, e.target.value as any)}
-              placeholder="Précisez le rôle"
+              value={roleCustom}
+              onChange={(e) => {
+                setRoleCustom(e.target.value);
+                set("role", e.target.value.trim() || "Autre");
+              }}
+              placeholder="Précisez le rôle (ex. Marraine, Oncle…)"
               maxLength={60}
               className="mt-2 h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
             />
