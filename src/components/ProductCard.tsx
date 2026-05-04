@@ -232,7 +232,7 @@ function SizeGuideHover() {
       </Link>
       <div
         role="tooltip"
-        className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 hidden w-[28rem] max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-xl border border-border bg-popover p-3 shadow-xl group-hover/guide:block"
+        className="pointer-events-none absolute left-full top-1/2 z-50 ml-3 hidden w-[28rem] max-w-[calc(100vw-2rem)] -translate-y-1/2 rounded-xl border border-border bg-popover p-3 shadow-xl group-hover/guide:block"
       >
         <div className="grid gap-3 sm:grid-cols-[8rem_1fr]">
           <img
