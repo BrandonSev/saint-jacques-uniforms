@@ -1,8 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
-import { Ruler } from "lucide-react";
+import { Ruler, Sparkles } from "lucide-react";
 import { PageWatermark } from "@/components/PageWatermark";
 import mesuresDiagram from "@/assets/guide-tailles-mesures.png";
+import { useMemo, useState, useEffect } from "react";
+import { ChildPicker } from "@/components/ChildPicker";
+import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/aide/guide-tailles")({
   head: () => ({
@@ -28,6 +31,32 @@ const rows = [
   { age: "18 ans", stature: "176/182", poitrine: "92", taille: "79", bassin: "96" },
 ];
 
+type Row = (typeof rows)[number];
+
+/** Parse "90/97" or "176" into [min, max] in cm. */
+function parseRange(v: string): [number, number] {
+  const parts = v.split("/").map((p) => parseFloat(p.trim()));
+  if (parts.length === 2 && parts.every((n) => !isNaN(n))) return [parts[0], parts[1]];
+  if (parts.length === 1 && !isNaN(parts[0])) return [parts[0], parts[0]];
+  return [NaN, NaN];
+}
+
+/** Index of the smallest row whose upper bound >= value. Falls back to last row. */
+function findRowIndexFor(value: number, key: keyof Pick<Row, "stature" | "poitrine" | "taille" | "bassin">): number {
+  for (let i = 0; i < rows.length; i++) {
+    const [min, max] = parseRange(rows[i][key]);
+    if (isNaN(min)) continue;
+    if (value <= max) return i;
+  }
+  return rows.length - 1;
+}
+
+function num(v: string | undefined | null): number | null {
+  if (!v) return null;
+  const n = parseFloat(String(v).replace(",", "."));
+  return isNaN(n) ? null : n;
+}
+
 const measurePoints = [
   { n: 1, label: "Stature", desc: "Hauteur totale, du sommet de la tête aux pieds." },
   { n: 2, label: "Tour de poitrine", desc: "Mesuré au niveau le plus fort de la poitrine." },
@@ -36,6 +65,38 @@ const measurePoints = [
 ];
 
 function GuideTaillesPage() {
+  const { children, user } = useStore();
+  const [childId, setChildId] = useState<string>("");
+
+  // Auto-select first child when available.
+  useEffect(() => {
+    if (!childId && children.length > 0) setChildId(children[0].id);
+  }, [children, childId]);
+
+  const selectedChild = useMemo(
+    () => children.find((c) => c.id === childId) ?? null,
+    [children, childId],
+  );
+
+  const recommendation = useMemo(() => {
+    if (!selectedChild) return null;
+    const stature = num(selectedChild.hauteur);
+    const poitrine = num(selectedChild.tour);
+    const candidates: { key: string; idx: number; value: number }[] = [];
+    if (stature !== null) candidates.push({ key: "Stature", idx: findRowIndexFor(stature, "stature"), value: stature });
+    if (poitrine !== null) candidates.push({ key: "Tour de poitrine", idx: findRowIndexFor(poitrine, "poitrine"), value: poitrine });
+    if (candidates.length === 0) return null;
+    // Take the most enveloping (largest) suggestion.
+    const best = candidates.reduce((a, b) => (b.idx > a.idx ? b : a));
+    const allSame = candidates.every((c) => c.idx === candidates[0].idx);
+    return {
+      idx: best.idx,
+      row: rows[best.idx],
+      drivers: candidates,
+      consistent: allSame,
+    };
+  }, [selectedChild]);
+
   return (
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
@@ -51,6 +112,47 @@ function GuideTaillesPage() {
           Le tableau ci-dessous vous aide à choisir la taille adaptée à votre enfant. En cas de doute
           entre deux tailles, nous vous conseillons de prendre la taille supérieure.
         </p>
+
+        {user && (
+          <div className="mt-6 rounded-2xl border border-border bg-card p-4">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              Suggestion personnalisée
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Sélectionnez un enfant pour mettre en évidence la taille recommandée d'après ses mesures
+              enregistrées dans <span className="font-medium text-foreground">Mes enfants</span>.
+            </p>
+            <div className="mt-3">
+              <ChildPicker value={childId} onChange={setChildId} />
+            </div>
+
+            {selectedChild && recommendation && (
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 rounded-xl bg-primary/5 px-3 py-2 text-xs">
+                <span className="font-semibold text-foreground">
+                  Taille recommandée : <span className="text-primary">{recommendation.row.age}</span>
+                </span>
+                <span className="text-muted-foreground">
+                  {recommendation.drivers
+                    .map((d) => `${d.key} ${d.value} cm → ${rows[d.idx].age}`)
+                    .join(" · ")}
+                </span>
+                {!recommendation.consistent && (
+                  <span className="rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
+                    Mesures discordantes — taille la plus enveloppante retenue
+                  </span>
+                )}
+              </div>
+            )}
+
+            {selectedChild && !recommendation && (
+              <p className="mt-3 text-xs text-muted-foreground">
+                Aucune mesure renseignée pour {selectedChild.prenom}. Ajoutez sa stature et son tour de
+                poitrine dans <span className="font-medium text-foreground">Mes enfants</span>.
+              </p>
+            )}
+          </div>
+        )}
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
           <div className="overflow-hidden rounded-2xl border border-border bg-card">
@@ -93,14 +195,34 @@ function GuideTaillesPage() {
                 </thead>
                 <tbody className="divide-y divide-border">
                   {rows.map((r, i) => (
-                    <tr key={r.age} className={i % 2 === 1 ? "bg-secondary/30" : undefined}>
+                    <tr
+                      key={r.age}
+                      className={
+                        recommendation?.idx === i
+                          ? "bg-primary/15 ring-2 ring-inset ring-primary"
+                          : i % 2 === 1
+                          ? "bg-secondary/30"
+                          : undefined
+                      }
+                    >
                       <th
                         scope="row"
                         className={`sticky left-0 z-10 px-2 py-2.5 text-left font-semibold text-foreground sm:px-4 sm:py-3 ${
-                          i % 2 === 1 ? "bg-secondary/60" : "bg-card"
+                          recommendation?.idx === i
+                            ? "bg-primary/25"
+                            : i % 2 === 1
+                            ? "bg-secondary/60"
+                            : "bg-card"
                         }`}
                       >
-                        {r.age}
+                        <span className="inline-flex items-center gap-1.5">
+                          {r.age}
+                          {recommendation?.idx === i && (
+                            <span className="rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-bold uppercase text-primary-foreground">
+                              Reco
+                            </span>
+                          )}
+                        </span>
                       </th>
                       <td className="whitespace-nowrap px-2 py-2.5 text-foreground/80 sm:px-4 sm:py-3">{r.stature}</td>
                       <td className="whitespace-nowrap px-2 py-2.5 text-foreground/80 sm:px-4 sm:py-3">{r.poitrine}</td>
