@@ -6,6 +6,7 @@ import { ChildPicker } from "@/components/ChildPicker";
 import { useStore, type Child } from "@/lib/store";
 import { recommendSize, sizeRows } from "@/lib/sizeRecommendation";
 import guideMesuresImg from "@/assets/guide-tailles-mesures.png";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export type ProductGenre = "Fille" | "Garçon" | "Unisexe";
 
@@ -221,18 +222,31 @@ function GenreBadge({ genre }: { genre: ProductGenre }) {
 }
 
 function SizeGuideHover() {
+  const [open, setOpen] = useState(false);
   return (
-    <span className="group/guide relative inline-flex">
-      <Link
-        to="/aide/guide-tailles"
-        className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-primary hover:underline"
-      >
-        <Ruler className="h-3 w-3" />
-        Guide des tailles
-      </Link>
-      <div
-        role="tooltip"
-        className="pointer-events-none absolute right-full top-1/2 z-50 mr-3 hidden w-[34rem] max-w-[calc(100vw-2rem)] -translate-y-1/2 rounded-2xl border border-border bg-popover p-5 shadow-2xl group-hover/guide:block"
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Link
+          to="/aide/guide-tailles"
+          onMouseEnter={() => setOpen(true)}
+          onMouseLeave={() => setOpen(false)}
+          onFocus={() => setOpen(true)}
+          onBlur={() => setOpen(false)}
+          className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-primary hover:underline"
+        >
+          <Ruler className="h-3 w-3" />
+          Guide des tailles
+        </Link>
+      </PopoverTrigger>
+      <PopoverContent
+        side="left"
+        align="center"
+        sideOffset={12}
+        collisionPadding={16}
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        className="w-[34rem] max-w-[calc(100vw-2rem)] rounded-2xl border border-border bg-popover p-5 shadow-2xl"
       >
         <div className="mb-3 flex items-center gap-2">
           <Ruler className="h-4 w-4 text-primary" />
@@ -278,7 +292,7 @@ function SizeGuideHover() {
           <span className="font-semibold text-foreground">3 T</span> : tour de taille ·{" "}
           <span className="font-semibold text-foreground">4 B</span> : tour de bassin (cm)
         </p>
-      </div>
-    </span>
+      </PopoverContent>
+    </Popover>
   );
 }
