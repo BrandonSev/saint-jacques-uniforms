@@ -46,11 +46,12 @@ type Props = {
  * Style harmonisé : checkboxes shadcn, bg coloré selon le genre.
  */
 export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
-  const { addChild, updateChild, children } = useStore();
+  const { addChild, updateChild, children, profile } = useStore();
   const isEdit = initial && "id" in initial;
+  const defaultFamilyName = profile?.family_name || profile?.nom || "";
   const [form, setForm] = useState<ChildForm>(() => ({
     prenom: initial?.prenom ?? "",
-    nom: initial?.nom ?? "",
+    nom: initial?.nom ?? (isEdit ? "" : defaultFamilyName),
     naissance: initial?.naissance ?? "",
     classe: initial?.classe ?? "",
     section: initial?.section || "Maternelle",
