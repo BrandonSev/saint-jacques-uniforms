@@ -167,7 +167,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
           <div className="sm:col-span-2"><Input label="Prénom *" value={form.prenom} onChange={(v) => setForm({ ...form, prenom: v })} required /></div>
           <div className="sm:col-span-2"><Input label="Nom *" value={form.nom} onChange={(v) => setForm({ ...form, nom: v })} required /></div>
 
-          <div className="sm:col-span-4">
+          <div className="sm:col-span-2">
             <DateOfBirthPicker
               label="Date de naissance *"
               value={form.naissance}
