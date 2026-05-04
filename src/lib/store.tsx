@@ -12,6 +12,8 @@ export type Child = {
   taille: string;
   hauteur: string;
   tour: string;
+  tour_taille: string;
+  tour_bassin: string;
   genre: "" | "Fille" | "Garçon";
   initials: string;
   color: string;
@@ -81,7 +83,7 @@ const COLORS = [
 ];
 
 function decorate(
-  c: { id: string; prenom: string; nom: string; naissance: string | null; classe: string | null; section: string | null; taille: string | null; hauteur: string | null; tour: string | null; genre?: string | null },
+  c: { id: string; prenom: string; nom: string; naissance: string | null; classe: string | null; section: string | null; taille: string | null; hauteur: string | null; tour: string | null; tour_taille?: string | null; tour_bassin?: string | null; genre?: string | null },
   idx: number,
 ): Child {
   const initials = ((c.prenom[0] ?? "") + (c.nom[0] ?? "")).toUpperCase();
@@ -95,6 +97,8 @@ function decorate(
     taille: c.taille ?? "",
     hauteur: c.hauteur ?? "",
     tour: c.tour ?? "",
+    tour_taille: c.tour_taille ?? "",
+    tour_bassin: c.tour_bassin ?? "",
     genre: (c.genre as Child["genre"]) ?? "",
     initials,
     color: COLORS[idx % COLORS.length],
@@ -239,6 +243,8 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
         naissance: c.naissance || null,
         classe: c.classe || null, section: c.section || null,
         taille: c.taille || null, hauteur: c.hauteur || null, tour: c.tour || null,
+        tour_taille: c.tour_taille || null,
+        tour_bassin: c.tour_bassin || null,
         genre: c.genre || null,
       }).select().single();
       if (error) throw error;

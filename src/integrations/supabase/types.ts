@@ -27,6 +27,8 @@ export type Database = {
           section: string | null
           taille: string | null
           tour: string | null
+          tour_bassin: string | null
+          tour_taille: string | null
           updated_at: string
           user_id: string
         }
@@ -42,6 +44,8 @@ export type Database = {
           section?: string | null
           taille?: string | null
           tour?: string | null
+          tour_bassin?: string | null
+          tour_taille?: string | null
           updated_at?: string
           user_id: string
         }
@@ -57,6 +61,8 @@ export type Database = {
           section?: string | null
           taille?: string | null
           tour?: string | null
+          tour_bassin?: string | null
+          tour_taille?: string | null
           updated_at?: string
           user_id?: string
         }

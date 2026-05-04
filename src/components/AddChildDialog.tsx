@@ -14,12 +14,14 @@ export type ChildForm = {
   taille: string;
   hauteur: string;
   tour: string;
+  tour_taille: string;
+  tour_bassin: string;
   genre: "" | "Fille" | "Garçon";
 };
 
 const empty: ChildForm = {
   prenom: "", nom: "", naissance: "", classe: "", section: "Maternelle",
-  taille: "", hauteur: "", tour: "", genre: "",
+  taille: "", hauteur: "", tour: "", tour_taille: "", tour_bassin: "", genre: "",
 };
 
 const classesBySection: Record<string, string[]> = {
@@ -53,6 +55,8 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
     taille: initial?.taille ?? "",
     hauteur: initial?.hauteur ?? "",
     tour: initial?.tour ?? "",
+    tour_taille: (initial as any)?.tour_taille ?? "",
+    tour_bassin: (initial as any)?.tour_bassin ?? "",
     genre: (initial && "genre" in initial ? (initial.genre as ChildForm["genre"]) : "") || "",
   }));
   const [saving, setSaving] = useState(false);
@@ -64,8 +68,8 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.prenom || !form.nom || !form.naissance || !form.classe || !form.section || !form.taille || !form.hauteur || !form.tour) {
-      toast.error("Merci de remplir tous les champs");
+    if (!form.prenom || !form.nom || !form.naissance || !form.classe || !form.section || !form.taille || !form.hauteur) {
+      toast.error("Merci de remplir les champs obligatoires (prénom, nom, naissance, classe, section, taille portée et hauteur)");
       return;
     }
     setSaving(true);
@@ -182,7 +186,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             placeholder="Sélectionner une classe"
           />
 
-          <div className="sm:col-span-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="sm:col-span-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Input
               label="Taille portée *"
               value={form.taille}
@@ -192,8 +196,54 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
               required
               tooltip="A titre d'information, taille que vous avez l'habitude d'acheter pour votre enfant actuellement"
             />
-            <Input label="Hauteur *" value={form.hauteur} onChange={(v) => setForm({ ...form, hauteur: v })} placeholder="ex: 128" suffix="cm" required />
-            <Input label="Tour de poitrine *" value={form.tour} onChange={(v) => setForm({ ...form, tour: v })} placeholder="ex: 62" suffix="cm" required />
+            <Input
+              label="Hauteur (stature) *"
+              value={form.hauteur}
+              onChange={(v) => setForm({ ...form, hauteur: v })}
+              placeholder="ex: 128"
+              suffix="cm"
+              required
+              badge={1}
+            />
+          </div>
+
+          <div className="sm:col-span-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5 text-[11px] leading-relaxed text-foreground/80">
+            <span className="font-semibold text-primary">Conseil :</span> renseignez aussi le tour de poitrine, de taille et de bassin pour fiabiliser le choix de la taille. Les numéros correspondent au{" "}
+            <a
+              href="/aide/guide-tailles"
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-primary underline-offset-2 hover:underline"
+            >
+              guide des tailles
+            </a>.
+          </div>
+
+          <div className="sm:col-span-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <Input
+              label="Tour de poitrine"
+              value={form.tour}
+              onChange={(v) => setForm({ ...form, tour: v })}
+              placeholder="ex: 62"
+              suffix="cm"
+              badge={2}
+            />
+            <Input
+              label="Tour de taille"
+              value={form.tour_taille}
+              onChange={(v) => setForm({ ...form, tour_taille: v })}
+              placeholder="ex: 56"
+              suffix="cm"
+              badge={3}
+            />
+            <Input
+              label="Tour de bassin"
+              value={form.tour_bassin}
+              onChange={(v) => setForm({ ...form, tour_bassin: v })}
+              placeholder="ex: 64"
+              suffix="cm"
+              badge={4}
+            />
           </div>
         </div>
 
@@ -218,10 +268,10 @@ export { empty as emptyChildForm };
 /* ------------------------- Sub-components ------------------------- */
 
 function Input({
-  label, value, onChange, type = "text", placeholder, required, suffix, tooltip,
+  label, value, onChange, type = "text", placeholder, required, suffix, tooltip, badge,
 }: {
   label: string; value: string; onChange: (v: string) => void;
-  type?: string; placeholder?: string; required?: boolean; suffix?: string; tooltip?: string;
+  type?: string; placeholder?: string; required?: boolean; suffix?: string; tooltip?: string; badge?: number;
 }) {
   const [tipOpen, setTipOpen] = useState(false);
   const tipRef = useRef<HTMLSpanElement>(null);
@@ -243,6 +293,11 @@ function Input({
   return (
     <label className="flex flex-col">
       <span className="line-clamp-2 inline-flex min-h-[2rem] items-start gap-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+        {badge !== undefined && (
+          <span className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
+            {badge}
+          </span>
+        )}
         <span>{label}</span>
         {tooltip && (
           <span ref={tipRef} className="relative inline-flex">

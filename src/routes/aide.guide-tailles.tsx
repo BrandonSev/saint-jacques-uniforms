@@ -82,9 +82,13 @@ function GuideTaillesPage() {
     if (!selectedChild) return null;
     const stature = num(selectedChild.hauteur);
     const poitrine = num(selectedChild.tour);
+    const tailleM = num(selectedChild.tour_taille);
+    const bassin = num(selectedChild.tour_bassin);
     const candidates: { key: string; idx: number; value: number }[] = [];
     if (stature !== null) candidates.push({ key: "Stature", idx: findRowIndexFor(stature, "stature"), value: stature });
     if (poitrine !== null) candidates.push({ key: "Tour de poitrine", idx: findRowIndexFor(poitrine, "poitrine"), value: poitrine });
+    if (tailleM !== null) candidates.push({ key: "Tour de taille", idx: findRowIndexFor(tailleM, "taille"), value: tailleM });
+    if (bassin !== null) candidates.push({ key: "Tour de bassin", idx: findRowIndexFor(bassin, "bassin"), value: bassin });
     if (candidates.length === 0) return null;
     // Take the most enveloping (largest) suggestion.
     const best = candidates.reduce((a, b) => (b.idx > a.idx ? b : a));
