@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Info, X } from "lucide-react";
+import { Cake, Info, X } from "lucide-react";
 import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useStore, type Child } from "@/lib/store";
@@ -415,34 +415,52 @@ function DateOfBirthPicker({ label, value, onChange }: { label: string; value: s
     const today = new Date();
     let years = today.getFullYear() - birth.getFullYear();
     let months = today.getMonth() - birth.getMonth();
-    let days = today.getDate() - birth.getDate();
+    const days = today.getDate() - birth.getDate();
     if (days < 0) months--;
     if (months < 0) {
       years--;
       months += 12;
     }
-    if (years < 0 || years > 120) return null;
-    return { years, months };
+    // Total months since birth (used for newborn / <1 an logic)
+    let totalMonths = years * 12 + months;
+    if (totalMonths < 0 || years > 120) return null;
+    return { years, months, totalMonths };
   };
   const age = computeAge();
-  const ageLabel = (() => {
+  const ageInfo = (() => {
     if (!age) return null;
-    const { years, months } = age;
-    if (years === 0) {
-      if (months <= 1) return "Nouveau-né";
-      return `${months} mois`;
+    const { years, months, totalMonths } = age;
+    let label: string;
+    let tooltip: string;
+    if (totalMonths < 1) {
+      label = "Nouveau-né";
+      tooltip = "Moins d'un mois";
+    } else if (years === 0) {
+      label = `${totalMonths} mois`;
+      tooltip = `${totalMonths} mois`;
+    } else if (years === 1 && months === 0) {
+      label = "1 an";
+      tooltip = "1 an pile";
+    } else {
+      const half = months >= 6 ? " et demi" : "";
+      label = `${years} an${years > 1 ? "s" : ""}${half}`;
+      tooltip = `${years} an${years > 1 ? "s" : ""} et ${months} mois`;
     }
-    const half = months >= 6 ? " et demi" : "";
-    return `${years} an${years > 1 ? "s" : ""}${half}`;
+    return { label, tooltip };
   })();
 
   return (
     <div className="flex h-full flex-col">
       <div className="line-clamp-2 inline-flex min-h-[2rem] items-start justify-between gap-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         <span>{label}</span>
-        {ageLabel && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold normal-case tracking-normal text-primary">
-            🎂 {ageLabel}
+        {ageInfo && (
+          <span
+            title={ageInfo.tooltip}
+            aria-label={`Âge : ${ageInfo.tooltip}`}
+            className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-gradient-to-r from-primary to-primary/80 px-2 py-0.5 text-[10px] font-bold normal-case tracking-normal text-primary-foreground shadow-sm transition-transform hover:scale-105"
+          >
+            <Cake className="h-3 w-3" aria-hidden="true" />
+            {ageInfo.label}
           </span>
         )}
       </div>
