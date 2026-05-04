@@ -108,12 +108,12 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
       <form
         onClick={(e) => e.stopPropagation()}
         onSubmit={submit}
-        className={`w-full max-w-md max-h-[85vh] overflow-y-auto rounded-2xl p-5 shadow-xl transition-colors ${
+        className={`w-full max-w-3xl max-h-[88vh] overflow-y-auto rounded-2xl p-4 sm:p-5 shadow-xl transition-colors ${
           genre === "Fille" ? "bg-pink-100" : genre === "Garçon" ? "bg-sky-100" : "bg-card"
         }`}
       >
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-base sm:text-lg font-semibold">
             {isEdit ? "Modifier l'enfant" : "Ajouter un enfant"}
           </h2>
           <button type="button" onClick={onClose} className="rounded-lg p-1.5 hover:bg-muted">
@@ -121,7 +121,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
           </button>
         </div>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+        <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
           <fieldset className="sm:col-span-2">
             <legend className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Genre *
@@ -129,11 +129,11 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             <RadioGroup
               value={genre || ""}
               onValueChange={(v) => setGenre(v as ChildForm["genre"])}
-              className="mt-2 grid grid-cols-2 gap-2"
+              className="mt-1.5 grid grid-cols-2 gap-2"
             >
               <label
                 htmlFor="genre-fille"
-                className={`flex cursor-pointer items-center gap-2.5 rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all ${
+                className={`flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 px-3 py-2 text-sm font-medium transition-all ${
                   genre === "Fille"
                     ? "border-pink-400 bg-pink-50 text-pink-700"
                     : "border-border bg-card text-foreground hover:border-pink-200"
@@ -148,7 +148,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
               </label>
               <label
                 htmlFor="genre-garcon"
-                className={`flex cursor-pointer items-center gap-2.5 rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all ${
+                className={`flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 px-3 py-2 text-sm font-medium transition-all ${
                   genre === "Garçon"
                     ? "border-sky-400 bg-sky-50 text-sky-700"
                     : "border-border bg-card text-foreground hover:border-sky-200"
@@ -187,28 +187,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             placeholder="Sélectionner une classe"
           />
 
-          <div className="sm:col-span-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <Input
-              label="Taille portée *"
-              value={form.taille}
-              onChange={(v) => setForm({ ...form, taille: v })}
-              placeholder="ex: 8"
-              suffix="ans"
-              required
-              tooltip="A titre d'information, taille que vous avez l'habitude d'acheter pour votre enfant actuellement"
-            />
-            <Input
-              label="Hauteur (stature) *"
-              value={form.hauteur}
-              onChange={(v) => setForm({ ...form, hauteur: v })}
-              placeholder="ex: 128"
-              suffix="cm"
-              required
-              badge={1}
-            />
-          </div>
-
-          <div className="sm:col-span-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5 text-[11px] leading-relaxed text-foreground/80">
+          <div className="sm:col-span-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-[11px] leading-relaxed text-foreground/80">
             <span className="font-semibold text-primary">Conseil :</span> renseignez aussi le tour de poitrine, de taille et de bassin pour fiabiliser le choix de la taille. Les numéros correspondent au{" "}
             <a
               href="/aide/guide-tailles"
@@ -220,44 +199,63 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             </a>.
           </div>
 
-          <div className="sm:col-span-2 flex justify-center rounded-xl border border-border bg-background/60 p-3">
-            <img
-              src={guideMesuresImg}
-              alt="Schéma des mesures : 1 hauteur, 2 tour de poitrine, 3 tour de taille, 4 tour de bassin"
-              className="h-auto max-h-[24rem] w-auto object-contain"
-              loading="lazy"
-            />
-          </div>
-
-          <div className="sm:col-span-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <Input
-              label="Tour de poitrine"
-              value={form.tour}
-              onChange={(v) => setForm({ ...form, tour: v })}
-              placeholder="ex: 62"
-              suffix="cm"
-              badge={2}
-            />
-            <Input
-              label="Tour de taille"
-              value={form.tour_taille}
-              onChange={(v) => setForm({ ...form, tour_taille: v })}
-              placeholder="ex: 56"
-              suffix="cm"
-              badge={3}
-            />
-            <Input
-              label="Tour de bassin"
-              value={form.tour_bassin}
-              onChange={(v) => setForm({ ...form, tour_bassin: v })}
-              placeholder="ex: 64"
-              suffix="cm"
-              badge={4}
-            />
+          <div className="sm:col-span-2 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-2">
+              <Input
+                label="Taille portée *"
+                value={form.taille}
+                onChange={(v) => setForm({ ...form, taille: v })}
+                placeholder="ex: 8"
+                suffix="ans"
+                required
+                tooltip="A titre d'information, taille que vous avez l'habitude d'acheter pour votre enfant actuellement"
+              />
+              <Input
+                label="Hauteur (stature) *"
+                value={form.hauteur}
+                onChange={(v) => setForm({ ...form, hauteur: v })}
+                placeholder="ex: 128"
+                suffix="cm"
+                required
+                badge={1}
+              />
+              <Input
+                label="Tour de poitrine"
+                value={form.tour}
+                onChange={(v) => setForm({ ...form, tour: v })}
+                placeholder="ex: 62"
+                suffix="cm"
+                badge={2}
+              />
+              <Input
+                label="Tour de taille"
+                value={form.tour_taille}
+                onChange={(v) => setForm({ ...form, tour_taille: v })}
+                placeholder="ex: 56"
+                suffix="cm"
+                badge={3}
+              />
+              <Input
+                label="Tour de bassin"
+                value={form.tour_bassin}
+                onChange={(v) => setForm({ ...form, tour_bassin: v })}
+                placeholder="ex: 64"
+                suffix="cm"
+                badge={4}
+              />
+            </div>
+            <div className="flex justify-center rounded-xl border border-border bg-background/60 p-2 sm:w-44">
+              <img
+                src={guideMesuresImg}
+                alt="Schéma des mesures : 1 hauteur, 2 tour de poitrine, 3 tour de taille, 4 tour de bassin"
+                className="h-auto max-h-56 w-auto object-contain sm:max-h-72"
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end gap-2">
+        <div className="mt-5 flex justify-end gap-2">
           <button type="button" onClick={onClose} className="h-10 rounded-lg border border-border bg-card px-4 text-sm font-medium hover:bg-muted">
             Annuler
           </button>
