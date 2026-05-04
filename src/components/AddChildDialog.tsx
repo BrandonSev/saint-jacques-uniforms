@@ -268,10 +268,10 @@ export { empty as emptyChildForm };
 /* ------------------------- Sub-components ------------------------- */
 
 function Input({
-  label, value, onChange, type = "text", placeholder, required, suffix, tooltip,
+  label, value, onChange, type = "text", placeholder, required, suffix, tooltip, badge,
 }: {
   label: string; value: string; onChange: (v: string) => void;
-  type?: string; placeholder?: string; required?: boolean; suffix?: string; tooltip?: string;
+  type?: string; placeholder?: string; required?: boolean; suffix?: string; tooltip?: string; badge?: number;
 }) {
   const [tipOpen, setTipOpen] = useState(false);
   const tipRef = useRef<HTMLSpanElement>(null);
@@ -293,6 +293,11 @@ function Input({
   return (
     <label className="flex flex-col">
       <span className="line-clamp-2 inline-flex min-h-[2rem] items-start gap-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+        {badge !== undefined && (
+          <span className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
+            {badge}
+          </span>
+        )}
         <span>{label}</span>
         {tooltip && (
           <span ref={tipRef} className="relative inline-flex">
