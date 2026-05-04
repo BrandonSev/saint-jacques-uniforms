@@ -67,6 +67,8 @@ Deno.serve(async (req) => {
       tls: false,
       auth: { username: user, password },
     },
+    debug: { log: false, allowUnsecure: false, encodeLB: false, noStartTLS: false },
+    pool: false,
   });
 
   try {
