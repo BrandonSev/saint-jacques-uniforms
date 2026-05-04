@@ -30,7 +30,7 @@ function LivraisonPage() {
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
           <Card icon={<Truck className="h-5 w-5" />} title="Délai" text="Livré sous 1 semaine si le produit est en stock. Et confection d'une nouvelle commande entre 6 à 12 semaines. " />
-          <Card icon={<Package className="h-5 w-5" />} title="Remise" text="Les tenues sont remises à votre enfant via l'établissement." />
+          <Card icon={<Package className="h-5 w-5" />} title="Remise" text="Les tenues sont remises à votre enfant via l'établissement ou en livraison directement chez vous. " />
         </div>
 
         <div className="mt-10 space-y-6 text-sm leading-relaxed text-foreground/80">
