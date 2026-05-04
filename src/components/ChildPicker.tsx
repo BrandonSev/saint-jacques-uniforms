@@ -49,12 +49,23 @@ export function ChildPicker({
 
   if (list.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-border bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">
-        Vous n'avez aucun&nbsp;enfant concerné par cette section.{" "}
-        <Link to="/enfants" className="font-semibold text-primary hover:underline">
-          Modifier
-        </Link>
-      </div>
+      <>
+        <div className="rounded-lg border border-dashed border-border bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">
+          Vous n'avez aucun&nbsp;enfant concerné par cette section.{" "}
+          <button
+            type="button"
+            onClick={() => setOpenAdd(true)}
+            className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
+          >
+            <UserPlus className="h-3 w-3" /> Ajouter un enfant
+          </button>
+        </div>
+        <AddChildDialog
+          open={openAdd}
+          onClose={() => setOpenAdd(false)}
+          onCreated={(c) => onChange(c.id)}
+        />
+      </>
     );
   }
 
