@@ -34,6 +34,7 @@ import { Route as AideCguRouteImport } from './routes/aide.cgu'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as EnfantsChildIdHistoriqueRouteImport } from './routes/enfants.$childId.historique'
 import { Route as ApiPublicPayplugWebhookRouteImport } from './routes/api/public/payplug-webhook'
+import { Route as ApiPublicEmailDiagRouteImport } from './routes/api/public/email-diag'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -164,6 +165,11 @@ const ApiPublicPayplugWebhookRoute = ApiPublicPayplugWebhookRouteImport.update({
   path: '/api/public/payplug-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicEmailDiagRoute = ApiPublicEmailDiagRouteImport.update({
+  id: '/api/public/email-diag',
+  path: '/api/public/email-diag',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailTransactionalSendRoute =
   LovableEmailTransactionalSendRouteImport.update({
     id: '/lovable/email/transactional/send',
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
   '/commandes/retour-paiement': typeof CommandesRetourPaiementRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/api/public/email-diag': typeof ApiPublicEmailDiagRoute
   '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -236,6 +243,7 @@ export interface FileRoutesByTo {
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
   '/commandes/retour-paiement': typeof CommandesRetourPaiementRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/api/public/email-diag': typeof ApiPublicEmailDiagRoute
   '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -267,6 +275,7 @@ export interface FileRoutesById {
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
   '/commandes/retour-paiement': typeof CommandesRetourPaiementRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/api/public/email-diag': typeof ApiPublicEmailDiagRoute
   '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -299,6 +308,7 @@ export interface FileRouteTypes {
     | '/aide/mentions-legales'
     | '/commandes/retour-paiement'
     | '/email/unsubscribe'
+    | '/api/public/email-diag'
     | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
     | '/lovable/email/suppression'
@@ -329,6 +339,7 @@ export interface FileRouteTypes {
     | '/aide/mentions-legales'
     | '/commandes/retour-paiement'
     | '/email/unsubscribe'
+    | '/api/public/email-diag'
     | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
     | '/lovable/email/suppression'
@@ -359,6 +370,7 @@ export interface FileRouteTypes {
     | '/aide/mentions-legales'
     | '/commandes/retour-paiement'
     | '/email/unsubscribe'
+    | '/api/public/email-diag'
     | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
     | '/lovable/email/suppression'
@@ -389,6 +401,7 @@ export interface RootRouteChildren {
   AideLivraisonRoute: typeof AideLivraisonRoute
   AideMentionsLegalesRoute: typeof AideMentionsLegalesRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  ApiPublicEmailDiagRoute: typeof ApiPublicEmailDiagRoute
   ApiPublicPayplugWebhookRoute: typeof ApiPublicPayplugWebhookRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -573,6 +586,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPayplugWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/email-diag': {
+      id: '/api/public/email-diag'
+      path: '/api/public/email-diag'
+      fullPath: '/api/public/email-diag'
+      preLoaderRoute: typeof ApiPublicEmailDiagRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/transactional/send': {
       id: '/lovable/email/transactional/send'
       path: '/lovable/email/transactional/send'
@@ -642,6 +662,7 @@ const rootRouteChildren: RootRouteChildren = {
   AideLivraisonRoute: AideLivraisonRoute,
   AideMentionsLegalesRoute: AideMentionsLegalesRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  ApiPublicEmailDiagRoute: ApiPublicEmailDiagRoute,
   ApiPublicPayplugWebhookRoute: ApiPublicPayplugWebhookRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
