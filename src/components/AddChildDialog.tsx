@@ -164,26 +164,25 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             </RadioGroup>
           </fieldset>
 
-          <div className="sm:col-span-2"><Input label="Prénom *" value={form.prenom} onChange={(v) => setForm({ ...form, prenom: v })} required /></div>
-          <div className="sm:col-span-2"><Input label="Nom *" value={form.nom} onChange={(v) => setForm({ ...form, nom: v })} required /></div>
-
-          <div className="sm:col-span-2">
-            <DateOfBirthPicker
-              label="Date de naissance *"
-              value={form.naissance}
-              onChange={(v) => setForm({ ...form, naissance: v })}
-            />
+          <div className="sm:col-span-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+            <Input label="Prénom *" value={form.prenom} onChange={(v) => setForm({ ...form, prenom: v })} required />
+            <Input label="Nom *" value={form.nom} onChange={(v) => setForm({ ...form, nom: v })} required />
+            <div className="col-span-2 sm:col-span-2">
+              <DateOfBirthPicker
+                label="Date de naissance *"
+                value={form.naissance}
+                onChange={(v) => setForm({ ...form, naissance: v })}
+              />
+            </div>
           </div>
 
-          <div className="sm:col-span-2">
+          <div className="sm:col-span-4 grid grid-cols-2 gap-2.5">
             <Select
               label="Section *"
               value={form.section}
               onChange={(v) => setForm({ ...form, section: v, classe: "" })}
               options={["Maternelle", "Élémentaire", "Collège", "Lycée"]}
             />
-          </div>
-          <div className="sm:col-span-2">
             <Select
               label="Classe actuelle *"
               value={form.classe}
