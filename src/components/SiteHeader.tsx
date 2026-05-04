@@ -102,7 +102,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
               <Link
                 to="/famille"
                 title="Voir et modifier les coordonnées de la famille"
-                className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-slate-200 px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted hover:text-background"
+                className="inline-flex h-10 items-center gap-2 rounded-full border border-border px-3 text-sm font-medium transition-colors hover:bg-muted hover:text-background bg-cyan-500 text-slate-100"
                 activeProps={{ className: "ring-2 ring-primary/40" }}
               >
                 <User className="h-4 w-4" />
