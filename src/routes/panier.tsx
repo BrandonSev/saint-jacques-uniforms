@@ -582,7 +582,7 @@ function ChildGroup({
             {group.child?.initials ?? "—"}
           </div>
           <div className="min-w-0">
-            <h3 className={`truncate font-semibold tracking-tight ${tone.name}`}>
+            <h3 className={`truncate tracking-tight ${tone.name} font-sans font-bold text-sm`}>
               {group.child ? `pour ${group.child.prenom} ${group.child.nom}` : "—"}
             </h3>
             <p className="truncate text-xs text-muted-foreground">
