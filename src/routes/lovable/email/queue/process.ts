@@ -1,4 +1,4 @@
-import { sendLovableEmail } from '@lovable.dev/email-js'
+import nodemailer from 'nodemailer'
 import { createClient } from '@supabase/supabase-js'
 import { createFileRoute } from '@tanstack/react-router'
 
@@ -15,6 +15,10 @@ function isRateLimited(error: unknown): boolean {
   if (error && typeof error === 'object' && 'status' in error) {
     return (error as { status: number }).status === 429
   }
+  if (error && typeof error === 'object' && 'responseCode' in error) {
+    const code = (error as { responseCode: number }).responseCode
+    return code === 421 || code === 450 || code === 451 || code === 452
+  }
   return error instanceof Error && error.message.includes('429')
 }
 
@@ -23,6 +27,10 @@ function isRateLimited(error: unknown): boolean {
 function isForbidden(error: unknown): boolean {
   if (error && typeof error === 'object' && 'status' in error) {
     return (error as { status: number }).status === 403
+  }
+  if (error && typeof error === 'object' && 'responseCode' in error) {
+    const code = (error as { responseCode: number }).responseCode
+    return code === 530 || code === 535 || code === 550 || code === 553 || code === 554
   }
   return error instanceof Error && error.message.includes('403')
 }
@@ -65,14 +73,26 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apiKey = process.env.LOVABLE_API_KEY
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
         const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+        const smtpHost = process.env.SMTP_HOST
+        const smtpPort = Number(process.env.SMTP_PORT || 587)
+        const smtpUser = process.env.SMTP_USER
+        const smtpPassword = process.env.SMTP_PASSWORD
+        const smtpFrom = process.env.SMTP_FROM || process.env.SMTP_USER
+        const smtpSecure = process.env.SMTP_SECURE
+          ? process.env.SMTP_SECURE === 'true'
+          : smtpPort === 465
 
-        if (!apiKey || !supabaseUrl || !supabaseServiceKey) {
-          console.error('Missing required environment variables')
+        if (!supabaseUrl || !supabaseServiceKey) {
+          console.error('Missing Supabase env vars')
+          return Response.json({ error: 'Server configuration error' }, { status: 500 })
+        }
+
+        if (!smtpHost || !smtpUser || !smtpPassword || !smtpFrom) {
+          console.error('Missing SMTP env vars (need SMTP_HOST, SMTP_USER, SMTP_PASSWORD, SMTP_FROM)')
           return Response.json(
-            { error: 'Server configuration error' },
+            { error: 'SMTP configuration missing' },
             { status: 500 }
           )
         }
@@ -90,6 +110,13 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
         }
 
         const supabase: any = createClient(supabaseUrl, supabaseServiceKey)
+
+        const transporter = nodemailer.createTransport({
+          host: smtpHost,
+          port: smtpPort,
+          secure: smtpSecure,
+          auth: { user: smtpUser, pass: smtpPassword },
+        })
 
         // 1. Check rate-limit cooldown and read queue config
         const { data: state } = await supabase
@@ -222,23 +249,17 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
             }
 
             try {
-              await sendLovableEmail(
-                {
-                  run_id: payload.run_id,
-                  to: payload.to,
-                  from: payload.from,
-                  sender_domain: payload.sender_domain,
-                  subject: payload.subject,
-                  html: payload.html,
-                  text: payload.text,
-                  purpose: payload.purpose,
-                  label: payload.label,
-                  idempotency_key: payload.idempotency_key,
-                  unsubscribe_token: payload.unsubscribe_token,
-                  message_id: payload.message_id,
-                },
-                { apiKey, sendUrl: process.env.LOVABLE_SEND_URL }
-              )
+              await transporter.sendMail({
+                from: payload.from || smtpFrom,
+                to: payload.to,
+                replyTo: payload.reply_to,
+                subject: payload.subject,
+                html: payload.html,
+                text: payload.text,
+                headers: payload.idempotency_key
+                  ? { 'X-Idempotency-Key': String(payload.idempotency_key) }
+                  : undefined,
+              })
 
               // Log success
               await supabase.from('email_send_log').insert({
