@@ -172,7 +172,7 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
               : enfant.color
           }`}
         >
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-xl font-semibold text-primary shadow-sm">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white font-semibold text-primary shadow-sm text-4xl">
             {enfant.initials}
           </div>
           <div>
