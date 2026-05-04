@@ -1,13 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
-import { useEffect, useState } from "react";
-import { Check, ChevronRight, Heart, Minus, Plus, ShieldCheck } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Check, ChevronRight, Heart, Minus, Plus, ShieldCheck, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { ChildPicker } from "@/components/ChildPicker";
 import { DirectorQuote } from "@/components/DirectorQuote";
 import { useStore } from "@/lib/store";
+import { recommendSize } from "@/lib/sizeRecommendation";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import bloussePliee from "@/assets/blouse-pliee.jpeg";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
@@ -46,6 +47,24 @@ function MaternellePage() {
   const productGenre: "Fille" | "Garçon" | "Unisexe" = "Unisexe";
   const selectedChild = children.find((c) => c.id === childId);
   const genreMismatch = !!selectedChild && productGenre !== "Unisexe" && selectedChild.genre !== productGenre;
+
+  const recommendation = useMemo(() => {
+    if (!selectedChild) return null;
+    const reco = recommendSize({
+      hauteur: selectedChild.hauteur,
+      tour: selectedChild.tour,
+      tour_taille: (selectedChild as any).tour_taille,
+      tour_bassin: (selectedChild as any).tour_bassin,
+    });
+    if (!reco) return null;
+    const match = sizes.find((s) => s.trim().toLowerCase() === reco.row.age.trim().toLowerCase());
+    return match ? { size: match, consistent: reco.consistent } : null;
+  }, [selectedChild]);
+
+  // Auto-sélection de la taille recommandée quand l'enfant change.
+  useEffect(() => {
+    if (recommendation) setSize(recommendation.size);
+  }, [recommendation]);
 
   const FAV_KEY = "sjc.favorites";
   const PRODUCT_ID = "blouse-officielle";
@@ -182,11 +201,34 @@ function MaternellePage() {
 
             {/* Size */}
             <div className="mt-8">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-foreground">Taille</label>
-                <Link to="/aide/guide-tailles" className="text-xs text-primary hover:underline">
-                  Guide des tailles
-                </Link>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-3">
+                  <label className="text-sm font-semibold text-foreground">Taille</label>
+                  <Link to="/aide/guide-tailles" className="text-xs text-primary hover:underline">
+                    Guide des tailles
+                  </Link>
+                </div>
+                {recommendation && (
+                  <span
+                    title={
+                      recommendation.consistent
+                        ? "Toutes les mesures concordent"
+                        : "Prise sur la mesure la plus enveloppante"
+                    }
+                    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm ring-1 ring-inset ${
+                      recommendation.consistent
+                        ? "bg-lime-200/70 text-lime-800 ring-lime-500"
+                        : "bg-emerald-50 text-emerald-800 ring-emerald-700"
+                    }`}
+                  >
+                    <Sparkles
+                      className={`h-3.5 w-3.5 ${
+                        recommendation.consistent ? "text-lime-700" : "text-emerald-700"
+                      }`}
+                    />
+                    Reco&nbsp;: <span className="font-bold">{recommendation.size}</span>
+                  </span>
+                )}
               </div>
               <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8">
                 {sizes.map((s) => (
@@ -196,6 +238,8 @@ function MaternellePage() {
                     className={`h-12 rounded-lg border text-sm font-medium transition-all ${
                       size === s
                         ? "border-primary bg-primary text-primary-foreground"
+                        : recommendation?.size === s
+                        ? "border-lime-500 bg-lime-50 text-lime-800 ring-1 ring-inset ring-lime-500 hover:bg-lime-100"
                         : "border-border bg-card text-foreground hover:border-primary/40"
                     }`}
                   >
