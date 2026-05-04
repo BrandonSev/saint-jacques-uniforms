@@ -204,15 +204,26 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             <Ruler className="h-3.5 w-3.5" /> Mensurations
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             <Field
               label="Taille portée"
               value={enfant.taille ? `${enfant.taille} ans` : "—"}
               tooltip="A titre d'information, taille que vous avez l'habitude d'acheter pour votre enfant actuellement"
             />
-            <Field label="Hauteur" value={enfant.hauteur ? `${enfant.hauteur} cm` : "—"} />
-            <Field label="Tour de poitrine" value={enfant.tour ? `${enfant.tour} cm` : "—"} />
+            <Field label="Hauteur" value={enfant.hauteur ? `${enfant.hauteur} cm` : "—"} badge={1} />
+            <Field label="Tour de poitrine" value={enfant.tour ? `${enfant.tour} cm` : "—"} badge={2} />
+            <Field label="Tour de taille" value={enfant.tour_taille ? `${enfant.tour_taille} cm` : "—"} badge={3} />
+            <Field label="Tour de bassin" value={enfant.tour_bassin ? `${enfant.tour_bassin} cm` : "—"} badge={4} />
           </div>
+          {(!enfant.tour || !enfant.tour_taille || !enfant.tour_bassin) && (
+            <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+              💡 Renseignez les tours manquants pour fiabiliser le choix de la taille (voir{" "}
+              <Link to="/aide/guide-tailles" className="font-semibold text-primary hover:underline">
+                guide des tailles
+              </Link>
+              ).
+            </p>
+          )}
 
           <div className="mt-6 flex items-center justify-end gap-2 border-t border-border pt-5">
             <button
@@ -254,10 +265,15 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
   );
 }
 
-function Field({ label, value, tooltip }: { label: string; value: string; tooltip?: string }) {
+function Field({ label, value, tooltip, badge }: { label: string; value: string; tooltip?: string; badge?: number }) {
   return (
     <div className="rounded-xl border border-border bg-background px-4 py-3">
       <div className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        {badge !== undefined && (
+          <span className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
+            {badge}
+          </span>
+        )}
         <span>{label}</span>
         {tooltip && (
           <span title={tooltip} aria-label={tooltip} className="cursor-help text-primary">
