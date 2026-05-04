@@ -14,12 +14,14 @@ export type ChildForm = {
   taille: string;
   hauteur: string;
   tour: string;
+  tour_taille: string;
+  tour_bassin: string;
   genre: "" | "Fille" | "Garçon";
 };
 
 const empty: ChildForm = {
   prenom: "", nom: "", naissance: "", classe: "", section: "Maternelle",
-  taille: "", hauteur: "", tour: "", genre: "",
+  taille: "", hauteur: "", tour: "", tour_taille: "", tour_bassin: "", genre: "",
 };
 
 const classesBySection: Record<string, string[]> = {
@@ -53,6 +55,8 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
     taille: initial?.taille ?? "",
     hauteur: initial?.hauteur ?? "",
     tour: initial?.tour ?? "",
+    tour_taille: (initial as any)?.tour_taille ?? "",
+    tour_bassin: (initial as any)?.tour_bassin ?? "",
     genre: (initial && "genre" in initial ? (initial.genre as ChildForm["genre"]) : "") || "",
   }));
   const [saving, setSaving] = useState(false);
@@ -64,8 +68,8 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.prenom || !form.nom || !form.naissance || !form.classe || !form.section || !form.taille || !form.hauteur || !form.tour) {
-      toast.error("Merci de remplir tous les champs");
+    if (!form.prenom || !form.nom || !form.naissance || !form.classe || !form.section || !form.taille || !form.hauteur) {
+      toast.error("Merci de remplir les champs obligatoires (prénom, nom, naissance, classe, section, taille portée et hauteur)");
       return;
     }
     setSaving(true);
