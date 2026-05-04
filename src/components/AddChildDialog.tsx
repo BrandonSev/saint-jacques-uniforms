@@ -268,6 +268,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
                 tour={form.tour}
                 tour_taille={form.tour_taille}
                 tour_bassin={form.tour_bassin}
+                className="sm:hidden"
               />
             </div>
             <div className="flex justify-center rounded-xl border border-border bg-background/60 p-2 sm:w-[18.4rem]">
@@ -281,7 +282,15 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
           </div>
         </div>
 
-        <div className="mt-5 flex flex-wrap items-center justify-end gap-2">
+        <div className="mt-5 flex flex-wrap items-center justify-end gap-2 sm:flex-nowrap">
+          <div className="hidden flex-1 sm:block">
+            <LiveSizeRecommendation
+              hauteur={form.hauteur}
+              tour={form.tour}
+              tour_taille={form.tour_taille}
+              tour_bassin={form.tour_bassin}
+            />
+          </div>
           <button type="button" onClick={onClose} className="h-10 rounded-lg border border-border bg-card px-4 text-sm font-medium hover:bg-muted">
             Annuler
           </button>
@@ -302,8 +311,8 @@ export { empty as emptyChildForm };
 /* ----------------------- Live size recommendation ----------------------- */
 
 function LiveSizeRecommendation({
-  hauteur, tour, tour_taille, tour_bassin,
-}: { hauteur: string; tour: string; tour_taille: string; tour_bassin: string }) {
+  hauteur, tour, tour_taille, tour_bassin, className,
+}: { hauteur: string; tour: string; tour_taille: string; tour_bassin: string; className?: string }) {
   const reco = useMemo(
     () => recommendSize({ hauteur, tour, tour_taille, tour_bassin }),
     [hauteur, tour, tour_taille, tour_bassin],
@@ -312,7 +321,7 @@ function LiveSizeRecommendation({
 
   if (!reco) {
     return (
-      <div className="flex flex-col items-start gap-1 rounded-xl border border-dashed border-border bg-muted/40 px-3 py-2.5 text-[11px] text-muted-foreground">
+      <div className={`flex flex-col items-start gap-1 rounded-xl border border-dashed border-border bg-muted/40 px-3 py-2.5 text-[11px] text-muted-foreground ${className ?? ""}`}>
         <Sparkles className="h-3.5 w-3.5 text-primary/60" />
         Saisissez au moins une mesure pour voir la taille recommandée.
       </div>
@@ -321,7 +330,7 @@ function LiveSizeRecommendation({
 
   return (
     <div
-      className={`flex flex-col items-start gap-1.5 rounded-xl px-3 py-2.5 text-xs shadow-sm ${
+      className={`flex flex-col items-start gap-1.5 rounded-xl px-3 py-2.5 text-xs shadow-sm ${className ?? ""} ${
         reco.consistent
           ? "bg-lime-200/70 ring-2 ring-inset ring-lime-500 dark:bg-lime-500/20"
           : "ring-2 ring-inset ring-amber-400 bg-emerald-100 border-emerald-500"
