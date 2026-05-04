@@ -222,8 +222,21 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
         </div>
 
         <div className="p-6 sm:p-8">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            <Ruler className="h-3.5 w-3.5" /> Mensurations
+          <div className="flex items-start gap-3">
+            <div className="flex shrink-0 items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <Ruler className="h-3.5 w-3.5" /> Mensurations
+            </div>
+            <div className="min-w-0 flex-1">
+              {(!enfant.tour || !enfant.tour_taille || !enfant.tour_bassin) && (
+                <p className="text-[11px] leading-relaxed text-muted-foreground">
+                  💡 Renseignez les tours manquants pour fiabiliser le choix de la taille (voir{" "}
+                  <Link to="/aide/guide-tailles" className="font-semibold text-primary hover:underline">
+                    guide des tailles
+                  </Link>
+                  ).
+                </p>
+              )}
+            </div>
           </div>
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             <Field
@@ -236,15 +249,6 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
             <Field label="Tour de taille" value={enfant.tour_taille ? `${enfant.tour_taille} cm` : "—"} badge={3} />
             <Field label="Tour de bassin" value={enfant.tour_bassin ? `${enfant.tour_bassin} cm` : "—"} badge={4} />
           </div>
-          {(!enfant.tour || !enfant.tour_taille || !enfant.tour_bassin) && (
-            <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-              💡 Renseignez les tours manquants pour fiabiliser le choix de la taille (voir{" "}
-              <Link to="/aide/guide-tailles" className="font-semibold text-primary hover:underline">
-                guide des tailles
-              </Link>
-              ).
-            </p>
-          )}
 
           <div className="mt-6 flex items-center justify-end gap-2 border-t border-border pt-5">
             <button
