@@ -194,31 +194,6 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             />
           </div>
 
-          <div className="sm:col-span-4 grid items-stretch gap-2.5 sm:grid-cols-2">
-            <div className="rounded-xl border border-border bg-background/60 p-2.5">
-              <Input
-                label="Taille portée *"
-                value={form.taille}
-                onChange={(v) => setForm({ ...form, taille: v })}
-                placeholder="ex: 8"
-                suffix="ans"
-                required
-                tooltip="A titre d'information, taille que vous avez l'habitude d'acheter pour votre enfant actuellement"
-              />
-            </div>
-            <div className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-[11px] leading-relaxed text-foreground/80">
-              <span className="font-semibold text-primary">Conseil :</span> renseignez aussi le tour de poitrine, de taille et de bassin pour fiabiliser le choix de la taille. Les numéros correspondent au{" "}
-              <a
-                href="/aide/guide-tailles"
-                target="_blank"
-                rel="noreferrer"
-                className="font-semibold text-primary underline-offset-2 hover:underline"
-              >
-                guide des tailles
-              </a>.
-            </div>
-          </div>
-
           <div className="sm:col-span-4 mt-2 flex items-center gap-3">
             <span className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
               <Ruler className="h-4 w-4 text-primary" />
@@ -229,6 +204,30 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
 
           <div className="sm:col-span-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
             <div className="flex flex-col gap-2.5 sm:self-center">
+              <div className="grid items-stretch gap-2.5 sm:grid-cols-2">
+                <div className="rounded-xl border border-border bg-background/60 p-2.5">
+                  <Input
+                    label="Taille portée *"
+                    value={form.taille}
+                    onChange={(v) => setForm({ ...form, taille: v })}
+                    placeholder="ex: 8"
+                    suffix="ans"
+                    required
+                    tooltip="A titre d'information, taille que vous avez l'habitude d'acheter pour votre enfant actuellement"
+                  />
+                </div>
+                <div className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-[11px] leading-relaxed text-foreground/80">
+                  <span className="font-semibold text-primary">Conseil :</span> renseignez aussi le tour de poitrine, de taille et de bassin pour fiabiliser le choix de la taille. Les numéros correspondent au{" "}
+                  <a
+                    href="/aide/guide-tailles"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-semibold text-primary underline-offset-2 hover:underline"
+                  >
+                    guide des tailles
+                  </a>.
+                </div>
+              </div>
               <div className="grid grid-cols-2 gap-2.5">
                 <Input
                   label="Hauteur (stature)*"
@@ -264,6 +263,12 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
                   badge={4}
                 />
               </div>
+              <LiveSizeRecommendation
+                hauteur={form.hauteur}
+                tour={form.tour}
+                tour_taille={form.tour_taille}
+                tour_bassin={form.tour_bassin}
+              />
             </div>
             <div className="flex justify-center rounded-xl border border-border bg-background/60 p-2 sm:w-[18.4rem]">
               <img
@@ -277,15 +282,6 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
         </div>
 
         <div className="mt-5 flex flex-wrap items-center justify-end gap-2">
-          <div className="min-w-0 sm:max-w-xs">
-            <LiveSizeRecommendation
-              hauteur={form.hauteur}
-              tour={form.tour}
-              tour_taille={form.tour_taille}
-              tour_bassin={form.tour_bassin}
-            />
-          </div>
-          <div className="flex-1" />
           <button type="button" onClick={onClose} className="h-10 rounded-lg border border-border bg-card px-4 text-sm font-medium hover:bg-muted">
             Annuler
           </button>
