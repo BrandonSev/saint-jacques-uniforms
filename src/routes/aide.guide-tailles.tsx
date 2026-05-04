@@ -210,7 +210,7 @@ function GuideTaillesPage() {
                       key={r.age}
                       className={
                         recommendation?.idx === i
-                          ? "bg-lime-200/70 ring-2 ring-inset ring-lime-500 dark:bg-lime-500/20"
+                          ? "bg-emerald-100 ring-2 ring-inset ring-lime-500"
                           : i % 2 === 1
                           ? "bg-secondary/30"
                           : undefined
