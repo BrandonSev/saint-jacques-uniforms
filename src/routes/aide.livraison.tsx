@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
-import { Truck, Package, RefreshCw } from "lucide-react";
+import { Truck, Package } from "lucide-react";
 import { PageWatermark } from "@/components/PageWatermark";
 
 export const Route = createFileRoute("/aide/livraison")({
@@ -28,10 +28,9 @@ function LivraisonPage() {
           l'établissement Saint-Jacques-de-Compostelle.
         </p>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+        <div className="mt-10 grid gap-4 sm:grid-cols-2">
           <Card icon={<Truck className="h-5 w-5" />} title="Délai" text="10 à 12 semaines après validation de la commande." />
           <Card icon={<Package className="h-5 w-5" />} title="Remise" text="Les tenues sont remises à votre enfant via l'établissement." />
-          <Card icon={<RefreshCw className="h-5 w-5" />} title="Échange" text="SAV possible les 30 premiers jours. " />
         </div>
 
         <div className="mt-10 space-y-6 text-sm leading-relaxed text-foreground/80">
