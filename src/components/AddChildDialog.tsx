@@ -193,6 +193,14 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             />
           </div>
 
+          <div className="sm:col-span-4 mt-2 flex items-center gap-3">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
+              <Ruler className="h-4 w-4 text-primary" />
+              Mensurations
+            </span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+
           <div className="sm:col-span-4 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-[11px] leading-relaxed text-foreground/80">
             <span className="font-semibold text-primary">Conseil :</span> renseignez aussi le tour de poitrine, de taille et de bassin pour fiabiliser le choix de la taille. Les numéros correspondent au{" "}
             <a
@@ -204,6 +212,13 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
               guide des tailles
             </a>.
           </div>
+
+          <LiveSizeRecommendation
+            hauteur={form.hauteur}
+            tour={form.tour}
+            tour_taille={form.tour_taille}
+            tour_bassin={form.tour_bassin}
+          />
 
           <div className="sm:col-span-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
             <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-2 sm:self-center">
