@@ -15,8 +15,7 @@ export const Route = createFileRoute("/boutique")({
       { title: "Choisir le niveau — Boutique Saint-Jacques-de-Compostelle" },
       {
         name: "description",
-        content:
-          "Sélectionnez le niveau scolaire de votre enfant pour découvrir la sélection d'uniformes adaptée.",
+        content: "Sélectionnez le niveau scolaire de votre enfant pour découvrir la sélection d'uniformes adaptée.",
       },
     ],
   }),
@@ -66,7 +65,10 @@ function NiveauPage() {
       <PageWatermark />
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" cartCount={0} />
 
-      <section className="relative overflow-hidden border-b border-border" style={{ background: "var(--gradient-soft)" }}>
+      <section
+        className="relative overflow-hidden border-b border-border"
+        style={{ background: "var(--gradient-soft)" }}
+      >
         <div className="pointer-events-none absolute inset-0 text-primary">
           <ShellMotif className="absolute -left-32 -top-20 h-[500px] w-[500px]" opacity={0.04} />
           <ShellMotif className="absolute -right-40 -bottom-40 h-[600px] w-[600px]" opacity={0.03} />
@@ -78,11 +80,13 @@ function NiveauPage() {
           <h1 className="mt-5 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
             Choisissez le niveau de votre enfant
           </h1>
-          <p className="mt-2 text-sm italic text-muted-foreground">Boutique officielle du groupe scolaire de Saint-Jacques-de-Compostelle</p>
+          <p className="mt-2 text-sm italic text-muted-foreground">
+            Boutique officielle du groupe scolaire de Saint-Jacques-de-Compostelle
+          </p>
           <div className="mx-auto mt-5 h-1 w-16 rounded-full bg-[var(--rouge)]" />
           <div className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            Chaque niveau dispose d'une sélection d'uniformes validée, en cours d'étude par l'établissement ou prochainement disponible.
-            Cliquez sur la carte correspondante pour découvrir les produits disponibles.
+            Chaque niveau dispose d'une sélection d'uniformes validée, en cours d'étude par l'établissement ou
+            prochainement disponible. Cliquez sur la carte correspondante pour découvrir les produits disponibles.
           </div>
           <div className="mt-6 flex justify-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary shadow-sm">
@@ -100,23 +104,21 @@ function NiveauPage() {
         </div>
 
         <p className="mt-10 text-center text-xs text-muted-foreground">
-          Besoin d'aide ? Contactez la boutique par email à <span className="text-foreground font-medium">boutique@franceuniformes.fr</span> ·
-          du lundi au vendredi, 9h–17h
+          Besoin d'aide ? Contactez la boutique par email à{" "}
+          <span className="text-foreground font-medium">boutique@franceuniformes.fr</span> · du lundi au vendredi,
+          9h–17h
         </p>
       </section>
-
+      <DirectorQuote
+        variant="hero"
+        quote="Toutes les actions menées dans notre Groupe scolaire ont pour finalité essentielle de contribuer à l'épanouissement et à la réussite du Jeune. La tenue de Saint-Jacques-de-Compostelle s'inscrit pleinement dans ce projet : elle incarne notre Éducation Intégrale, le sens de l'appartenance à notre communauté et l'attention quotidienne portée à chaque élève."
+      />
       <SiteFooter />
     </div>
   );
 }
 
-function LevelCard({
-  level,
-  priority,
-}: {
-  level: (typeof levels)[number];
-  priority: boolean;
-}) {
+function LevelCard({ level, priority }: { level: (typeof levels)[number]; priority: boolean }) {
   return (
     <Link
       to={level.href}
