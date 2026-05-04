@@ -225,6 +225,8 @@ function Input({
 }) {
   const [tipOpen, setTipOpen] = useState(false);
   const tipRef = useRef<HTMLSpanElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [tipPos, setTipPos] = useState<{ top: number; left: number } | null>(null);
   useEffect(() => {
     if (!tipOpen) return;
     const onClick = (e: MouseEvent) => {
@@ -233,6 +235,11 @@ function Input({
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
   }, [tipOpen]);
+  useEffect(() => {
+    if (!tipOpen || !btnRef.current) return;
+    const r = btnRef.current.getBoundingClientRect();
+    setTipPos({ top: r.bottom + 6, left: r.left + r.width / 2 });
+  }, [tipOpen]);
   return (
     <label className="flex flex-col">
       <span className="line-clamp-2 inline-flex min-h-[2rem] items-start gap-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -240,6 +247,7 @@ function Input({
         {tooltip && (
           <span ref={tipRef} className="relative inline-flex">
             <button
+              ref={btnRef}
               type="button"
               onClick={(e) => {
                 e.preventDefault();
@@ -252,14 +260,18 @@ function Input({
             >
               <Info className="h-3 w-3" />
             </button>
-            {tipOpen && (
-              <span
-                role="tooltip"
-                className="absolute left-1/2 top-full z-50 mt-1 w-56 -translate-x-1/2 rounded-md border border-border bg-popover px-2.5 py-2 text-[11px] font-normal normal-case tracking-normal text-popover-foreground shadow-md"
-              >
-                {tooltip}
-              </span>
-            )}
+            {tipOpen && tipPos && typeof document !== "undefined" &&
+              createPortal(
+                <span
+                  role="tooltip"
+                  style={{ position: "fixed", top: tipPos.top, left: tipPos.left, transform: "translateX(-50%)" }}
+                  className="z-[80] w-56 max-w-[calc(100vw-2rem)] rounded-md border border-border bg-popover px-2.5 py-2 text-[11px] font-normal normal-case tracking-normal text-popover-foreground shadow-md"
+                >
+                  {tooltip}
+                </span>,
+                document.body,
+              )
+            }
           </span>
         )}
       </span>
