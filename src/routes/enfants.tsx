@@ -266,7 +266,7 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
                   className={`mr-auto inline-flex items-center gap-3 rounded-2xl px-4 py-2.5 shadow-sm ring-2 ring-inset ${
                     reco.consistent
                       ? "bg-lime-200/70 ring-lime-500 dark:bg-lime-500/20"
-                      : "bg-emerald-100 ring-amber-400"
+                      : "bg-emerald-100 ring-amber-400 border-emerald-700"
                   }`}
                 >
                   <Sparkles className={`h-5 w-5 ${reco.consistent ? "text-lime-700 dark:text-lime-300" : "text-amber-600"}`} />
