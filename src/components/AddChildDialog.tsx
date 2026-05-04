@@ -108,7 +108,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
       <form
         onClick={(e) => e.stopPropagation()}
         onSubmit={submit}
-        className={`w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl p-6 shadow-xl transition-colors ${
+        className={`w-full max-w-md max-h-[85vh] overflow-y-auto rounded-2xl p-5 shadow-xl transition-colors ${
           genre === "Fille" ? "bg-pink-100" : genre === "Garçon" ? "bg-sky-100" : "bg-card"
         }`}
       >
@@ -220,11 +220,11 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             </a>.
           </div>
 
-          <div className="sm:col-span-2 flex justify-center rounded-xl border border-border bg-background/60 p-4">
+          <div className="sm:col-span-2 flex justify-center rounded-xl border border-border bg-background/60 p-3">
             <img
               src={guideMesuresImg}
               alt="Schéma des mesures : 1 hauteur, 2 tour de poitrine, 3 tour de taille, 4 tour de bassin"
-              className="h-auto max-h-[28rem] w-auto object-contain"
+              className="h-auto max-h-[24rem] w-auto object-contain"
               loading="lazy"
             />
           </div>
@@ -304,7 +304,7 @@ function Input({
     <label className="flex flex-col">
       <span className="line-clamp-2 inline-flex min-h-[2rem] items-start gap-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         {badge !== undefined && (
-          <span className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
+          <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
             {badge}
           </span>
         )}
