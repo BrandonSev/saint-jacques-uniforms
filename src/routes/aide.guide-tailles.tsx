@@ -229,7 +229,7 @@ function GuideTaillesPage() {
                         <span className="inline-flex items-center gap-1.5">
                           {r.age}
                           {recommendation?.idx === i && (
-                            <span className="rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase text-white bg-emerald-600">
+                            <span className="rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase text-white bg-emerald-700">
                               Reco
                             </span>
                           )}
@@ -244,7 +244,7 @@ function GuideTaillesPage() {
                 </tbody>
               </table>
             </div>
-            <p className="whitespace-pre-line border-t border-border bg-secondary/40 px-3 py-2 text-[11px] text-muted-foreground sm:px-4">
+            <p className="whitespace-pre-line border-t border-border bg-secondary/40 px-3 py-2 text-[11px] text-muted-foreground sm:px-4 font-medium">
               Mesures en centimètres. {"\n"}Faites défiler horizontalement si nécessaire.
             </p>
           </div>
