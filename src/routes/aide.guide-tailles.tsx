@@ -142,8 +142,8 @@ function GuideTaillesPage() {
                     .join(" · ")}
                 </span>
                 {!recommendation.consistent && (
-                  <span className="rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
-                    Mesures discordantes — taille la plus enveloppante retenue
+                  <span className="rounded-full px-2 py-0.5 font-semibold text-lime-600 bg-amber-50">
+                    En cas de mesures discordantes —&gt; la taille la plus enveloppante est retenue dans la recommandation
                   </span>
                 )}
               </div>
