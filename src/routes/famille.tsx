@@ -397,6 +397,15 @@ function ParentCard({
               </option>
             ))}
           </select>
+          {form.role === "Autre" && (
+            <input
+              value={form.role_custom ?? ""}
+              onChange={(e) => set("role_custom" as any, e.target.value as any)}
+              placeholder="Précisez le rôle"
+              maxLength={60}
+              className="mt-2 h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
+            />
+          )}
         </Field>
         <Field label="Civilité">
           <select
