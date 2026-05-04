@@ -220,11 +220,11 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             </a>.
           </div>
 
-          <div className="sm:col-span-2 flex justify-center rounded-xl border border-border bg-background/60 p-3">
+          <div className="sm:col-span-2 flex justify-center rounded-xl border border-border bg-background/60 p-4">
             <img
               src={guideMesuresImg}
               alt="Schéma des mesures : 1 hauteur, 2 tour de poitrine, 3 tour de taille, 4 tour de bassin"
-              className="h-auto max-h-56 w-auto object-contain"
+              className="h-auto max-h-[28rem] w-auto object-contain"
               loading="lazy"
             />
           </div>
