@@ -421,7 +421,8 @@ function CommandesPage() {
                           <FileDown className="h-3.5 w-3.5" /> Télécharger le récap PDF
                         </button>
                       </div>
-                      <table className="w-full text-sm">
+                      {/* Vue tableau (desktop/tablette) */}
+                      <table className="hidden w-full text-sm md:table">
                         <thead>
                           <tr className="text-left text-[11px] uppercase tracking-wider text-muted-foreground">
                             <th className="pb-2">Enfant</th>
@@ -470,6 +471,59 @@ function CommandesPage() {
                           })}
                         </tbody>
                       </table>
+
+                      {/* Vue cartes (mobile) */}
+                      <ul className="space-y-3 md:hidden">
+                        {oItems.map((i) => {
+                          const itemIncidents = oIncidents.filter((x) => x.order_item_id === i.id);
+                          return (
+                            <li key={i.id} className="rounded-xl border border-border bg-card p-3">
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0 flex-1">
+                                  <div className="text-sm font-semibold text-foreground">
+                                    {i.product_name}
+                                  </div>
+                                  <div className="text-[11px] text-muted-foreground">Réf. {i.product_ref}</div>
+                                </div>
+                                <div className="text-right">
+                                  <div className="text-sm font-semibold">{Number(i.line_total).toFixed(2)} €</div>
+                                  <div className="text-[11px] text-muted-foreground">Qté {i.quantity}</div>
+                                </div>
+                              </div>
+                              <dl className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
+                                <div className="rounded-md bg-muted/40 px-2 py-1.5">
+                                  <dt className="font-semibold uppercase tracking-wider text-muted-foreground">Enfant</dt>
+                                  <dd className="mt-0.5 text-foreground">
+                                    {i.child_prenom} {i.child_nom}
+                                    {(i.child_section || i.child_classe) && (
+                                      <div className="text-[10px] text-muted-foreground">
+                                        {[i.child_section, i.child_classe].filter(Boolean).join(" · ")}
+                                      </div>
+                                    )}
+                                  </dd>
+                                </div>
+                                <div className="rounded-md bg-muted/40 px-2 py-1.5">
+                                  <dt className="font-semibold uppercase tracking-wider text-muted-foreground">Taille</dt>
+                                  <dd className="mt-0.5 text-foreground">{i.size}</dd>
+                                </div>
+                              </dl>
+                              {itemIncidents.length > 0 && (
+                                <div className="mt-2 space-y-1.5">
+                                  {itemIncidents.map((inc) => (
+                                    <IncidentAlert key={inc.id} status={inc.status} createdAt={inc.created_at} />
+                                  ))}
+                                </div>
+                              )}
+                              <button
+                                onClick={() => setIncidentItem(i)}
+                                className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-muted-foreground hover:border-destructive/40 hover:text-destructive"
+                              >
+                                <AlertTriangle className="h-3.5 w-3.5" /> Déclarer un incident
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
                     </div>
                   )}
                 </article>
