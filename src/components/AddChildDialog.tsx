@@ -313,7 +313,7 @@ function LiveSizeRecommendation({
 
   if (!reco) {
     return (
-      <div className="sm:col-span-4 flex items-center gap-2 rounded-xl border border-dashed border-border bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground">
+      <div className="sm:col-span-4 mt-1 flex items-center gap-2 rounded-xl border border-dashed border-border bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground">
         <Sparkles className="h-3.5 w-3.5 text-primary/60" />
         Saisissez au moins une mesure pour voir la taille recommandée.
       </div>
@@ -322,20 +322,25 @@ function LiveSizeRecommendation({
 
   return (
     <div
-      className={`sm:col-span-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border px-3 py-2 text-xs ${
+      className={`sm:col-span-4 mt-1 flex flex-wrap items-center justify-between gap-2 rounded-xl border-2 px-3 py-2.5 text-xs shadow-sm ${
         reco.consistent
-          ? "border-primary/30 bg-primary/10"
-          : "border-amber-300/60 bg-amber-50"
+          ? "border-lime-500 bg-lime-200/70 dark:bg-lime-500/20"
+          : "border-amber-400 bg-amber-50"
       }`}
     >
       <div className="flex items-center gap-2">
-        <Sparkles className={`h-4 w-4 ${reco.consistent ? "text-primary" : "text-amber-600"}`} />
+        <Sparkles className={`h-4 w-4 ${reco.consistent ? "text-lime-700" : "text-amber-600"}`} />
         <span className="font-medium text-foreground">
           Taille recommandée :{" "}
-          <span className={`text-base font-bold ${reco.consistent ? "text-primary" : "text-amber-700"}`}>
+          <span className={`text-base font-bold ${reco.consistent ? "text-lime-700" : "text-amber-700"}`}>
             {reco.row.age}
           </span>
         </span>
+        {reco.consistent && (
+          <span className="rounded-full bg-lime-600 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
+            Match
+          </span>
+        )}
       </div>
       <span className="text-[11px] text-muted-foreground">
         {filledCount}/4 mesure{filledCount > 1 ? "s" : ""} renseignée{filledCount > 1 ? "s" : ""}
