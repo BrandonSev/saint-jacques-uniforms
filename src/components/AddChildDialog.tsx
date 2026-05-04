@@ -294,6 +294,51 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
 
 export { empty as emptyChildForm };
 
+/* ----------------------- Live size recommendation ----------------------- */
+
+function LiveSizeRecommendation({
+  hauteur, tour, tour_taille, tour_bassin,
+}: { hauteur: string; tour: string; tour_taille: string; tour_bassin: string }) {
+  const reco = useMemo(
+    () => recommendSize({ hauteur, tour, tour_taille, tour_bassin }),
+    [hauteur, tour, tour_taille, tour_bassin],
+  );
+  const filledCount = [hauteur, tour, tour_taille, tour_bassin].filter((v) => v && v.trim() !== "").length;
+
+  if (!reco) {
+    return (
+      <div className="sm:col-span-4 flex items-center gap-2 rounded-xl border border-dashed border-border bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground">
+        <Sparkles className="h-3.5 w-3.5 text-primary/60" />
+        Saisissez au moins une mesure pour voir la taille recommandée.
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`sm:col-span-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border px-3 py-2 text-xs ${
+        reco.consistent
+          ? "border-primary/30 bg-primary/10"
+          : "border-amber-300/60 bg-amber-50"
+      }`}
+    >
+      <div className="flex items-center gap-2">
+        <Sparkles className={`h-4 w-4 ${reco.consistent ? "text-primary" : "text-amber-600"}`} />
+        <span className="font-medium text-foreground">
+          Taille recommandée :{" "}
+          <span className={`text-base font-bold ${reco.consistent ? "text-primary" : "text-amber-700"}`}>
+            {reco.row.age}
+          </span>
+        </span>
+      </div>
+      <span className="text-[11px] text-muted-foreground">
+        {filledCount}/4 mesure{filledCount > 1 ? "s" : ""} renseignée{filledCount > 1 ? "s" : ""}
+        {!reco.consistent && " · prise sur la mesure la plus enveloppante"}
+      </span>
+    </div>
+  );
+}
+
 /* ------------------------- Sub-components ------------------------- */
 
 function Input({
