@@ -330,20 +330,25 @@ function CommandesPage() {
                 <article key={o.id} className="overflow-hidden rounded-2xl border border-border bg-card">
                   <button
                     onClick={() => setOpenId(isOpen ? null : o.id)}
-                    className="flex w-full items-center justify-between gap-4 px-6 py-4 text-left hover:bg-muted/30"
+                    className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left hover:bg-muted/30 sm:gap-4 sm:px-6"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                         <Package className="h-4 w-4" />
                       </div>
-                      <div>
-                        <div className="text-sm font-semibold text-foreground">{o.order_number}</div>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-semibold text-foreground">{o.order_number}</div>
                         <div className="text-xs text-muted-foreground">
                           {new Date(o.created_at).toLocaleDateString("fr-FR", {
                             day: "2-digit",
                             month: "long",
                             year: "numeric",
                           })}
+                        </div>
+                        <div className="mt-1 flex flex-wrap items-center gap-1.5 sm:hidden">
+                          <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium text-foreground/80">
+                            {o.status}
+                          </span>
                         </div>
                         {oIncidents.length > 0 && (
                           <div className="mt-1 flex flex-wrap items-center gap-1.5">
@@ -366,11 +371,13 @@ function CommandesPage() {
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <span className="rounded-full bg-secondary px-3 py-1 text-[11px] font-medium text-foreground/80">
+                    <div className="flex shrink-0 items-center gap-2 sm:gap-4">
+                      <span className="hidden rounded-full bg-secondary px-3 py-1 text-[11px] font-medium text-foreground/80 sm:inline">
                         {o.status}
                       </span>
-                      <span className="text-base font-semibold">{Number(o.total_amount).toFixed(2)} €</span>
+                      <span className="whitespace-nowrap text-sm font-semibold sm:text-base">
+                        {Number(o.total_amount).toFixed(2)} €
+                      </span>
                       {isOpen ? (
                         <ChevronUp className="h-4 w-4 text-muted-foreground" />
                       ) : (
