@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Cake, Info, X } from "lucide-react";
+import { Cake, Info, Ruler, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useStore, type Child } from "@/lib/store";
+import { recommendSize } from "@/lib/sizeRecommendation";
 import guideMesuresImg from "@/assets/guide-tailles-mesures.png";
 
 export type ChildForm = {
@@ -192,6 +193,14 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             />
           </div>
 
+          <div className="sm:col-span-4 mt-2 flex items-center gap-3">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
+              <Ruler className="h-4 w-4 text-primary" />
+              Mensurations
+            </span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+
           <div className="sm:col-span-4 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-[11px] leading-relaxed text-foreground/80">
             <span className="font-semibold text-primary">Conseil :</span> renseignez aussi le tour de poitrine, de taille et de bassin pour fiabiliser le choix de la taille. Les numéros correspondent au{" "}
             <a
@@ -203,6 +212,13 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
               guide des tailles
             </a>.
           </div>
+
+          <LiveSizeRecommendation
+            hauteur={form.hauteur}
+            tour={form.tour}
+            tour_taille={form.tour_taille}
+            tour_bassin={form.tour_bassin}
+          />
 
           <div className="sm:col-span-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
             <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-2 sm:self-center">
@@ -277,6 +293,51 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
 }
 
 export { empty as emptyChildForm };
+
+/* ----------------------- Live size recommendation ----------------------- */
+
+function LiveSizeRecommendation({
+  hauteur, tour, tour_taille, tour_bassin,
+}: { hauteur: string; tour: string; tour_taille: string; tour_bassin: string }) {
+  const reco = useMemo(
+    () => recommendSize({ hauteur, tour, tour_taille, tour_bassin }),
+    [hauteur, tour, tour_taille, tour_bassin],
+  );
+  const filledCount = [hauteur, tour, tour_taille, tour_bassin].filter((v) => v && v.trim() !== "").length;
+
+  if (!reco) {
+    return (
+      <div className="sm:col-span-4 flex items-center gap-2 rounded-xl border border-dashed border-border bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground">
+        <Sparkles className="h-3.5 w-3.5 text-primary/60" />
+        Saisissez au moins une mesure pour voir la taille recommandée.
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`sm:col-span-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border px-3 py-2 text-xs ${
+        reco.consistent
+          ? "border-primary/30 bg-primary/10"
+          : "border-amber-300/60 bg-amber-50"
+      }`}
+    >
+      <div className="flex items-center gap-2">
+        <Sparkles className={`h-4 w-4 ${reco.consistent ? "text-primary" : "text-amber-600"}`} />
+        <span className="font-medium text-foreground">
+          Taille recommandée :{" "}
+          <span className={`text-base font-bold ${reco.consistent ? "text-primary" : "text-amber-700"}`}>
+            {reco.row.age}
+          </span>
+        </span>
+      </div>
+      <span className="text-[11px] text-muted-foreground">
+        {filledCount}/4 mesure{filledCount > 1 ? "s" : ""} renseignée{filledCount > 1 ? "s" : ""}
+        {!reco.consistent && " · prise sur la mesure la plus enveloppante"}
+      </span>
+    </div>
+  );
+}
 
 /* ------------------------- Sub-components ------------------------- */
 
