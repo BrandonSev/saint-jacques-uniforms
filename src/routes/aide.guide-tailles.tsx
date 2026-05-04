@@ -40,7 +40,7 @@ function GuideTaillesPage() {
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
-      <section className="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
         <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
           <span className="h-px w-6 bg-gold" /> Aide
         </span>
@@ -52,9 +52,9 @@ function GuideTaillesPage() {
           entre deux tailles, nous vous conseillons de prendre la taille supérieure.
         </p>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-start">
-          <div className="overflow-hidden rounded-2xl border border-border bg-card">
-            <table className="w-full text-sm">
+        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+          <div className="overflow-x-auto rounded-2xl border border-border bg-card">
+            <table className="w-full min-w-[640px] text-sm">
               <thead>
                 <tr className="bg-secondary text-left text-[11px] uppercase tracking-wider text-muted-foreground">
                   <th className="px-4 py-3">Taille</th>
