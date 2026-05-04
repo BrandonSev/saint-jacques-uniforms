@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Cake, Info, X } from "lucide-react";
+import { Cake, Info, Ruler, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useStore, type Child } from "@/lib/store";
+import { recommendSize } from "@/lib/sizeRecommendation";
 import guideMesuresImg from "@/assets/guide-tailles-mesures.png";
 
 export type ChildForm = {
