@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { Sparkles } from "lucide-react";
 import { ChildPicker } from "@/components/ChildPicker";
 import { useStore, type Child } from "@/lib/store";
+import { recommendSize } from "@/lib/sizeRecommendation";
 
 export type ProductGenre = "Fille" | "Garçon" | "Unisexe";
 
@@ -47,6 +49,25 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
   const selectedChild = children.find((c) => c.id === childId);
   const genreMismatch =
     !!selectedChild && productGenre !== "Unisexe" && selectedChild.genre !== productGenre;
+
+  const recommendation = useMemo(() => {
+    if (!selectedChild) return null;
+    const reco = recommendSize({
+      hauteur: selectedChild.hauteur,
+      tour: selectedChild.tour,
+      tour_taille: (selectedChild as any).tour_taille,
+      tour_bassin: (selectedChild as any).tour_bassin,
+    });
+    if (!reco) return null;
+    // Match recommendation row.age (e.g. "4 ans") with available sizes.
+    const match = sizes.find((s) => s.trim().toLowerCase() === reco.row.age.trim().toLowerCase());
+    return match ? { size: match, consistent: reco.consistent } : null;
+  }, [selectedChild, sizes]);
+
+  // Auto-select the recommended size when the child changes.
+  useEffect(() => {
+    if (recommendation) setSize(recommendation.size);
+  }, [recommendation]);
 
   const handleAdd = () => {
     if (disabled) {
@@ -112,15 +133,40 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
         </div>
 
         <div className="mt-4">
-          <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Taille</div>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Taille</div>
+            {recommendation && (
+              <span
+                title={
+                  recommendation.consistent
+                    ? "Toutes les mesures concordent"
+                    : "Prise sur la mesure la plus enveloppante"
+                }
+                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold shadow-sm ring-1 ring-inset ${
+                  recommendation.consistent
+                    ? "bg-lime-200/70 text-lime-800 ring-lime-500 dark:bg-lime-500/20 dark:text-lime-200"
+                    : "bg-emerald-100 text-emerald-800 ring-amber-400"
+                }`}
+              >
+                <Sparkles
+                  className={`h-3 w-3 ${
+                    recommendation.consistent ? "text-lime-700 dark:text-lime-300" : "text-amber-600"
+                  }`}
+                />
+                Reco&nbsp;: <span className="font-bold">{recommendation.size}</span>
+              </span>
+            )}
+          </div>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {sizes.map((s) => (
               <button
                 key={s}
                 onClick={() => setSize(s)}
-                className={`h-9 px-2 min-w-[3.5rem] rounded-md border text-xs font-medium transition-all ${
+                className={`relative h-9 px-2 min-w-[3.5rem] rounded-md border text-xs font-medium transition-all ${
                   size === s
                     ? "border-primary bg-primary text-primary-foreground"
+                    : recommendation?.size === s
+                    ? "border-lime-500 bg-lime-50 text-lime-800 ring-1 ring-inset ring-lime-500 hover:bg-lime-100 dark:bg-lime-500/10 dark:text-lime-200"
                     : "border-border bg-card text-foreground hover:border-primary/40"
                 }`}
               >
