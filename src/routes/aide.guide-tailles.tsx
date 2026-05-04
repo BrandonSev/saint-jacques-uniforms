@@ -53,47 +53,66 @@ function GuideTaillesPage() {
         </p>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-          <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-            <table className="w-full min-w-[640px] text-sm">
-              <thead>
-                <tr className="bg-secondary text-left text-[11px] uppercase tracking-wider text-muted-foreground">
-                  <th className="px-4 py-3">Taille</th>
-                  <th className="px-4 py-3">
-                    <span className="inline-flex items-center gap-1.5">
-                      <NumberBadge n={1} /> Stature
-                    </span>
-                  </th>
-                  <th className="px-4 py-3">
-                    <span className="inline-flex items-center gap-1.5">
-                      <NumberBadge n={2} /> Tour de poitrine
-                    </span>
-                  </th>
-                  <th className="px-4 py-3">
-                    <span className="inline-flex items-center gap-1.5">
-                      <NumberBadge n={3} /> Tour de taille
-                    </span>
-                  </th>
-                  <th className="px-4 py-3">
-                    <span className="inline-flex items-center gap-1.5">
-                      <NumberBadge n={4} /> Tour de bassin
-                    </span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {rows.map((r) => (
-                  <tr key={r.age}>
-                    <td className="px-4 py-3 font-semibold text-foreground">{r.age}</td>
-                    <td className="px-4 py-3 text-foreground/80">{r.stature}</td>
-                    <td className="px-4 py-3 text-foreground/80">{r.poitrine}</td>
-                    <td className="px-4 py-3 text-foreground/80">{r.taille}</td>
-                    <td className="px-4 py-3 text-foreground/80">{r.bassin}</td>
+          <div className="overflow-hidden rounded-2xl border border-border bg-card">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[520px] border-collapse text-xs sm:text-sm">
+                <thead>
+                  <tr className="bg-secondary text-left text-[10px] uppercase tracking-wider text-muted-foreground sm:text-[11px]">
+                    <th scope="col" className="sticky left-0 z-10 bg-secondary px-2 py-2.5 sm:px-4 sm:py-3">
+                      Taille
+                    </th>
+                    <th scope="col" className="px-2 py-2.5 sm:px-4 sm:py-3">
+                      <span className="inline-flex items-center gap-1.5">
+                        <NumberBadge n={1} />
+                        <span className="hidden sm:inline">Stature</span>
+                        <span className="sm:hidden">Stat.</span>
+                      </span>
+                    </th>
+                    <th scope="col" className="px-2 py-2.5 sm:px-4 sm:py-3">
+                      <span className="inline-flex items-center gap-1.5">
+                        <NumberBadge n={2} />
+                        <span className="hidden sm:inline">Tour de poitrine</span>
+                        <span className="sm:hidden">Poitr.</span>
+                      </span>
+                    </th>
+                    <th scope="col" className="px-2 py-2.5 sm:px-4 sm:py-3">
+                      <span className="inline-flex items-center gap-1.5">
+                        <NumberBadge n={3} />
+                        <span className="hidden sm:inline">Tour de taille</span>
+                        <span className="sm:hidden">Taille</span>
+                      </span>
+                    </th>
+                    <th scope="col" className="px-2 py-2.5 sm:px-4 sm:py-3">
+                      <span className="inline-flex items-center gap-1.5">
+                        <NumberBadge n={4} />
+                        <span className="hidden sm:inline">Tour de bassin</span>
+                        <span className="sm:hidden">Bassin</span>
+                      </span>
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            <p className="border-t border-border bg-secondary/40 px-4 py-2 text-[11px] text-muted-foreground">
-              Mesures exprimées en centimètres.
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {rows.map((r, i) => (
+                    <tr key={r.age} className={i % 2 === 1 ? "bg-secondary/30" : undefined}>
+                      <th
+                        scope="row"
+                        className={`sticky left-0 z-10 px-2 py-2.5 text-left font-semibold text-foreground sm:px-4 sm:py-3 ${
+                          i % 2 === 1 ? "bg-secondary/60" : "bg-card"
+                        }`}
+                      >
+                        {r.age}
+                      </th>
+                      <td className="whitespace-nowrap px-2 py-2.5 text-foreground/80 sm:px-4 sm:py-3">{r.stature}</td>
+                      <td className="whitespace-nowrap px-2 py-2.5 text-foreground/80 sm:px-4 sm:py-3">{r.poitrine}</td>
+                      <td className="whitespace-nowrap px-2 py-2.5 text-foreground/80 sm:px-4 sm:py-3">{r.taille}</td>
+                      <td className="whitespace-nowrap px-2 py-2.5 text-foreground/80 sm:px-4 sm:py-3">{r.bassin}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="border-t border-border bg-secondary/40 px-3 py-2 text-[11px] text-muted-foreground sm:px-4">
+              Mesures en centimètres. Faites défiler horizontalement si nécessaire.
             </p>
           </div>
 
