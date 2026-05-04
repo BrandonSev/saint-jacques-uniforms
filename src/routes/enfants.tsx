@@ -21,7 +21,6 @@ export const Route = createFileRoute("/enfants")({
 });
 
 function computeAgeInfoFromISO(iso: string): { label: string; tooltip: string } | null {
-  // placeholder kept here intentionally — see currentSchoolYear below
   if (!iso) return null;
   const birth = new Date(iso);
   if (isNaN(birth.getTime())) return null;
@@ -44,6 +43,14 @@ function computeAgeInfoFromISO(iso: string): { label: string; tooltip: string } 
     label: `${years} an${years > 1 ? "s" : ""}${half}`,
     tooltip: `${years} an${years > 1 ? "s" : ""} et ${months} mois`,
   };
+}
+
+function currentSchoolYear(): string {
+  const now = new Date();
+  const y = now.getFullYear();
+  // School year in France starts in September.
+  const start = now.getMonth() >= 7 ? y : y - 1;
+  return `${start}/${start + 1}`;
 }
 
 function EnfantsPage() {
