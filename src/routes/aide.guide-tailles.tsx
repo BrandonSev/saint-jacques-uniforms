@@ -210,7 +210,7 @@ function GuideTaillesPage() {
                       key={r.age}
                       className={
                         recommendation?.idx === i
-                          ? "bg-primary/15 ring-2 ring-inset ring-primary"
+                          ? "bg-lime-200/70 ring-2 ring-inset ring-lime-500 dark:bg-lime-500/20"
                           : i % 2 === 1
                           ? "bg-secondary/30"
                           : undefined
@@ -220,7 +220,7 @@ function GuideTaillesPage() {
                         scope="row"
                         className={`sticky left-0 z-10 px-2 py-2.5 text-left font-semibold text-foreground sm:px-4 sm:py-3 ${
                           recommendation?.idx === i
-                            ? "bg-primary/25"
+                            ? "bg-lime-200 dark:bg-lime-500/30"
                             : i % 2 === 1
                             ? "bg-secondary/60"
                             : "bg-card"
@@ -229,7 +229,7 @@ function GuideTaillesPage() {
                         <span className="inline-flex items-center gap-1.5">
                           {r.age}
                           {recommendation?.idx === i && (
-                            <span className="rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-bold uppercase text-primary-foreground">
+                            <span className="rounded-full bg-lime-600 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
                               Reco
                             </span>
                           )}
