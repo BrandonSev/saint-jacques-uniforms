@@ -86,6 +86,19 @@ export const sendCustomPasswordReset = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ email: z.string().email(), redirectTo: z.string().url() }).parse(d))
   .handler(async ({ data }) => {
     try {
+      const srk = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+      console.log("[sendCustomPasswordReset] env check", {
+        hasUrl: !!process.env.SUPABASE_URL,
+        hasServiceRoleKey: !!srk,
+        serviceRoleKeyLen: srk.length,
+        // décode le rôle dans le JWT pour vérifier que c'est bien service_role
+        serviceRoleKeyRole: (() => {
+          try {
+            const p = srk.split(".")[1];
+            return JSON.parse(Buffer.from(p, "base64").toString()).role;
+          } catch { return "unparseable"; }
+        })(),
+      });
       const { data: linkData, error } = await supabaseAdmin.auth.admin.generateLink({
         type: "recovery",
         email: data.email,
