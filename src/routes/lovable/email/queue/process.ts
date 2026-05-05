@@ -1,4 +1,3 @@
-import { Resend } from 'resend'
 import { createClient } from '@supabase/supabase-js'
 import { createFileRoute } from '@tanstack/react-router'
 
@@ -75,18 +74,19 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
       POST: async ({ request }) => {
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
         const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-        const resendApiKey = process.env.RESEND_API_KEY
-        const resendFrom = process.env.RESEND_FROM
+        const mailerUrl = process.env.MAILER_URL || 'https://franceuniformes.fr/api/mailer/send'
+        const mailerToken = process.env.MAILER_TOKEN
+        const mailerFrom = process.env.MAILER_FROM || 'France Uniformes <info@franceuniformes.fr>'
 
         if (!supabaseUrl || !supabaseServiceKey) {
           console.error('Missing Supabase env vars')
           return Response.json({ error: 'Server configuration error' }, { status: 500 })
         }
 
-        if (!resendApiKey || !resendFrom) {
-          console.error('Missing Resend env vars (need RESEND_API_KEY and RESEND_FROM)')
+        if (!mailerToken) {
+          console.error('Missing MAILER_TOKEN env var')
           return Response.json(
-            { error: 'Resend configuration missing' },
+            { error: 'Mailer configuration missing' },
             { status: 500 }
           )
         }
@@ -105,7 +105,7 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
 
         const supabase: any = createClient(supabaseUrl, supabaseServiceKey)
 
-        const resend = new Resend(resendApiKey)
+        const sendUrl = `${mailerUrl}${mailerUrl.includes('?') ? '&' : '?'}token=${encodeURIComponent(mailerToken)}`
 
         // 1. Check rate-limit cooldown and read queue config
         const { data: state } = await supabase
@@ -238,19 +238,28 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
             }
 
             try {
-              const { error: sendError } = await resend.emails.send({
-                from: payload.from || resendFrom,
-                to: Array.isArray(payload.to) ? payload.to : [payload.to],
-                replyTo: payload.reply_to,
-                subject: payload.subject,
-                html: payload.html,
-                text: payload.text,
-                headers: payload.idempotency_key
-                  ? { 'X-Idempotency-Key': String(payload.idempotency_key) }
-                  : undefined,
+              const recipient = Array.isArray(payload.to) ? payload.to[0] : payload.to
+              const res = await fetch(sendUrl, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  ...(payload.idempotency_key
+                    ? { 'X-Idempotency-Key': String(payload.idempotency_key) }
+                    : {}),
+                },
+                body: JSON.stringify({
+                  from: payload.from || mailerFrom,
+                  to: recipient,
+                  replyTo: payload.reply_to,
+                  subject: payload.subject,
+                  html: payload.html,
+                  text: payload.text,
+                  idempotencyKey: payload.idempotency_key,
+                }),
               })
-              if (sendError) {
-                throw sendError
+              if (!res.ok) {
+                const body = await res.text().catch(() => '')
+                throw new Error(`Mailer HTTP ${res.status}: ${body}`)
               }
 
               // Log success
