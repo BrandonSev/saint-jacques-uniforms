@@ -67,5 +67,11 @@ export async function enqueueTransactionalEmail(params: {
   }
 
   const data = await res.json().catch(() => ({}) as any);
-  return { success: true, sent: true, messageId, mailerId: data?.id };
+  return {
+    success: true,
+    sent: true,
+    messageId,
+    mailerId: data?.id,
+    keyPrefix: process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(0, 10) + "...",
+  };
 }
