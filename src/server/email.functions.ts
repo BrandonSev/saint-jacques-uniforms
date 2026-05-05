@@ -13,6 +13,29 @@ import {
   sendIncidentResolutionFamily,
   type OrderEmailItem,
 } from "./email.server";
+import { enqueueTransactionalEmail } from "@/lib/email/send.server";
+import { TEMPLATES } from "@/lib/email-templates/registry";
+
+// Test : envoie un template au hasard à une adresse donnée (admin only via UI)
+export const sendTestRandomEmail = createServerFn({ method: "POST" })
+  .inputValidator((d) => z.object({ email: z.string().email() }).parse(d))
+  .handler(async ({ data }) => {
+    const names = Object.keys(TEMPLATES);
+    const templateName = names[Math.floor(Math.random() * names.length)];
+    const previewData = (TEMPLATES[templateName] as any).previewData ?? {};
+    try {
+      const res = await enqueueTransactionalEmail({
+        templateName,
+        recipientEmail: data.email,
+        templateData: previewData,
+        idempotencyKey: `test-${templateName}-${Date.now()}`,
+      });
+      return { ok: true, templateName, res };
+    } catch (e: any) {
+      console.error("sendTestRandomEmail:", e);
+      return { ok: false, templateName, error: e?.message ?? String(e) };
+    }
+  });
 
 // Bienvenue après création de compte (appelable par utilisateur authentifié)
 export const sendWelcome = createServerFn({ method: "POST" })
