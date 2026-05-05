@@ -7,7 +7,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
-import { sendOrderStatusUpdate, sendIncidentUpdate } from "@/server/email.functions";
+import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/server/email.functions";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
@@ -356,6 +356,23 @@ function AdminPage() {
             className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
           >
             <Download className="h-4 w-4" /> Exporter Excel fournisseur
+          </button>
+          <button
+            onClick={async () => {
+              const t = toast.loading("Envoi d'un email de test…");
+              try {
+                const r = await sendTestRandomEmail({ data: { email: "seveste.brandon@gmail.com" } });
+                toast.dismiss(t);
+                if (r.ok) toast.success(`Email '${r.templateName}' envoyé`);
+                else toast.error(`Échec (${r.templateName}): ${r.error}`);
+              } catch (e: any) {
+                toast.dismiss(t);
+                toast.error(e?.message ?? "Erreur");
+              }
+            }}
+            className="inline-flex h-11 items-center gap-2 rounded-xl border border-border bg-card px-4 text-sm font-medium hover:bg-accent"
+          >
+            ✉️ Test email aléatoire
           </button>
         </div>
 
