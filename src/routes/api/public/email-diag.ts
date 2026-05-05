@@ -29,7 +29,6 @@ export const Route = createFileRoute("/api/public/email-diag")({
             recipientEmail: body.to,
             templateData,
             idempotencyKey: `diag-${Date.now()}`,
-            keyPrefix: process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(0, 10) + "...",
           });
           return Response.json({ ok: true, result });
         } catch (e: any) {
