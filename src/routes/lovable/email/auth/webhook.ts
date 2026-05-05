@@ -2,7 +2,6 @@ import * as React from 'react'
 import { render } from '@react-email/components'
 import { parseEmailWebhookPayload } from '@lovable.dev/email-js'
 import { WebhookError, verifyWebhookRequest } from '@lovable.dev/webhooks-js'
-import { Resend } from 'resend'
 import { createFileRoute } from '@tanstack/react-router'
 import { SignupEmail } from '@/lib/email-templates/signup'
 import { InviteEmail } from '@/lib/email-templates/invite'
@@ -33,7 +32,7 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 // Configuration
 const SITE_NAME = 'France Uniformes'
 const ROOT_DOMAIN = 'franceuniformes.fr'
-const FROM_ADDRESS = process.env.RESEND_FROM || `${SITE_NAME} <info@franceuniformes.fr>`
+const FROM_ADDRESS = process.env.MAILER_FROM || `${SITE_NAME} <info@franceuniformes.fr>`
 const REPLY_TO = 'info@franceuniformes.fr'
 const SITE_URL = process.env.URL || `https://${ROOT_DOMAIN}`
 
@@ -149,10 +148,11 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
         const html = await render(element)
         const text = await render(element, { plainText: true })
 
-        // Send directly via Resend (no Supabase service-role key needed)
-        const resendKey = process.env.RESEND_API_KEY
-        if (!resendKey) {
-          console.error('RESEND_API_KEY not configured', { run_id })
+        // Send via self-hosted mailer (HTTP POST with token query param)
+        const mailerUrl = process.env.MAILER_URL || 'https://franceuniformes.fr/api/mailer/send'
+        const mailerToken = process.env.MAILER_TOKEN
+        if (!mailerToken) {
+          console.error('MAILER_TOKEN not configured', { run_id })
           return Response.json(
             { error: 'Server configuration error' },
             { status: 500 }
@@ -160,37 +160,47 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
         }
 
         const messageId = crypto.randomUUID()
-        const resend = new Resend(resendKey)
-        const { data, error: sendError } = await resend.emails.send({
-          from: FROM_ADDRESS,
-          to: [payload.data.email],
-          replyTo: REPLY_TO,
-          subject: EMAIL_SUBJECTS[emailType] || 'Notification',
-          html,
-          text,
-          headers: { 'X-Idempotency-Key': messageId },
+        const url = `${mailerUrl}${mailerUrl.includes('?') ? '&' : '?'}token=${encodeURIComponent(mailerToken)}`
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Idempotency-Key': messageId,
+          },
+          body: JSON.stringify({
+            from: FROM_ADDRESS,
+            to: payload.data.email,
+            replyTo: REPLY_TO,
+            subject: EMAIL_SUBJECTS[emailType] || 'Notification',
+            html,
+            text,
+            idempotencyKey: messageId,
+          }),
         })
 
-        if (sendError) {
-          console.error('Failed to send auth email via Resend', {
-            error: sendError,
+        if (!res.ok) {
+          const body = await res.text().catch(() => '')
+          console.error('Failed to send auth email via mailer', {
+            status: res.status,
+            body,
             run_id,
             emailType,
           })
           return Response.json(
-            { error: `Failed to send email: ${sendError.message ?? String(sendError)}` },
+            { error: `Failed to send email: HTTP ${res.status}` },
             { status: 500 }
           )
         }
 
-        console.log('Auth email sent via Resend', {
+        const data = await res.json().catch(() => ({} as any))
+        console.log('Auth email sent via mailer', {
           emailType,
           email_redacted: redactEmail(payload.data.email),
-          resendId: data?.id,
+          mailerId: data?.id,
           run_id,
         })
 
-        return Response.json({ success: true, sent: true, resendId: data?.id })
+        return Response.json({ success: true, sent: true, mailerId: data?.id })
       },
     },
   },
