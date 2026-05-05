@@ -100,7 +100,7 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
           return Response.json({ error: "Forbidden" }, { status: 403 });
         }
 
-        const supabase: any = createClient(supabaseUrl);
+        const supabase: any = createClient(supabaseUrl, supabaseServiceKey);
 
         const sendUrl = `${mailerUrl}${mailerUrl.includes("?") ? "&" : "?"}token=${encodeURIComponent(mailerToken)}`;
 
