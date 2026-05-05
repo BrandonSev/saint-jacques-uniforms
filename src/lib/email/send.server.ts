@@ -60,7 +60,7 @@ export async function enqueueTransactionalEmail(params: {
       idempotencyKey: idemKey,
     }),
   });
-  console.error("[email] mailer send failed", { res });
+  console.error("[email] mailer send failed", { res: process.env.SUPABASE_SERVICE_ROLE_KEY });
   if (!res.ok) {
     const body = await res.text().catch(() => "");
     console.error("[email] mailer send failed", { templateName, to: effectiveRecipient, status: res.status, body });
