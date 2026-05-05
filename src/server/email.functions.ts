@@ -2,6 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { enqueueTransactionalEmail } from "@/lib/email/send.server";
+import { TEMPLATES } from "@/lib/email-templates/registry";
 import {
   sendWelcomeEmail,
   sendOrderConfirmation,
