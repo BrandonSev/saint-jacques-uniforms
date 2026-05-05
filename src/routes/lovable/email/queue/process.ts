@@ -78,8 +78,8 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
         const mailerToken = process.env.MAILER_TOKEN;
         const mailerFrom = process.env.MAILER_FROM || "France Uniformes <info@franceuniformes.fr>";
 
-        if (!supabaseUrl || !supabaseServiceKey) {
-          console.error("Missing Supabase env vars", { supabaseUrl, supabaseServiceKey });
+        if (!supabaseUrl) {
+          console.error("Missing Supabase env vars");
           return Response.json({ error: "Server configuration error" }, { status: 500 });
         }
 
