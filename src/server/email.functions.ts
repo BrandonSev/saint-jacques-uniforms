@@ -1,12 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import {
   sendWelcomeEmail,
   sendOrderConfirmation,
   sendAdminOrderNotification,
-  sendPasswordResetEmail,
   sendOrderStatusEmail,
   sendIncidentOpenedFamily,
   sendIncidentOpenedAdmin,
@@ -57,28 +55,6 @@ export const sendOrderEmails = createServerFn({ method: "POST" })
     } catch (e) {
       console.error("sendOrderEmails:", e);
       return { ok: false, error: "send_failed" as const };
-    }
-  });
-
-// Reset password custom : génère un lien admin et l'envoie via SMTP Outlook (PUBLIC, pas de middleware auth)
-export const sendCustomPasswordReset = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ email: z.string().email(), redirectTo: z.string().url() }).parse(d))
-  .handler(async ({ data }) => {
-    try {
-      const { data: linkData, error } = await supabaseAdmin.auth.admin.generateLink({
-        type: "recovery",
-        email: data.email,
-        options: { redirectTo: data.redirectTo },
-      });
-      if (error || !linkData?.properties?.action_link) {
-        // Ne pas révéler si le compte existe
-        return { ok: true };
-      }
-      await sendPasswordResetEmail(data.email, linkData.properties.action_link);
-      return { ok: true };
-    } catch (e) {
-      console.error("sendCustomPasswordReset:", e);
-      return { ok: true }; // toujours ok pour ne pas leak
     }
   });
 
