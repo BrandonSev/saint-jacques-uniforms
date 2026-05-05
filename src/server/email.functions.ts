@@ -13,29 +13,6 @@ import {
   sendIncidentResolutionFamily,
   type OrderEmailItem,
 } from "./email.server";
-import { enqueueTransactionalEmail } from "@/lib/email/send.server";
-import { TEMPLATES } from "@/lib/email-templates/registry";
-
-// Test : envoie un template au hasard à une adresse donnée (admin only via UI)
-export const sendTestRandomEmail = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ email: z.string().email() }).parse(d))
-  .handler(async ({ data }) => {
-    const names = Object.keys(TEMPLATES);
-    const templateName = names[Math.floor(Math.random() * names.length)];
-    const previewData = (TEMPLATES[templateName] as any).previewData ?? {};
-    try {
-      const res = await enqueueTransactionalEmail({
-        templateName,
-        recipientEmail: data.email,
-        templateData: previewData,
-        idempotencyKey: `test-${templateName}-${Date.now()}`,
-      });
-      return { ok: true, templateName, res };
-    } catch (e: any) {
-      console.error("sendTestRandomEmail:", e);
-      return { ok: false, templateName, error: e?.message ?? String(e) };
-    }
-  });
 
 // Bienvenue après création de compte (appelable par utilisateur authentifié)
 export const sendWelcome = createServerFn({ method: "POST" })
@@ -109,19 +86,6 @@ export const sendCustomPasswordReset = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ email: z.string().email(), redirectTo: z.string().url() }).parse(d))
   .handler(async ({ data }) => {
     try {
-      const srk = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
-      console.log("[sendCustomPasswordReset] env check", {
-        hasUrl: !!process.env.SUPABASE_URL,
-        hasServiceRoleKey: !!srk,
-        serviceRoleKeyLen: srk.length,
-        // décode le rôle dans le JWT pour vérifier que c'est bien service_role
-        serviceRoleKeyRole: (() => {
-          try {
-            const p = srk.split(".")[1];
-            return JSON.parse(Buffer.from(p, "base64").toString()).role;
-          } catch { return "unparseable"; }
-        })(),
-      });
       const { data: linkData, error } = await supabaseAdmin.auth.admin.generateLink({
         type: "recovery",
         email: data.email,

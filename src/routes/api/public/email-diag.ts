@@ -9,7 +9,11 @@ export const Route = createFileRoute("/api/public/email-diag")({
     handlers: {
       POST: async ({ request }) => {
         let body: any;
-        try { body = await request.json(); } catch { return new Response("invalid json", { status: 400 }); }
+        try {
+          body = await request.json();
+        } catch {
+          return new Response("invalid json", { status: 400 });
+        }
         const expected = process.env.EMAIL_WEBHOOK_SECRET;
         if (!expected || body?.secret !== expected) {
           return new Response("unauthorized", { status: 401 });
@@ -25,6 +29,7 @@ export const Route = createFileRoute("/api/public/email-diag")({
             recipientEmail: body.to,
             templateData,
             idempotencyKey: `diag-${Date.now()}`,
+            keyPrefix: process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(0, 10) + "...",
           });
           return Response.json({ ok: true, result });
         } catch (e: any) {
