@@ -5,7 +5,8 @@ import { z } from "zod";
 import { toast } from "sonner";
 import sjcLogo from "@/assets/saint-jacques-logo-full.png";
 import { AuthHeroBackground } from "@/components/AuthHeroBackground";
-import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { sendCustomPasswordReset } from "@/server/email.functions";
 
 export const Route = createFileRoute("/mot-de-passe-oublie")({
   head: () => ({
@@ -25,6 +26,7 @@ function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const sendReset = useServerFn(sendCustomPasswordReset);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,8 +34,11 @@ function ForgotPasswordPage() {
     if (!parsed.success) { toast.error(parsed.error.issues[0].message); return; }
     setLoading(true);
     try {
-      await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+      await sendReset({
+        data: {
+          email: parsed.data.email,
+          redirectTo: `${window.location.origin}/reset-password`,
+        },
       });
     } catch {}
     setLoading(false);
