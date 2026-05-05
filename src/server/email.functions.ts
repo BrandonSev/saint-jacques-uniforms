@@ -2,6 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { enqueueTransactionalEmail } from "@/lib/email/send.server";
+import { TEMPLATES } from "@/lib/email-templates/registry";
 import {
   sendWelcomeEmail,
   sendOrderConfirmation,
@@ -13,6 +15,27 @@ import {
   sendIncidentResolutionFamily,
   type OrderEmailItem,
 } from "./email.server";
+
+// Test rapide : envoie un email d'un template aléatoire avec ses previewData
+export const sendTestRandomEmail = createServerFn({ method: "POST" })
+  .inputValidator((d) => z.object({ email: z.string().email() }).parse(d))
+  .handler(async ({ data }) => {
+    const names = Object.keys(TEMPLATES);
+    const templateName = names[Math.floor(Math.random() * names.length)];
+    const tpl = TEMPLATES[templateName];
+    try {
+      const result = await enqueueTransactionalEmail({
+        templateName,
+        recipientEmail: data.email,
+        templateData: tpl.previewData ?? {},
+        idempotencyKey: `test-${templateName}-${Date.now()}`,
+      });
+      return { ok: true as const, templateName, result };
+    } catch (e: any) {
+      console.error("sendTestRandomEmail:", e);
+      return { ok: false as const, templateName, error: e?.message ?? String(e) };
+    }
+  });
 
 // Bienvenue après création de compte (appelable par utilisateur authentifié)
 export const sendWelcome = createServerFn({ method: "POST" })
