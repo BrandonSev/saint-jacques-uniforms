@@ -2,7 +2,7 @@ import * as React from 'react'
 import { render } from '@react-email/components'
 import { parseEmailWebhookPayload } from '@lovable.dev/email-js'
 import { WebhookError, verifyWebhookRequest } from '@lovable.dev/webhooks-js'
-import { createClient } from '@supabase/supabase-js'
+import { Resend } from 'resend'
 import { createFileRoute } from '@tanstack/react-router'
 import { SignupEmail } from '@/lib/email-templates/signup'
 import { InviteEmail } from '@/lib/email-templates/invite'
@@ -12,12 +12,12 @@ import { EmailChangeEmail } from '@/lib/email-templates/email-change'
 import { ReauthenticationEmail } from '@/lib/email-templates/reauthentication'
 
 const EMAIL_SUBJECTS: Record<string, string> = {
-  signup: 'Confirm your email',
-  invite: "You've been invited",
-  magiclink: 'Your login link',
-  recovery: 'Reset your password',
-  email_change: 'Confirm your new email',
-  reauthentication: 'Your verification code',
+  signup: 'Confirmez votre adresse email',
+  invite: 'Vous avez été invité',
+  magiclink: 'Votre lien de connexion',
+  recovery: 'Réinitialisation de votre mot de passe',
+  email_change: 'Confirmez votre nouvelle adresse email',
+  reauthentication: 'Votre code de vérification',
 }
 
 // Template mapping
@@ -31,10 +31,11 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "ecole-dash-dax"
-const SENDER_DOMAIN = "notify.franceuniformes.fr"
-const ROOT_DOMAIN = "franceuniformes.fr"
-const FROM_DOMAIN = "franceuniformes.fr"
+const SITE_NAME = 'France Uniformes'
+const ROOT_DOMAIN = 'franceuniformes.fr'
+const FROM_ADDRESS = process.env.RESEND_FROM || `${SITE_NAME} <info@franceuniformes.fr>`
+const REPLY_TO = 'info@franceuniformes.fr'
+const SITE_URL = process.env.URL || `https://${ROOT_DOMAIN}`
 
 function redactEmail(email: string | null | undefined): string {
   if (!email) return '***'
@@ -134,7 +135,7 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
         // Build template props from payload.data (HookData structure)
         const templateProps = {
           siteName: SITE_NAME,
-          siteUrl: `https://${ROOT_DOMAIN}`,
+          siteUrl: SITE_URL,
           recipient: payload.data.email,
           confirmationUrl: payload.data.url,
           token: payload.data.token,
@@ -148,68 +149,48 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
         const html = await render(element)
         const text = await render(element, { plainText: true })
 
-        // Enqueue email for async processing by the dispatcher (process-email-queue).
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-        const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-        if (!supabaseUrl || !supabaseServiceKey) {
-          console.error('Missing Supabase environment variables')
+        // Send directly via Resend (no Supabase service-role key needed)
+        const resendKey = process.env.RESEND_API_KEY
+        if (!resendKey) {
+          console.error('RESEND_API_KEY not configured', { run_id })
           return Response.json(
             { error: 'Server configuration error' },
             { status: 500 }
           )
         }
 
-        const supabase = createClient(supabaseUrl, supabaseServiceKey)
         const messageId = crypto.randomUUID()
-
-        // Log pending BEFORE enqueue so we have a record even if enqueue crashes
-        await supabase.from('email_send_log').insert({
-          message_id: messageId,
-          template_name: emailType,
-          recipient_email: payload.data.email,
-          status: 'pending',
+        const resend = new Resend(resendKey)
+        const { data, error: sendError } = await resend.emails.send({
+          from: FROM_ADDRESS,
+          to: [payload.data.email],
+          replyTo: REPLY_TO,
+          subject: EMAIL_SUBJECTS[emailType] || 'Notification',
+          html,
+          text,
+          headers: { 'X-Idempotency-Key': messageId },
         })
 
-        const { error: enqueueError } = await supabase.rpc('enqueue_email', {
-          queue_name: 'auth_emails',
-          payload: {
+        if (sendError) {
+          console.error('Failed to send auth email via Resend', {
+            error: sendError,
             run_id,
-            message_id: messageId,
-            to: payload.data.email,
-            from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
-            sender_domain: SENDER_DOMAIN,
-            subject: EMAIL_SUBJECTS[emailType] || 'Notification',
-            html,
-            text,
-            purpose: 'transactional',
-            label: emailType,
-            queued_at: new Date().toISOString(),
-          },
-        })
-
-        if (enqueueError) {
-          console.error('Failed to enqueue auth email', { error: enqueueError, run_id, emailType })
-          await supabase.from('email_send_log').insert({
-            message_id: messageId,
-            template_name: emailType,
-            recipient_email: payload.data.email,
-            status: 'failed',
-            error_message: 'Failed to enqueue email',
+            emailType,
           })
           return Response.json(
-            { error: 'Failed to enqueue email' },
+            { error: `Failed to send email: ${sendError.message ?? String(sendError)}` },
             { status: 500 }
           )
         }
 
-        console.log('Auth email enqueued', {
+        console.log('Auth email sent via Resend', {
           emailType,
           email_redacted: redactEmail(payload.data.email),
+          resendId: data?.id,
           run_id,
         })
 
-        return Response.json({ success: true, queued: true })
+        return Response.json({ success: true, sent: true, resendId: data?.id })
       },
     },
   },
