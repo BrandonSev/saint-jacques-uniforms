@@ -1,4 +1,3 @@
-import margueritePortrait from "@/assets/marguerite-de-perignon.jpg";
 import { ShellMotif } from "@/components/SchoolMotif";
 
 type Props = {
