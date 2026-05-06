@@ -80,7 +80,7 @@ const products = [
     price: 19.2,
     image: tshirt,
     tag: "Sport",
-    desc: "Tee-shirt blanc col rond, coton souple, écusson brodé et finition tricolore.",
+    desc: "Tee-shirt blanc col rond, coton souple, écusson brodé et liseré tricolore.",
     genre: "Unisexe" as const,
   },
 ];
