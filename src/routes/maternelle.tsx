@@ -137,7 +137,7 @@ function MaternelleListPage() {
                   Portée fièrement chaque jour
                 </h2>
                 <p className="mt-2 max-w-md text-sm leading-relaxed text-white/90 drop-shadow">
-                  Confort, identité et sentiment d'appartenance — pensée pour accompagner les enfants de la PS au CM1.
+                  Confort, identité et sentiment d'appartenance — pensée pour accompagner les enfants de la petite section jusqu'au CM1.
                 </p>
               </div>
             </div>
