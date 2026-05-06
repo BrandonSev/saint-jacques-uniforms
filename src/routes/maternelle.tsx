@@ -131,7 +131,7 @@ function MaternelleListPage() {
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/50 via-transparent to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
                 <span className="absolute -top-[60px] inline-flex items-center gap-1.5 rounded-full bg-card/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary backdrop-blur">
-                  École maternelle
+                  Dès l'École maternelle... jusqu'au CM1
                 </span>
                 <h2 className="mt-2 max-w-md text-2xl font-semibold tracking-tight text-white drop-shadow">
                   Portée fièrement chaque jour
