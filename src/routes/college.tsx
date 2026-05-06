@@ -45,7 +45,7 @@ const products = [
   },
   {
     id: "pull",
-    name: "Pull Col V",
+    name: "Pull col V tricoté",
     ref: "Pull V Dax",
     price: 45.6,
     image: pull,
