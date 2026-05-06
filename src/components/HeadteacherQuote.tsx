@@ -1,4 +1,3 @@
-import margueritePortrait from "@/assets/marguerite-de-perignon.jpg";
 import { ShellMotif } from "@/components/SchoolMotif";
 
 type Props = {
@@ -8,6 +7,24 @@ type Props = {
   variant?: "hero" | "card";
   className?: string;
 };
+
+/**
+ * Placeholder visuel "Photo en attente".
+ * Provisoire — à remplacer par la vraie photo de Marguerite de Pérignon.
+ */
+function PhotoPending({ className = "" }: { className?: string }) {
+  return (
+    <div
+      role="img"
+      aria-label="Photo en attente"
+      className={`flex items-center justify-center bg-foreground text-center font-display text-background ${className}`}
+    >
+      <span className="whitespace-pre-line text-sm leading-tight tracking-wide sm:text-base">
+        {"Photo\nen attente"}
+      </span>
+    </div>
+  );
+}
 
 /**
  * Bloc "Mot de la cheffe d'établissement — 1er degré" réutilisable.
@@ -20,12 +37,7 @@ export function HeadteacherQuote({ quote, variant = "card", className = "" }: Pr
         className={`overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] ${className}`}
       >
         <div className="flex flex-col gap-0 sm:flex-row sm:items-stretch">
-          <img
-            src={"https://imagefaker.access.mx.com/440x230/282828/eae0d0/?retina=1&text=En%20attente"}
-            alt="Marguerite de Pérignon, Cheffe d'établissement du 1er degré"
-            className="h-40 w-full object-cover sm:h-auto sm:w-40 sm:shrink-0"
-            loading="lazy"
-          />
+          <PhotoPending className="h-40 w-full sm:h-auto sm:w-40 sm:shrink-0" />
           <div className="flex flex-col justify-center gap-3 p-5 sm:p-6">
             <span className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.16em] text-primary">
               Mot de la cheffe d'établissement — 1er degré
@@ -58,12 +70,7 @@ export function HeadteacherQuote({ quote, variant = "card", className = "" }: Pr
         <div className="grid items-center justify-center place-items-center gap-10 md:grid-cols-[auto,1fr] md:gap-12">
           <div className="mx-auto md:mx-0">
             <div className="relative h-40 w-40 overflow-hidden rounded-full border-4 border-card shadow-[var(--shadow-card)] ring-1 ring-primary/15 sm:h-48 sm:w-48">
-              <img
-                src={"https://imagefaker.access.mx.com/440x230/282828/eae0d0/?retina=1&text=En%20attente"}
-                alt="Marguerite de Pérignon, Cheffe d'établissement du 1er degré"
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
+              <PhotoPending className="h-full w-full" />
             </div>
           </div>
           <div className="text-center">
