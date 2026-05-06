@@ -35,7 +35,7 @@ const sizes = ["10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];
 const products = [
   {
     id: "polo",
-    name: "Polo Alban",
+    name: "Polo",
     ref: "TS Sport Dax",
     price: 33.6,
     image: polo,
