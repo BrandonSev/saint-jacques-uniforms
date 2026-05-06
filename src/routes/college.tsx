@@ -116,7 +116,7 @@ function CollegePage() {
             </span>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Collège</h1>
             <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
-              Sélection d'uniformes validée par l'établissement pour les classes de CM2, 6ᵉ, 5ᵉ et 4ᵉ. Commande simple
+              Sélection d'uniformes en cours d'étude par l'établissement pour les classes de CM2, 6ᵉ, 5ᵉ et 4ᵉ. Commande simple
               pour les familles : tous les produits ci-dessous sont autorisés au collège Saint-Jacques-de-Compostelle.
             </p>
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
