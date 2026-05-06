@@ -55,7 +55,7 @@ const products = [
   },
   {
     id: "chemise",
-    name: "Pull col V",
+    name: "Chemise manches longues",
     ref: "CHE-FU-002G",
     price: 26.4,
     image: chemise,
