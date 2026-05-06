@@ -47,7 +47,7 @@ function LyceePage() {
         </h1>
         <p className="mx-auto mt-4 max-w-xl leading-relaxed text-muted-foreground">
           Il n'y a pas d'uniformes au lycée actuellement. Les élèves de 3ᵉ sont rattachés à cette section. Les familles
-          seront informées par mail si une sélection venait à être proposée.
+          seront informées si une sélection venait à être introduite par l'établissement.
         </p>
         <Link
           to="/boutique"
