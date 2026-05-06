@@ -72,6 +72,5 @@ export async function enqueueTransactionalEmail(params: {
     sent: true,
     messageId,
     mailerId: data?.id,
-    keyPrefix: process.env.SUPABASE_SERVICE_ROLE_KEY,
   };
 }
