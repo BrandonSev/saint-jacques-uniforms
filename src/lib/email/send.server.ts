@@ -2,10 +2,10 @@ import * as React from "react";
 import { render } from "@react-email/components";
 import { TEMPLATES } from "@/lib/email-templates/registry";
 
-const SITE_NAME = "France Uniformes";
+const SITE_NAME = "Franceuniformes";
 const FROM_DOMAIN = "franceuniformes.fr";
-const FROM_LOCALPART = "info";
-const REPLY_TO = "info@franceuniformes.fr";
+const FROM_LOCALPART = "boutique";
+const REPLY_TO = "boutique@franceuniformes.fr";
 
 /**
  * Server-side helper to send a transactional email via the self-hosted
