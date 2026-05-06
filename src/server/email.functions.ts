@@ -3,7 +3,7 @@ import { z } from "zod";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { withSupabaseAuth } from "@/lib/supabase-client-middleware";
+import { withSupabaseAuth } from "@/integrations/supabase/supabase-client-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { supabase } from "@/integrations/supabase/client";
 import { enqueueTransactionalEmail } from "@/lib/email/send.server";
