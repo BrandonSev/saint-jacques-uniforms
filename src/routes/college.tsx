@@ -50,7 +50,7 @@ const products = [
     price: 45.6,
     image: pull,
     tag: "Hiver",
-    desc: "Pull col V bleu marine, maille jacquard, écusson brodé poitrine.",
+    desc: "Pull col V bleu marine, maille jacquard, écusson brodé poitrine et liseré tricolore.",
     genre: "Unisexe" as const,
   },
   {
