@@ -55,7 +55,7 @@ const products = [
   },
   {
     id: "chemise",
-    name: "Chemise manches longues",
+    name: "Chemise — Garçon",
     ref: "CHE-FU-002G",
     price: 26.4,
     image: chemise,
