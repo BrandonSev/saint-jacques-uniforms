@@ -45,7 +45,7 @@ const products = [
   },
   {
     id: "pull",
-    name: "Pull Oscar",
+    name: "Pull Col V",
     ref: "Pull V Dax",
     price: 45.6,
     image: pull,
