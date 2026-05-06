@@ -1,5 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { promises as fs } from "node:fs";
+import path from "node:path";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { enqueueTransactionalEmail } from "@/lib/email/send.server";
@@ -15,6 +17,19 @@ import {
   sendIncidentResolutionFamily,
   type OrderEmailItem,
 } from "./email.server";
+
+async function logResetError(payload: Record<string, any>) {
+  try {
+    const dir = path.resolve(process.cwd(), "logs");
+    await fs.mkdir(dir, { recursive: true });
+    const file = path.join(dir, "password-reset-errors.log");
+    const line =
+      JSON.stringify({ ts: new Date().toISOString(), ...payload }) + "\n";
+    await fs.appendFile(file, line, "utf8");
+  } catch (e) {
+    console.error("logResetError failed:", e);
+  }
+}
 
 // Test rapide : envoie un email d'un template aléatoire avec ses previewData
 export const sendTestRandomEmail = createServerFn({ method: "POST" })
@@ -115,14 +130,27 @@ export const sendCustomPasswordReset = createServerFn({ method: "POST" })
         options: { redirectTo: data.redirectTo },
       });
       if (error || !linkData?.properties?.action_link) {
+        await logResetError({
+          email: data.email,
+          stage: "generateLink",
+          message: error?.message ?? "no_action_link",
+          status: (error as any)?.status,
+          code: (error as any)?.code,
+        });
         // Ne pas révéler si le compte existe
-        return { ok: error };
+        return { ok: true as const };
       }
       await sendPasswordResetEmail(data.email, linkData.properties.action_link);
-      return { ok: true };
-    } catch (e) {
+      return { ok: true as const };
+    } catch (e: any) {
       console.error("sendCustomPasswordReset:", e);
-      return { ok: true }; // toujours ok pour ne pas leak
+      await logResetError({
+        email: data.email,
+        stage: "exception",
+        message: e?.message ?? String(e),
+        stack: e?.stack,
+      });
+      return { ok: true as const }; // toujours ok pour ne pas leak
     }
   });
 
