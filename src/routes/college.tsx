@@ -46,7 +46,7 @@ const products = [
   {
     id: "pull",
     name: "Pull Oscar",
-    ref: "PU-FU-009",
+    ref: "Pull V Dax",
     price: 45.6,
     image: pull,
     tag: "Hiver",
