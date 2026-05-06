@@ -127,7 +127,7 @@ export const sendCustomPasswordReset = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ email: z.string().email(), redirectTo: z.string().url() }).parse(d))
   .handler(async ({ data }) => {
     try {
-      const { data: linkData, error } = await supabase.auth.admin.generateLink({
+      const { data: linkData, error } = await supabaseAdmin.auth.admin.generateLink({
         type: "recovery",
         email: data.email,
         options: { redirectTo: data.redirectTo },
