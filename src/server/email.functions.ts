@@ -19,15 +19,18 @@ import {
 } from "./email.server";
 
 async function logResetError(payload: Record<string, any>) {
+  const line =
+    JSON.stringify({ ts: new Date().toISOString(), ...payload }) + "\n";
+  // Toujours logger en console (visible dans les logs serveur / Docker stdout)
+  console.error("[password-reset-error]", line.trim());
   try {
     const dir = path.resolve(process.cwd(), "logs");
     await fs.mkdir(dir, { recursive: true });
     const file = path.join(dir, "password-reset-errors.log");
-    const line =
-      JSON.stringify({ ts: new Date().toISOString(), ...payload }) + "\n";
     await fs.appendFile(file, line, "utf8");
+    console.log("[password-reset-error] wrote to", file);
   } catch (e) {
-    console.error("logResetError failed:", e);
+    console.error("[password-reset-error] file write failed:", (e as any)?.message ?? e);
   }
 }
 
