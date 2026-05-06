@@ -56,20 +56,7 @@ function DefaultErrorComponent({ error, reset }: { error: Error; reset: () => vo
 export const getRouter = () => {
   const router = createRouter({
     routeTree,
-    context: {
-      supabaseAccessToken: async () => {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        return session?.access_token;
-      },
-    },
-    defaultHeaders: async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
-    },
+    context: {},
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
     defaultErrorComponent: DefaultErrorComponent,
