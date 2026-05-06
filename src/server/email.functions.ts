@@ -116,7 +116,7 @@ export const sendCustomPasswordReset = createServerFn({ method: "POST" })
       });
       if (error || !linkData?.properties?.action_link) {
         // Ne pas révéler si le compte existe
-        return { ok: true, msg: error };
+        return { ok: error };
       }
       await sendPasswordResetEmail(data.email, linkData.properties.action_link);
       return { ok: true };
