@@ -4,6 +4,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { supabase } from "@/integrations/supabase/client";
 import { enqueueTransactionalEmail } from "@/lib/email/send.server";
 import { TEMPLATES } from "@/lib/email-templates/registry";
 import {
@@ -19,8 +20,7 @@ import {
 } from "./email.server";
 
 async function logResetError(payload: Record<string, any>) {
-  const line =
-    JSON.stringify({ ts: new Date().toISOString(), ...payload }) + "\n";
+  const line = JSON.stringify({ ts: new Date().toISOString(), ...payload }) + "\n";
   // Toujours logger en console (visible dans les logs serveur / Docker stdout)
   console.error("[password-reset-error]", line.trim());
   try {
@@ -127,7 +127,7 @@ export const sendCustomPasswordReset = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ email: z.string().email(), redirectTo: z.string().url() }).parse(d))
   .handler(async ({ data }) => {
     try {
-      const { data: linkData, error } = await supabaseAdmin.auth.admin.generateLink({
+      const { data: linkData, error } = await supabase.auth.admin.generateLink({
         type: "recovery",
         email: data.email,
         options: { redirectTo: data.redirectTo },
