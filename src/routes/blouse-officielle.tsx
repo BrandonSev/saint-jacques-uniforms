@@ -222,9 +222,7 @@ function MaternellePage() {
                     }`}
                   >
                     <Sparkles
-                      className={`h-3.5 w-3.5 ${
-                        recommendation.consistent ? "text-lime-700" : "text-emerald-700"
-                      }`}
+                      className={`h-3.5 w-3.5 ${recommendation.consistent ? "text-lime-700" : "text-emerald-700"}`}
                     />
                     Reco&nbsp;: <span className="font-bold">{recommendation.size}</span>
                   </span>
@@ -239,8 +237,8 @@ function MaternellePage() {
                       size === s
                         ? "border-primary bg-primary text-primary-foreground"
                         : recommendation?.size === s
-                        ? "border-lime-500 bg-lime-50 text-lime-800 ring-1 ring-inset ring-lime-500 hover:bg-lime-100"
-                        : "border-border bg-card text-foreground hover:border-primary/40"
+                          ? "border-lime-500 bg-lime-50 text-lime-800 ring-1 ring-inset ring-lime-500 hover:bg-lime-100"
+                          : "border-border bg-card text-foreground hover:border-primary/40"
                     }`}
                   >
                     {s}
@@ -320,7 +318,9 @@ function MaternellePage() {
 
       <DirectorQuote
         variant="hero"
-        quote="Notre mission première d'Éducation se construit et se renforce jour après jour, au service du Jeune. Porter la blouse de Saint-Jacques-de-Compostelle, c'est rejoindre cette communauté qui travaille avec attachement et dévotion à former des adultes responsables, équilibrés, épanouis et confiants en leur avenir."
+        quote="Dans le cadre de la vie scolaire et afin de favoriser un climat propice au travail,  le port de la blouse pour les élèves nous semble important.
+Cette blouse présente plusieurs avantages : elle permet de protéger les vêtements, de réduire les inégalités visibles entre les élèves et de renforcer le sentiment d’appartenance à l’école. Nous avons choisi un tissu de qualité  afin que la blouse soit confortable et adaptée aux activités scolaires. 
+Merci de la marquer au nom de votre enfant."
       />
 
       <SiteFooter />
