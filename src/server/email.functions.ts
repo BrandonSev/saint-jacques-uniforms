@@ -3,6 +3,7 @@ import { z } from "zod";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { withSupabaseAuth } from "@/lib/supabase-client-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { supabase } from "@/integrations/supabase/client";
 import { enqueueTransactionalEmail } from "@/lib/email/send.server";
@@ -184,7 +185,7 @@ export const sendOrderStatusUpdate = createServerFn({ method: "POST" })
 
 // Notification d'ouverture d'incident (famille → famille + admin)
 export const sendIncidentNotifications = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
   .inputValidator((d) => z.object({ incidentId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
