@@ -130,14 +130,27 @@ export const sendCustomPasswordReset = createServerFn({ method: "POST" })
         options: { redirectTo: data.redirectTo },
       });
       if (error || !linkData?.properties?.action_link) {
+        await logResetError({
+          email: data.email,
+          stage: "generateLink",
+          message: error?.message ?? "no_action_link",
+          status: (error as any)?.status,
+          code: (error as any)?.code,
+        });
         // Ne pas révéler si le compte existe
-        return { ok: error };
+        return { ok: true as const };
       }
       await sendPasswordResetEmail(data.email, linkData.properties.action_link);
-      return { ok: true };
-    } catch (e) {
+      return { ok: true as const };
+    } catch (e: any) {
       console.error("sendCustomPasswordReset:", e);
-      return { ok: true }; // toujours ok pour ne pas leak
+      await logResetError({
+        email: data.email,
+        stage: "exception",
+        message: e?.message ?? String(e),
+        stack: e?.stack,
+      });
+      return { ok: true as const }; // toujours ok pour ne pas leak
     }
   });
 
