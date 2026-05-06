@@ -76,7 +76,7 @@ const products = [
   {
     id: "tshirt",
     name: "Tee-shirt de sport",
-    ref: "TS-FU-019",
+    ref: "TS Sport",
     price: 19.2,
     image: tshirt,
     tag: "Sport",
