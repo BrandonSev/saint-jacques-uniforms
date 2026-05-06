@@ -21,7 +21,7 @@ export function HeadteacherQuote({ quote, variant = "card", className = "" }: Pr
       >
         <div className="flex flex-col gap-0 sm:flex-row sm:items-stretch">
           <img
-            src={margueritePortrait}
+            src={"https://imagefaker.access.mx.com/440x230/282828/eae0d0/?retina=1&text=En%20attente"}
             alt="Marguerite de Pérignon, Cheffe d'établissement du 1er degré"
             className="h-40 w-full object-cover sm:h-auto sm:w-40 sm:shrink-0"
             loading="lazy"
@@ -31,7 +31,7 @@ export function HeadteacherQuote({ quote, variant = "card", className = "" }: Pr
               Mot de la cheffe d'établissement — 1er degré
             </span>
             <blockquote className="font-display text-sm leading-relaxed text-foreground sm:text-base">
-              <p>« {quote} »</p>
+              <p dangerouslySetInnerHTML={{ __html: `« ${quote} »` }}></p>
             </blockquote>
             <figcaption className="flex items-center gap-2.5">
               <span className="h-px w-8 bg-gold" />
@@ -80,7 +80,7 @@ export function HeadteacherQuote({ quote, variant = "card", className = "" }: Pr
                 <path d="M7.17 6C4.32 6 2 8.32 2 11.17V18h6.83v-6.83H5.17C5.17 9.42 6.42 8.17 8.17 8.17V6h-1zm10 0c-2.85 0-5.17 2.32-5.17 5.17V18h6.83v-6.83h-3.66c0-1.75 1.25-3 3-3V6h-1z"></path>
               </svg>
               <blockquote className="mt-6 font-display text-xl leading-relaxed text-foreground sm:text-2xl">
-                <p>« {quote} »</p>
+                <p dangerouslySetInnerHTML={{ __html: `« ${quote} »` }}></p>
               </blockquote>
               <figcaption className="mt-8 flex flex-col items-center gap-1">
                 <span className="h-px w-12 bg-gold"></span>

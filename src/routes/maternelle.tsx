@@ -143,7 +143,11 @@ function MaternelleListPage() {
             </div>
 
             {/* Mot de la cheffe d'établissement — condensé */}
-            <HeadteacherQuote quote="J'ai choisi avec soin la couleur bleu Riviera et chaque détail de cette blouse pour qu'elle accompagne nos élèves avec élégance et fierté." />
+            <HeadteacherQuote
+              quote="Dans le cadre de la vie scolaire et afin de favoriser un climat propice au travail, le port de la blouse pour les élèves nous semble important. <br/>
+Cette blouse présente plusieurs avantages : elle permet de protéger les vêtements, de réduire les inégalités visibles entre les élèves et de renforcer le sentiment d’appartenance à l’école.<br/> Nous avons choisi un tissu de qualité afin que la blouse soit confortable et adaptée aux activités scolaires.<br/> 
+Merci de la marquer au nom de votre enfant."
+            />
           </div>
         </div>
       </section>
