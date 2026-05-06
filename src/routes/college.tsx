@@ -36,7 +36,7 @@ const products = [
   {
     id: "polo",
     name: "Polo",
-    ref: "TS Sport Dax",
+    ref: "Polo Dax",
     price: 33.6,
     image: polo,
     tag: "Best-seller",
