@@ -56,7 +56,7 @@ const products = [
   {
     id: "chemise",
     name: "Chemise — Garçon",
-    ref: "CHE-FU-002G",
+    ref: "Chemise Garçon Dax",
     price: 26.4,
     image: chemise,
     tag: "Cérémonie",
