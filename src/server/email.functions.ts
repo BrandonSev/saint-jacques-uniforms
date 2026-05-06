@@ -114,10 +114,9 @@ export const sendCustomPasswordReset = createServerFn({ method: "POST" })
         email: data.email,
         options: { redirectTo: data.redirectTo },
       });
-      console.log(linkData, error);
       if (error || !linkData?.properties?.action_link) {
         // Ne pas révéler si le compte existe
-        return { ok: true };
+        return { ok: true, msg: error };
       }
       await sendPasswordResetEmail(data.email, linkData.properties.action_link);
       return { ok: true };
