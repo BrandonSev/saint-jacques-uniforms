@@ -65,7 +65,7 @@ const products = [
   },
   {
     id: "chemise-fille",
-    name: "Chemise Candice — Fille",
+    name: "Chemise — Fille",
     ref: "Chemise Fille Dax",
     price: 29.4,
     image: chemiseFille,
