@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { ChildPicker } from "@/components/ChildPicker";
-import { DirectorQuote } from "@/components/DirectorQuote";
+import { HeadteacherQuote } from "@/components/HeadteacherQuote";
 import { useStore } from "@/lib/store";
 import { recommendSize } from "@/lib/sizeRecommendation";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
@@ -316,7 +316,7 @@ function MaternellePage() {
         </div>
       </section>
 
-      <DirectorQuote
+      <HeadteacherQuote
         variant="hero"
         quote="Dans le cadre de la vie scolaire et afin de favoriser un climat propice au travail,  le port de la blouse pour les élèves nous semble important.
 Cette blouse présente plusieurs avantages : elle permet de protéger les vêtements, de réduire les inégalités visibles entre les élèves et de renforcer le sentiment d’appartenance à l’école. Nous avons choisi un tissu de qualité  afin que la blouse soit confortable et adaptée aux activités scolaires. 
