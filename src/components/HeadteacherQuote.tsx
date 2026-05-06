@@ -59,7 +59,7 @@ export function HeadteacherQuote({ quote, variant = "card", className = "" }: Pr
           <div className="mx-auto md:mx-0">
             <div className="relative h-40 w-40 overflow-hidden rounded-full border-4 border-card shadow-[var(--shadow-card)] ring-1 ring-primary/15 sm:h-48 sm:w-48">
               <img
-                src={margueritePortrait}
+                src={"https://imagefaker.access.mx.com/440x230/282828/eae0d0/?retina=1&text=En%20attente"}
                 alt="Marguerite de Pérignon, Cheffe d'établissement du 1er degré"
                 className="h-full w-full object-cover"
                 loading="lazy"
