@@ -121,22 +121,22 @@ function MaternelleListPage() {
             ))}
           </div>
           <div className="flex-col gap-6 flex">
-            <div className="relative overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-card)] aspect-[4/5] sm:aspect-[16/7]">
+            <div className="relative overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-card)] aspect-[2.36]">
               <img
                 src={courMaternelle}
                 alt="Élèves de maternelle en blouse SJDC dans la cour de récréation"
                 className="h-full w-full object-cover"
                 loading="lazy"
               />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/20 to-transparent" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/60 sm:via-foreground/30 to-foreground/20 sm:to-transparent" />
               <span className="absolute top-4 left-4 sm:left-8 inline-flex items-center gap-1.5 rounded-full bg-card/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary backdrop-blur">
                 Dès l'École maternelle... jusqu'au CM1
               </span>
-              <div className="absolute inset-x-0 bottom-0 p-4 pb-4 sm:p-8">
-                <h2 className="mt-2 max-w-md text-xl sm:text-2xl font-semibold tracking-tight text-white drop-shadow">
+              <div className="absolute inset-x-0 bottom-0 p-4 sm:p-8">
+                <h2 className="mt-2 max-w-md text-lg sm:text-2xl font-semibold tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                   Portée fièrement chaque jour
                 </h2>
-                <p className="mt-2 max-w-md text-xs sm:text-sm leading-relaxed text-white/90 drop-shadow">
+                <p className="mt-1.5 max-w-md text-[11px] sm:text-sm leading-snug sm:leading-relaxed text-white/95 drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
                   Confort, identité et sentiment d'appartenance — pensée pour accompagner les enfants de la petite
                   section jusqu'au CM1.
                 </p>
