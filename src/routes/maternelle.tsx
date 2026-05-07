@@ -130,14 +130,15 @@ function MaternelleListPage() {
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/50 via-transparent to-transparent" />
               <span className="absolute top-4 left-6 sm:left-8 inline-flex items-center gap-1.5 rounded-full bg-card/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary backdrop-blur">
-                École maternelle
+                Dès l'École maternelle... jusqu'au CM1
               </span>
               <div className="absolute inset-x-0 bottom-0 p-6 pb-4 sm:p-8">
                 <h2 className="mt-2 max-w-md text-2xl font-semibold tracking-tight text-white drop-shadow">
                   Portée fièrement chaque jour
                 </h2>
                 <p className="mt-2 max-w-md text-sm leading-relaxed text-white/90 drop-shadow">
-                  Confort, identité et sentiment d'appartenance — pensée pour accompagner les enfants de la petite section jusqu'au CM1.
+                  Confort, identité et sentiment d'appartenance — pensée pour accompagner les enfants de la petite
+                  section jusqu'au CM1.
                 </p>
               </div>
             </div>
