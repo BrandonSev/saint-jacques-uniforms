@@ -37,12 +37,12 @@ function summarizeItems(items: CartItem[]): string {
   const counts = new Map<string, number>();
   for (const it of items) {
     // Première moitié du nom = type de vêtement (souvent : "Blouse officielle", "Chemise blanche", ...)
-    const baseRaw = it.name.split(/[\s,—-]/)[0] || it.name;
-    const base = baseRaw.charAt(0).toUpperCase() + baseRaw.slice(1).toLowerCase();
+    const baseRaw = it.name.split(/[\s,—]/)[0] || it.name;
+    const base = baseRaw.charAt(0).toUpperCase() + baseRaw.slice(1);
     counts.set(base, (counts.get(base) ?? 0) + it.qty);
   }
   return Array.from(counts.entries())
-    .map(([name, qty]) => (qty > 1 ? `${name}s` : name))
+    .map(([name, qty]) => (qty > 1 ? (name.endsWith("s") ? name : `${name}s`) : name))
     .join(", ");
 }
 
