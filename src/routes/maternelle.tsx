@@ -120,7 +120,7 @@ function MaternelleListPage() {
               />
             ))}
           </div>
-          <div className="hidden flex-col gap-6 lg:flex">
+          <div className="flex-col gap-6 flex">
             <div className="relative overflow-hidden rounded-3xl border border-border shadow-[var(--shadow-card)] aspect-[16/7]">
               <img
                 src={courMaternelle}
