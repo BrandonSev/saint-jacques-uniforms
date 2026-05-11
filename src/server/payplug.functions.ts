@@ -18,13 +18,15 @@ function appBaseUrl() {
 }
 
 export const createOrderPayment = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
   .inputValidator((d) => z.object({ orderId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: order, error } = await supabase
       .from("orders")
-      .select("id, order_number, total_amount, status, family_email, family_prenom, family_nom, shipping_mode, shipping_address, shipping_postal, shipping_city, shipping_recipient, payplug_payment_id, payment_url, user_id")
+      .select(
+        "id, order_number, total_amount, status, family_email, family_prenom, family_nom, shipping_mode, shipping_address, shipping_postal, shipping_city, shipping_recipient, payplug_payment_id, payment_url, user_id",
+      )
       .eq("id", data.orderId)
       .maybeSingle();
     if (error || !order) return { ok: false as const, error: "order_not_found" };
