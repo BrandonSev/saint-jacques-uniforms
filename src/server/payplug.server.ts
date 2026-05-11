@@ -41,12 +41,6 @@ export async function createPayplugPayment(input: PayplugCreateInput): Promise<P
   const body = {
     amount: input.amount,
     currency: input.currency,
-    customer: {
-      email: input.email,
-      first_name: input.firstName,
-      last_name: input.lastName,
-      language: input.language ?? "fr",
-    },
     billing: {
       first_name: input.firstName,
       last_name: input.lastName,
