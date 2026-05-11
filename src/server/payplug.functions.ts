@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { withSupabaseAuth } from "@/integrations/supabase/supabase-auth-middleware";
 import { createPayplugPayment } from "./payplug.server";
 import { getRequestHost } from "@tanstack/react-start/server";
 
