@@ -187,7 +187,11 @@ function PanierPage() {
                   <Row label={`Articles`} value={`${cartCount}`} />
                   <Row label="Enfants concernés" value={`${groups.length}`} />
                   <Row label="Sous-total" value={formatEUR(subtotal)} />
-                  <Row label="Livraison" value="Calculée à l'étape suivante" />
+                   <Row 
+                     label="Livraison" 
+                     value="Gratuite pour la rentrée de sept. 2026" 
+                     subValue="À retirer auprès de l'APEL fin août"
+                   />
                 </dl>
                 <div className="my-5 h-px bg-border" />
                 <div className="flex items-baseline justify-between">
@@ -671,20 +675,31 @@ function ChildGroup({
 }
 
 function Row({
-  label,
-  value,
-  valueClass = "",
-  muted = false,
-}: {
-  label: string;
-  value: string;
-  valueClass?: string;
-  muted?: boolean;
-}) {
-  return (
-    <div className="flex items-center justify-between">
-      <dt className={muted ? "text-muted-foreground" : "text-foreground/80"}>{label}</dt>
-      <dd className={`font-medium ${valueClass || (muted ? "text-muted-foreground" : "text-foreground")}`}>{value}</dd>
-    </div>
-  );
+   label,
+   value,
+   subValue,
+   valueClass = "",
+   muted = false,
+ }: {
+   label: string;
+   value: string;
+   subValue?: string;
+   valueClass?: string;
+   muted?: boolean;
+ }) {
+   return (
+     <div className="flex items-start justify-between gap-4">
+       <dt className={muted ? "text-muted-foreground" : "text-foreground/80"}>{label}</dt>
+       <div className="text-right">
+         <dd className={`font-medium ${valueClass || (muted ? "text-muted-foreground" : "text-foreground")}`}>
+           {value}
+         </dd>
+         {subValue && (
+           <p className="mt-0.5 text-[11px] leading-tight text-muted-foreground italic">
+             {subValue}
+           </p>
+         )}
+       </div>
+     </div>
+   );
 }
