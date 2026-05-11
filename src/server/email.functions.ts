@@ -71,7 +71,7 @@ export const sendWelcome = createServerFn({ method: "POST" })
 
 // Confirmation de commande + notification admin (post-checkout)
 export const sendOrderEmails = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
   .inputValidator((d) => z.object({ orderId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
@@ -160,7 +160,7 @@ export const sendCustomPasswordReset = createServerFn({ method: "POST" })
 
 // Notification de changement de statut commande (admin → famille)
 export const sendOrderStatusUpdate = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
   .inputValidator((d) => z.object({ orderId: z.string().uuid(), note: z.string().max(500).optional() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase } = context;
@@ -237,7 +237,7 @@ export const sendIncidentNotifications = createServerFn({ method: "POST" })
 
 // Notification de mise à jour d'incident (admin → famille)
 export const sendIncidentUpdate = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
   .inputValidator((d) => z.object({ incidentId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase } = context;
