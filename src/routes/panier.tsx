@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore, type CartItem, type Child, type Profile, type ShippingChoice, type FamilyParent } from "@/lib/store";
-import { sendOrderEmails } from "@/server/email.functions";
 import { createOrderPayment } from "@/server/payplug.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { PageWatermark } from "@/components/PageWatermark";
@@ -111,10 +110,8 @@ function PanierPage() {
     setProcessing(true);
     try {
       const { orderId, orderNumber } = await checkout(shipping);
-      toast.success(`Commande ${orderNumber} créée — redirection vers le paiement…`);
-      // Notification admin (best-effort)
-      sendOrderEmails({ data: { orderId } }).catch(() => {});
-      // Création paiement PayPlug
+      toast.success(`Commande ${orderNumber} préparée — redirection vers le paiement…`);
+      // Création paiement PayPlug — les emails ne partiront qu'après paiement validé (via webhook)
       const res = await createOrderPayment({ data: { orderId } });
       if (!res.ok || !("paymentUrl" in res)) {
         toast.error("Impossible de créer le paiement. Vous pouvez réessayer depuis vos commandes.");
