@@ -11,8 +11,16 @@
  */
 export const HOME_DELIVERY_AVAILABLE_FROM = new Date("2025-09-01T00:00:00+02:00");
 
-/** `null` = comportement automatique selon la date. `true`/`false` = override manuel. */
-export const HOME_DELIVERY_OVERRIDE: boolean | null = null;
+/**
+ * `null` = comportement automatique selon la date.
+ * `true`/`false` = override manuel (prioritaire sur la date).
+ *
+ * Phase actuelle : livraison **uniquement** à l'établissement, distribuée par
+ * l'APE à la rentrée. On force donc `false` en attendant la décision officielle
+ * d'ouvrir la livraison à domicile (passer la valeur à `null` pour revenir au
+ * basculement automatique au 01/09/2025).
+ */
+export const HOME_DELIVERY_OVERRIDE: boolean | null = false;
 
 export function isHomeDeliveryEnabled(now: Date = new Date()): boolean {
   if (HOME_DELIVERY_OVERRIDE !== null) return HOME_DELIVERY_OVERRIDE;
