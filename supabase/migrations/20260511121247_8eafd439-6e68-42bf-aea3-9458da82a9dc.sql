@@ -1,0 +1,2 @@
+UPDATE public.delivery_options SET active = true, is_default = true, position = 1 WHERE code = 'pickup';
+UPDATE public.delivery_options SET active = false, is_default = false, position = 2 WHERE code = 'home';
