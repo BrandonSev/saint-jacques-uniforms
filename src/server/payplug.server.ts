@@ -76,7 +76,7 @@ export async function createPayplugPayment(input: PayplugCreateInput): Promise<P
 
   const res = await fetch(`${API_BASE}/payments`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: authHeader() },
+    headers: { "Content-Type": "application/json", Authorization: authHeader(), "PayPlug-Version": "2019-08-06" },
     body: JSON.stringify(body),
   });
   const json = await res.json();
@@ -89,7 +89,7 @@ export async function createPayplugPayment(input: PayplugCreateInput): Promise<P
 
 export async function fetchPayplugPayment(id: string): Promise<PayplugPayment> {
   const res = await fetch(`${API_BASE}/payments/${id}`, {
-    headers: { Authorization: authHeader() },
+    headers: { Authorization: authHeader(), "PayPlug-Version": "2019-08-06" },
   });
   const json = await res.json();
   if (!res.ok) throw new Error(json?.message || `PayPlug ${res.status}`);
