@@ -11,6 +11,7 @@ import { sendOrderEmails } from "@/server/email.functions";
 import { createOrderPayment } from "@/server/payplug.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { PageWatermark } from "@/components/PageWatermark";
+import { ENABLE_HOME_DELIVERY } from "@/config/featureFlags";
 
 export const Route = createFileRoute("/panier")({
   head: () => ({
@@ -53,7 +54,9 @@ function PanierPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [sizeConfirmed, setSizeConfirmed] = useState(false);
   const [deliveryOptions, setDeliveryOptions] = useState<{ code: string; label: string; description: string | null }[]>([
-    { code: "home", label: "Livraison à domicile", description: null },
+    ENABLE_HOME_DELIVERY
+      ? { code: "home", label: "Livraison à domicile", description: null }
+      : { code: "pickup", label: "Livraison à l'établissement", description: "Distribution assurée par l'APE à la rentrée de septembre." },
   ]);
 
   useEffect(() => {
@@ -63,7 +66,13 @@ function PanierPage() {
       .eq("active", true)
       .order("position", { ascending: true })
       .then(({ data }) => {
-        if (data && data.length) setDeliveryOptions(data.map((d: any) => ({ code: d.code, label: d.label, description: d.description })));
+        if (data && data.length) {
+          const mapped = data.map((d: any) => ({ code: d.code, label: d.label, description: d.description }));
+          // Tant que la livraison à domicile n'est pas activée, on ne propose
+          // que le retrait/livraison à l'établissement.
+          const filtered = ENABLE_HOME_DELIVERY ? mapped : mapped.filter((d) => d.code !== "home");
+          if (filtered.length) setDeliveryOptions(filtered);
+        }
       });
   }, []);
 
