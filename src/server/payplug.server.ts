@@ -1,4 +1,3 @@
-// Helpers serveur PayPlug (TEST/sandbox automatique selon la clé sk_test_/sk_live_)
 const API_BASE = "https://api.payplug.com/v1";
 
 function authHeader() {
@@ -8,7 +7,7 @@ function authHeader() {
 }
 
 export type PayplugCreateInput = {
-  amount: number; // centimes
+  amount: number;
   currency: "EUR";
   email: string;
   firstName: string;
@@ -19,7 +18,7 @@ export type PayplugCreateInput = {
     city: string;
     postcode: string;
     country: string;
-    deliveryType: "BILLING" | "NEW" | "VERIFIED" | "SHIP_TO_STORE" | "DIGITAL_GOODS" | "TRAVEL_OR_EVENT" | "OTHER";
+    deliveryType: "BILLING" | "NEW_ADDRESS" | "SHIP_TO_STORE" | "DIGITAL_GOODS" | "TRAVEL_OR_EVENT";
   };
   notificationUrl: string;
   returnUrl: string;
@@ -42,7 +41,12 @@ export async function createPayplugPayment(input: PayplugCreateInput): Promise<P
   const body = {
     amount: input.amount,
     currency: input.currency,
-    customer: { email: input.email, first_name: input.firstName, last_name: input.lastName, language: input.language ?? "fr" },
+    customer: {
+      email: input.email,
+      first_name: input.firstName,
+      last_name: input.lastName,
+      language: input.language ?? "fr",
+    },
     billing: {
       first_name: input.firstName,
       last_name: input.lastName,
@@ -56,12 +60,10 @@ export async function createPayplugPayment(input: PayplugCreateInput): Promise<P
     shipping: {
       first_name: input.firstName,
       last_name: input.lastName,
-      email: input.email,
       address1: input.shipping.address1,
       city: input.shipping.city,
       postcode: input.shipping.postcode,
       country: input.shipping.country,
-      language: input.language ?? "fr",
       delivery_type: input.shipping.deliveryType,
     },
     hosted_payment: {
@@ -71,6 +73,7 @@ export async function createPayplugPayment(input: PayplugCreateInput): Promise<P
     notification_url: input.notificationUrl,
     metadata: input.metadata,
   };
+
   const res = await fetch(`${API_BASE}/payments`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: authHeader() },
