@@ -22,8 +22,11 @@ export const HOME_DELIVERY_AVAILABLE_FROM = new Date("2025-09-01T00:00:00+02:00"
  */
 export const HOME_DELIVERY_OVERRIDE: boolean | null = false;
 
-export function isHomeDeliveryEnabled(now: Date = new Date()): boolean {
-  if (HOME_DELIVERY_OVERRIDE !== null) return HOME_DELIVERY_OVERRIDE;
+export function isHomeDeliveryEnabled(
+  now: Date = new Date(),
+  override: boolean | null = HOME_DELIVERY_OVERRIDE,
+): boolean {
+  if (override !== null) return override;
   return now.getTime() >= HOME_DELIVERY_AVAILABLE_FROM.getTime();
 }
 
