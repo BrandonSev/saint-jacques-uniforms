@@ -79,11 +79,7 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
             .from("orders")
             .update({ status: "Paiement échoué" })
             .eq("id", orderId);
-          if (order.family_email) {
-            try {
-              await sendOrderStatusEmail(order.family_email, order.family_prenom ?? "", order.order_number, "Paiement échoué", { note: payment.failure.message });
-            } catch (e) { console.error(e); }
-          }
+          // Aucun email n'est envoyé en cas d'échec : seuls les paiements validés déclenchent des emails.
         }
 
         return new Response("ok", { status: 200 });
