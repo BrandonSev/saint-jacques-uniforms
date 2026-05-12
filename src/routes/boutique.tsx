@@ -149,7 +149,7 @@ function LevelCard({ level, priority }: { level: (typeof levels)[number]; priori
       <div className="relative p-6 text-white">
         {showDeadlineBadge && daysLeft > 0 && (
           <span className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-100/95 px-2.5 py-1 text-[10.5px] font-semibold leading-tight text-amber-900 shadow-sm backdrop-blur">
-            <CalendarClock className="h-3 w-3 shrink-0" />
+            <CalendarClock className="lucide lucide-calendar-clock shrink-0 w-[20px] h-[20px]" />
             Plus que {daysLeft}j pour livraison garantie à la rentrée
           </span>
         )}
