@@ -66,6 +66,10 @@ function NiveauPage() {
       <PageWatermark />
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" cartCount={0} />
 
+      <div className="mx-auto w-full max-w-6xl px-4 pt-6 sm:px-6 lg:px-8">
+        <BackToSchoolAlert />
+      </div>
+
       <section
         className="relative overflow-hidden border-b border-border"
         style={{ background: "var(--gradient-soft)" }}
