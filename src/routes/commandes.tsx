@@ -13,6 +13,7 @@ import {
   XCircle,
   FileDown,
   Truck,
+  CreditCard,
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
@@ -22,6 +23,7 @@ import { toast } from "sonner";
 import { PageWatermark } from "@/components/PageWatermark";
 import { downloadOrderPdf, type PdfOrder } from "@/lib/orderPdf";
 import { sendIncidentNotifications } from "@/server/email.functions";
+import { createOrderPayment } from "@/server/payplug.functions";
 
 export const Route = createFileRoute("/commandes")({
   head: () => ({ meta: [{ title: "Mes commandes — Espace familles" }] }),
@@ -192,6 +194,28 @@ function CommandesPage() {
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<string | null>(null);
   const [incidentItem, setIncidentItem] = useState<OrderItem | null>(null);
+  const [resumingId, setResumingId] = useState<string | null>(null);
+
+  const resumePayment = async (o: Order) => {
+    setResumingId(o.id);
+    try {
+      const res = await createOrderPayment({ data: { orderId: o.id } });
+      if (res.ok) {
+        window.location.href = res.paymentUrl;
+        return;
+      }
+      if (res.error === "already_paid") {
+        toast.success("Cette commande est déjà payée.");
+        await reload();
+      } else {
+        toast.error("Impossible de relancer le paiement. Réessayez dans quelques instants.");
+      }
+    } catch (e) {
+      toast.error("Erreur lors de la relance du paiement.");
+    } finally {
+      setResumingId(null);
+    }
+  };
 
   const reload = async () => {
     const { data: o } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
@@ -421,6 +445,18 @@ function CommandesPage() {
                         </div>
                       )}
                       <div className="mb-4 flex justify-end">
+                      <div className="mb-4 flex flex-wrap items-center justify-end gap-2">
+                        {!o.paid_at &&
+                          ["En attente", "En attente paiement", "Paiement échoué"].includes(o.status) && (
+                            <button
+                              onClick={() => resumePayment(o)}
+                              disabled={resumingId === o.id}
+                              className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-60"
+                            >
+                              <CreditCard className="h-3.5 w-3.5" />
+                              {resumingId === o.id ? "Redirection…" : "Reprendre le paiement"}
+                            </button>
+                          )}
                         <button
                           onClick={() => handleDownloadPdf(o)}
                           className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:border-primary hover:text-primary"
