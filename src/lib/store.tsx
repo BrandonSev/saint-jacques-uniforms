@@ -19,6 +19,7 @@ export type Child = {
   color: string;
   blouse_portee_2025: "" | "oui" | "non";
   taille_blouse_2025: string;
+  modele_blouse_2025: "" | "septembre_2025" | "janvier_2026";
 };
 
 export type Profile = {
