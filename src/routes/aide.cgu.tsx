@@ -40,7 +40,7 @@ function CguPage() {
           <h2 className="mt-6 text-lg font-semibold text-foreground">3. Commandes et livraison</h2>
           <p className="mt-2 text-sm leading-relaxed">
             Les commandes sont enregistrées par la famille directement en ligne et transmises à l'établissement.
-            Les tenues sont fabriquées en France. Pour la rentrée de septembre 2026, les commandes sont distribuées
+            Les tenues seront fabriquées en France. Pour la rentrée de septembre 2026, les commandes sont distribuées
             par l'APEL au sein de l'établissement, sans frais de livraison. À partir de l'automne 2026, une option
             d'expédition individuelle à domicile sera proposée, avec des frais de port et d'emballage calculés au
             moment de la commande.
