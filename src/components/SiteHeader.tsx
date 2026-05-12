@@ -174,6 +174,10 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                 <MenuLink to="/admin" onClick={() => setMenuOpen(false)} icon={<ShieldCheck className="h-4 w-4" />}>
                   Administration
                 </MenuLink>
+              ) : isApel ? (
+                <MenuLink to="/apel" onClick={() => setMenuOpen(false)} icon={<Users className="h-4 w-4" />}>
+                  Espace APEL
+                </MenuLink>
               ) : (
                 <>
                   <MenuLink to="/boutique" onClick={() => setMenuOpen(false)}>
