@@ -5,7 +5,8 @@ import { withSupabaseAuth } from "@/integrations/supabase/supabase-auth-middlewa
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { enqueueTransactionalEmail } from "@/lib/email/send.server";
 
-async function userHasAnyRole(userId: string, roles: string[]) {
+type AppRole = "admin" | "apel" | "user";
+async function userHasAnyRole(userId: string, roles: AppRole[]) {
   const { data } = await supabaseAdmin
     .from("user_roles")
     .select("role")
