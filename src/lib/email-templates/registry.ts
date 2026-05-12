@@ -17,6 +17,7 @@ import { template as incidentFamily } from './incident-family'
 import { template as incidentAdmin } from './incident-admin'
 import { template as incidentResolution } from './incident-resolution'
 import { template as passwordReset } from './password-reset'
+import { template as apelReminder } from './apel-reminder'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome': welcome,
@@ -27,4 +28,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'incident-admin': incidentAdmin,
   'incident-resolution': incidentResolution,
   'password-reset': passwordReset,
+  'apel-reminder': apelReminder,
 }
