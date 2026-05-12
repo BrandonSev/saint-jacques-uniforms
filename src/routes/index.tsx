@@ -136,7 +136,7 @@ function Index() {
           />
           <TrustItem
             icon={<Truck className="h-5 w-5" />}
-            title="Distribution par l'APEL"
+            title="Livraison à l'école directement pour la rentrée de septembre"
             text="Vos commandes sont distribuées avant la rentrée par l'APEL dans l'établissement. L'expédition à votre domicile sera disponible en option à partir de l'automne 2026."
           />
           <TrustItem
