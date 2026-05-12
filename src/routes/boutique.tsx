@@ -146,16 +146,13 @@ function LevelCard({ level, priority }: { level: (typeof levels)[number]; priori
         </span>
       </div>
 
-      {showDeadlineBadge && daysLeft > 0 && (
-        <div className="absolute right-4 top-4">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-100/95 px-2.5 py-1 text-[10.5px] font-semibold leading-tight text-amber-900 shadow-sm backdrop-blur">
+      <div className="relative p-6 text-white">
+        {showDeadlineBadge && daysLeft > 0 && (
+          <span className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-100/95 px-2.5 py-1 text-[10.5px] font-semibold leading-tight text-amber-900 shadow-sm backdrop-blur">
             <CalendarClock className="h-3 w-3 shrink-0" />
             Plus que {daysLeft}j pour livraison garantie à la rentrée
           </span>
-        </div>
-      )}
-
-      <div className="relative p-6 text-white">
+        )}
         <p className="text-[11px] uppercase tracking-wider text-white/75">{level.range}</p>
         <h3 className="mt-2 text-2xl font-semibold tracking-tight">{level.title}</h3>
         <p className="mt-1 text-sm text-white/85">{level.accent}</p>
