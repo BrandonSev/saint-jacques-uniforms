@@ -29,7 +29,7 @@ function ContactPage() {
             2 rue Paul Lahargou<br />
             40100 Dax
           </Item>
-          <Item icon={<Mail className="h-5 w-5" />} title="Email">
+          <Item icon={<Mail className="h-5 w-5" />} title="Email - Boutique France Uniformes SJDC">
             <a href="mailto:boutique@franceuniformes.fr" className="text-primary hover:underline">boutique@franceuniformes.fr</a>
           </Item>
           <Item icon={<Clock className="h-5 w-5" />} title="Horaires">

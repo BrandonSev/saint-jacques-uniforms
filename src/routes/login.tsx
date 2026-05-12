@@ -181,7 +181,7 @@ function LoginPage() {
 
             {mode === "signin" ? (
               <form onSubmit={handleSignIn} className="mt-6 space-y-4">
-                <Field label="Email" icon={<Mail className="h-4 w-4" />}>
+                <Field label="Email - Boutique France Uniformes SJDC" icon={<Mail className="h-4 w-4" />}>
                   <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="vous@exemple.com" className={inputCls} />
                 </Field>
                 <Field label="Mot de passe" icon={<Lock className="h-4 w-4" />}>
@@ -217,7 +217,7 @@ function LoginPage() {
                     <input type="text" required value={nom} onChange={(e) => setNom(e.target.value)} maxLength={80} className={inputCls} />
                   </Field>
                 </div>
-                <Field label="Email" icon={<Mail className="h-4 w-4" />}>
+                <Field label="Email - Boutique France Uniformes SJDC" icon={<Mail className="h-4 w-4" />}>
                   <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={inputCls} />
                 </Field>
                 <Field label="Téléphone (optionnel)" icon={<Phone className="h-4 w-4" />}>
