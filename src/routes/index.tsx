@@ -10,11 +10,11 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Boutique groupe scolaire Saint-Jacques-de-Compostelle — Dax" },
-      {
-        name: "description",
-        content:
-          "Espace familles officiel du Groupe scolaire Saint-Jacques-de-Compostelle de Dax. Commandez les uniformes scolaires de la maternelle au lycée.",
-      },
+       {
+         name: "description",
+         content:
+           "Espace familles officiel du Groupe scolaire Saint-Jacques-de-Compostelle de Dax. Commandez les tenues officielles en quelques clics.",
+       },
       { property: "og:title", content: "Boutique groupe scolaire Saint-Jacques-de-Compostelle — Dax" },
       {
         property: "og:description",
@@ -83,10 +83,10 @@ function Index() {
                 <span className="text-[10px] font-medium uppercase tracking-[0.32em] text-white/70">Depuis 2003</span>
                 <span className="h-px w-10 bg-gold" />
               </div>
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg mx-auto lg:mx-0">
-                Bienvenue sur l'espace familles du Groupe scolaire Saint-Jacques-de-Compostelle de Dax. Commandez les
-                tenues officielles de la maternelle au lycée en quelques clics.
-              </p>
+               <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg mx-auto lg:mx-0">
+                 Bienvenue sur l'espace familles du Groupe scolaire Saint-Jacques-de-Compostelle de Dax. Commandez les
+                 tenues officielles en quelques clics.
+               </p>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
                 <Link
