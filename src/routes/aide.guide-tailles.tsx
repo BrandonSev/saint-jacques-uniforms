@@ -6,6 +6,7 @@ import mesuresDiagram from "@/assets/guide-tailles-mesures.png";
 import { useMemo, useState, useEffect } from "react";
 import { ChildPicker } from "@/components/ChildPicker";
 import { useStore } from "@/lib/store";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const Route = createFileRoute("/aide/guide-tailles")({
   head: () => ({
@@ -245,9 +246,18 @@ function GuideTaillesPage() {
                         <span className="inline-flex items-center gap-1.5">
                           {r.age}
                           {recommendation?.idx === i && (
-                            <span className="rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase text-white bg-emerald-700">
-                              Reco
-                            </span>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <span className="cursor-help rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase text-white bg-emerald-700">
+                                    RECO 1re couche
+                                  </span>
+                                </TooltipTrigger>
+                                <TooltipContent side="top" className="max-w-xs text-xs">
+                                  Taille recommandée pour les vêtements de première couche (t-shirt, polo, chemise) d'après les mesures de cet enfant.
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           )}
                         </span>
                       </th>
