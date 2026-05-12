@@ -275,34 +275,24 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
               if (!reco) return null;
               return (
                 <div
-                  title={reco.consistent ? "Toutes les mesures concordent" : "Prise sur la mesure la plus enveloppante"}
-                  className={`mr-auto inline-flex items-center gap-3 rounded-2xl px-4 py-2.5 shadow-sm ring-2 ring-inset ${
-                    reco.consistent
-                      ? "bg-lime-200/70 ring-lime-500 dark:bg-lime-500/20"
-                      : "bg-emerald-50 ring-emerald-700 border-emerald-700"
-                  }`}
+                  title="Taille recommandée pour une 1ʳᵉ couche (body, t-shirt, polo, chemise)"
+                  className="mr-auto inline-flex items-center gap-3 rounded-2xl px-4 py-2.5 shadow-sm ring-2 ring-inset bg-emerald-50 ring-emerald-700 border-emerald-700"
                 >
-                  <Sparkles className={`h-5 w-5 ${reco.consistent ? "text-lime-700 dark:text-lime-300" : "text-emerald-700"}`} />
+                  <Sparkles className="h-5 w-5 text-emerald-700" />
                   <div className="flex flex-col leading-tight">
                     <span className="text-[10px] font-semibold uppercase tracking-wider text-foreground/70">
                       Taille recommandée
                     </span>
-                    <span className={`text-xl font-bold ${reco.consistent ? "text-lime-800 dark:text-lime-200" : "text-emerald-800"}`}>
+                    <span className="text-xl font-bold text-emerald-800">
                       {reco.row.age}
                     </span>
                     <span className="text-[9px] italic text-muted-foreground">
                       1ʳᵉ couche (body, t-shirt, polo, chemise)
                     </span>
                   </div>
-                  {reco.consistent ? (
-                    <span className="rounded-full bg-lime-600 px-2 py-0.5 text-[9px] font-bold uppercase text-white">
-                      Reco
-                    </span>
-                  ) : (
-                    <span className="rounded-full bg-emerald-700 px-2 py-0.5 text-[9px] font-bold uppercase text-white">
-                      Estim.
-                    </span>
-                  )}
+                  <span className="rounded-full bg-emerald-700 px-2 py-0.5 text-[9px] font-bold uppercase text-white">
+                    Reco
+                  </span>
                 </div>
               );
             })()}

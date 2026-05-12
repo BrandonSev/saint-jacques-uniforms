@@ -212,21 +212,10 @@ function MaternellePage() {
                 </div>
                 {recommendation && (
                   <span
-                    title={
-                      (recommendation.consistent
-                        ? "Toutes les mesures concordent"
-                        : "Prise sur la mesure la plus enveloppante") +
-                      " — taille recommandée pour une 1ʳᵉ couche (body, t-shirt, polo, chemise)"
-                    }
-                    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm ring-1 ring-inset ${
-                      recommendation.consistent
-                        ? "bg-lime-200/70 text-lime-800 ring-lime-500"
-                        : "bg-emerald-50 text-emerald-800 ring-emerald-700"
-                    }`}
+                    title="Taille recommandée pour une 1ʳᵉ couche (body, t-shirt, polo, chemise)"
+                    className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm ring-1 ring-inset bg-emerald-50 text-emerald-800 ring-emerald-700"
                   >
-                    <Sparkles
-                      className={`h-3.5 w-3.5 ${recommendation.consistent ? "text-lime-700" : "text-emerald-700"}`}
-                    />
+                    <Sparkles className="h-3.5 w-3.5 text-emerald-700" />
                     Reco&nbsp;: <span className="font-bold">{recommendation.size}</span>
                   </span>
                 )}
@@ -245,7 +234,7 @@ function MaternellePage() {
                       size === s
                         ? "border-primary bg-primary text-primary-foreground"
                         : recommendation?.size === s
-                          ? "border-lime-500 bg-lime-50 text-lime-800 ring-1 ring-inset ring-lime-500 hover:bg-lime-100"
+                          ? "border-emerald-700 bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-700 hover:bg-emerald-100"
                           : "border-border bg-card text-foreground hover:border-primary/40"
                     }`}
                   >

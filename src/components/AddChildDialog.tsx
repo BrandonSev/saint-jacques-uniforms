@@ -330,29 +330,22 @@ function LiveSizeRecommendation({
 
   return (
     <div
-      className={`flex flex-col items-start gap-1.5 rounded-xl px-3 py-2.5 text-xs shadow-sm ${className ?? ""} ${
-        reco.consistent
-          ? "bg-lime-200/70 ring-2 ring-inset ring-lime-500 dark:bg-lime-500/20"
-          : "ring-2 ring-inset ring-amber-400 bg-emerald-100 border-emerald-500"
-      }`}
+      className={`flex flex-col items-start gap-1.5 rounded-xl px-3 py-2.5 text-xs shadow-sm bg-emerald-50 ring-2 ring-inset ring-emerald-700 ${className ?? ""}`}
     >
       <div className="flex items-center gap-2">
-        <Sparkles className={`h-4 w-4 ${reco.consistent ? "text-lime-700 dark:text-lime-300" : "text-amber-600"}`} />
+        <Sparkles className="h-4 w-4 text-emerald-700" />
         <span className="font-medium text-foreground">
           Taille recommandée :{" "}
-          <span className={`text-base font-bold ${reco.consistent ? "text-lime-700 dark:text-lime-300" : "text-amber-700"}`}>
+          <span className="text-base font-bold text-emerald-800">
             {reco.row.age}
           </span>
         </span>
-        {reco.consistent && (
-          <span className="rounded-full bg-lime-600 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
-            Reco
-          </span>
-        )}
+        <span className="rounded-full bg-emerald-700 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
+          Reco
+        </span>
       </div>
       <span className="text-[11px] text-muted-foreground">
         {filledCount}/4 mesure{filledCount > 1 ? "s" : ""} renseignée{filledCount > 1 ? "s" : ""}
-        {!reco.consistent && " · prise sur la mesure la plus enveloppante"}
       </span>
       <span className="text-[11px] italic text-muted-foreground">
         Pour une 1ʳᵉ couche : body, t-shirt, polo, chemise.
