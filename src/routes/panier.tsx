@@ -432,7 +432,7 @@ function ConfirmModal({
           {mode === "pickup" && pickupOption && (
             <div className="mb-4 rounded-xl border border-border bg-secondary/40 px-4 py-3 text-xs">
               <p className="font-semibold text-foreground">Retrait à l'établissement</p>
-              <p className="mt-1 text-muted-foreground">Vous serez prévenu(e) par email dès que la commande sera disponible au secrétariat.</p>
+              <p className="mt-1 text-muted-foreground">Vous serez prévenu(e) par email dès que la commande sera disponible.</p>
             </div>
           )}
 
