@@ -33,7 +33,13 @@ function ContactPage() {
             <a href="mailto:boutique@franceuniformes.fr" className="text-primary hover:underline">boutique@franceuniformes.fr</a>
           </Item>
           <Item icon={<Clock className="h-5 w-5" />} title="Horaires">
-            Lundi → vendredi<br />9h – 17h
+            Lundi : 08:00–12:00, 13:30–17:30<br />
+            Mardi : 08:00–12:00, 13:30–17:30<br />
+            Mercredi : 08:00–12:00, 13:30–17:30<br />
+            Jeudi : 08:00–12:00, 13:30–00:00<br />
+            Vendredi : 00:00–07:50, 08:00–12:00, 13:30–17:00<br />
+            Samedi : Fermé<br />
+            Dimanche : Fermé
           </Item>
           <Item icon={<Globe className="h-5 w-5" />} title="Site Internet">
             <a href="https://sjdc-dax.fr" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">sjdc-dax.fr</a>
