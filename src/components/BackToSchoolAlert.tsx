@@ -56,8 +56,8 @@ export function BackToSchoolAlert({ className = "" }: { className?: string }) {
             <strong className="whitespace-nowrap">{BACK_TO_SCHOOL_DEADLINE}</strong>.
           </p>
           <p className="mt-1.5 text-[12px] leading-relaxed text-amber-900/80 sm:text-[13px]">
-            Les commandes passées au-delà de cette date restent possibles, mais nous ne pourrons pas garantir la
-            disponibilité de toutes les tailles ni la livraison avant la rentrée.
+            Les commandes passées au-delà de cette date restent possibles, mais nous ne pourrons pas vous garantir la 
+            disponibilité de toutes les tailles, ni la livraison avant la rentrée. Anticipez et commandez dès maintenant !
           </p>
         </div>
       </div>
