@@ -19,11 +19,14 @@ export type ChildForm = {
   tour_taille: string;
   tour_bassin: string;
   genre: "" | "Fille" | "Garçon";
+  blouse_portee_2025: "" | "oui" | "non";
+  taille_blouse_2025: string;
 };
 
 const empty: ChildForm = {
   prenom: "", nom: "", naissance: "", classe: "", section: "Maternelle",
   taille: "", hauteur: "", tour: "", tour_taille: "", tour_bassin: "", genre: "",
+  blouse_portee_2025: "", taille_blouse_2025: "",
 };
 
 const classesBySection: Record<string, string[]> = {
@@ -61,6 +64,8 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
     tour_taille: (initial as any)?.tour_taille ?? "",
     tour_bassin: (initial as any)?.tour_bassin ?? "",
     genre: (initial && "genre" in initial ? (initial.genre as ChildForm["genre"]) : "") || "",
+    blouse_portee_2025: ((initial as any)?.blouse_portee_2025 ?? "") as ChildForm["blouse_portee_2025"],
+    taille_blouse_2025: (initial as any)?.taille_blouse_2025 ?? "",
   }));
   const [saving, setSaving] = useState(false);
 
