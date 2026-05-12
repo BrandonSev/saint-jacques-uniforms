@@ -9,6 +9,7 @@ import college from "@/assets/college-polo-porte.jpg";
 import lycee from "@/assets/lycee-uniformes.jpg";
 import { PageWatermark } from "@/components/PageWatermark";
 import { DirectorQuote } from "@/components/DirectorQuote";
+import { BackToSchoolAlert } from "@/components/BackToSchoolAlert";
 
 export const Route = createFileRoute("/boutique")({
   head: () => ({
@@ -65,6 +66,10 @@ function NiveauPage() {
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" cartCount={0} />
+
+      <div className="mx-auto w-full max-w-6xl px-4 pt-6 sm:px-6 lg:px-8">
+        <BackToSchoolAlert />
+      </div>
 
       <section
         className="relative overflow-hidden border-b border-border"

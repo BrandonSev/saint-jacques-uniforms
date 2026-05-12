@@ -10,6 +10,7 @@ import { useStore, type CartItem, type Child, type Profile, type ShippingChoice,
 import { createOrderPayment } from "@/server/payplug.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { PageWatermark } from "@/components/PageWatermark";
+import { BackToSchoolAlert } from "@/components/BackToSchoolAlert";
 import {
   filterDeliveryOptions,
   getInitialDeliveryOptions,
@@ -133,6 +134,7 @@ function PanierPage() {
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       <section className="relative mx-auto max-w-6xl w-full px-4 py-10 sm:px-6 lg:px-8">
+        <BackToSchoolAlert className="mb-6" />
         <div className="pointer-events-none absolute -top-10 left-0 -z-0 h-80 w-80 text-primary">
           <ShellMotif className="h-full w-full" opacity={0.045} />
         </div>

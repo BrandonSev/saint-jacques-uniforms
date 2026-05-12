@@ -7,6 +7,7 @@ import sjcLogo from "@/assets/saint-jacques-logo-new.png";
 import { SchoolIdentityBar } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
+import { BackToSchoolBanner } from "@/components/BackToSchoolAlert";
 
 interface SiteHeaderProps {
   schoolName?: string;
@@ -35,6 +36,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
   return (
     <>
       <header className="sticky top-0 z-40 w-full border-b border-border bg-background/90 backdrop-blur-md">
+        <BackToSchoolBanner />
         <div className="mx-auto max-w-6xl flex h-16 w-full items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link to="/" className="flex items-center gap-3">
             {schoolName ? (
