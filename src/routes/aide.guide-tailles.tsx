@@ -120,7 +120,7 @@ function GuideTaillesPage() {
             statistiques françaises en vigueur.
           </p>
           <p>
-            <b>Ce tableau ne s'applique pas directement aux vêtements de deuxième ou troisième couche</b> (pulls,
+            <b>Taille recommandée : 4 ans</b> (pulls,
             sweatshirts, blouses…). Pour ces articles, une recommandation de taille spécifique est indiquée directement
             sur la page de chaque vêtement, tenant compte de sa coupe et de son aisance
           </p>
