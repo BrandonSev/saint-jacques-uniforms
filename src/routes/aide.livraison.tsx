@@ -51,7 +51,9 @@ function LivraisonPage() {
             <br />
             La fabrication est lancée et l'établissement est informé des commandes des familles.
             <br />
+            <br />
             <strong>2ème étape - Livraison </strong> : Deux options de retrait : <br />
+            <br />
             • Retrait à l'établissement les tenues sont livrées en lot à l'établissement puis remises aux familles via
             l’APEL (livraison groupée, sans frais supplémentaires)
             <br />• Expédition individuelle à domicile qui engage des frais supplémentaires d'emballage et de port. Ce
