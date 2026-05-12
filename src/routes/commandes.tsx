@@ -444,7 +444,6 @@ function CommandesPage() {
                           )}
                         </div>
                       )}
-                      <div className="mb-4 flex justify-end">
                       <div className="mb-4 flex flex-wrap items-center justify-end gap-2">
                         {!o.paid_at &&
                           ["En attente", "En attente paiement", "Paiement échoué"].includes(o.status) && (
