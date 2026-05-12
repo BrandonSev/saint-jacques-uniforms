@@ -254,7 +254,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
                       label={`Taille de blouse "FU" portée ?`}
                       value={form.taille_blouse_2025}
                       onChange={(v) => setForm({ ...form, taille_blouse_2025: v })}
-                      tooltip="Quelle taille de blouse France Uniformes a-t-il porté cette année, et qui selon vous, était la plus adaptée par rapport au modèle et les mensurations de votre enfant indiquées ci-dessous ?"
+                      tooltip="Quelle taille de blouse France Uniformes a-t-il porté cette année, et qui selon vous, était la plus adaptée par rapport au modèle et aux mensurations de votre enfant indiquées ci-dessous ?"
                     />
                   )}
                 </div>
