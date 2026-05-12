@@ -211,20 +211,18 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             <div className="flex flex-col gap-2.5 sm:self-center">
               <div className="grid items-stretch gap-2.5 sm:grid-cols-2">
                 <div className="rounded-xl border border-border bg-background/60 p-2.5">
-                  <Input
-                    label="Taille habituelle dans le commerce *"
+                  <SizeSelect
+                    label="Taille portée habituellement ?"
                     value={form.taille}
                     onChange={(v) => setForm({ ...form, taille: v })}
-                    placeholder="ex: 8"
-                    suffix="ans"
-                    required
-                    tooltip="Quelle taille achetez-vous habituellement dans le commerce pour votre enfant ? Cela permet de cerner sa taille corps à nu."
+                    tooltip="Quelle taille achetez-vous habituellement pour votre enfant (dans le commerce) ?"
                   />
                 </div>
                 <div className="rounded-xl border border-border bg-background/60 p-2.5 flex flex-col gap-2">
-                  <span className="line-clamp-2 inline-flex min-h-[2rem] items-start gap-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    A porté une blouse France Uniformes depuis sept. 2025 ?
-                  </span>
+                  <LabelWithTooltip
+                    label={`Nouvelle blouse "FU" depuis la rentrée 09/2025 ?`}
+                    tooltip="Votre enfant a-t-il porté une blouse France Uniformes depuis septembre 2025 ?"
+                  />
                   <div className="flex gap-2">
                     {(["oui", "non"] as const).map((v) => (
                       <button
@@ -248,12 +246,11 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
                     ))}
                   </div>
                   {form.blouse_portee_2025 === "oui" && (
-                    <Input
-                      label="Taille de blouse portée cette année"
+                    <SizeSelect
+                      label={`Taille de blouse "FU" portée ?`}
                       value={form.taille_blouse_2025}
                       onChange={(v) => setForm({ ...form, taille_blouse_2025: v })}
-                      placeholder="ex: 8"
-                      suffix="ans"
+                      tooltip="Quelle taille de blouse a-t-il porté cette année ? Selon vous, quelle taille était la plus adaptée par rapport au modèle fourni par France Uniformes ?"
                     />
                   )}
                 </div>
