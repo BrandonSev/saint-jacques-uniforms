@@ -213,9 +213,10 @@ function MaternellePage() {
                 {recommendation && (
                   <span
                     title={
-                      recommendation.consistent
+                      (recommendation.consistent
                         ? "Toutes les mesures concordent"
-                        : "Prise sur la mesure la plus enveloppante"
+                        : "Prise sur la mesure la plus enveloppante") +
+                      " — taille recommandée pour une 1ʳᵉ couche (body, t-shirt, polo, chemise)"
                     }
                     className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm ring-1 ring-inset ${
                       recommendation.consistent
@@ -230,6 +231,11 @@ function MaternellePage() {
                   </span>
                 )}
               </div>
+              {recommendation && (
+                <p className="mt-1 text-[11px] italic text-muted-foreground">
+                  Recommandation calculée pour une 1ʳᵉ couche (body, t-shirt, polo, chemise).
+                </p>
+              )}
               <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8">
                 {sizes.map((s) => (
                   <button

@@ -354,6 +354,9 @@ function LiveSizeRecommendation({
         {filledCount}/4 mesure{filledCount > 1 ? "s" : ""} renseignée{filledCount > 1 ? "s" : ""}
         {!reco.consistent && " · prise sur la mesure la plus enveloppante"}
       </span>
+      <span className="text-[11px] italic text-muted-foreground">
+        Pour une 1ʳᵉ couche : body, t-shirt, polo, chemise.
+      </span>
     </div>
   );
 }
