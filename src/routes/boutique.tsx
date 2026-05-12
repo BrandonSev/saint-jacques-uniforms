@@ -9,6 +9,7 @@ import college from "@/assets/college-polo-porte.jpg";
 import lycee from "@/assets/lycee-uniformes.jpg";
 import { PageWatermark } from "@/components/PageWatermark";
 import { DirectorQuote } from "@/components/DirectorQuote";
+import { BackToSchoolAlert } from "@/components/BackToSchoolAlert";
 
 export const Route = createFileRoute("/boutique")({
   head: () => ({
