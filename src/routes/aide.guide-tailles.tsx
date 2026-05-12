@@ -112,10 +112,24 @@ function GuideTaillesPage() {
         <h1 className="mt-1 inline-flex items-center gap-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           <Ruler className="h-6 w-6 text-primary" /> Guide des tailles
         </h1>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Le tableau ci-dessous vous aide à choisir la taille adaptée à votre enfant. En cas de doute
-          entre deux tailles, nous vous conseillons de prendre la taille supérieure.
-        </p>
+        <div className="mt-3 text-sm leading-relaxed text-muted-foreground space-y-4">
+          <p>
+            Le tableau ci-dessous est un barême de "corps à nu" qui permet de connaître la taille de vêtement à porter en première couche par votre enfant, selon les dernières normes et statistiques françaises actuellement en vigueur.
+          </p>
+          <p>
+            La première couche est le premier vêtement porté à même la peau par votre enfant, tel qu'un body, un tee-shirt, un polo, ou une chemise.
+          </p>
+          <p>
+            La tableau ci-dessous vous aide ainsi, à choisir la taille adaptée à votre enfant pour un tee-shirt, un polo ou une chemise.
+            <br />
+            Si le vêtement à commander est une coupe supérieure, seconde couche ou couche extérieure, vous devez vous référer à la recommandation accessible directement sur la page du vêtement qui vous sera présentée de manière ajustée à chaque vêtement.
+          </p>
+          <p>
+            Avant toute commande, nous vous conseillons de faire essayer à votre enfant le vêtement dans la taille visée à l'aide d'une exemplaire de l'un de ses camarades pour confirmer votre choix.
+            <br />
+            En cas de doute entre deux tailles, nous vous conseillons de prendre la taille supérieure.
+          </p>
+        </div>
 
         {user && (
           <div className="mt-6 rounded-2xl border border-border bg-card p-4">
