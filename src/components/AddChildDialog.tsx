@@ -24,9 +24,19 @@ export type ChildForm = {
 };
 
 const empty: ChildForm = {
-  prenom: "", nom: "", naissance: "", classe: "", section: "Maternelle",
-  taille: "", hauteur: "", tour: "", tour_taille: "", tour_bassin: "", genre: "",
-  blouse_portee_2025: "", taille_blouse_2025: "",
+  prenom: "",
+  nom: "",
+  naissance: "",
+  classe: "",
+  section: "Maternelle",
+  taille: "",
+  hauteur: "",
+  tour: "",
+  tour_taille: "",
+  tour_bassin: "",
+  genre: "",
+  blouse_portee_2025: "",
+  taille_blouse_2025: "",
 };
 
 const classesBySection: Record<string, string[]> = {
@@ -71,8 +81,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
 
   if (!open) return null;
 
-  const setGenre = (g: ChildForm["genre"]) =>
-    setForm((f) => ({ ...f, genre: f.genre === g ? "" : g }));
+  const setGenre = (g: ChildForm["genre"]) => setForm((f) => ({ ...f, genre: f.genre === g ? "" : g }));
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,10 +117,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
   const genre = form.genre;
 
   const node = (
-    <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
       <form
         onClick={(e) => e.stopPropagation()}
         onSubmit={submit}
@@ -120,9 +126,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
         }`}
       >
         <div className="flex items-center justify-between">
-          <h2 className="text-base sm:text-lg font-semibold">
-            {isEdit ? "Modifier l'enfant" : "Ajouter un enfant"}
-          </h2>
+          <h2 className="text-base sm:text-lg font-semibold">{isEdit ? "Modifier l'enfant" : "Ajouter un enfant"}</h2>
           <button type="button" onClick={onClose} className="rounded-lg p-1.5 hover:bg-muted">
             <X className="h-4 w-4" />
           </button>
@@ -250,13 +254,14 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
                       label={`Taille de blouse "FU" portée ?`}
                       value={form.taille_blouse_2025}
                       onChange={(v) => setForm({ ...form, taille_blouse_2025: v })}
-                      tooltip="Quelle taille de blouse a-t-il porté cette année ? Selon vous, quelle taille était la plus adaptée par rapport au modèle fourni par France Uniformes ?"
+                      tooltip="Quelle taille de blouse France Uniformes a-t-il porté cette année, et qui selon vous, était la plus adaptée par rapport au modèle ?"
                     />
                   )}
                 </div>
               </div>
               <div className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-[11px] leading-relaxed text-foreground/80">
-                <span className="font-semibold text-primary">Conseil :</span> renseignez aussi le tour de poitrine, de taille et de bassin pour fiabiliser le choix de la taille. Les numéros correspondent au{" "}
+                <span className="font-semibold text-primary">Conseil :</span> renseignez aussi le tour de poitrine, de
+                taille et de bassin pour fiabiliser le choix de la taille. Les numéros correspondent au{" "}
                 <a
                   href="/aide/guide-tailles"
                   target="_blank"
@@ -264,7 +269,8 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
                   className="font-semibold text-primary underline-offset-2 hover:underline"
                 >
                   guide des tailles
-                </a>.
+                </a>
+                .
               </div>
               <div className="grid grid-cols-2 gap-2.5">
                 <Input
@@ -329,10 +335,18 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
               tour_bassin={form.tour_bassin}
             />
           </div>
-          <button type="button" onClick={onClose} className="h-10 rounded-lg border border-border bg-card px-4 text-sm font-medium hover:bg-muted">
+          <button
+            type="button"
+            onClick={onClose}
+            className="h-10 rounded-lg border border-border bg-card px-4 text-sm font-medium hover:bg-muted"
+          >
             Annuler
           </button>
-          <button type="submit" disabled={saving} className="h-10 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-60">
+          <button
+            type="submit"
+            disabled={saving}
+            className="h-10 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+          >
             {saving ? "Enregistrement…" : isEdit ? "Enregistrer" : "Ajouter l'enfant"}
           </button>
         </div>
@@ -349,8 +363,18 @@ export { empty as emptyChildForm };
 /* ----------------------- Live size recommendation ----------------------- */
 
 function LiveSizeRecommendation({
-  hauteur, tour, tour_taille, tour_bassin, className,
-}: { hauteur: string; tour: string; tour_taille: string; tour_bassin: string; className?: string }) {
+  hauteur,
+  tour,
+  tour_taille,
+  tour_bassin,
+  className,
+}: {
+  hauteur: string;
+  tour: string;
+  tour_taille: string;
+  tour_bassin: string;
+  className?: string;
+}) {
   const reco = useMemo(
     () => recommendSize({ hauteur, tour, tour_taille, tour_bassin }),
     [hauteur, tour, tour_taille, tour_bassin],
@@ -359,7 +383,9 @@ function LiveSizeRecommendation({
 
   if (!reco) {
     return (
-      <div className={`flex flex-col items-start gap-1 rounded-xl border border-dashed border-border bg-muted/40 px-3 py-2.5 text-[11px] text-muted-foreground ${className ?? ""}`}>
+      <div
+        className={`flex flex-col items-start gap-1 rounded-xl border border-dashed border-border bg-muted/40 px-3 py-2.5 text-[11px] text-muted-foreground ${className ?? ""}`}
+      >
         <Sparkles className="h-3.5 w-3.5 text-primary/60" />
         Saisissez au moins une mesure pour voir la taille recommandée.
       </div>
@@ -373,10 +399,7 @@ function LiveSizeRecommendation({
       <div className="flex items-center gap-2">
         <Sparkles className="h-4 w-4 text-emerald-700" />
         <span className="font-medium text-foreground">
-          Taille recommandée :{" "}
-          <span className="text-base font-bold text-emerald-800">
-            {reco.row.age}
-          </span>
+          Taille recommandée : <span className="text-base font-bold text-emerald-800">{reco.row.age}</span>
         </span>
         <span className="rounded-full bg-emerald-700 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
           Reco
@@ -395,10 +418,25 @@ function LiveSizeRecommendation({
 /* ------------------------- Sub-components ------------------------- */
 
 function Input({
-  label, value, onChange, type = "text", placeholder, required, suffix, tooltip, badge,
+  label,
+  value,
+  onChange,
+  type = "text",
+  placeholder,
+  required,
+  suffix,
+  tooltip,
+  badge,
 }: {
-  label: string; value: string; onChange: (v: string) => void;
-  type?: string; placeholder?: string; required?: boolean; suffix?: string; tooltip?: string; badge?: number;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
+  placeholder?: string;
+  required?: boolean;
+  suffix?: string;
+  tooltip?: string;
+  badge?: number;
 }) {
   const [tipOpen, setTipOpen] = useState(false);
   const tipRef = useRef<HTMLSpanElement>(null);
@@ -442,7 +480,9 @@ function Input({
             >
               <Info className="h-3 w-3" />
             </button>
-            {tipOpen && tipPos && typeof document !== "undefined" &&
+            {tipOpen &&
+              tipPos &&
+              typeof document !== "undefined" &&
               createPortal(
                 <span
                   role="tooltip"
@@ -452,8 +492,7 @@ function Input({
                   {tooltip}
                 </span>,
                 document.body,
-              )
-            }
+              )}
           </span>
         )}
       </span>
@@ -477,14 +516,32 @@ function Input({
 }
 
 function Select({
-  label, value, onChange, options, placeholder,
-}: { label: string; value: string; onChange: (v: string) => void; options: string[]; placeholder?: string }) {
+  label,
+  value,
+  onChange,
+  options,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: string[];
+  placeholder?: string;
+}) {
   return (
     <label className="block">
       <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
-      <select value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm"
+      >
         {placeholder && <option value="">{placeholder}</option>}
-        {options.map((o) => <option key={o} value={o}>{o}</option>)}
+        {options.map((o) => (
+          <option key={o} value={o}>
+            {o}
+          </option>
+        ))}
       </select>
     </label>
   );
@@ -528,7 +585,9 @@ function LabelWithTooltip({ label, tooltip }: { label: string; tooltip?: string 
           >
             <Info className="h-3 w-3" />
           </button>
-          {tipOpen && tipPos && typeof document !== "undefined" &&
+          {tipOpen &&
+            tipPos &&
+            typeof document !== "undefined" &&
             createPortal(
               <span
                 role="tooltip"
@@ -538,8 +597,7 @@ function LabelWithTooltip({ label, tooltip }: { label: string; tooltip?: string 
                 {tooltip}
               </span>,
               document.body,
-            )
-          }
+            )}
         </span>
       )}
     </span>
@@ -547,8 +605,16 @@ function LabelWithTooltip({ label, tooltip }: { label: string; tooltip?: string 
 }
 
 function SizeSelect({
-  label, value, onChange, tooltip,
-}: { label: string; value: string; onChange: (v: string) => void; tooltip?: string }) {
+  label,
+  value,
+  onChange,
+  tooltip,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  tooltip?: string;
+}) {
   return (
     <label className="flex flex-col">
       <LabelWithTooltip label={label} tooltip={tooltip} />
@@ -560,7 +626,9 @@ function SizeSelect({
         >
           <option value="">—</option>
           {TAILLE_OPTIONS.map((o) => (
-            <option key={o} value={o}>{o} ans</option>
+            <option key={o} value={o}>
+              {o} ans
+            </option>
           ))}
         </select>
         <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-medium text-muted-foreground">
@@ -571,7 +639,15 @@ function SizeSelect({
   );
 }
 
-function DateOfBirthPicker({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+function DateOfBirthPicker({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
   const [parts, setParts] = useState<{ y: string; m: string; d: string }>(() => {
     if (value) {
       const [yy, mm, dd] = value.split("-");
@@ -583,10 +659,18 @@ function DateOfBirthPicker({ label, value, onChange }: { label: string; value: s
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 19 }, (_, i) => String(currentYear - i));
   const months = [
-    { v: "01", n: "Janvier" }, { v: "02", n: "Février" }, { v: "03", n: "Mars" },
-    { v: "04", n: "Avril" }, { v: "05", n: "Mai" }, { v: "06", n: "Juin" },
-    { v: "07", n: "Juillet" }, { v: "08", n: "Août" }, { v: "09", n: "Septembre" },
-    { v: "10", n: "Octobre" }, { v: "11", n: "Novembre" }, { v: "12", n: "Décembre" },
+    { v: "01", n: "Janvier" },
+    { v: "02", n: "Février" },
+    { v: "03", n: "Mars" },
+    { v: "04", n: "Avril" },
+    { v: "05", n: "Mai" },
+    { v: "06", n: "Juin" },
+    { v: "07", n: "Juillet" },
+    { v: "08", n: "Août" },
+    { v: "09", n: "Septembre" },
+    { v: "10", n: "Octobre" },
+    { v: "11", n: "Novembre" },
+    { v: "12", n: "Décembre" },
   ];
   const daysInMonth = (yy: string, mm: string) => {
     if (!yy || !mm) return 31;
@@ -660,17 +744,41 @@ function DateOfBirthPicker({ label, value, onChange }: { label: string; value: s
         )}
       </div>
       <div className="mt-auto grid grid-cols-3 gap-2">
-        <select value={d} onChange={(e) => update(y, m, e.target.value)} className="h-10 w-full rounded-lg border border-border bg-background px-2 text-sm">
+        <select
+          value={d}
+          onChange={(e) => update(y, m, e.target.value)}
+          className="h-10 w-full rounded-lg border border-border bg-background px-2 text-sm"
+        >
           <option value="">Jour</option>
-          {days.map((dd) => <option key={dd} value={dd}>{Number(dd)}</option>)}
+          {days.map((dd) => (
+            <option key={dd} value={dd}>
+              {Number(dd)}
+            </option>
+          ))}
         </select>
-        <select value={m} onChange={(e) => update(y, e.target.value, d)} className="h-10 w-full rounded-lg border border-border bg-background px-2 text-sm">
+        <select
+          value={m}
+          onChange={(e) => update(y, e.target.value, d)}
+          className="h-10 w-full rounded-lg border border-border bg-background px-2 text-sm"
+        >
           <option value="">Mois</option>
-          {months.map((mm) => <option key={mm.v} value={mm.v}>{mm.n}</option>)}
+          {months.map((mm) => (
+            <option key={mm.v} value={mm.v}>
+              {mm.n}
+            </option>
+          ))}
         </select>
-        <select value={y} onChange={(e) => update(e.target.value, m, d)} className="h-10 w-full rounded-lg border border-border bg-background px-2 text-sm">
+        <select
+          value={y}
+          onChange={(e) => update(e.target.value, m, d)}
+          className="h-10 w-full rounded-lg border border-border bg-background px-2 text-sm"
+        >
           <option value="">Année</option>
-          {years.map((yy) => <option key={yy} value={yy}>{yy}</option>)}
+          {years.map((yy) => (
+            <option key={yy} value={yy}>
+              {yy}
+            </option>
+          ))}
         </select>
       </div>
     </div>
