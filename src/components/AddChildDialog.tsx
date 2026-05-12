@@ -76,8 +76,8 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.prenom || !form.nom || !form.naissance || !form.classe || !form.section || !form.taille || !form.hauteur) {
-      toast.error("Merci de remplir les champs obligatoires (prénom, nom, naissance, classe, section, taille portée et hauteur)");
+    if (!form.prenom || !form.nom || !form.naissance || !form.classe || !form.section || !form.hauteur) {
+      toast.error("Merci de remplir les champs obligatoires (prénom, nom, naissance, classe, section et hauteur)");
       return;
     }
     setSaving(true);
@@ -211,20 +211,18 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
             <div className="flex flex-col gap-2.5 sm:self-center">
               <div className="grid items-stretch gap-2.5 sm:grid-cols-2">
                 <div className="rounded-xl border border-border bg-background/60 p-2.5">
-                  <Input
-                    label="Taille habituelle dans le commerce *"
+                  <SizeSelect
+                    label="Taille portée habituellement ?"
                     value={form.taille}
                     onChange={(v) => setForm({ ...form, taille: v })}
-                    placeholder="ex: 8"
-                    suffix="ans"
-                    required
-                    tooltip="Quelle taille achetez-vous habituellement dans le commerce pour votre enfant ? Cela permet de cerner sa taille corps à nu."
+                    tooltip="Quelle taille achetez-vous habituellement pour votre enfant (dans le commerce) ?"
                   />
                 </div>
                 <div className="rounded-xl border border-border bg-background/60 p-2.5 flex flex-col gap-2">
-                  <span className="line-clamp-2 inline-flex min-h-[2rem] items-start gap-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    A porté une blouse France Uniformes depuis sept. 2025 ?
-                  </span>
+                  <LabelWithTooltip
+                    label={`Nouvelle blouse "FU" depuis la rentrée 09/2025 ?`}
+                    tooltip="Votre enfant a-t-il porté une blouse France Uniformes depuis septembre 2025 ?"
+                  />
                   <div className="flex gap-2">
                     {(["oui", "non"] as const).map((v) => (
                       <button
@@ -248,12 +246,11 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
                     ))}
                   </div>
                   {form.blouse_portee_2025 === "oui" && (
-                    <Input
-                      label="Taille de blouse portée cette année"
+                    <SizeSelect
+                      label={`Taille de blouse "FU" portée ?`}
                       value={form.taille_blouse_2025}
                       onChange={(v) => setForm({ ...form, taille_blouse_2025: v })}
-                      placeholder="ex: 8"
-                      suffix="ans"
+                      tooltip="Quelle taille de blouse a-t-il porté cette année ? Selon vous, quelle taille était la plus adaptée par rapport au modèle fourni par France Uniformes ?"
                     />
                   )}
                 </div>
@@ -489,6 +486,87 @@ function Select({
         {placeholder && <option value="">{placeholder}</option>}
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
+    </label>
+  );
+}
+
+const TAILLE_OPTIONS = ["4", "6", "8", "10", "12", "14", "16", "18"];
+
+function LabelWithTooltip({ label, tooltip }: { label: string; tooltip?: string }) {
+  const [tipOpen, setTipOpen] = useState(false);
+  const tipRef = useRef<HTMLSpanElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [tipPos, setTipPos] = useState<{ top: number; left: number } | null>(null);
+  useEffect(() => {
+    if (!tipOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (tipRef.current && !tipRef.current.contains(e.target as Node)) setTipOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [tipOpen]);
+  useEffect(() => {
+    if (!tipOpen || !btnRef.current) return;
+    const r = btnRef.current.getBoundingClientRect();
+    setTipPos({ top: r.bottom + 6, left: r.left + r.width / 2 });
+  }, [tipOpen]);
+  return (
+    <span className="line-clamp-2 inline-flex min-h-[2rem] items-start gap-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+      <span>{label}</span>
+      {tooltip && (
+        <span ref={tipRef} className="relative inline-flex">
+          <button
+            ref={btnRef}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setTipOpen((v) => !v);
+            }}
+            title={tooltip}
+            aria-label={tooltip}
+            className="cursor-help text-primary"
+          >
+            <Info className="h-3 w-3" />
+          </button>
+          {tipOpen && tipPos && typeof document !== "undefined" &&
+            createPortal(
+              <span
+                role="tooltip"
+                style={{ position: "fixed", top: tipPos.top, left: tipPos.left, transform: "translateX(-50%)" }}
+                className="z-[80] w-64 max-w-[calc(100vw-2rem)] rounded-md border border-border bg-popover px-2.5 py-2 text-[11px] font-normal normal-case tracking-normal text-popover-foreground shadow-md"
+              >
+                {tooltip}
+              </span>,
+              document.body,
+            )
+          }
+        </span>
+      )}
+    </span>
+  );
+}
+
+function SizeSelect({
+  label, value, onChange, tooltip,
+}: { label: string; value: string; onChange: (v: string) => void; tooltip?: string }) {
+  return (
+    <label className="flex flex-col">
+      <LabelWithTooltip label={label} tooltip={tooltip} />
+      <div className="relative mt-auto">
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-10 w-full appearance-none rounded-lg border border-border bg-background px-3 pr-10 text-sm"
+        >
+          <option value="">—</option>
+          {TAILLE_OPTIONS.map((o) => (
+            <option key={o} value={o}>{o} ans</option>
+          ))}
+        </select>
+        <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-medium text-muted-foreground">
+          ans
+        </span>
+      </div>
     </label>
   );
 }
