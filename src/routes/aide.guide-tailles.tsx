@@ -139,8 +139,9 @@ function GuideTaillesPage() {
               Suggestion personnalisée
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              Sélectionnez un enfant pour mettre en évidence la taille recommandée d'après ses mesures enregistrées dans{" "}
-              <span className="font-medium text-foreground">Mes enfants</span>.
+              Sélectionnez un enfant pour voir sa taille recommandée sur ce tableau. Cette recommandation s'applique
+              uniquement aux vêtements portés en première couche (t-shirt, polo, chemise). Pour les couches supérieures,
+              consultez la recommandation directement sur la fiche produit.
             </p>
             <div className="mt-3">
               <ChildPicker value={childId} onChange={setChildId} />
@@ -155,10 +156,15 @@ function GuideTaillesPage() {
                   {recommendation.drivers.map((d) => `${d.key} ${d.value} cm → ${rows[d.idx].age}`).join(" · ")}
                 </span>
                 {!recommendation.consistent && (
-                  <span className="rounded-full px-2 py-0.5 font-semibold bg-amber-50 text-emerald-500">
-                    En cas de mesures discordantes —&gt; la taille la plus enveloppante est retenue dans la
-                    recommandation
-                  </span>
+                  <>
+                    <span className="rounded-full px-2 py-0.5 font-semibold bg-amber-50 text-emerald-500">
+                      En cas de mesures discordantes → la taille la plus enveloppante est retenue dans la recommandation
+                    </span>
+                    <span className="rounded-full px-2 py-0.5 font-semibold bg-amber-50 text-emerald-500">
+                      ⚠️ Pour les couches supérieures (pull, blazer, blouse…), consultez la recommandation directement
+                      sur la fiche produit.
+                    </span>
+                  </>
                 )}
               </div>
             )}
