@@ -443,8 +443,9 @@ function LiveSizeRecommendation({
       <span className="text-[11px] text-muted-foreground">
         {filledCount}/4 mesure{filledCount > 1 ? "s" : ""} renseignée{filledCount > 1 ? "s" : ""}
       </span>
-      <span className="text-[11px] italic text-muted-foreground">
-        Pour une 1ʳᵉ couche : t-shirt, polo, chemise.
+      <span className="text-[11px] italic text-muted-foreground leading-snug">
+        Conseil : assurez-vous d'avoir complété les 4 mensurations de votre enfant afin de bénéficier d'une recommandation fiabilisée.{" "}
+        <a href="/enfants" className="underline underline-offset-2 hover:text-emerald-700">Gérer mes enfants</a>
       </span>
     </div>
   );
