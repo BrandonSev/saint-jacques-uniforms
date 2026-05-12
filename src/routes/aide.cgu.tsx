@@ -40,7 +40,7 @@ function CguPage() {
           <h2 className="mt-6 text-lg font-semibold text-foreground">3. Commandes</h2>
           <p className="mt-2 text-sm leading-relaxed">
             Les commandes sont enregistrées par la famille et transmises à l'établissement. Les tenues
-            sont fabriquées en France et livrées directement à l'école.
+            sont fabriquées en France et livrées directement à l'école ou à domicile à partir de la rentrée de Septembre 2026.
           </p>
 
           <h2 className="mt-6 text-lg font-semibold text-foreground">4. Tarifs et paiement</h2>
