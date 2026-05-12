@@ -23,7 +23,10 @@ function LivraisonPage() {
           <span className="h-px w-6 bg-gold" /> Aide
         </span>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Livraisons</h1>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Livraison sous 1 à 2 semaines si le produit est en stock. Et confection d'une nouvelle commande entre 8 à 12 semaines. </p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Toutes les commandes sont préparées dans nos ateliers français et livrées directement à l'établissement
+          Saint-Jacques-de-Compostelle.
+        </p>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
           <Card
@@ -34,46 +37,45 @@ function LivraisonPage() {
           <Card
             icon={<Package className="h-5 w-5" />}
             title="Remise"
-            text="Les tenues sont remises à votre enfant via l'établissement. La livraison directement chez vous sera disponible à partir de septembre 2026."
+            text="Les tenues sont remises à votre enfant via l'établissement ou en livraison directement chez vous. "
           />
         </div>
 
         <div className="mt-10 space-y-6 text-sm leading-relaxed text-foreground/80">
           <Block title="Modes de commande et de livraison">
             Toutes les tenues sont fabriquées en France. Deux modes de commande sont possibles :
-            <br /><br />
-            <strong>1. Commande groupée par l'établissement.</strong> Les familles enregistrent
-            leur commande sur la plateforme. La commande est transmise à l'établissement et le
-            règlement s'effectue selon les modalités définies par l'école. Les tenues sont
-            livrées en lot à l'établissement puis remises aux familles via l'APEL.
-            <br /><br />
-            <strong>2. Commande individuelle.</strong> Les familles enregistrent et règlent leur
-            commande directement en ligne. Deux options de retrait :
             <br />
-            • <strong>Retrait à l'établissement</strong> lors de la prochaine livraison groupée
-            (sans frais supplémentaires) ;
             <br />
-            • <strong>Expédition individuelle au domicile</strong>, qui engage des frais
-            supplémentaires d'emballage et de port. Ce service démarre à partir de l'automne 2026.
+            <strong>1ère étape - Commande</strong> : Les familles enregistrent et règlent leur commande directement en
+            ligne.
+            <br />
+            La fabrication est lancée et l'établissement est informé des commandes des familles.
+            <br />
+            <strong>2ème étape - Livraison </strong> : Deux options de retrait : <br />
+            • Retrait à l'établissement les tenues sont livrées en lot à l'établissement puis remises aux familles via
+            l’APEL (livraison groupée, sans frais supplémentaires)
+            <br />• Expédition individuelle à domicile qui engage des frais supplémentaires d'emballage et de port. Ce
+            service démarre à partir de l'automne 2026.
           </Block>
           <Block title="Frais de livraison">
-            La livraison à l'établissement est <strong>incluse</strong> pour toutes les commandes
-            (groupées ou individuelles avec retrait sur place). Seules les expéditions
-            individuelles au domicile engagent un <strong>surcoût</strong> de port et d'emballage,
-            calculé au moment de la commande.
+            La livraison à l'établissement est <strong>incluse</strong> pour toutes les commandes (groupées ou
+            individuelles avec retrait sur place). Seules les expéditions individuelles au domicile engagent un{" "}
+            <strong>surcoût</strong> de port et d'emballage, calculé au moment de la commande.
           </Block>
           <Block title="Retours et échanges">
             En cas de problème (malfaçon, erreur d'envoi, article manquant…), rendez-vous dans
             <strong> Mes commandes</strong>, ouvrez la commande concernée et cliquez sur
-            <strong> « Déclarer un incident »</strong> à côté de l'article concerné. Vous pouvez
-            sélectionner la quantité concernée (ex. 1 blouse sur 2), choisir le type d'incident
-            puis décrire le problème. Selon le motif, votre demande pourra être prise en charge ou
-            non. Aucun vêtement porté ne peut être retourné ni échangé. Dans tous les cas, les
-            frais de retour sont à la charge de l'expéditeur.
+            <strong> « Déclarer un incident »</strong> à côté de l'article concerné. Vous pouvez sélectionner la
+            quantité concernée (ex. 1 blouse sur 2), choisir le type d'incident puis décrire le problème. Selon le
+            motif, votre demande pourra être prise en charge ou non. Aucun vêtement porté ne peut être retourné ni
+            échangé. Dans tous les cas, les frais de retour sont à la charge de l'expéditeur.
           </Block>
         </div>
 
-        <Link to="/" className="mt-10 inline-flex h-11 items-center rounded-xl border border-border bg-card px-5 text-sm font-medium text-foreground hover:bg-muted">
+        <Link
+          to="/"
+          className="mt-10 inline-flex h-11 items-center rounded-xl border border-border bg-card px-5 text-sm font-medium text-foreground hover:bg-muted"
+        >
           Retour à l'accueil
         </Link>
       </section>
