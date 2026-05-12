@@ -253,42 +253,44 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
                     ))}
                   </div>
                   {form.blouse_portee_2025 === "oui" && (
-                    <>
+                    <div className="flex flex-col gap-2 rounded-lg border border-primary/20 bg-primary/5 p-2">
+                      <div className="flex flex-col gap-1.5">
+                        <LabelWithTooltip
+                          label="Quel modèle de blouse ?"
+                          tooltip="France Uniformes a fait évoluer la coupe de la blouse en cours d'année. Indiquez la version portée : « Septembre 2025 » correspond au modèle de la rentrée, « Janvier 2026 » au modèle révisé déployé après les vacances de Noël."
+                        />
+                        <div className="flex gap-2">
+                          {([
+                            { v: "septembre_2025", label: "Sept. 2025" },
+                            { v: "janvier_2026", label: "Janv. 2026" },
+                          ] as const).map((opt) => (
+                            <button
+                              key={opt.v}
+                              type="button"
+                              onClick={() =>
+                                setForm((f) => ({
+                                  ...f,
+                                  modele_blouse_2025: f.modele_blouse_2025 === opt.v ? "" : opt.v,
+                                }))
+                              }
+                              className={`flex-1 h-9 rounded-lg border-2 text-sm font-medium transition-all ${
+                                form.modele_blouse_2025 === opt.v
+                                  ? "border-primary bg-primary/10 text-primary"
+                                  : "border-border bg-card text-foreground hover:border-primary/40"
+                              }`}
+                            >
+                              {opt.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                       <SizeSelect
                         label={`Taille de blouse "FU" portée ?`}
                         value={form.taille_blouse_2025}
                         onChange={(v) => setForm({ ...form, taille_blouse_2025: v })}
                         tooltip="Quelle taille de blouse France Uniformes a-t-il porté cette année, et qui selon vous, était la plus adaptée par rapport au modèle et aux mensurations de votre enfant indiquées ci-dessous ?"
                       />
-                      <LabelWithTooltip
-                        label="Quel modèle ?"
-                        tooltip="France Uniformes a fait évoluer la coupe de la blouse en cours d'année. Indiquez la version portée : « Septembre 2025 » correspond au modèle de la rentrée, « Janvier 2026 » au modèle révisé déployé après les vacances de Noël."
-                      />
-                      <div className="flex gap-2">
-                        {([
-                          { v: "septembre_2025", label: "Septembre 2025" },
-                          { v: "janvier_2026", label: "Janvier 2026" },
-                        ] as const).map((opt) => (
-                          <button
-                            key={opt.v}
-                            type="button"
-                            onClick={() =>
-                              setForm((f) => ({
-                                ...f,
-                                modele_blouse_2025: f.modele_blouse_2025 === opt.v ? "" : opt.v,
-                              }))
-                            }
-                            className={`flex-1 h-10 rounded-lg border-2 text-sm font-medium transition-all ${
-                              form.modele_blouse_2025 === opt.v
-                                ? "border-primary bg-primary/10 text-primary"
-                                : "border-border bg-card text-foreground hover:border-primary/40"
-                            }`}
-                          >
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
