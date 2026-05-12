@@ -22,7 +22,7 @@ function CguPage() {
           <span className="h-px w-6 bg-gold" /> Légal
         </span>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Conditions générales</h1>
-        <p className="mt-3 text-sm text-muted-foreground">Dernière mise à jour : avril 2026</p>
+        <p className="mt-3 text-sm text-muted-foreground">Dernière mise à jour : mai 2026</p>
 
         <div className="prose prose-sm mt-8 max-w-none text-foreground/85">
           <h2 className="mt-8 text-lg font-semibold text-foreground">1. Objet</h2>
@@ -37,16 +37,20 @@ function CguPage() {
             fournir des informations exactes et à conserver ses identifiants de connexion confidentiels.
           </p>
 
-          <h2 className="mt-6 text-lg font-semibold text-foreground">3. Commandes</h2>
+          <h2 className="mt-6 text-lg font-semibold text-foreground">3. Commandes et livraison</h2>
           <p className="mt-2 text-sm leading-relaxed">
-            Les commandes sont enregistrées par la famille et transmises à l'établissement. Les tenues
-            sont fabriquées en France et livrées directement à l'école ou à domicile à partir de la rentrée de Septembre 2026.
+            Les commandes sont enregistrées par la famille directement en ligne et transmises à l'établissement.
+            Les tenues sont fabriquées en France. Pour la rentrée de septembre 2026, les commandes sont distribuées
+            par l'APEL au sein de l'établissement, sans frais de livraison. À partir de l'automne 2026, une option
+            d'expédition individuelle à domicile sera proposée, avec des frais de port et d'emballage calculés au
+            moment de la commande.
           </p>
 
           <h2 className="mt-6 text-lg font-semibold text-foreground">4. Tarifs et paiement</h2>
           <p className="mt-2 text-sm leading-relaxed">
-            Les prix sont indiqués en euros, TTC. Le paiement en ligne sera disponible prochainement ;
-            d'ici là, les commandes sont enregistrées et facturées par l'établissement.
+            Les prix sont indiqués en euros, toutes taxes comprises (TTC). Le règlement s'effectue en ligne par
+            carte bancaire via notre prestataire de paiement sécurisé PayPlug. La commande n'est définitivement
+            enregistrée et transmise en fabrication qu'après validation du paiement.
           </p>
 
           <h2 className="mt-6 text-lg font-semibold text-foreground">5. Données personnelles</h2>
