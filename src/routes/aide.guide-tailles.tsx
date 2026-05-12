@@ -249,8 +249,9 @@ function GuideTaillesPage() {
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <span className="cursor-help rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase text-white bg-emerald-700">
-                                    RECO 1re couche
+                                  <span className="cursor-help inline-flex flex-col items-center text-center leading-tight rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase text-white bg-emerald-700">
+                                    <span>RECO</span>
+                                    <span>1re couche</span>
                                   </span>
                                 </TooltipTrigger>
                                 <TooltipContent side="top" className="max-w-xs text-xs">
