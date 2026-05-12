@@ -86,7 +86,7 @@ const COLORS = [
 ];
 
 function decorate(
-  c: { id: string; prenom: string; nom: string; naissance: string | null; classe: string | null; section: string | null; taille: string | null; hauteur: string | null; tour: string | null; tour_taille?: string | null; tour_bassin?: string | null; genre?: string | null; blouse_portee_2025?: boolean | null; taille_blouse_2025?: string | null },
+  c: { id: string; prenom: string; nom: string; naissance: string | null; classe: string | null; section: string | null; taille: string | null; hauteur: string | null; tour: string | null; tour_taille?: string | null; tour_bassin?: string | null; genre?: string | null; blouse_portee_2025?: boolean | null; taille_blouse_2025?: string | null; modele_blouse_2025?: string | null },
   idx: number,
 ): Child {
   const initials = ((c.prenom[0] ?? "") + (c.nom[0] ?? "")).toUpperCase();
@@ -108,6 +108,7 @@ function decorate(
     blouse_portee_2025:
       c.blouse_portee_2025 === true ? "oui" : c.blouse_portee_2025 === false ? "non" : "",
     taille_blouse_2025: c.taille_blouse_2025 ?? "",
+    modele_blouse_2025: (c.modele_blouse_2025 as Child["modele_blouse_2025"]) ?? "",
   };
 }
 
@@ -271,6 +272,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
         blouse_portee_2025:
           c.blouse_portee_2025 === "oui" ? true : c.blouse_portee_2025 === "non" ? false : null,
         taille_blouse_2025: c.taille_blouse_2025 || null,
+        modele_blouse_2025: c.modele_blouse_2025 || null,
       }).select().single();
       if (error) throw error;
       if (data) setChildList((p) => [...p, decorate(data as any, p.length)]);
@@ -289,6 +291,9 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
       }
       if ("taille_blouse_2025" in dbPatch && !dbPatch.taille_blouse_2025) {
         dbPatch.taille_blouse_2025 = null;
+      }
+      if ("modele_blouse_2025" in dbPatch && !dbPatch.modele_blouse_2025) {
+        dbPatch.modele_blouse_2025 = null;
       }
       const { data, error } = await supabase.from("children").update(dbPatch).eq("id", id).select().single();
       if (error) throw error;
