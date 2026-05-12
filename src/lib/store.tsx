@@ -360,7 +360,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
       setCart([]);
       return { orderId: order.id, orderNumber: order.order_number };
     },
-  }), [user, session, profile, authLoading, isAdmin, childList, displayedChildren, parentList, cart, setCart, loadProfile]);
+  }), [user, session, profile, authLoading, isAdmin, isApel, childList, displayedChildren, parentList, cart, setCart, loadProfile]);
 
   return <Ctx.Provider value={value}>{kids}</Ctx.Provider>;
 }
