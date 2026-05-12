@@ -23,10 +23,7 @@ function LivraisonPage() {
           <span className="h-px w-6 bg-gold" /> Aide
         </span>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Livraisons</h1>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Toutes les commandes sont préparées dans nos ateliers français et livrées directement à
-          l'établissement Saint-Jacques-de-Compostelle.
-        </p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Livraison sous 1 à 2 semaines si le produit est en stock. Et confection d'une nouvelle commande entre 8 à 12 semaines. </p>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
           <Card
