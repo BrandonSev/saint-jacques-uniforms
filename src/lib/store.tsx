@@ -17,6 +17,8 @@ export type Child = {
   genre: "" | "Fille" | "Garçon";
   initials: string;
   color: string;
+  blouse_portee_2025: "" | "oui" | "non";
+  taille_blouse_2025: string;
 };
 
 export type Profile = {
@@ -83,7 +85,7 @@ const COLORS = [
 ];
 
 function decorate(
-  c: { id: string; prenom: string; nom: string; naissance: string | null; classe: string | null; section: string | null; taille: string | null; hauteur: string | null; tour: string | null; tour_taille?: string | null; tour_bassin?: string | null; genre?: string | null },
+  c: { id: string; prenom: string; nom: string; naissance: string | null; classe: string | null; section: string | null; taille: string | null; hauteur: string | null; tour: string | null; tour_taille?: string | null; tour_bassin?: string | null; genre?: string | null; blouse_portee_2025?: boolean | null; taille_blouse_2025?: string | null },
   idx: number,
 ): Child {
   const initials = ((c.prenom[0] ?? "") + (c.nom[0] ?? "")).toUpperCase();
@@ -102,6 +104,9 @@ function decorate(
     genre: (c.genre as Child["genre"]) ?? "",
     initials,
     color: COLORS[idx % COLORS.length],
+    blouse_portee_2025:
+      c.blouse_portee_2025 === true ? "oui" : c.blouse_portee_2025 === false ? "non" : "",
+    taille_blouse_2025: c.taille_blouse_2025 ?? "",
   };
 }
 
@@ -251,6 +256,9 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
         tour_taille: c.tour_taille || null,
         tour_bassin: c.tour_bassin || null,
         genre: c.genre || null,
+        blouse_portee_2025:
+          c.blouse_portee_2025 === "oui" ? true : c.blouse_portee_2025 === "non" ? false : null,
+        taille_blouse_2025: c.taille_blouse_2025 || null,
       }).select().single();
       if (error) throw error;
       if (data) setChildList((p) => [...p, decorate(data as any, p.length)]);
@@ -259,6 +267,17 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
       const dbPatch: any = { ...patch };
       if ("naissance" in dbPatch && !dbPatch.naissance) dbPatch.naissance = null;
       if ("genre" in dbPatch && !dbPatch.genre) dbPatch.genre = null;
+      if ("blouse_portee_2025" in dbPatch) {
+        dbPatch.blouse_portee_2025 =
+          dbPatch.blouse_portee_2025 === "oui"
+            ? true
+            : dbPatch.blouse_portee_2025 === "non"
+              ? false
+              : null;
+      }
+      if ("taille_blouse_2025" in dbPatch && !dbPatch.taille_blouse_2025) {
+        dbPatch.taille_blouse_2025 = null;
+      }
       const { data, error } = await supabase.from("children").update(dbPatch).eq("id", id).select().single();
       if (error) throw error;
       if (data) setChildList((p) => p.map((c, i) => (c.id === id ? decorate(data as any, i) : c)));

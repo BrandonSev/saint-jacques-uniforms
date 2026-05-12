@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       children: {
         Row: {
+          blouse_portee_2025: boolean | null
           classe: string | null
           created_at: string
           genre: string | null
@@ -26,6 +27,7 @@ export type Database = {
           prenom: string
           section: string | null
           taille: string | null
+          taille_blouse_2025: string | null
           tour: string | null
           tour_bassin: string | null
           tour_taille: string | null
@@ -33,6 +35,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          blouse_portee_2025?: boolean | null
           classe?: string | null
           created_at?: string
           genre?: string | null
@@ -43,6 +46,7 @@ export type Database = {
           prenom: string
           section?: string | null
           taille?: string | null
+          taille_blouse_2025?: string | null
           tour?: string | null
           tour_bassin?: string | null
           tour_taille?: string | null
@@ -50,6 +54,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          blouse_portee_2025?: boolean | null
           classe?: string | null
           created_at?: string
           genre?: string | null
@@ -60,6 +65,7 @@ export type Database = {
           prenom?: string
           section?: string | null
           taille?: string | null
+          taille_blouse_2025?: string | null
           tour?: string | null
           tour_bassin?: string | null
           tour_taille?: string | null

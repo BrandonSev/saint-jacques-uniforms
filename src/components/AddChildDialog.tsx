@@ -19,11 +19,14 @@ export type ChildForm = {
   tour_taille: string;
   tour_bassin: string;
   genre: "" | "Fille" | "Garçon";
+  blouse_portee_2025: "" | "oui" | "non";
+  taille_blouse_2025: string;
 };
 
 const empty: ChildForm = {
   prenom: "", nom: "", naissance: "", classe: "", section: "Maternelle",
   taille: "", hauteur: "", tour: "", tour_taille: "", tour_bassin: "", genre: "",
+  blouse_portee_2025: "", taille_blouse_2025: "",
 };
 
 const classesBySection: Record<string, string[]> = {
@@ -61,6 +64,8 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
     tour_taille: (initial as any)?.tour_taille ?? "",
     tour_bassin: (initial as any)?.tour_bassin ?? "",
     genre: (initial && "genre" in initial ? (initial.genre as ChildForm["genre"]) : "") || "",
+    blouse_portee_2025: ((initial as any)?.blouse_portee_2025 ?? "") as ChildForm["blouse_portee_2025"],
+    taille_blouse_2025: (initial as any)?.taille_blouse_2025 ?? "",
   }));
   const [saving, setSaving] = useState(false);
 
@@ -207,26 +212,62 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
               <div className="grid items-stretch gap-2.5 sm:grid-cols-2">
                 <div className="rounded-xl border border-border bg-background/60 p-2.5">
                   <Input
-                    label="Taille portée *"
+                    label="Taille habituelle dans le commerce *"
                     value={form.taille}
                     onChange={(v) => setForm({ ...form, taille: v })}
                     placeholder="ex: 8"
                     suffix="ans"
                     required
-                    tooltip="A titre d'information, taille que vous avez l'habitude d'acheter pour votre enfant actuellement"
+                    tooltip="Quelle taille achetez-vous habituellement dans le commerce pour votre enfant ? Cela permet de cerner sa taille corps à nu."
                   />
                 </div>
-                <div className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-[11px] leading-relaxed text-foreground/80">
-                  <span className="font-semibold text-primary">Conseil :</span> renseignez aussi le tour de poitrine, de taille et de bassin pour fiabiliser le choix de la taille. Les numéros correspondent au{" "}
-                  <a
-                    href="/aide/guide-tailles"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-semibold text-primary underline-offset-2 hover:underline"
-                  >
-                    guide des tailles
-                  </a>.
+                <div className="rounded-xl border border-border bg-background/60 p-2.5 flex flex-col gap-2">
+                  <span className="line-clamp-2 inline-flex min-h-[2rem] items-start gap-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    A porté une blouse France Uniformes depuis sept. 2025 ?
+                  </span>
+                  <div className="flex gap-2">
+                    {(["oui", "non"] as const).map((v) => (
+                      <button
+                        key={v}
+                        type="button"
+                        onClick={() =>
+                          setForm((f) => ({
+                            ...f,
+                            blouse_portee_2025: f.blouse_portee_2025 === v ? "" : v,
+                            taille_blouse_2025: v === "non" ? "" : f.taille_blouse_2025,
+                          }))
+                        }
+                        className={`flex-1 h-10 rounded-lg border-2 text-sm font-medium capitalize transition-all ${
+                          form.blouse_portee_2025 === v
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border bg-card text-foreground hover:border-primary/40"
+                        }`}
+                      >
+                        {v}
+                      </button>
+                    ))}
+                  </div>
+                  {form.blouse_portee_2025 === "oui" && (
+                    <Input
+                      label="Taille de blouse portée cette année"
+                      value={form.taille_blouse_2025}
+                      onChange={(v) => setForm({ ...form, taille_blouse_2025: v })}
+                      placeholder="ex: 8"
+                      suffix="ans"
+                    />
+                  )}
                 </div>
+              </div>
+              <div className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-[11px] leading-relaxed text-foreground/80">
+                <span className="font-semibold text-primary">Conseil :</span> renseignez aussi le tour de poitrine, de taille et de bassin pour fiabiliser le choix de la taille. Les numéros correspondent au{" "}
+                <a
+                  href="/aide/guide-tailles"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-semibold text-primary underline-offset-2 hover:underline"
+                >
+                  guide des tailles
+                </a>.
               </div>
               <div className="grid grid-cols-2 gap-2.5">
                 <Input
