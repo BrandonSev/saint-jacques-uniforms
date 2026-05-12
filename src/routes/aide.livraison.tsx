@@ -33,7 +33,6 @@ function LivraisonPage() {
             icon={<Truck className="h-5 w-5" />}
             title="Délai"
             text="Livré sous 1 semaine si le produit est en stock. Et confection d'une nouvelle commande entre 6 à 12 semaines. "
-            overlay="Ce service sera disponible à partir de septembre 2026."
           />
           <Card
             icon={<Package className="h-5 w-5" />}
@@ -86,29 +85,12 @@ function LivraisonPage() {
   );
 }
 
-function Card({
-  icon,
-  title,
-  text,
-  overlay,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  text: string;
-  overlay?: string;
-}) {
+function Card({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-5">
+    <div className="rounded-2xl border border-border bg-card p-5">
       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">{icon}</div>
       <h3 className="mt-3 text-sm font-semibold text-foreground">{title}</h3>
       <p className="mt-1 text-xs text-muted-foreground">{text}</p>
-      {overlay ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-card/85 backdrop-blur-[2px] p-4 text-center">
-          <span className="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-3 py-1.5 text-[12px] font-semibold text-amber-900 shadow-sm">
-            {overlay}
-          </span>
-        </div>
-      ) : null}
     </div>
   );
 }
