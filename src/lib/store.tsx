@@ -226,6 +226,17 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
     }
   }, [user, loadProfile, loadChildren, loadParents, loadAdmin]);
 
+  // Purge stale cart items whose child no longer exists (e.g. child deleted on
+  // another device, or legacy items added before child selection was required).
+  useEffect(() => {
+    if (!user) return;
+    const validIds = new Set(childList.map((c) => c.id));
+    setCart((prev) => {
+      const next = prev.filter((i) => i.childId && validIds.has(i.childId));
+      return next.length === prev.length ? prev : next;
+    });
+  }, [user, childList, setCart]);
+
   const familyDisplayName = profile?.family_name || profile?.nom || "";
   const displayedChildren = childList.map((c) => {
     const nom = familyDisplayName || c.nom;
