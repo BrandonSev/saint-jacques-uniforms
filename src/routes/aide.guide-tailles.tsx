@@ -116,7 +116,7 @@ function GuideTaillesPage() {
         <div className="mt-3 text-sm leading-relaxed text-muted-foreground space-y-4">
           <p>
             <b>Le tableau ci-dessous est un barème "corps à nu" </b> : il indique la taille de vêtement adaptée à votre
-            enfant pour une <b>première couche</b> (body, t-shirt, polo, chemise), en s'appuyant sur les normes et
+            enfant pour une <b>première couche</b> (t-shirt, polo, chemise), en s'appuyant sur les normes et
             statistiques françaises en vigueur.
           </p>
           <p>

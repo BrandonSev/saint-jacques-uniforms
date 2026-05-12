@@ -409,7 +409,7 @@ function LiveSizeRecommendation({
         {filledCount}/4 mesure{filledCount > 1 ? "s" : ""} renseignée{filledCount > 1 ? "s" : ""}
       </span>
       <span className="text-[11px] italic text-muted-foreground">
-        Pour une 1ʳᵉ couche : body, t-shirt, polo, chemise.
+        Pour une 1ʳᵉ couche : t-shirt, polo, chemise.
       </span>
     </div>
   );
