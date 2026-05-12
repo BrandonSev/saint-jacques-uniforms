@@ -638,7 +638,7 @@ function RolesPanel() {
         </p>
         <div className="mt-4 flex flex-wrap items-end gap-3">
           <div className="flex-1 min-w-[220px]">
-            <label className="text-xs font-medium text-muted-foreground">Email du compte</label>
+            <label className="text-xs font-medium text-muted-foreground">Email - Boutique France Uniformes SJDC du compte</label>
             <input
               type="email"
               value={email}
@@ -674,7 +674,7 @@ function RolesPanel() {
             <thead className="bg-secondary text-left text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
                 <th className="px-4 py-3">Utilisateur</th>
-                <th className="px-4 py-3">Email</th>
+                <th className="px-4 py-3">Email - Boutique France Uniformes SJDC</th>
                 <th className="px-4 py-3">Rôle</th>
                 <th className="px-4 py-3">Attribué le</th>
                 <th className="px-4 py-3"></th>
@@ -776,7 +776,7 @@ function IncidentDetailsModal({
         <div className="space-y-4 px-6 py-5 text-sm">
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Famille" value={`${incident.family_prenom ?? ""} ${incident.family_nom ?? ""}`.trim() || "—"} />
-            <Field label="Email" value={incident.family_email ?? "—"} />
+            <Field label="Email - Boutique France Uniformes SJDC" value={incident.family_email ?? "—"} />
             <Field label="Enfant" value={`${incident.child_prenom ?? ""} ${incident.child_nom ?? ""}`.trim() || "—"} />
             <Field
               label="Produit"

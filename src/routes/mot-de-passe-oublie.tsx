@@ -86,7 +86,7 @@ function ForgotPasswordPage() {
             ) : (
               <form onSubmit={handleSubmit} className="mt-8 space-y-4">
                 <div>
-                  <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Email</label>
+                  <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Email - Boutique France Uniformes SJDC</label>
                   <div className="relative mt-1.5">
                     <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground">
                       <Mail className="h-4 w-4" />
