@@ -73,10 +73,7 @@ function GuideTaillesPage() {
     if (!childId && children.length > 0) setChildId(children[0].id);
   }, [children, childId]);
 
-  const selectedChild = useMemo(
-    () => children.find((c) => c.id === childId) ?? null,
-    [children, childId],
-  );
+  const selectedChild = useMemo(() => children.find((c) => c.id === childId) ?? null, [children, childId]);
 
   const recommendation = useMemo(() => {
     if (!selectedChild) return null;
@@ -86,9 +83,12 @@ function GuideTaillesPage() {
     const bassin = num(selectedChild.tour_bassin);
     const candidates: { key: string; idx: number; value: number }[] = [];
     if (stature !== null) candidates.push({ key: "Stature", idx: findRowIndexFor(stature, "stature"), value: stature });
-    if (poitrine !== null) candidates.push({ key: "Tour de poitrine", idx: findRowIndexFor(poitrine, "poitrine"), value: poitrine });
-    if (tailleM !== null) candidates.push({ key: "Tour de taille", idx: findRowIndexFor(tailleM, "taille"), value: tailleM });
-    if (bassin !== null) candidates.push({ key: "Tour de bassin", idx: findRowIndexFor(bassin, "bassin"), value: bassin });
+    if (poitrine !== null)
+      candidates.push({ key: "Tour de poitrine", idx: findRowIndexFor(poitrine, "poitrine"), value: poitrine });
+    if (tailleM !== null)
+      candidates.push({ key: "Tour de taille", idx: findRowIndexFor(tailleM, "taille"), value: tailleM });
+    if (bassin !== null)
+      candidates.push({ key: "Tour de bassin", idx: findRowIndexFor(bassin, "bassin"), value: bassin });
     if (candidates.length === 0) return null;
     // Take the most enveloping (largest) suggestion.
     const best = candidates.reduce((a, b) => (b.idx > a.idx ? b : a));
@@ -114,20 +114,21 @@ function GuideTaillesPage() {
         </h1>
         <div className="mt-3 text-sm leading-relaxed text-muted-foreground space-y-4">
           <p>
-            Le tableau ci-dessous est un barême de "corps à nu" qui permet de connaître la taille de vêtement à porter en première couche par votre enfant, selon les dernières normes et statistiques françaises actuellement en vigueur.
+            <b>Le tableau ci-dessous est un barème "corps à nu" </b> : il indique la taille de vêtement adaptée à votre
+            enfant pour une <b>première couche</b> (body, t-shirt, polo, chemise), en s'appuyant sur les normes et
+            statistiques françaises en vigueur.
           </p>
+          <br />
           <p>
-            La première couche est le premier vêtement porté à même la peau par votre enfant, tel qu'un body, un tee-shirt, un polo, ou une chemise.
+            <b>Ce tableau ne s'applique pas directement aux vêtements de deuxième ou troisième couche</b> (pulls,
+            sweatshirts, blouses…). Pour ces articles, une recommandation de taille spécifique est indiquée directement
+            sur la page de chaque vêtement, tenant compte de sa coupe et de son aisance
           </p>
+          <br />
           <p>
-            La tableau ci-dessous vous aide ainsi, à choisir la taille adaptée à votre enfant pour un tee-shirt, un polo ou une chemise.
-            <br />
-            Si le vêtement à commander est une coupe supérieure, seconde couche ou couche extérieure, vous devez vous référer à la recommandation accessible directement sur la page du vêtement qui vous sera présentée de manière ajustée à chaque vêtement.
-          </p>
-          <p>
-            Avant toute commande, nous vous conseillons de faire essayer à votre enfant le vêtement dans la taille visée à l'aide d'une exemplaire de l'un de ses camarades pour confirmer votre choix.
-            <br />
-            En cas de doute entre deux tailles, nous vous conseillons de prendre la taille supérieure.
+            <b>Avant de commander</b>, nous vous conseillons de faire essayer le vêtement visé à votre enfant, si
+            possible sur un exemplaire d'un camarade. En cas d'hésitation entre deux tailles, privilégiez la taille
+            supérieure.
           </p>
         </div>
 
@@ -138,8 +139,8 @@ function GuideTaillesPage() {
               Suggestion personnalisée
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              Sélectionnez un enfant pour mettre en évidence la taille recommandée d'après ses mesures
-              enregistrées dans <span className="font-medium text-foreground">Mes enfants</span>.
+              Sélectionnez un enfant pour mettre en évidence la taille recommandée d'après ses mesures enregistrées dans{" "}
+              <span className="font-medium text-foreground">Mes enfants</span>.
             </p>
             <div className="mt-3">
               <ChildPicker value={childId} onChange={setChildId} />
@@ -151,13 +152,12 @@ function GuideTaillesPage() {
                   Taille recommandée : <span className="text-primary">{recommendation.row.age}</span>
                 </span>
                 <span className="text-muted-foreground">
-                  {recommendation.drivers
-                    .map((d) => `${d.key} ${d.value} cm → ${rows[d.idx].age}`)
-                    .join(" · ")}
+                  {recommendation.drivers.map((d) => `${d.key} ${d.value} cm → ${rows[d.idx].age}`).join(" · ")}
                 </span>
                 {!recommendation.consistent && (
                   <span className="rounded-full px-2 py-0.5 font-semibold bg-amber-50 text-emerald-500">
-                    En cas de mesures discordantes —&gt; la taille la plus enveloppante est retenue dans la recommandation
+                    En cas de mesures discordantes —&gt; la taille la plus enveloppante est retenue dans la
+                    recommandation
                   </span>
                 )}
               </div>
@@ -165,8 +165,8 @@ function GuideTaillesPage() {
 
             {selectedChild && !recommendation && (
               <p className="mt-3 text-xs text-muted-foreground">
-                Aucune mesure renseignée pour {selectedChild.prenom}. Ajoutez sa stature et son tour de
-                poitrine dans <span className="font-medium text-foreground">Mes enfants</span>.
+                Aucune mesure renseignée pour {selectedChild.prenom}. Ajoutez sa stature et son tour de poitrine dans{" "}
+                <span className="font-medium text-foreground">Mes enfants</span>.
               </p>
             )}
           </div>
@@ -226,18 +226,14 @@ function GuideTaillesPage() {
                         recommendation?.idx === i
                           ? "bg-emerald-100 ring-2 ring-inset ring-lime-500"
                           : i % 2 === 1
-                          ? "bg-secondary/30"
-                          : undefined
+                            ? "bg-secondary/30"
+                            : undefined
                       }
                     >
                       <th
                         scope="row"
                         className={`sticky left-0 z-10 px-2 py-2.5 text-left font-semibold text-foreground sm:px-4 sm:py-3 ${
-                          recommendation?.idx === i
-                            ? "bg-emerald-300"
-                            : i % 2 === 1
-                            ? "bg-secondary/60"
-                            : "bg-card"
+                          recommendation?.idx === i ? "bg-emerald-300" : i % 2 === 1 ? "bg-secondary/60" : "bg-card"
                         }`}
                       >
                         <span className="inline-flex items-center gap-1.5">
