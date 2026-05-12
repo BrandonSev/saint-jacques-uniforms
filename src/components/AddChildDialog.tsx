@@ -490,6 +490,87 @@ function Select({
   );
 }
 
+const TAILLE_OPTIONS = ["4", "6", "8", "10", "12", "14", "16", "18"];
+
+function LabelWithTooltip({ label, tooltip }: { label: string; tooltip?: string }) {
+  const [tipOpen, setTipOpen] = useState(false);
+  const tipRef = useRef<HTMLSpanElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [tipPos, setTipPos] = useState<{ top: number; left: number } | null>(null);
+  useEffect(() => {
+    if (!tipOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (tipRef.current && !tipRef.current.contains(e.target as Node)) setTipOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [tipOpen]);
+  useEffect(() => {
+    if (!tipOpen || !btnRef.current) return;
+    const r = btnRef.current.getBoundingClientRect();
+    setTipPos({ top: r.bottom + 6, left: r.left + r.width / 2 });
+  }, [tipOpen]);
+  return (
+    <span className="line-clamp-2 inline-flex min-h-[2rem] items-start gap-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+      <span>{label}</span>
+      {tooltip && (
+        <span ref={tipRef} className="relative inline-flex">
+          <button
+            ref={btnRef}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setTipOpen((v) => !v);
+            }}
+            title={tooltip}
+            aria-label={tooltip}
+            className="cursor-help text-primary"
+          >
+            <Info className="h-3 w-3" />
+          </button>
+          {tipOpen && tipPos && typeof document !== "undefined" &&
+            createPortal(
+              <span
+                role="tooltip"
+                style={{ position: "fixed", top: tipPos.top, left: tipPos.left, transform: "translateX(-50%)" }}
+                className="z-[80] w-64 max-w-[calc(100vw-2rem)] rounded-md border border-border bg-popover px-2.5 py-2 text-[11px] font-normal normal-case tracking-normal text-popover-foreground shadow-md"
+              >
+                {tooltip}
+              </span>,
+              document.body,
+            )
+          }
+        </span>
+      )}
+    </span>
+  );
+}
+
+function SizeSelect({
+  label, value, onChange, tooltip,
+}: { label: string; value: string; onChange: (v: string) => void; tooltip?: string }) {
+  return (
+    <label className="flex flex-col">
+      <LabelWithTooltip label={label} tooltip={tooltip} />
+      <div className="relative mt-auto">
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-10 w-full appearance-none rounded-lg border border-border bg-background px-3 pr-10 text-sm"
+        >
+          <option value="">—</option>
+          {TAILLE_OPTIONS.map((o) => (
+            <option key={o} value={o}>{o} ans</option>
+          ))}
+        </select>
+        <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-medium text-muted-foreground">
+          ans
+        </span>
+      </div>
+    </label>
+  );
+}
+
 function DateOfBirthPicker({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   const [parts, setParts] = useState<{ y: string; m: string; d: string }>(() => {
     if (value) {
