@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
-import { Download, ShieldCheck, AlertTriangle, X, ImageIcon, Truck, Save } from "lucide-react";
+import { Download, ShieldCheck, AlertTriangle, X, ImageIcon, Truck, Save, Users, Trash2 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { RequireAuth } from "@/components/RequireAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/server/email.functions";
+import { listRoleAssignments, setUserRole } from "@/server/apel.functions";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
@@ -114,7 +115,7 @@ function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [incidentsLoading, setIncidentsLoading] = useState(true);
-  const [tab, setTab] = useState<"orders" | "tracking" | "incidents">("orders");
+  const [tab, setTab] = useState<"orders" | "tracking" | "incidents" | "roles">("orders");
   const [orderRows, setOrderRows] = useState<OrderRow[]>([]);
   const [orderRowsLoading, setOrderRowsLoading] = useState(true);
   const [openIncident, setOpenIncident] = useState<Incident | null>(null);
