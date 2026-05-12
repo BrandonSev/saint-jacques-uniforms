@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { withSupabaseAuth } from "@/integrations/supabase/supabase-auth-middleware";
-import { createPayplugPayment } from "./payplug.server";
+import { createPayplugPayment, fetchPayplugPayment } from "./payplug.server";
 import { getRequestHost } from "@tanstack/react-start/server";
 
 function appBaseUrl() {
@@ -38,9 +38,31 @@ export const createOrderPayment = createServerFn({ method: "POST" })
       return { ok: false as const, error: "already_paid" };
     }
 
-    // Réutilise un paiement existant non finalisé si présent
+    // Réutilise un paiement existant uniquement s'il est encore valide chez PayPlug
     if (order.payplug_payment_id && order.payment_url) {
-      return { ok: true as const, paymentUrl: order.payment_url, paymentId: order.payplug_payment_id, reused: true };
+      try {
+        const existing = await fetchPayplugPayment(order.payplug_payment_id);
+        if (existing.is_paid) {
+          // Sync DB et empêche un re-paiement
+          await supabase
+            .from("orders")
+            .update({ status: "Paiement validé", paid_at: new Date().toISOString() })
+            .eq("id", order.id);
+          return { ok: false as const, error: "already_paid" };
+        }
+        // Si le paiement n'a pas échoué/expiré, on peut réutiliser le lien hébergé
+        if (!existing.failure) {
+          return {
+            ok: true as const,
+            paymentUrl: order.payment_url,
+            paymentId: order.payplug_payment_id,
+            reused: true,
+          };
+        }
+        // Sinon (échec/expiration/annulation) on en crée un nouveau ci-dessous
+      } catch (e) {
+        console.warn("createOrderPayment: existing payment fetch failed, creating a new one", e);
+      }
     }
 
     const base = appBaseUrl();
