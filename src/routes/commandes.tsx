@@ -456,12 +456,14 @@ function CommandesPage() {
                               {resumingId === o.id ? "Redirection…" : "Reprendre le paiement"}
                             </button>
                           )}
-                        <button
-                          onClick={() => handleDownloadPdf(o)}
-                          className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:border-primary hover:text-primary"
-                        >
-                          <FileDown className="h-3.5 w-3.5" /> Télécharger le récap PDF
-                        </button>
+                        {o.paid_at && (
+                          <button
+                            onClick={() => handleDownloadPdf(o)}
+                            className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:border-primary hover:text-primary"
+                          >
+                            <FileDown className="h-3.5 w-3.5" /> Voir la facture
+                          </button>
+                        )}
                       </div>
                       {/* Vue tableau (desktop/tablette) */}
                       <table className="hidden w-full text-sm md:table">
