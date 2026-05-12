@@ -211,8 +211,8 @@ function PanierPage() {
                   </p>
 
                 <div className="mt-6 rounded-xl bg-secondary p-4 text-xs leading-relaxed text-foreground/75">
-                  <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground whitespace-pre-line text-justify">
-                    Après validation de votre paiement, votre commande est enregistrée, afin d'être intégrée à la confection des blouses pour la rentrée prochaine et vous garantir la disponibilité des tailles dans les quantités souhaitées pour vos enfants dès la rentrée de septembre 2026.
+                  <p className="mt-3 text-[11px] font-medium leading-relaxed text-muted-foreground whitespace-pre-line text-justify">
+                    Après validation de votre paiement, votre commande est enregistrée, afin d'être intégrée à la confection des blouses et vous garantir la disponibilité des tailles dans les quantités souhaitées pour vos enfants dès la rentrée de septembre 2026.
                   </p>
                 </div>
               </div>
