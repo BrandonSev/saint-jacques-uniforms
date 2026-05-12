@@ -76,8 +76,8 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.prenom || !form.nom || !form.naissance || !form.classe || !form.section || !form.taille || !form.hauteur) {
-      toast.error("Merci de remplir les champs obligatoires (prénom, nom, naissance, classe, section, taille portée et hauteur)");
+    if (!form.prenom || !form.nom || !form.naissance || !form.classe || !form.section || !form.hauteur) {
+      toast.error("Merci de remplir les champs obligatoires (prénom, nom, naissance, classe, section et hauteur)");
       return;
     }
     setSaving(true);
