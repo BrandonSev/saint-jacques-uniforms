@@ -204,11 +204,11 @@ function PanierPage() {
                 >
                   {user ? "Confirmer ma commande" : "Se connecter pour commander"}
                 </button>
-                 <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground">
-                   Paiement en ligne sécurisé par carte bancaire.
-                   <br />
-                   Vos articles seront fabriqués dans nos ateliers en France, dans les semaines qui viennent et expédiés dans l'établissement pour remise en mains propre dès la rentrée.
-                 </p>
+                  <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground">
+                    Paiement en ligne sécurisé par carte bancaire.
+                    <br />
+                    Vos articles seront fabriqués dans nos ateliers en France, dans les semaines qui viennent et expédiés dans l'établissement pour remise en main propre dès la rentrée.
+                  </p>
 
                 <div className="mt-6 rounded-xl bg-secondary p-4 text-xs leading-relaxed text-foreground/75">
                   <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground whitespace-pre-line text-justify">
