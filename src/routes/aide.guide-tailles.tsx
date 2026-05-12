@@ -251,11 +251,14 @@ function GuideTaillesPage() {
                                 <TooltipTrigger asChild>
                                   <span className="cursor-help inline-flex flex-col items-center text-center leading-tight rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase text-white bg-emerald-700">
                                     <span>RECO</span>
-                                    <span>1re couche</span>
+                                    <span>
+                                      1<sup>re</sup> couche
+                                    </span>
                                   </span>
                                 </TooltipTrigger>
                                 <TooltipContent side="top" className="max-w-xs text-xs">
-                                  Taille recommandée pour les vêtements de première couche (t-shirt, polo, chemise) d'après les mesures de cet enfant.
+                                  Taille recommandée pour les vêtements de première couche (t-shirt, polo, chemise)
+                                  d'après les mesures de cet enfant.
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
