@@ -21,6 +21,7 @@ import { Route as CommandesRouteImport } from './routes/commandes'
 import { Route as CollegeRouteImport } from './routes/college'
 import { Route as BoutiqueRouteImport } from './routes/boutique'
 import { Route as BlouseOfficielleRouteImport } from './routes/blouse-officielle'
+import { Route as ApelRouteImport } from './routes/apel'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
@@ -99,6 +100,11 @@ const BoutiqueRoute = BoutiqueRouteImport.update({
 const BlouseOfficielleRoute = BlouseOfficielleRouteImport.update({
   id: '/blouse-officielle',
   path: '/blouse-officielle',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApelRoute = ApelRouteImport.update({
+  id: '/apel',
+  path: '/apel',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -204,6 +210,7 @@ const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/apel': typeof ApelRoute
   '/blouse-officielle': typeof BlouseOfficielleRoute
   '/boutique': typeof BoutiqueRoute
   '/college': typeof CollegeRoute
@@ -237,6 +244,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/apel': typeof ApelRoute
   '/blouse-officielle': typeof BlouseOfficielleRoute
   '/boutique': typeof BoutiqueRoute
   '/college': typeof CollegeRoute
@@ -271,6 +279,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/apel': typeof ApelRoute
   '/blouse-officielle': typeof BlouseOfficielleRoute
   '/boutique': typeof BoutiqueRoute
   '/college': typeof CollegeRoute
@@ -306,6 +315,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/apel'
     | '/blouse-officielle'
     | '/boutique'
     | '/college'
@@ -339,6 +349,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/apel'
     | '/blouse-officielle'
     | '/boutique'
     | '/college'
@@ -372,6 +383,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/apel'
     | '/blouse-officielle'
     | '/boutique'
     | '/college'
@@ -406,6 +418,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  ApelRoute: typeof ApelRoute
   BlouseOfficielleRoute: typeof BlouseOfficielleRoute
   BoutiqueRoute: typeof BoutiqueRoute
   CollegeRoute: typeof CollegeRoute
@@ -519,6 +532,13 @@ declare module '@tanstack/react-router' {
       path: '/blouse-officielle'
       fullPath: '/blouse-officielle'
       preLoaderRoute: typeof BlouseOfficielleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apel': {
+      id: '/apel'
+      path: '/apel'
+      fullPath: '/apel'
+      preLoaderRoute: typeof ApelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -683,6 +703,7 @@ const EnfantsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  ApelRoute: ApelRoute,
   BlouseOfficielleRoute: BlouseOfficielleRoute,
   BoutiqueRoute: BoutiqueRoute,
   CollegeRoute: CollegeRoute,

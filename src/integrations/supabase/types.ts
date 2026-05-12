@@ -615,6 +615,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apel_families_overview: {
+        Args: { _season_start?: string }
+        Returns: {
+          children_count: number
+          classes: string
+          family_civilite: string
+          family_email: string
+          family_nom: string
+          family_prenom: string
+          family_telephone: string
+          has_ordered: boolean
+          items_count: number
+          last_paid_at: string
+          paid_orders_count: number
+          user_id: string
+          ville: string
+        }[]
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -650,7 +668,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role: "admin" | "user" | "apel"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -778,7 +796,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      app_role: ["admin", "user", "apel"],
     },
   },
 } as const

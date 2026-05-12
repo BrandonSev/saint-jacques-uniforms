@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
-import { Download, ShieldCheck, AlertTriangle, X, ImageIcon, Truck, Save } from "lucide-react";
+import { Download, ShieldCheck, AlertTriangle, X, ImageIcon, Truck, Save, Users, Trash2 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { RequireAuth } from "@/components/RequireAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/server/email.functions";
+import { listRoleAssignments, setUserRole } from "@/server/apel.functions";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
@@ -114,7 +115,7 @@ function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [incidentsLoading, setIncidentsLoading] = useState(true);
-  const [tab, setTab] = useState<"orders" | "tracking" | "incidents">("orders");
+  const [tab, setTab] = useState<"orders" | "tracking" | "incidents" | "roles">("orders");
   const [orderRows, setOrderRows] = useState<OrderRow[]>([]);
   const [orderRowsLoading, setOrderRowsLoading] = useState(true);
   const [openIncident, setOpenIncident] = useState<Incident | null>(null);
@@ -406,6 +407,12 @@ function AdminPage() {
               </span>
             )}
           </button>
+          <button
+            onClick={() => setTab("roles")}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${tab === "roles" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            <Users className="mr-1 inline h-3.5 w-3.5" /> Rôles
+          </button>
         </div>
 
         {tab === "orders" && (
@@ -558,6 +565,8 @@ function AdminPage() {
             </div>
           </div>
         )}
+
+        {tab === "roles" && <RolesPanel />}
       </section>
 
       {openIncident && (
@@ -582,6 +591,126 @@ function AdminPage() {
       )}
 
       <SiteFooter />
+    </div>
+  );
+}
+
+function RolesPanel() {
+  const [assignments, setAssignments] = useState<Array<{ user_id: string; role: string; email: string; prenom: string; nom: string; created_at: string }>>([]);
+  const [loading, setLoading] = useState(true);
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState<"apel" | "admin">("apel");
+  const [busy, setBusy] = useState(false);
+
+  const refresh = async () => {
+    setLoading(true);
+    const r = await listRoleAssignments({ data: {} });
+    if (r.ok) setAssignments(r.assignments as any);
+    else toast.error(r.error || "Erreur de chargement");
+    setLoading(false);
+  };
+  useEffect(() => { refresh(); }, []);
+
+  const grant = async () => {
+    if (!email.trim()) return;
+    setBusy(true);
+    const r = await setUserRole({ data: { email: email.trim(), role, action: "grant" } });
+    setBusy(false);
+    if (!r.ok) toast.error(r.error === "user_not_found" ? "Utilisateur introuvable (l'email doit déjà avoir un compte)" : r.error || "Erreur");
+    else { toast.success(`Rôle ${role} attribué à ${email}`); setEmail(""); refresh(); }
+  };
+
+  const revoke = async (userEmail: string, userRole: string) => {
+    if (!confirm(`Retirer le rôle ${userRole} à ${userEmail} ?`)) return;
+    const r = await setUserRole({ data: { email: userEmail, role: userRole as "apel" | "admin", action: "revoke" } });
+    if (!r.ok) toast.error(r.error || "Erreur");
+    else { toast.success("Rôle retiré"); refresh(); }
+  };
+
+  return (
+    <div className="mt-4 space-y-6">
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <h2 className="text-base font-semibold text-foreground">Attribuer un rôle</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Le rôle <strong>APEL</strong> permet à l'Association des Parents d'Élèves de consulter
+          la liste des familles et leur statut de commande, et d'envoyer des relances par email.
+          L'utilisateur doit déjà avoir créé son compte.
+        </p>
+        <div className="mt-4 flex flex-wrap items-end gap-3">
+          <div className="flex-1 min-w-[220px]">
+            <label className="text-xs font-medium text-muted-foreground">Email du compte</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="parent@example.com"
+              className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm focus:border-primary focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">Rôle</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value as "apel" | "admin")}
+              className="mt-1 h-10 rounded-lg border border-border bg-background px-3 text-sm"
+            >
+              <option value="apel">APEL</option>
+              <option value="admin">Administrateur</option>
+            </select>
+          </div>
+          <button
+            onClick={grant}
+            disabled={busy || !email.trim()}
+            className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          >
+            Attribuer
+          </button>
+        </div>
+      </div>
+
+      <div className="overflow-hidden rounded-2xl border border-border bg-card">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-secondary text-left text-xs uppercase tracking-wider text-muted-foreground">
+              <tr>
+                <th className="px-4 py-3">Utilisateur</th>
+                <th className="px-4 py-3">Email</th>
+                <th className="px-4 py-3">Rôle</th>
+                <th className="px-4 py-3">Attribué le</th>
+                <th className="px-4 py-3"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {loading && (
+                <tr><td colSpan={5} className="px-4 py-6 text-center text-muted-foreground">Chargement…</td></tr>
+              )}
+              {!loading && assignments.length === 0 && (
+                <tr><td colSpan={5} className="px-4 py-6 text-center text-muted-foreground">Aucun rôle attribué.</td></tr>
+              )}
+              {assignments.map((a) => (
+                <tr key={`${a.user_id}-${a.role}`} className="hover:bg-muted/30">
+                  <td className="px-4 py-3 font-medium">{a.prenom} {a.nom}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{a.email}</td>
+                  <td className="px-4 py-3">
+                    <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${a.role === 'admin' ? 'bg-primary/15 text-primary' : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'}`}>
+                      {a.role}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">{new Date(a.created_at).toLocaleDateString("fr-FR")}</td>
+                  <td className="px-4 py-3 text-right">
+                    <button
+                      onClick={() => revoke(a.email, a.role)}
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--rouge)] hover:underline"
+                    >
+                      <Trash2 className="h-3 w-3" /> Retirer
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

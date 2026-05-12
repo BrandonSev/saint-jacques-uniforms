@@ -111,6 +111,7 @@ type StoreCtx = {
   profile: Profile | null;
   authLoading: boolean;
   isAdmin: boolean;
+  isApel: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   updateProfile: (patch: Partial<Omit<Profile, "id" | "email">>) => Promise<void>;
@@ -162,6 +163,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
   const [parentList, setParentList] = useState<FamilyParent[]>([]);
   const [cart, setCart] = useLocal<CartItem[]>("sjc.cart", []);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isApel, setIsApel] = useState(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
@@ -172,6 +174,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
         setChildList([]);
         setParentList([]);
         setIsAdmin(false);
+        setIsApel(false);
       }
     });
     supabase.auth.getSession().then(({ data: { session: s } }) => {
@@ -203,8 +206,10 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
   }, []);
 
   const loadAdmin = useCallback(async (uid: string) => {
-    const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid).eq("role", "admin").maybeSingle();
-    setIsAdmin(!!data);
+    const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+    const roles = (data ?? []).map((r: any) => r.role);
+    setIsAdmin(roles.includes("admin"));
+    setIsApel(roles.includes("apel"));
   }, []);
 
   useEffect(() => {
@@ -224,7 +229,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
   });
 
   const value = useMemo<StoreCtx>(() => ({
-    user, session, profile, authLoading, isAdmin,
+    user, session, profile, authLoading, isAdmin, isApel,
     signOut: async () => { await supabase.auth.signOut(); },
     refreshProfile: async () => { if (user) await loadProfile(user.id); },
     updateProfile: async (patch) => {
@@ -355,7 +360,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
       setCart([]);
       return { orderId: order.id, orderNumber: order.order_number };
     },
-  }), [user, session, profile, authLoading, isAdmin, childList, displayedChildren, parentList, cart, setCart, loadProfile]);
+  }), [user, session, profile, authLoading, isAdmin, isApel, childList, displayedChildren, parentList, cart, setCart, loadProfile]);
 
   return <Ctx.Provider value={value}>{kids}</Ctx.Provider>;
 }
