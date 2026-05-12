@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
-import { ArrowRight, CreditCard, Sparkles } from "lucide-react";
+import { ArrowRight, CreditCard, Sparkles, CalendarClock } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif, WaveMotif } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
@@ -9,7 +9,7 @@ import college from "@/assets/college-polo-porte.jpg";
 import lycee from "@/assets/lycee-uniformes.jpg";
 import { PageWatermark } from "@/components/PageWatermark";
 import { DirectorQuote } from "@/components/DirectorQuote";
-import { BackToSchoolAlert } from "@/components/BackToSchoolAlert";
+import { BackToSchoolAlert, daysUntilDeadline } from "@/components/BackToSchoolAlert";
 
 export const Route = createFileRoute("/boutique")({
   head: () => ({
@@ -125,6 +125,8 @@ function NiveauPage() {
 }
 
 function LevelCard({ level, priority }: { level: (typeof levels)[number]; priority: boolean }) {
+  const showDeadlineBadge = level.id === "maternelle";
+  const daysLeft = showDeadlineBadge ? daysUntilDeadline() : 0;
   return (
     <Link
       to={level.href}
@@ -143,6 +145,15 @@ function LevelCard({ level, priority }: { level: (typeof levels)[number]; priori
           {level.subtitle}
         </span>
       </div>
+
+      {showDeadlineBadge && daysLeft > 0 && (
+        <div className="absolute right-4 top-4">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-100/95 px-2.5 py-1 text-[10.5px] font-semibold leading-tight text-amber-900 shadow-sm backdrop-blur">
+            <CalendarClock className="h-3 w-3 shrink-0" />
+            Plus que {daysLeft}j pour livraison garantie à la rentrée
+          </span>
+        </div>
+      )}
 
       <div className="relative p-6 text-white">
         <p className="text-[11px] uppercase tracking-wider text-white/75">{level.range}</p>

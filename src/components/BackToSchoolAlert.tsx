@@ -5,6 +5,15 @@ import { AlertTriangle, CalendarClock } from "lucide-react";
  * des blouses pour la rentrée 2026.
  */
 export const BACK_TO_SCHOOL_DEADLINE = "30 juin 2026";
+export const BACK_TO_SCHOOL_DEADLINE_DATE = new Date(2026, 5, 30); // 30 juin 2026
+
+/**
+ * Nombre de jours restants avant la date limite (>=0).
+ */
+export function daysUntilDeadline(now: Date = new Date()): number {
+  const ms = BACK_TO_SCHOOL_DEADLINE_DATE.getTime() - now.getTime();
+  return Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
+}
 
 /**
  * Bandeau fin (header global) — visible sur toutes les pages.
