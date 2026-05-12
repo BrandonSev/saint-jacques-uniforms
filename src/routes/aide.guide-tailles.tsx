@@ -119,13 +119,11 @@ function GuideTaillesPage() {
             enfant pour une <b>première couche</b> (body, t-shirt, polo, chemise), en s'appuyant sur les normes et
             statistiques françaises en vigueur.
           </p>
-          <br />
           <p>
             <b>Ce tableau ne s'applique pas directement aux vêtements de deuxième ou troisième couche</b> (pulls,
             sweatshirts, blouses…). Pour ces articles, une recommandation de taille spécifique est indiquée directement
             sur la page de chaque vêtement, tenant compte de sa coupe et de son aisance
           </p>
-          <br />
           <p>
             <b>Avant de commander</b>, nous vous conseillons de faire essayer le vêtement visé à votre enfant, si
             possible sur un exemplaire d'un camarade. En cas d'hésitation entre deux tailles, privilégiez la taille
@@ -155,6 +153,10 @@ function GuideTaillesPage() {
                 </span>
                 <span className="text-muted-foreground">
                   {recommendation.drivers.map((d) => `${d.key} ${d.value} cm → ${rows[d.idx].age}`).join(" · ")}
+                </span>
+                <span>
+                  Compléter les mensurations de cet enfant pour obtenir une recommandation fiable.{" "}
+                  <a href="/enfants">Gérer mes enfants</a>
                 </span>
                 {!recommendation.consistent && (
                   <>
