@@ -301,8 +301,8 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
                 >
                   <Sparkles className="h-5 w-5 text-emerald-700" />
                   <div className="flex flex-col leading-tight">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-foreground/70">
-                      Taille recommandée
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-foreground/70 leading-tight">
+                      Taille recommandée<br />en première couche
                     </span>
                     <span className="text-xl font-bold text-emerald-800">
                       {reco.row.age}

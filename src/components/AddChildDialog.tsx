@@ -399,7 +399,7 @@ function LiveSizeRecommendation({
       <div className="flex items-center gap-2">
         <Sparkles className="h-4 w-4 text-emerald-700" />
         <span className="font-medium text-foreground">
-          Taille recommandée : <span className="text-base font-bold text-emerald-800">{reco.row.age}</span>
+        Taille recommandée en première couche : <span className="text-base font-bold text-emerald-800">{reco.row.age}</span>
         </span>
         <span className="rounded-full bg-emerald-700 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
           Reco
