@@ -252,12 +252,33 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
               )}
             </div>
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            <Field
-              label="Taille portée"
-              value={enfant.taille ? `${enfant.taille} ans` : "—"}
-              tooltip="A titre d'information, taille que vous avez l'habitude d'acheter pour votre enfant actuellement"
-            />
+          <div className="mt-4 rounded-xl border border-border/60 bg-muted/30 p-3 text-xs">
+            <div className="grid gap-1.5 sm:grid-cols-3">
+              <DeclLine
+                label="Taille portée habituellement"
+                value={enfant.taille ? `${enfant.taille} ans` : "—"}
+              />
+              <DeclLine
+                label="Blouse FU depuis 09/2025"
+                value={
+                  enfant.blouse_portee_2025 === "oui"
+                    ? "Oui"
+                    : enfant.blouse_portee_2025 === "non"
+                      ? "Non"
+                      : "—"
+                }
+              />
+              <DeclLine
+                label="Taille blouse FU portée"
+                value={
+                  enfant.blouse_portee_2025 === "oui" && enfant.taille_blouse_2025
+                    ? `${enfant.taille_blouse_2025} ans`
+                    : "—"
+                }
+              />
+            </div>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <Field label="Hauteur" value={enfant.hauteur ? `${enfant.hauteur} cm` : "—"} badge={1} />
             <Field label="Tour de poitrine" value={enfant.tour ? `${enfant.tour} cm` : "—"} badge={2} />
             <Field label="Tour de taille" value={enfant.tour_taille ? `${enfant.tour_taille} cm` : "—"} badge={3} />
