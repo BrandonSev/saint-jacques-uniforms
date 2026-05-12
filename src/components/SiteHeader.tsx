@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { LogIn, LogOut, Menu, ShieldCheck, ShoppingBag, User, X } from "lucide-react";
+import { LogIn, LogOut, Menu, ShieldCheck, ShoppingBag, User, X, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import logo from "@/assets/france-uniformes-logo-blue.jpeg";
 import logoWhite from "@/assets/france-uniformes-logo-white.svg";
@@ -16,7 +16,7 @@ interface SiteHeaderProps {
 }
 
 export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHeaderProps) {
-  const { cartCount: storeCount, profile, user, signOut, isAdmin } = useStore();
+  const { cartCount: storeCount, profile, user, signOut, isAdmin, isApel } = useStore();
   const count = cartCount ?? storeCount;
   const navigate = useNavigate();
   const famName = profile?.family_name || profile?.nom;
@@ -70,6 +70,14 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                   activeProps={{ className: "text-primary" }}
                 >
                   <ShieldCheck className="h-3.5 w-3.5" /> Administration
+                </Link>
+              ) : isApel ? (
+                <Link
+                  to="/apel"
+                  className="inline-flex items-center gap-1 transition-colors hover:text-primary"
+                  activeProps={{ className: "text-primary" }}
+                >
+                  <Users className="h-3.5 w-3.5" /> Espace APEL
                 </Link>
               ) : (
                 <>
