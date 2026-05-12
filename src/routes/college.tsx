@@ -1,14 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
-import { ChevronRight, CreditCard, ShieldCheck } from "lucide-react";
+import { ChevronRight, Info, ShieldCheck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
-import { ProductCard } from "@/components/ProductCard";
-import polo from "@/assets/polo-alban.jpg";
-import pull from "@/assets/pull-oscar.jpg";
-import tshirt from "@/assets/tshirt-valery.jpg";
-import chemise from "@/assets/chemise-candice.jpg";
-import chemiseFille from "@/assets/chemise-candice-fille.png";
 import poloPorte from "@/assets/college-polo-porte.jpg";
 import { PageWatermark } from "@/components/PageWatermark";
 
@@ -29,61 +23,6 @@ export const Route = createFileRoute("/college")({
     </RequireAuth>
   ),
 });
-
-const sizes = ["10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];
-
-const products = [
-  {
-    id: "polo",
-    name: "Polo",
-    ref: "Polo Dax",
-    price: 33.6,
-    image: polo,
-    tag: "Best-seller",
-    desc: "Polo blanc en piqué de coton, écusson brodé du groupe scolaire et liseré tricolore.",
-    genre: "Unisexe" as const,
-  },
-  {
-    id: "pull",
-    name: "Pull col V tricoté",
-    ref: "Pull V Dax",
-    price: 45.6,
-    image: pull,
-    tag: "Hiver",
-    desc: "Pull col V bleu marine, maille jacquard, écusson brodé poitrine et liseré tricolore.",
-    genre: "Unisexe" as const,
-  },
-  {
-    id: "chemise",
-    name: "Chemise — Garçon",
-    ref: "Chemise Garçon Dax",
-    price: 26.4,
-    image: chemise,
-    tag: "Cérémonie",
-    desc: "Chemise blanche manches longues, coton tissé, écusson brodé poitrine.",
-    genre: "Garçon" as const,
-  },
-  {
-    id: "chemise-fille",
-    name: "Chemise — Fille",
-    ref: "Chemise Fille Dax",
-    price: 29.4,
-    image: chemiseFille,
-    tag: "Fille",
-    desc: "Chemise blanche manches longues, coupe cintrée (pinces poitrine & dos), 50% polyester / 50% coton.",
-    genre: "Fille" as const,
-  },
-  {
-    id: "tshirt",
-    name: "Tee-shirt de sport",
-    ref: "TS Sport",
-    price: 19.2,
-    image: tshirt,
-    tag: "Sport",
-    desc: "Tee-shirt blanc col rond, coton souple, écusson brodé et liseré tricolore.",
-    genre: "Unisexe" as const,
-  },
-];
 
 function CollegePage() {
   return (
@@ -112,30 +51,14 @@ function CollegePage() {
         <div className="relative mx-auto max-w-6xl grid w-full items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-yellow-300 bg-yellow-100 px-3 py-1 font-semibold uppercase tracking-wider text-sm text-yellow-900">
-              <ShieldCheck className="h-3 w-3" /> Sélection en cours d'étude par l'établissement
+              <ShieldCheck className="h-3 w-3" /> Trousseau non géré par France Uniformes
             </span>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Collège</h1>
             <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
-              Sélection d'uniformes en cours d'étude par l'établissement pour les classes de CM2, 6ᵉ, 5ᵉ et 4ᵉ. Commande simple
-              pour les familles : tous les produits ci-dessous sont autorisés au collège Saint-Jacques-de-Compostelle.
+              Le trousseau du collège n'est pas géré par France Uniformes pour le moment. Pour toute information
+              concernant les tenues des classes de CM2, 6ᵉ, 5ᵉ et 4ᵉ, merci de vous adresser directement à
+              l'établissement ou à l'APEL du groupe scolaire Saint-Jacques-de-Compostelle.
             </p>
-            <div className="mt-6 flex flex-wrap gap-2 text-xs">
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">
-                5 produits
-              </span>
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">
-                Tailles 10 → 18 ans
-              </span>
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">
-                Livraison à l'établissement
-              </span>
-              <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">
-                Livraison à domicile
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--teal)]/30 bg-[var(--teal)]/10 px-3 py-1.5 font-semibold text-[var(--teal-deep)]">
-                <CreditCard className="h-3 w-3" /> Paiement en ligne sécurisé
-              </span>
-            </div>
           </div>
           <div className="relative h-64 overflow-hidden rounded-3xl border border-border lg:h-80">
             <img src={poloPorte} alt="Collégien en uniforme" className="h-full w-full object-cover" loading="lazy" />
@@ -144,18 +67,52 @@ function CollegePage() {
         </div>
       </section>
 
-      {/* Products */}
-      <section className="mx-auto max-w-6xl w-full px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-8 [grid-template-columns:repeat(auto-fill,minmax(320px,1fr))]">
-          {products.map((p) => (
-            <ProductCard
-              key={p.id}
-              product={p}
-              sizes={sizes}
-              defaultSize="14 ans"
-              childFilter={(c) => c.section === "Collège" || c.section === "Lycée"}
-            />
-          ))}
+      {/* Info block */}
+      <section className="mx-auto max-w-3xl w-full px-4 py-12 sm:px-6 lg:px-8">
+        <div className="rounded-3xl border border-border bg-card p-8 shadow-[var(--shadow-card)] sm:p-10">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-secondary text-primary">
+              <Info className="h-6 w-6" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+                Trousseau collège non disponible à la commande
+              </h2>
+              <p className="mt-3 leading-relaxed text-muted-foreground">
+                Le trousseau du collège n'a pas été retenu dans notre catalogue. France Uniformes ne propose donc
+                pas, à ce jour, de tenues pour les niveaux CM2, 6ᵉ, 5ᵉ et 4ᵉ du groupe scolaire
+                Saint-Jacques-de-Compostelle.
+              </p>
+              <p className="mt-4 leading-relaxed text-muted-foreground">
+                Pour connaître les pièces attendues et les modalités d'achat, merci de vous rapprocher
+                directement&nbsp;:
+              </p>
+              <ul className="mt-3 space-y-2 text-muted-foreground">
+                <li className="flex gap-2">
+                  <span className="text-primary">•</span>
+                  <span>de l'<strong className="text-foreground">établissement</strong> Saint-Jacques-de-Compostelle&nbsp;;</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-primary">•</span>
+                  <span>ou de l'<strong className="text-foreground">APEL</strong> du groupe scolaire.</span>
+                </li>
+              </ul>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  to="/boutique"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+                >
+                  Retour à la boutique
+                </Link>
+                <Link
+                  to="/aide/contact"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-secondary"
+                >
+                  Nous contacter
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
