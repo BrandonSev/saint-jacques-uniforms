@@ -377,6 +377,17 @@ function Field({ label, value, tooltip, badge }: { label: string; value: string;
   );
 }
 
+function DeclLine({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-2 sm:flex-col sm:items-start sm:gap-0.5">
+      <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </span>
+      <span className="text-sm font-semibold text-foreground">{value}</span>
+    </div>
+  );
+}
+
 function shopHrefForSection(section?: string): "/maternelle" | "/college" | "/lycee" | "/boutique" {
   const s = (section || "").toLowerCase();
   if (s.includes("maternelle") || s.includes("élémentaire") || s.includes("elementaire")) return "/maternelle";
