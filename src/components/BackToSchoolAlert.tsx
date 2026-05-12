@@ -4,8 +4,8 @@ import { AlertTriangle, CalendarClock } from "lucide-react";
  * Date limite de commande pour garantir la fabrication et la livraison
  * des blouses pour la rentrée 2026.
  */
-export const BACK_TO_SCHOOL_DEADLINE = "30 juin 2026";
-export const BACK_TO_SCHOOL_DEADLINE_DATE = new Date(2026, 5, 30); // 30 juin 2026
+ export const BACK_TO_SCHOOL_DEADLINE = "24 mai 2026";
+ export const BACK_TO_SCHOOL_DEADLINE_DATE = new Date(2026, 4, 24); // 24 mai 2026
 
 /**
  * Nombre de jours restants avant la date limite (>=0).
@@ -23,11 +23,10 @@ export function BackToSchoolBanner() {
     <div className="w-full border-b border-amber-300/70 bg-amber-100 text-amber-900">
       <div className="mx-auto flex max-w-6xl w-full items-center justify-center gap-2 px-4 py-2 text-[12px] font-medium leading-snug sm:px-6 sm:text-[13px] lg:px-8">
         <CalendarClock className="hidden h-4 w-4 shrink-0 sm:inline" aria-hidden />
-        <span className="text-center">
-          <strong className="font-semibold">Rentrée 2026 :</strong> commandez avant le{" "}
-          <strong className="whitespace-nowrap">{BACK_TO_SCHOOL_DEADLINE}</strong> pour garantir la fabrication et la
-          livraison à la rentrée.
-        </span>
+         <span className="text-center">
+           <strong className="font-semibold">Rentrée 2026 :</strong> commandez vos blouses avant le{" "}
+           <strong className="whitespace-nowrap">{BACK_TO_SCHOOL_DEADLINE}</strong> afin de vous garantir une fabrication et une livraison pour la rentrée de septembre.
+         </span>
       </div>
     </div>
   );
