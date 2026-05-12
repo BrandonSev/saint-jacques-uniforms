@@ -84,7 +84,7 @@ export function buildOrderPdf(order: PdfOrder): jsPDF {
   doc.text(family, M, y);
   const shipping =
     order.shipping.mode === "pickup"
-      ? "Retrait à l'établissement\nSecrétariat — Saint-Jacques"
+      ? "Retrait auprès de l'APEL\n(Dates communiquées par mail)"
       : [
           order.shipping.recipient,
           order.shipping.address,
