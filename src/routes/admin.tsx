@@ -407,6 +407,12 @@ function AdminPage() {
               </span>
             )}
           </button>
+          <button
+            onClick={() => setTab("roles")}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${tab === "roles" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            <Users className="mr-1 inline h-3.5 w-3.5" /> Rôles
+          </button>
         </div>
 
         {tab === "orders" && (
