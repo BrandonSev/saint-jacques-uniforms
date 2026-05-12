@@ -143,9 +143,10 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
             {recommendation && (
               <span
                 title={
-                  recommendation.consistent
+                  (recommendation.consistent
                     ? "Toutes les mesures concordent"
-                    : "Prise sur la mesure la plus enveloppante"
+                    : "Prise sur la mesure la plus enveloppante") +
+                  " — taille recommandée pour une 1ʳᵉ couche (body, t-shirt, polo, chemise)"
                 }
                 className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold shadow-sm ring-1 ring-inset ${
                   recommendation.consistent
@@ -162,6 +163,11 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
               </span>
             )}
           </div>
+          {recommendation && (
+            <p className="mt-1 text-[10px] italic text-muted-foreground">
+              Recommandation pour une 1ʳᵉ couche (body, t-shirt, polo, chemise).
+            </p>
+          )}
           <div className="mt-2 flex flex-wrap gap-1.5">
             {sizes.map((s) => (
               <button

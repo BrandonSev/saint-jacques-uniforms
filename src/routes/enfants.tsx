@@ -290,6 +290,9 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
                     <span className={`text-xl font-bold ${reco.consistent ? "text-lime-800 dark:text-lime-200" : "text-emerald-800"}`}>
                       {reco.row.age}
                     </span>
+                    <span className="text-[9px] italic text-muted-foreground">
+                      1ʳᵉ couche (body, t-shirt, polo, chemise)
+                    </span>
                   </div>
                   {reco.consistent ? (
                     <span className="rounded-full bg-lime-600 px-2 py-0.5 text-[9px] font-bold uppercase text-white">
