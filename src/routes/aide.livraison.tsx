@@ -29,8 +29,17 @@ function LivraisonPage() {
         </p>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
-          <Card icon={<Truck className="h-5 w-5" />} title="Délai" text="Livré sous 1 semaine si le produit est en stock. Et confection d'une nouvelle commande entre 6 à 12 semaines. " />
-          <Card icon={<Package className="h-5 w-5" />} title="Remise" text="Les tenues sont remises à votre enfant via l'établissement ou en livraison directement chez vous. " />
+          <Card
+            icon={<Truck className="h-5 w-5" />}
+            title="Délai"
+            text="Livré sous 1 semaine si le produit est en stock. Et confection d'une nouvelle commande entre 6 à 12 semaines. "
+            overlay="Ce service sera disponible à partir de septembre 2026."
+          />
+          <Card
+            icon={<Package className="h-5 w-5" />}
+            title="Remise"
+            text="Les tenues sont remises à votre enfant via l'établissement. La livraison directement chez vous sera disponible à partir de septembre 2026."
+          />
         </div>
 
         <div className="mt-10 space-y-6 text-sm leading-relaxed text-foreground/80">
@@ -49,7 +58,7 @@ function LivraisonPage() {
             (sans frais supplémentaires) ;
             <br />
             • <strong>Expédition individuelle au domicile</strong>, qui engage des frais
-            supplémentaires d'emballage et de port.
+            supplémentaires d'emballage et de port. Ce service démarre à partir de l'automne 2026.
           </Block>
           <Block title="Frais de livraison">
             La livraison à l'établissement est <strong>incluse</strong> pour toutes les commandes
@@ -77,12 +86,29 @@ function LivraisonPage() {
   );
 }
 
-function Card({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
+function Card({
+  icon,
+  title,
+  text,
+  overlay,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  text: string;
+  overlay?: string;
+}) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-5">
+    <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-5">
       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">{icon}</div>
       <h3 className="mt-3 text-sm font-semibold text-foreground">{title}</h3>
       <p className="mt-1 text-xs text-muted-foreground">{text}</p>
+      {overlay ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-card/85 backdrop-blur-[2px] p-4 text-center">
+          <span className="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-3 py-1.5 text-[12px] font-semibold text-amber-900 shadow-sm">
+            {overlay}
+          </span>
+        </div>
+      ) : null}
     </div>
   );
 }
