@@ -21,6 +21,7 @@ export type ChildForm = {
   genre: "" | "Fille" | "Garçon";
   blouse_portee_2025: "" | "oui" | "non";
   taille_blouse_2025: string;
+  modele_blouse_2025: "" | "septembre_2025" | "janvier_2026";
 };
 
 const empty: ChildForm = {
@@ -37,6 +38,7 @@ const empty: ChildForm = {
   genre: "",
   blouse_portee_2025: "",
   taille_blouse_2025: "",
+  modele_blouse_2025: "",
 };
 
 const classesBySection: Record<string, string[]> = {
@@ -76,6 +78,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
     genre: (initial && "genre" in initial ? (initial.genre as ChildForm["genre"]) : "") || "",
     blouse_portee_2025: ((initial as any)?.blouse_portee_2025 ?? "") as ChildForm["blouse_portee_2025"],
     taille_blouse_2025: (initial as any)?.taille_blouse_2025 ?? "",
+    modele_blouse_2025: ((initial as any)?.modele_blouse_2025 ?? "") as ChildForm["modele_blouse_2025"],
   }));
   const [saving, setSaving] = useState(false);
 
@@ -250,12 +253,42 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
                     ))}
                   </div>
                   {form.blouse_portee_2025 === "oui" && (
-                    <SizeSelect
-                      label={`Taille de blouse "FU" portée ?`}
-                      value={form.taille_blouse_2025}
-                      onChange={(v) => setForm({ ...form, taille_blouse_2025: v })}
-                      tooltip="Quelle taille de blouse France Uniformes a-t-il porté cette année, et qui selon vous, était la plus adaptée par rapport au modèle et aux mensurations de votre enfant indiquées ci-dessous ?"
-                    />
+                    <>
+                      <SizeSelect
+                        label={`Taille de blouse "FU" portée ?`}
+                        value={form.taille_blouse_2025}
+                        onChange={(v) => setForm({ ...form, taille_blouse_2025: v })}
+                        tooltip="Quelle taille de blouse France Uniformes a-t-il porté cette année, et qui selon vous, était la plus adaptée par rapport au modèle et aux mensurations de votre enfant indiquées ci-dessous ?"
+                      />
+                      <LabelWithTooltip
+                        label="Quel modèle ?"
+                        tooltip="France Uniformes a fait évoluer la coupe de la blouse en cours d'année. Indiquez la version portée : « Septembre 2025 » correspond au modèle de la rentrée, « Janvier 2026 » au modèle révisé déployé après les vacances de Noël."
+                      />
+                      <div className="flex gap-2">
+                        {([
+                          { v: "septembre_2025", label: "Septembre 2025" },
+                          { v: "janvier_2026", label: "Janvier 2026" },
+                        ] as const).map((opt) => (
+                          <button
+                            key={opt.v}
+                            type="button"
+                            onClick={() =>
+                              setForm((f) => ({
+                                ...f,
+                                modele_blouse_2025: f.modele_blouse_2025 === opt.v ? "" : opt.v,
+                              }))
+                            }
+                            className={`flex-1 h-10 rounded-lg border-2 text-sm font-medium transition-all ${
+                              form.modele_blouse_2025 === opt.v
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-border bg-card text-foreground hover:border-primary/40"
+                            }`}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </>
                   )}
                 </div>
               </div>

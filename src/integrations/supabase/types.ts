@@ -22,6 +22,7 @@ export type Database = {
           genre: string | null
           hauteur: string | null
           id: string
+          modele_blouse_2025: string | null
           naissance: string | null
           nom: string
           prenom: string
@@ -41,6 +42,7 @@ export type Database = {
           genre?: string | null
           hauteur?: string | null
           id?: string
+          modele_blouse_2025?: string | null
           naissance?: string | null
           nom: string
           prenom: string
@@ -60,6 +62,7 @@ export type Database = {
           genre?: string | null
           hauteur?: string | null
           id?: string
+          modele_blouse_2025?: string | null
           naissance?: string | null
           nom?: string
           prenom?: string
