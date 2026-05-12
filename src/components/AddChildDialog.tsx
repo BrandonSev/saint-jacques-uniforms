@@ -224,7 +224,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
                 </div>
                 <div className="rounded-xl border border-border bg-background/60 p-2.5 flex flex-col gap-2">
                   <LabelWithTooltip
-                    label={`Porte-t-il la nouvelle blouse "FU" depuis la rentrée 09/2025 ?`}
+                    label={`Porte-t-il déjà la nouvelle blouse faite par France Uniformes cette année ?`}
                     tooltip="Votre enfant a-t-il porté une blouse France Uniformes depuis septembre 2025 ?"
                   />
                   <div className="flex gap-2">
