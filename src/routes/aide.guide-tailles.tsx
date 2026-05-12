@@ -154,11 +154,7 @@ function GuideTaillesPage() {
                 <span className="text-muted-foreground">
                   {recommendation.drivers.map((d) => `${d.key} ${d.value} cm → ${rows[d.idx].age}`).join(" · ")}
                 </span>
-                <span>
-                  Compléter les mensurations de cet enfant pour obtenir une recommandation fiable.{" "}
-                  <a href="/enfants">Gérer mes enfants</a>
-                </span>
-                {!recommendation.consistent && (
+                {!recommendation.consistent ? (
                   <>
                     <span className="rounded-full px-2 py-0.5 font-semibold bg-amber-50 text-emerald-500">
                       En cas de mesures discordantes → la taille la plus enveloppante est retenue dans la recommandation
@@ -168,6 +164,11 @@ function GuideTaillesPage() {
                       sur la fiche produit.
                     </span>
                   </>
+                ) : (
+                  <span>
+                    Compléter les mensurations de cet enfant pour obtenir une recommandation fiable.{" "}
+                    <a href="/enfants">Gérer mes enfants</a>
+                  </span>
                 )}
               </div>
             )}
