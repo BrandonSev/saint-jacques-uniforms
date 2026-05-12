@@ -296,7 +296,7 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
               if (!reco) return null;
               return (
                 <div
-                  title="Taille recommandée pour une 1ʳᵉ couche (body, t-shirt, polo, chemise)"
+                  title="Taille recommandée pour une 1ʳᵉ couche (t-shirt, polo, chemise)"
                   className="mr-auto inline-flex items-center gap-3 rounded-2xl px-4 py-2.5 shadow-sm ring-2 ring-inset bg-emerald-50 ring-emerald-700 border-emerald-700"
                 >
                   <Sparkles className="h-5 w-5 text-emerald-700" />
@@ -308,7 +308,7 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
                       {reco.row.age}
                     </span>
                     <span className="text-[9px] italic text-muted-foreground">
-                      1ʳᵉ couche (body, t-shirt, polo, chemise)
+                      1ʳᵉ couche (t-shirt, polo, chemise)
                     </span>
                   </div>
                   <span className="rounded-full bg-emerald-700 px-2 py-0.5 text-[9px] font-bold uppercase text-white">

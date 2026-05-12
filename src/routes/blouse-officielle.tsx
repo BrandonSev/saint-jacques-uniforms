@@ -212,7 +212,7 @@ function MaternellePage() {
                 </div>
                 {recommendation && (
                   <span
-                    title="Taille recommandée pour une 1ʳᵉ couche (body, t-shirt, polo, chemise)"
+                    title="Taille recommandée pour une 1ʳᵉ couche (t-shirt, polo, chemise)"
                     className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm ring-1 ring-inset bg-emerald-50 text-emerald-800 ring-emerald-700"
                   >
                     <Sparkles className="h-3.5 w-3.5 text-emerald-700" />
@@ -222,7 +222,7 @@ function MaternellePage() {
               </div>
               {recommendation && (
                 <p className="mt-1 text-[11px] italic text-muted-foreground">
-                  Recommandation calculée pour une 1ʳᵉ couche (body, t-shirt, polo, chemise).
+                  Recommandation calculée pour une 1ʳᵉ couche (t-shirt, polo, chemise).
                 </p>
               )}
               <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8">
