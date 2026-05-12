@@ -13,6 +13,7 @@ import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import bloussePliee from "@/assets/blouse-pliee.jpeg";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
 import { PageWatermark } from "@/components/PageWatermark";
+import { BackToSchoolAlert } from "@/components/BackToSchoolAlert";
 
 export const Route = createFileRoute("/blouse-officielle")({
   head: () => ({
@@ -134,6 +135,7 @@ function MaternellePage() {
       </div>
 
       <section className="relative mx-auto max-w-6xl w-full px-4 py-10 sm:px-6 lg:px-8">
+        <BackToSchoolAlert className="mb-8" />
         <div className="pointer-events-none absolute right-0 top-0 -z-0 h-96 w-96 text-primary">
           <ShellMotif className="h-full w-full" opacity={0.04} />
         </div>
