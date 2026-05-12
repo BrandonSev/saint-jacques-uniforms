@@ -565,6 +565,8 @@ function AdminPage() {
             </div>
           </div>
         )}
+
+        {tab === "roles" && <RolesPanel />}
       </section>
 
       {openIncident && (
