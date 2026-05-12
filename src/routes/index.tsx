@@ -136,8 +136,8 @@ function Index() {
           />
           <TrustItem
             icon={<Truck className="h-5 w-5" />}
-            title="Livraison à l'école ou directement à la maison"
-            text="Vos commandes sont remises dans le cartable de votre enfant ou expédiées à votre domicile."
+            title="Distribution par l'APEL"
+            text="Vos commandes sont distribuées avant la rentrée par l'APEL dans l'établissement. L'expédition à votre domicile sera disponible en option à partir de l'automne 2026."
           />
           <TrustItem
             icon={<MapPin className="h-5 w-5" />}
