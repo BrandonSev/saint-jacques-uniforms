@@ -167,7 +167,9 @@ function GuideTaillesPage() {
                 ) : (
                   <span>
                     Compléter les mensurations de cet enfant pour obtenir une recommandation fiable.{" "}
-                    <a href="/enfants">Gérer mes enfants</a>
+                    <a className="underline" href="/enfants">
+                      Gérer mes enfants
+                    </a>
                   </span>
                 )}
               </div>
