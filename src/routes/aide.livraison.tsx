@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { Truck, Package } from "lucide-react";
 import { PageWatermark } from "@/components/PageWatermark";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/aide/livraison")({
   head: () => ({
@@ -10,8 +11,16 @@ export const Route = createFileRoute("/aide/livraison")({
       { name: "description", content: "Modalités de livraison pour les commandes d'uniformes." },
     ],
   }),
-  component: LivraisonPage,
+  component: LivraisonRoute,
 });
+
+function LivraisonRoute() {
+  return (
+    <RequireAuth>
+      <LivraisonPage />
+    </RequireAuth>
+  );
+}
 
 function LivraisonPage() {
   return (

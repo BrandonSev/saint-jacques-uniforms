@@ -8,6 +8,7 @@ import { useMemo, useState, useEffect } from "react";
 import { ChildPicker } from "@/components/ChildPicker";
 import { useStore } from "@/lib/store";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/aide/guide-tailles")({
   head: () => ({
@@ -16,8 +17,16 @@ export const Route = createFileRoute("/aide/guide-tailles")({
       { name: "description", content: "Tableau des tailles et conseils de mesure pour les uniformes." },
     ],
   }),
-  component: GuideTaillesPage,
+  component: GuideTaillesRoute,
 });
+
+function GuideTaillesRoute() {
+  return (
+    <RequireAuth>
+      <GuideTaillesPage />
+    </RequireAuth>
+  );
+}
 
 const rows = [
   { age: "3 ans", stature: "90/97", poitrine: "53", taille: "50", bassin: "56" },
