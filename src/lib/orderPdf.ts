@@ -1,5 +1,35 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import logoUrl from "@/assets/france-uniformes-logo-white.png";
+
+// Couleurs de la charte France Uniformes.
+const FU_NAVY: [number, number, number] = [10, 37, 64];
+const FU_RED: [number, number, number] = [200, 16, 46];
+
+const ESTABLISHMENT_PICKUP = {
+  name: "Ensemble scolaire Saint-Jacques-de-Compostelle",
+  address: "32 rue Paul Lahargou",
+  postalCity: "40100 Dax",
+  hint: "Distribution assurée par l'APE — dates communiquées par e-mail.",
+};
+
+let cachedLogo: string | null = null;
+async function getLogoDataUrl(): Promise<string | null> {
+  if (cachedLogo) return cachedLogo;
+  try {
+    const res = await fetch(logoUrl);
+    const blob = await res.blob();
+    cachedLogo = await new Promise<string>((resolve, reject) => {
+      const r = new FileReader();
+      r.onloadend = () => resolve(r.result as string);
+      r.onerror = reject;
+      r.readAsDataURL(blob);
+    });
+    return cachedLogo;
+  } catch {
+    return null;
+  }
+}
 
 export type PdfOrderItem = {
   child: string;
@@ -48,23 +78,30 @@ function eur(n: number) {
   return `${n.toFixed(2).replace(".", ",")} €`;
 }
 
-export function buildOrderPdf(order: PdfOrder): jsPDF {
+export async function buildOrderPdf(order: PdfOrder): Promise<jsPDF> {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const W = doc.internal.pageSize.getWidth();
   const M = 40;
 
-  // En-tête
-  doc.setFillColor(15, 58, 95);
-  doc.rect(0, 0, W, 90, "F");
+  // En-tête — bandeau navy + logo France Uniformes + filet rouge.
+  doc.setFillColor(...FU_NAVY);
+  doc.rect(0, 0, W, 110, "F");
+  doc.setFillColor(...FU_RED);
+  doc.rect(0, 110, W, 3, "F");
+
+  const logo = await getLogoDataUrl();
+  if (logo) {
+    doc.addImage(logo, "PNG", M, 24, 130, 30);
+  }
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(10);
-  doc.text("SAINT-JACQUES-DE-COMPOSTELLE — DAX", M, 35);
-  doc.setFontSize(20);
-  doc.text("Récapitulatif de commande", M, 65);
+  doc.setFontSize(9);
+  doc.text("SAINT-JACQUES-DE-COMPOSTELLE — DAX", W - M, 38, { align: "right" });
+  doc.setFontSize(18);
+  doc.text("Récapitulatif de commande", W - M, 64, { align: "right" });
 
   doc.setTextColor(20, 20, 20);
   doc.setFontSize(11);
-  let y = 120;
+  let y = 140;
   doc.text(`N° de commande : ${order.orderNumber}`, M, y);
   doc.text(`Date : ${fr(order.createdAt)}`, W - M, y, { align: "right" });
   y += 16;
@@ -75,7 +112,7 @@ export function buildOrderPdf(order: PdfOrder): jsPDF {
 
   // Famille / livraison
   doc.setFontSize(10);
-  doc.setTextColor(100);
+  doc.setTextColor(...FU_RED);
   doc.text("FAMILLE", M, y);
   doc.text("LIVRAISON", W / 2, y);
   doc.setTextColor(20);
@@ -84,7 +121,14 @@ export function buildOrderPdf(order: PdfOrder): jsPDF {
   doc.text(family, M, y);
   const shipping =
     order.shipping.mode === "pickup"
-      ? "Retrait auprès de l'APEL\n(Dates communiquées par mail)"
+      ? [
+          "Retrait à l'établissement",
+          ESTABLISHMENT_PICKUP.name,
+          ESTABLISHMENT_PICKUP.address,
+          ESTABLISHMENT_PICKUP.postalCity,
+          "",
+          ESTABLISHMENT_PICKUP.hint,
+        ].join("\n")
       : [
           order.shipping.recipient,
           order.shipping.address,
@@ -93,7 +137,7 @@ export function buildOrderPdf(order: PdfOrder): jsPDF {
           .filter(Boolean)
           .join("\n") || "Adresse non renseignée";
   doc.text(shipping, W / 2, y);
-  y += 60;
+  y += order.shipping.mode === "pickup" ? 90 : 60;
 
   // Tableau articles
   autoTable(doc, {
@@ -109,7 +153,7 @@ export function buildOrderPdf(order: PdfOrder): jsPDF {
     ]),
     theme: "striped",
     styles: { fontSize: 9, cellPadding: 6 },
-    headStyles: { fillColor: [15, 58, 95], textColor: 255 },
+    headStyles: { fillColor: FU_NAVY, textColor: 255 },
     columnStyles: {
       3: { halign: "right" },
       4: { halign: "right" },
@@ -150,7 +194,7 @@ export function buildOrderPdf(order: PdfOrder): jsPDF {
   return doc;
 }
 
-export function downloadOrderPdf(order: PdfOrder) {
-  const doc = buildOrderPdf(order);
+export async function downloadOrderPdf(order: PdfOrder) {
+  const doc = await buildOrderPdf(order);
   doc.save(`commande-${order.orderNumber}.pdf`);
 }
