@@ -257,13 +257,15 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
                       <div className="flex flex-col gap-1.5">
                         <LabelWithTooltip
                           label="Quel modèle de blouse ?"
-                          tooltip={"Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la blouse — emmanchures élargies et manches allongées — pour un confort optimal, y compris portée sur un sweat. Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir la bonne taille.\n\nEn cas de doute, vous pouvez toujours prendre une taille au-dessus."}
+                          tooltip="France Uniformes a fait évoluer la coupe de la blouse en cours d'année. Indiquez la version portée : « Septembre 2025 » correspond au modèle de la rentrée, « Janvier 2026 » au modèle révisé déployé après les vacances de Noël."
                         />
                         <div className="flex gap-2">
-                          {([
-                            { v: "septembre_2025", label: "Sept. 2025" },
-                            { v: "janvier_2026", label: "Janv. 2026" },
-                          ] as const).map((opt) => (
+                          {(
+                            [
+                              { v: "septembre_2025", label: "Sept. 2025" },
+                              { v: "janvier_2026", label: "Janv. 2026" },
+                            ] as const
+                          ).map((opt) => (
                             <button
                               key={opt.v}
                               type="button"
@@ -434,7 +436,7 @@ function LiveSizeRecommendation({
       <div className="flex items-center gap-2">
         <Sparkles className="h-4 w-4 text-emerald-700" />
         <span className="font-medium text-foreground">
-        Taille recommandée : <span className="text-base font-bold text-emerald-800">{reco.row.age}</span>
+          Taille recommandée : <span className="text-base font-bold text-emerald-800">{reco.row.age}</span>
         </span>
         <span className="rounded-full bg-emerald-700 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
           Reco
@@ -444,8 +446,11 @@ function LiveSizeRecommendation({
         {filledCount}/4 mesure{filledCount > 1 ? "s" : ""} renseignée{filledCount > 1 ? "s" : ""}
       </span>
       <span className="text-[11px] italic text-muted-foreground leading-snug">
-        Conseil : assurez-vous d'avoir complété les 4 mensurations de votre enfant afin de bénéficier d'une recommandation fiabilisée.{" "}
-        <a href="/enfants" className="underline underline-offset-2 hover:text-emerald-700">Gérer mes enfants</a>
+        Conseil : assurez-vous d'avoir complété les 4 mensurations de votre enfant afin de bénéficier d'une
+        recommandation fiabilisée.{" "}
+        <a href="/enfants" className="underline underline-offset-2 hover:text-emerald-700">
+          Gérer mes enfants
+        </a>
       </span>
     </div>
   );
@@ -583,7 +588,7 @@ function Select({
   );
 }
 
-const TAILLE_OPTIONS = ["4", "6", "8", "10", "12", "14", "16", "18"];
+const TAILLE_OPTIONS = ["3", "4", "6", "8", "10", "12", "14", "16", "18"];
 
 function LabelWithTooltip({ label, tooltip }: { label: string; tooltip?: string }) {
   const [tipOpen, setTipOpen] = useState(false);
