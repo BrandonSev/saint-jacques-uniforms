@@ -87,7 +87,24 @@ const COLORS = [
 ];
 
 function decorate(
-  c: { id: string; prenom: string; nom: string; naissance: string | null; classe: string | null; section: string | null; taille: string | null; hauteur: string | null; tour: string | null; tour_taille?: string | null; tour_bassin?: string | null; genre?: string | null; blouse_portee_2025?: boolean | null; taille_blouse_2025?: string | null; modele_blouse_2025?: string | null; updated_at?: string | null },
+  c: {
+    id: string;
+    prenom: string;
+    nom: string;
+    naissance: string | null;
+    classe: string | null;
+    section: string | null;
+    taille: string | null;
+    hauteur: string | null;
+    tour: string | null;
+    tour_taille?: string | null;
+    tour_bassin?: string | null;
+    genre?: string | null;
+    blouse_portee_2025?: boolean | null;
+    taille_blouse_2025?: string | null;
+    modele_blouse_2025?: string | null;
+    updated_at?: string | null;
+  },
   idx: number,
 ): Child {
   const initials = ((c.prenom[0] ?? "") + (c.nom[0] ?? "")).toUpperCase();
@@ -106,8 +123,7 @@ function decorate(
     genre: (c.genre as Child["genre"]) ?? "",
     initials,
     color: COLORS[idx % COLORS.length],
-    blouse_portee_2025:
-      c.blouse_portee_2025 === true ? "oui" : c.blouse_portee_2025 === false ? "non" : "",
+    blouse_portee_2025: c.blouse_portee_2025 === true ? "oui" : c.blouse_portee_2025 === false ? "non" : "",
     taille_blouse_2025: c.taille_blouse_2025 ?? "",
     modele_blouse_2025: (c.modele_blouse_2025 as Child["modele_blouse_2025"]) ?? "",
     updated_at: c.updated_at ?? "",
@@ -158,7 +174,9 @@ function useLocal<T>(key: string, initial: T): [T, (v: T | ((p: T) => T)) => voi
   }, [key]);
   useEffect(() => {
     if (!hydrated) return;
-    try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+    try {
+      localStorage.setItem(key, JSON.stringify(val));
+    } catch {}
   }, [key, val, hydrated]);
   return [val, setVal];
 }
@@ -175,7 +193,9 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
   const [isApel, setIsApel] = useState(false);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_e, s) => {
       setSession(s);
       setUser(s?.user ?? null);
       if (!s) {
@@ -200,7 +220,11 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
   }, []);
 
   const loadChildren = useCallback(async (uid: string) => {
-    const { data } = await supabase.from("children").select("*").eq("user_id", uid).order("created_at", { ascending: true });
+    const { data } = await supabase
+      .from("children")
+      .select("*")
+      .eq("user_id", uid)
+      .order("created_at", { ascending: true });
     if (data) setChildList(data.map((c, i) => decorate(c as any, i)));
   }, []);
 
@@ -248,157 +272,219 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
     return { ...c, nom, initials };
   });
 
-  const value = useMemo<StoreCtx>(() => ({
-    user, session, profile, authLoading, isAdmin, isApel,
-    signOut: async () => { await supabase.auth.signOut(); },
-    refreshProfile: async () => { if (user) await loadProfile(user.id); },
-    updateProfile: async (patch) => {
-      if (!user) return;
-      const { data, error } = await supabase.from("profiles").update(patch).eq("id", user.id).select().single();
-      if (error) throw error;
-      if (data) setProfile(data as Profile);
-    },
+  const value = useMemo<StoreCtx>(
+    () => ({
+      user,
+      session,
+      profile,
+      authLoading,
+      isAdmin,
+      isApel,
+      signOut: async () => {
+        await supabase.auth.signOut();
+      },
+      refreshProfile: async () => {
+        if (user) await loadProfile(user.id);
+      },
+      updateProfile: async (patch) => {
+        if (!user) return;
+        const { data, error } = await supabase.from("profiles").update(patch).eq("id", user.id).select().single();
+        if (error) throw error;
+        if (data) setProfile(data as Profile);
+      },
 
-    children: displayedChildren,
-    addChild: async (c) => {
-      if (!user) return;
-      const { data, error } = await supabase.from("children").insert({
-        user_id: user.id,
-        prenom: c.prenom, nom: c.nom,
-        naissance: c.naissance || null,
-        classe: c.classe || null, section: c.section || null,
-        taille: c.taille || null, hauteur: c.hauteur || null, tour: c.tour || null,
-        tour_taille: c.tour_taille || null,
-        tour_bassin: c.tour_bassin || null,
-        genre: c.genre || null,
-        blouse_portee_2025:
-          c.blouse_portee_2025 === "oui" ? true : c.blouse_portee_2025 === "non" ? false : null,
-        taille_blouse_2025: c.taille_blouse_2025 || null,
-        modele_blouse_2025: c.modele_blouse_2025 || null,
-      }).select().single();
-      if (error) throw error;
-      if (data) setChildList((p) => [...p, decorate(data as any, p.length)]);
-    },
-    updateChild: async (id, patch) => {
-      const dbPatch: any = { ...patch };
-      if ("naissance" in dbPatch && !dbPatch.naissance) dbPatch.naissance = null;
-      if ("genre" in dbPatch && !dbPatch.genre) dbPatch.genre = null;
-      if ("blouse_portee_2025" in dbPatch) {
-        dbPatch.blouse_portee_2025 =
-          dbPatch.blouse_portee_2025 === "oui"
-            ? true
-            : dbPatch.blouse_portee_2025 === "non"
-              ? false
-              : null;
-      }
-      if ("taille_blouse_2025" in dbPatch && !dbPatch.taille_blouse_2025) {
-        dbPatch.taille_blouse_2025 = null;
-      }
-      if ("modele_blouse_2025" in dbPatch && !dbPatch.modele_blouse_2025) {
-        dbPatch.modele_blouse_2025 = null;
-      }
-      const { data, error } = await supabase.from("children").update(dbPatch).eq("id", id).select().single();
-      if (error) throw error;
-      if (data) setChildList((p) => p.map((c, i) => (c.id === id ? decorate(data as any, i) : c)));
-    },
-    removeChild: async (id) => {
-      const { error } = await supabase.from("children").delete().eq("id", id);
-      if (error) throw error;
-      setChildList((p) => p.filter((c) => c.id !== id));
-      setCart((p) => p.filter((i) => i.childId !== id));
-    },
+      children: displayedChildren,
+      addChild: async (c) => {
+        if (!user) return;
+        const { data, error } = await supabase
+          .from("children")
+          .insert({
+            user_id: user.id,
+            prenom: c.prenom,
+            nom: c.nom,
+            naissance: c.naissance || null,
+            classe: c.classe || null,
+            section: c.section || null,
+            taille: c.taille || null,
+            hauteur: c.hauteur || null,
+            tour: c.tour || null,
+            tour_taille: c.tour_taille || null,
+            tour_bassin: c.tour_bassin || null,
+            genre: c.genre || null,
+            blouse_portee_2025: c.blouse_portee_2025 === "oui" ? true : c.blouse_portee_2025 === "non" ? false : null,
+            taille_blouse_2025: c.taille_blouse_2025 || null,
+            modele_blouse_2025: c.modele_blouse_2025 || null,
+          })
+          .select()
+          .single();
+        if (error) throw error;
+        if (data) setChildList((p) => [...p, decorate(data as any, p.length)]);
+      },
+      updateChild: async (id, patch) => {
+        const dbPatch: any = { ...patch };
+        if ("naissance" in dbPatch && !dbPatch.naissance) dbPatch.naissance = null;
+        if ("genre" in dbPatch && !dbPatch.genre) dbPatch.genre = null;
+        if ("blouse_portee_2025" in dbPatch) {
+          dbPatch.blouse_portee_2025 =
+            dbPatch.blouse_portee_2025 === "oui" ? true : dbPatch.blouse_portee_2025 === "non" ? false : null;
+        }
+        if ("taille_blouse_2025" in dbPatch && !dbPatch.taille_blouse_2025) {
+          dbPatch.taille_blouse_2025 = null;
+        }
+        if ("modele_blouse_2025" in dbPatch && !dbPatch.modele_blouse_2025) {
+          dbPatch.modele_blouse_2025 = null;
+        }
+        const { data, error } = await supabase.from("children").update(dbPatch).eq("id", id).select().single();
+        if (error) throw error;
+        if (data) setChildList((p) => p.map((c, i) => (c.id === id ? decorate(data as any, i) : c)));
+      },
+      removeChild: async (id) => {
+        const { error } = await supabase.from("children").delete().eq("id", id);
+        if (error) throw error;
+        setChildList((p) => p.filter((c) => c.id !== id));
+        setCart((p) => p.filter((i) => i.childId !== id));
+      },
 
-    parents: parentList,
-    addParent: async (p) => {
-      if (!user) return;
-      const position = parentList.length;
-      const { data, error } = await supabase.from("family_parents").insert({
-        user_id: user.id,
-        role: p.role || (position === 0 ? "Mère" : "Père"),
-        civilite: p.civilite || "Mme",
-        prenom: p.prenom || "",
-        nom: p.nom || "",
-        email: p.email || null,
-        telephone: p.telephone || null,
-        adresse: p.adresse || null,
-        code_postal: p.code_postal || null,
-        ville: p.ville || null,
-        is_primary: position === 0,
-        position,
-      }).select().single();
-      if (error) throw error;
-      if (data) setParentList((prev) => [...prev, data as FamilyParent]);
-    },
-    updateParent: async (id, patch) => {
-      const { data, error } = await supabase.from("family_parents").update(patch).eq("id", id).select().single();
-      if (error) throw error;
-      if (data) setParentList((prev) => prev.map((p) => (p.id === id ? (data as FamilyParent) : p)));
-    },
-    removeParent: async (id) => {
-      const { error } = await supabase.from("family_parents").delete().eq("id", id);
-      if (error) throw error;
-      setParentList((prev) => prev.filter((p) => p.id !== id));
-    },
+      parents: parentList,
+      addParent: async (p) => {
+        if (!user) return;
+        const position = parentList.length;
+        const { data, error } = await supabase
+          .from("family_parents")
+          .insert({
+            user_id: user.id,
+            role: p.role || (position === 0 ? "Mère" : "Père"),
+            civilite: p.civilite || "Mme",
+            prenom: p.prenom || "",
+            nom: p.nom || "",
+            email: p.email || null,
+            telephone: p.telephone || null,
+            adresse: p.adresse || null,
+            code_postal: p.code_postal || null,
+            ville: p.ville || null,
+            is_primary: position === 0,
+            position,
+          })
+          .select()
+          .single();
+        if (error) throw error;
+        if (data) setParentList((prev) => [...prev, data as FamilyParent]);
+      },
+      updateParent: async (id, patch) => {
+        if (patch.email) {
+          const { data: existingAccount, error: checkError } = await supabase
+            .from("family_parents")
+            .select("id")
+            .eq("email", patch.email)
+            .neq("id", id)
+            .maybeSingle();
 
-    cart,
-    addToCart: (item) => {
-      setCart((prev) => {
-        const existing = prev.find((i) => i.productId === item.productId && i.size === item.size && i.childId === item.childId);
-        if (existing) return prev.map((i) => (i.id === existing.id ? { ...i, qty: i.qty + item.qty } : i));
-        return [...prev, { ...item, id: `${item.productId}-${item.size}-${item.childId}-${Date.now()}` }];
-      });
-    },
-    updateQty: (id, qty) => setCart((prev) => qty <= 0 ? prev.filter((i) => i.id !== id) : prev.map((i) => i.id === id ? { ...i, qty } : i)),
-    removeFromCart: (id) => setCart((prev) => prev.filter((i) => i.id !== id)),
-    clearCart: () => setCart([]),
-    cartCount: cart.reduce((s, i) => s + i.qty, 0),
-    checkout: async (shipping) => {
-      if (!user || !profile) throw new Error("Non connecté");
-      if (cart.length === 0) throw new Error("Panier vide");
-      const total = cart.reduce((s, i) => s + i.qty * i.price, 0);
-      const { data: order, error: oErr } = await supabase.from("orders").insert({
-        user_id: user.id,
-        status: "En attente paiement",
-        total_amount: total,
-        family_civilite: profile.civilite,
-        family_nom: profile.nom,
-        family_prenom: profile.prenom,
-        family_email: profile.email,
-        family_telephone: profile.telephone,
-        shipping_mode: shipping.mode,
-        shipping_label: shipping.label ?? null,
-        shipping_recipient: shipping.recipient ?? null,
-        shipping_address: shipping.address ?? null,
-        shipping_postal: shipping.postal ?? null,
-        shipping_city: shipping.city ?? null,
-      }).select().single();
-      if (oErr) throw oErr;
-      const items = cart.map((i) => {
-        const child = childList.find((c) => c.id === i.childId);
-        const [productId, ...variantParts] = i.productId.split("::");
-        return {
-          order_id: order.id,
-          child_id: i.childId || null,
-          child_prenom: child?.prenom ?? "—",
-          child_nom: child?.nom ?? "—",
-          child_classe: child?.classe ?? null,
-          child_section: child?.section ?? null,
-          product_id: productId,
-          product_name: i.name,
-          product_ref: i.ref,
-          variant: variantParts.join("::") || null,
-          size: i.size,
-          quantity: i.qty,
-          unit_price: i.price,
-          line_total: i.qty * i.price,
-        };
-      });
-      const { error: iErr } = await supabase.from("order_items").insert(items);
-      if (iErr) throw iErr;
-      setCart([]);
-      return { orderId: order.id, orderNumber: order.order_number };
-    },
-  }), [user, session, profile, authLoading, isAdmin, isApel, childList, displayedChildren, parentList, cart, setCart, loadProfile]);
+          if (checkError) throw checkError;
+
+          if (existingAccount) {
+            throw new Error(
+              "Une erreur est survenu lors de la modification de votre mail. Veuillez indiquer un mail valide",
+            );
+          }
+        }
+
+        const { data, error } = await supabase.from("family_parents").update(patch).eq("id", id).select().single();
+
+        if (error) throw error;
+
+        if (data) {
+          setParentList((prev) => prev.map((p) => (p.id === id ? (data as FamilyParent) : p)));
+        }
+      },
+      removeParent: async (id) => {
+        const { error } = await supabase.from("family_parents").delete().eq("id", id);
+        if (error) throw error;
+        setParentList((prev) => prev.filter((p) => p.id !== id));
+      },
+
+      cart,
+      addToCart: (item) => {
+        setCart((prev) => {
+          const existing = prev.find(
+            (i) => i.productId === item.productId && i.size === item.size && i.childId === item.childId,
+          );
+          if (existing) return prev.map((i) => (i.id === existing.id ? { ...i, qty: i.qty + item.qty } : i));
+          return [...prev, { ...item, id: `${item.productId}-${item.size}-${item.childId}-${Date.now()}` }];
+        });
+      },
+      updateQty: (id, qty) =>
+        setCart((prev) =>
+          qty <= 0 ? prev.filter((i) => i.id !== id) : prev.map((i) => (i.id === id ? { ...i, qty } : i)),
+        ),
+      removeFromCart: (id) => setCart((prev) => prev.filter((i) => i.id !== id)),
+      clearCart: () => setCart([]),
+      cartCount: cart.reduce((s, i) => s + i.qty, 0),
+      checkout: async (shipping) => {
+        if (!user || !profile) throw new Error("Non connecté");
+        if (cart.length === 0) throw new Error("Panier vide");
+        const total = cart.reduce((s, i) => s + i.qty * i.price, 0);
+        const { data: order, error: oErr } = await supabase
+          .from("orders")
+          .insert({
+            user_id: user.id,
+            status: "En attente paiement",
+            total_amount: total,
+            family_civilite: profile.civilite,
+            family_nom: profile.nom,
+            family_prenom: profile.prenom,
+            family_email: profile.email,
+            family_telephone: profile.telephone,
+            shipping_mode: shipping.mode,
+            shipping_label: shipping.label ?? null,
+            shipping_recipient: shipping.recipient ?? null,
+            shipping_address: shipping.address ?? null,
+            shipping_postal: shipping.postal ?? null,
+            shipping_city: shipping.city ?? null,
+          })
+          .select()
+          .single();
+        if (oErr) throw oErr;
+        const items = cart.map((i) => {
+          const child = childList.find((c) => c.id === i.childId);
+          const [productId, ...variantParts] = i.productId.split("::");
+          return {
+            order_id: order.id,
+            child_id: i.childId || null,
+            child_prenom: child?.prenom ?? "—",
+            child_nom: child?.nom ?? "—",
+            child_classe: child?.classe ?? null,
+            child_section: child?.section ?? null,
+            product_id: productId,
+            product_name: i.name,
+            product_ref: i.ref,
+            variant: variantParts.join("::") || null,
+            size: i.size,
+            quantity: i.qty,
+            unit_price: i.price,
+            line_total: i.qty * i.price,
+          };
+        });
+        const { error: iErr } = await supabase.from("order_items").insert(items);
+        if (iErr) throw iErr;
+        setCart([]);
+        return { orderId: order.id, orderNumber: order.order_number };
+      },
+    }),
+    [
+      user,
+      session,
+      profile,
+      authLoading,
+      isAdmin,
+      isApel,
+      childList,
+      displayedChildren,
+      parentList,
+      cart,
+      setCart,
+      loadProfile,
+    ],
+  );
 
   return <Ctx.Provider value={value}>{kids}</Ctx.Provider>;
 }

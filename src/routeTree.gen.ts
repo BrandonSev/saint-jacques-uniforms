@@ -170,9 +170,9 @@ const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
 } as any)
 const EnfantsChildIdHistoriqueRoute =
   EnfantsChildIdHistoriqueRouteImport.update({
-    id: '/$childId/historique',
-    path: '/$childId/historique',
-    getParentRoute: () => EnfantsRoute,
+    id: '/enfants/$childId/historique',
+    path: '/enfants/$childId/historique',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicPayplugWebhookRoute = ApiPublicPayplugWebhookRouteImport.update({
   id: '/api/public/payplug-webhook',
@@ -453,6 +453,7 @@ export interface RootRouteChildren {
   EnfantsIndexRoute: typeof EnfantsIndexRoute
   ApiPublicEmailDiagRoute: typeof ApiPublicEmailDiagRoute
   ApiPublicPayplugWebhookRoute: typeof ApiPublicPayplugWebhookRoute
+  EnfantsChildIdHistoriqueRoute: typeof EnfantsChildIdHistoriqueRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -640,10 +641,10 @@ declare module '@tanstack/react-router' {
     }
     '/enfants/$childId/historique': {
       id: '/enfants/$childId/historique'
-      path: '/$childId/historique'
+      path: '/enfants/$childId/historique'
       fullPath: '/enfants/$childId/historique'
       preLoaderRoute: typeof EnfantsChildIdHistoriqueRouteImport
-      parentRoute: typeof EnfantsRoute
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/payplug-webhook': {
       id: '/api/public/payplug-webhook'
@@ -735,6 +736,7 @@ const rootRouteChildren: RootRouteChildren = {
   EnfantsIndexRoute: EnfantsIndexRoute,
   ApiPublicEmailDiagRoute: ApiPublicEmailDiagRoute,
   ApiPublicPayplugWebhookRoute: ApiPublicPayplugWebhookRoute,
+  EnfantsChildIdHistoriqueRoute: EnfantsChildIdHistoriqueRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
