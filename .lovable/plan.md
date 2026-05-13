@@ -1,47 +1,61 @@
-## Objectif
+Cette demande contient 13 modifications distinctes touchant plusieurs pages, composants, la logique de recommandation de taille et la base de données. Je propose ce plan d'exécution.
 
-Renforcer la mise en avant du « Made in France » sur la page **Blouse officielle** (`/blouse-officielle`) avec un drapeau français 🇫🇷 et la mention « Fabrication française » à plusieurs endroits clés.
+## 1. Breadcrumbs — gestion du truncate
+Repérer le composant de breadcrumbs (probablement inline dans `src/routes/*.tsx` comme `lycee.tsx`/`college.tsx`). Ajouter `min-w-0`, `truncate` et un wrapper `flex-1` sur le dernier segment pour qu'il se tronque proprement sur petits écrans.
 
-## Modifications dans `src/routes/blouse-officielle.tsx`
+## 2. `/` — drapeau français au lieu de l'icône MapPin
+Dans `src/routes/index.tsx`, remplacer l'icône `MapPin` du `TrustItem` "Fabrication française" par un petit composant `FrenchFlag` (3 bandes CSS bleu/blanc/rouge, déjà utilisé sur `blouse-officielle` et `ProductCard`).
 
-### 1. Badge drapeau sur la galerie (au-dessus de l'image principale)
-Ajouter un badge superposé en haut à gauche de l'image principale :
-- Drapeau FR (3 bandes bleu/blanc/rouge en CSS pur, pas d'emoji pour un rendu net) + texte « Fabriqué en France »
-- Style : pill blanc avec ombre légère, position `absolute top-3 left-3`
+## 3. `ProductCard` — guide des tailles en modal
+- Ajouter dans `src/components/ProductCard.tsx` un `Dialog` (shadcn) qui affiche le contenu du guide des tailles (extrait depuis `aide.guide-tailles.tsx`) au clic sur "Guide des tailles", au lieu du `Link` actuel.
+- Pour éviter la duplication, extraire le tableau et le texte du guide dans un nouveau composant partagé `src/components/SizeGuideContent.tsx` réutilisé par la page `/aide/guide-tailles` et par le modal.
 
-### 2. Badge à côté du titre
-Ajouter une seconde pastille à côté du badge « Tenue officielle » existant, ligne 170 :
-- Mini drapeau + « Fabrication française »
-- Même style que la pastille existante (rounded-full, fond clair)
+## 4. Logique "blouse = taille +1" (rentrée 2025)
+- Modifier `src/lib/sizeRecommendation.ts` : ajouter un paramètre optionnel `{ product?: "blouse" }` à `recommendSize()` qui décale l'index recommandé de +1 (capé sur la dernière ligne).
+- Mettre à jour les appelants : `AddChildDialog`, page enfants, page blouse, ProductCard. Quand le produit est la blouse, afficher la taille +1 et un message explicite "Pour la blouse livrée à la rentrée de Septembre 2025, nous recommandons de prendre une taille au-dessus".
+- Ajouter cette mention sur le guide des tailles dans une encart dédié blouse.
 
-### 3. Renforcement du paragraphe descriptif (ligne 185-190)
-Mettre en gras la mention finale « **Confectionnée dans nos ateliers français** 🇫🇷 » avec un petit drapeau inline.
+## 5. `/boutique` — accent Collège & Lycée
+Dans `src/routes/boutique.tsx`, remplacer `accent` des entrées `college` et `lycee` par "Non gérée par France Uniformes".
 
-### 4. Bloc « Trust » en bas (ligne 287-291)
-Remplacer la simple ligne « Fabrication française » par une mise en valeur :
-- Icône drapeau FR (au lieu du `Check`)
-- Texte en `font-semibold`
-- Fond légèrement teinté pour faire ressortir cette ligne par rapport aux autres bullets
+## 6. `/lycee` harmonisé avec `/college`
+Reprendre la structure visuelle de `src/routes/college.tsx` (header, breadcrumbs, hero, sections, CTAs) dans `src/routes/lycee.tsx` en gardant le contenu spécifique "Prochainement / 3ᵉ rattachée".
 
-### 5. Nouveau bandeau « Made in France » dans le bloc Description (après ligne 313)
-Ajouter une bande horizontale dans le bloc `bg-secondary` :
-- Grand drapeau français à gauche
-- Titre « Fabriqué en France 🇫🇷 » + sous-texte « Confection 100% française dans nos ateliers, du tissu à la finition. »
-- Border-top pour séparer du contenu existant
+## 7. `/boutique` — retirer "du lundi au vendredi…"
+Dans `src/routes/boutique.tsx`, simplifier la phrase de bas de page :
+"Besoin d'aide ? Contactez la boutique par email à boutique@franceuniformes.fr".
 
-## Composant drapeau
+## 8. Mise en valeur ESS (économie sociale et solidaire)
+- Ajouter dans `src/routes/blouse-officielle.tsx` un encart dédié "Fabriquée en France via l'économie sociale et solidaire" expliquant la production par des personnes en situation de handicap / reconversion / réinsertion professionnelle.
+- Ajouter une mention compacte aussi sur `/` (TrustItem "Fabrication française" → texte enrichi) et sur `ProductCard` blouse (petite ligne sous le badge).
 
-Créer un petit composant inline `<FrenchFlag />` réutilisable dans le fichier (ou inline avec 3 `<span>` colorés) :
-```tsx
-<span className="inline-flex h-3 w-5 overflow-hidden rounded-sm border border-border">
-  <span className="flex-1 bg-[#0055A4]" />
-  <span className="flex-1 bg-white" />
-  <span className="flex-1 bg-[#EF4135]" />
-</span>
-```
-Tailles variables (h-3 / h-4 / h-6) selon le contexte.
+## 9. `/blouse-officielle` — alléger les mentions "Fabrication française"
+- Garder le badge sur l'image de galerie OU à côté de "Tenue officielle", pas les deux. Choix : conserver le badge image (plus visible) et supprimer le pill à côté de "Tenue officielle".
+- Conserver également la mention dans la description (`<strong>`) et le grand bandeau "Made in France" repensé pour intégrer la mention ESS (point 8).
+- Supprimer le doublon dans le bloc de confiance si redondant.
 
-## Hors scope
+## 10. Harmoniser tous les badges "Taille recommandée"
+Créer `src/components/SizeBadge.tsx` utilisé partout (page enfants, AddChildDialog, ProductCard, blouse-officielle, guide-tailles). Style unique : pill `bg-primary/10 text-primary border border-primary/20`, icône `Ruler`, texte "Taille recommandée : X ans" + variante "blouse" (taille +1).
 
-- Pas de changement sur les autres pages (maternelle, college, lycée, index). L'utilisateur a précisé « partout sur la blouse » → uniquement la page produit.
-- Aucune modification backend.
+## 11. Nouveau type d'incident "Erreur de commande"
+- Ajouter "Erreur de commande" dans la liste des types proposés sur le formulaire d'incident (côté UI, fichier de la modale d'incident — à repérer dans `commandes.tsx` ou composant dédié).
+- Pas de changement DB nécessaire (`incident_type` est `text` libre).
+
+## 12. Élargir la colonne "Taille" sur le guide des tailles
+Dans `src/routes/aide.guide-tailles.tsx` et le composant partagé créé en 3, augmenter la largeur de la colonne `Taille` (`w-` plus large + `whitespace-nowrap`).
+
+## 13. Date de mise à jour des enfants + tooltip
+- Afficher `updated_at` formaté ("Mis à jour le …") sur chaque carte enfant dans `src/routes/enfants.tsx`.
+- Ajouter un `Tooltip` (shadcn) sur la phrase "n'hésitez pas à mettre à jour…" expliquant que les mensurations évoluent et impactent la taille recommandée.
+
+## Ordre de livraison
+1. Composants partagés (SizeBadge, SizeGuideContent, FrenchFlag réutilisable)
+2. Logique `sizeRecommendation` + appelants
+3. Pages (`index`, `boutique`, `lycee`, `blouse-officielle`, `enfants`, `aide.guide-tailles`)
+4. ProductCard (modal + badge + ESS)
+5. Incident type
+6. Breadcrumbs truncate
+
+Aucune migration DB nécessaire.
+
+Confirmez-vous ce plan ? Je peux aussi le découper en plusieurs livraisons si vous préférez valider par lots.
