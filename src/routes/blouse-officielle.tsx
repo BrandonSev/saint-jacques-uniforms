@@ -230,10 +230,17 @@ function MaternellePage() {
                 )}
               </div>
               {recommendation && (
-                <p className="mt-1 text-[11px] italic text-muted-foreground">
-                  Pour la blouse livrée à la rentrée de Septembre 2025, nous recommandons explicitement
-                  de prendre une taille au-dessus.
-                </p>
+                <div className="mt-1 space-y-2 text-[11px] italic leading-relaxed text-muted-foreground">
+                  <p>
+                    Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la blouse, emmanchures élargies et manches allongées, pour un confort optimal, y compris portée sur un sweat.
+                  </p>
+                  <p>
+                    Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir la bonne taille.
+                  </p>
+                  <p>
+                    En cas de doute, vous pouvez toujours prendre une taille au-dessus.
+                  </p>
+                </div>
               )}
               <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8">
                 {sizes.map((s) => (
