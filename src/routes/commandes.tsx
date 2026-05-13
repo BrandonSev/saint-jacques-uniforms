@@ -462,7 +462,7 @@ function CommandesPage() {
                             onClick={() => handleDownloadPdf(o)}
                             className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:border-primary hover:text-primary"
                           >
-                            <FileDown className="h-3.5 w-3.5" /> Voir la facture
+                            <FileDown className="h-3.5 w-3.5" /> Voir le récapitulatif de commande
                           </button>
                         )}
                       </div>

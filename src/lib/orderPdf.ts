@@ -130,15 +130,22 @@ export function buildOrderPdf(order: PdfOrder): jsPDF {
     doc.text(`Suivi : ${order.trackingCarrier ?? ""} ${order.trackingNumber}`, M, ty);
   }
 
-  // Pied de page
+  // Pied de page — mentions légales France Uniformes
+  const pageH = doc.internal.pageSize.getHeight();
   doc.setFontSize(8);
   doc.setTextColor(120);
   doc.text(
-    "Établissement Saint-Jacques · Document généré automatiquement.",
+    "Document généré automatiquement — ne constitue pas une facture officielle.",
     W / 2,
-    doc.internal.pageSize.getHeight() - 24,
+    pageH - 48,
     { align: "center" },
   );
+  doc.setFontSize(7);
+  doc.setTextColor(140);
+  const legal1 = "France Uniformes — SAS au capital de 2 500 € — RCS Chartres — SIRET 983 587 932 00010";
+  const legal2 = "TVA FR43 983 587 932 — Code NAF/APE 4791B — Siège social : 2 rue Percheronne, 28000 Chartres, France";
+  doc.text(legal1, W / 2, pageH - 32, { align: "center" });
+  doc.text(legal2, W / 2, pageH - 22, { align: "center" });
 
   return doc;
 }
