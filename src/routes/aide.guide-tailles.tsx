@@ -140,11 +140,15 @@ function GuideTaillesPage() {
             supérieure.
           </p>
           <div className="rounded-xl border border-amber-300 bg-amber-50/70 p-3 text-foreground/85">
-            <p className="text-sm leading-relaxed">
-              <b>Cas particulier — Blouse livrée à la rentrée de Septembre 2025 :</b> nous recommandons
-              <b> explicitement de prendre une taille au-dessus</b> de la taille calculée ci-dessous, afin
-              que la blouse reste confortable sur l'année scolaire.
-            </p>
+            <div className="text-sm leading-relaxed space-y-3">
+              <p><b>Cas particulier — Blouse livrée à la rentrée de Septembre 2025 :</b></p>
+              <p>
+                Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la blouse, emmanchures élargies et manches allongées, pour un confort optimal, y compris portée sur un sweat. Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir la bonne taille.
+              </p>
+              <p>
+                En cas de doute, vous pouvez toujours prendre une taille au-dessus.
+              </p>
+            </div>
           </div>
         </div>
 
