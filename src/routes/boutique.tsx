@@ -45,7 +45,7 @@ const levels = [
     range: "CM2 · 6e · 5e · 4e",
     image: college,
     href: "/college" as const,
-    accent: "Polo, pull, chemise, tee-shirt",
+    accent: "Non gérée par France Uniformes",
   },
   {
     id: "lycee",
@@ -54,7 +54,7 @@ const levels = [
     range: "3e · 2nde · 1re · Terminale",
     image: lycee,
     href: "/lycee" as const,
-    accent: "Prochainement !",
+    accent: "Non gérée par France Uniformes",
   },
 ];
 
@@ -111,8 +111,7 @@ function NiveauPage() {
 
         <p className="mt-10 text-center text-xs text-muted-foreground">
           Besoin d'aide ? Contactez la boutique par email à{" "}
-          <span className="text-foreground font-medium">boutique@franceuniformes.fr</span> · du lundi au vendredi,
-          9h–17h
+          <span className="text-foreground font-medium">boutique@franceuniformes.fr</span>
         </p>
       </section>
       <DirectorQuote
