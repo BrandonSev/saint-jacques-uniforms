@@ -310,7 +310,7 @@ function LoginPage() {
                     />
                   </Field>
                 </div>
-                <Field label="Email - Boutique France Uniformes SJDC" icon={<Mail className="h-4 w-4" />}>
+                <Field label={"EMAIL\n"} icon={<Mail className="h-4 w-4" />}>
                   <input
                     type="email"
                     required
