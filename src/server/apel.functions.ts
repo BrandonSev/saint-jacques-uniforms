@@ -53,7 +53,7 @@ export const sendApelReminders = createServerFn({ method: "POST" })
     }
     const { data: profiles } = await supabaseAdmin
       .from("profiles")
-      .select("id, email, prenom")
+      .select("id, email, prenom, nom")
       .in("id", data.userIds);
     let sent = 0;
     const errors: string[] = [];
@@ -65,6 +65,7 @@ export const sendApelReminders = createServerFn({ method: "POST" })
           recipientEmail: p.email,
           templateData: {
             prenom: p.prenom ?? "",
+            familyName: (p as any).nom ?? "",
             deadline: data.deadline ?? "30 juin 2026",
             customMessage: data.customMessage,
           },
