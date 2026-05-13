@@ -139,7 +139,7 @@ function MaternellePage() {
         </div>
       </div>
 
-      <section className="relative mx-auto max-w-6xl w-full px-4 py-10 sm:px-6 lg:px-8">
+      <section className="relative mx-auto max-w-6xl w-full px-4 pt-4 pb-10 sm:px-6 lg:px-8">
         <BackToSchoolAlert className="mb-8" />
         <div className="pointer-events-none absolute right-0 top-0 -z-0 h-96 w-96 text-primary">
           <ShellMotif className="h-full w-full" opacity={0.04} />

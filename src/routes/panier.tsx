@@ -133,7 +133,7 @@ function PanierPage() {
       <PageWatermark />
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
-      <section className="relative mx-auto max-w-6xl w-full px-4 py-10 sm:px-6 lg:px-8">
+      <section className="relative mx-auto max-w-6xl w-full px-4 pt-4 pb-10 sm:px-6 lg:px-8">
         <BackToSchoolAlert className="mb-6" />
         <div className="pointer-events-none absolute -top-10 left-0 -z-0 h-80 w-80 text-primary">
           <ShellMotif className="h-full w-full" opacity={0.045} />

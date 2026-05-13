@@ -48,7 +48,7 @@ function CollegePage() {
         <div className="pointer-events-none absolute inset-0 text-primary">
           <ShellMotif className="absolute -left-32 -bottom-32 h-[480px] w-[480px]" opacity={0.05} />
         </div>
-        <div className="relative mx-auto max-w-6xl grid w-full items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
+        <div className="relative mx-auto max-w-6xl grid w-full items-center gap-10 px-4 pt-6 pb-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-yellow-300 bg-yellow-100 px-3 py-1 font-semibold uppercase tracking-wider text-sm text-yellow-900">
               <ShieldCheck className="h-3 w-3" /> Trousseau non géré par France Uniformes

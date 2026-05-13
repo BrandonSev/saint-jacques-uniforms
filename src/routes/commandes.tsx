@@ -315,7 +315,7 @@ function CommandesPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
-      <section className="relative mx-auto max-w-6xl w-full px-4 py-12 sm:px-6 lg:px-8">
+      <section className="relative mx-auto max-w-6xl w-full px-4 pt-6 pb-12 sm:px-6 lg:px-8">
         <div className="pointer-events-none absolute -top-10 right-0 -z-0 h-72 w-72 text-primary">
           <ShellMotif className="h-full w-full" opacity={0.045} />
         </div>
