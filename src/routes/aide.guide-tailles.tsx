@@ -130,9 +130,9 @@ function GuideTaillesPage() {
             statistiques françaises en vigueur.
           </p>
           <p>
-            <b>Taille recommandée&nbsp;(pulls, sweatshirts, blouses…) :</b> Pour ces articles, une recommandation de
-            taille spécifique est indiquée directement sur la page de chaque vêtement, tenant compte de sa coupe et de
-            son aisance
+            Ce tableau ne s'applique pas directement aux vêtements de deuxième ou troisième couche
+            (pulls, sweatshirts, blouses…). Pour ces articles, une recommandation de taille spécifique est indiquée
+            directement sur la page de chaque vêtement, tenant compte de sa coupe et de son aisance.
           </p>
           <p>
             <b>Avant de commander</b>, nous vous conseillons de faire essayer le vêtement visé à votre enfant, si
