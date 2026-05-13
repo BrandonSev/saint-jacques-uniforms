@@ -42,7 +42,7 @@ export function BackToSchoolAlert({ className = "" }: { className?: string }) {
       role="alert"
       className={`rounded-2xl border border-amber-300 bg-amber-50 p-4 sm:p-5 text-amber-900 shadow-[var(--shadow-card)] ${className}`}
     >
-      <div className="flex items-start gap-3">
+      <div className="gap-3 items-start justify-start flex flex-col">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-200/70 text-amber-900">
           <AlertTriangle className="h-5 w-5" aria-hidden />
         </div>

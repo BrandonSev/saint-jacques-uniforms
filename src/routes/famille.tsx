@@ -504,7 +504,7 @@ function ParentCard({
 
       {/* Options de livraison */}
       <div className="mt-5 space-y-3 rounded-2xl border border-border bg-muted/30 p-4">
-        <label className="flex items-start gap-3 cursor-pointer">
+        <label className="gap-3 items-start justify-start flex flex-col cursor-pointer">
           <input
             type="checkbox"
             checked={form.is_shipping_default}
@@ -519,7 +519,7 @@ function ParentCard({
           </span>
         </label>
 
-        <label className="flex items-start gap-3 cursor-pointer">
+        <label className="gap-3 items-start justify-start flex flex-col cursor-pointer">
           <input
             type="checkbox"
             checked={form.has_alt_shipping}

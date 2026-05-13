@@ -368,7 +368,7 @@ function ConfirmModal({
                 <button
                   type="button"
                   onClick={() => setMode("home")}
-                  className={`flex items-start gap-3 rounded-xl border-2 p-3 text-left transition ${mode === "home" ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"}`}
+                  className={`gap-3 items-start justify-start flex flex-col rounded-xl border-2 p-3 text-left transition ${mode === "home" ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"}`}
                 >
                   <Home className={`mt-0.5 h-4 w-4 shrink-0 ${mode === "home" ? "text-primary" : "text-muted-foreground"}`} />
                   <div>
@@ -381,7 +381,7 @@ function ConfirmModal({
                 <button
                   type="button"
                   onClick={() => setMode("pickup")}
-                  className={`flex items-start gap-3 rounded-xl border-2 p-3 text-left transition ${mode === "pickup" ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"}`}
+                  className={`gap-3 items-start justify-start flex flex-col rounded-xl border-2 p-3 text-left transition ${mode === "pickup" ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"}`}
                 >
                   <Store className={`mt-0.5 h-4 w-4 shrink-0 ${mode === "pickup" ? "text-primary" : "text-muted-foreground"}`} />
                   <div>
@@ -436,7 +436,7 @@ function ConfirmModal({
             </div>
           )}
 
-          <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100">
+          <div className="mb-4 gap-3 items-start justify-start flex flex-col rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <div>
               <p className="font-semibold">Avez-vous bien vérifié la taille de chaque article ?</p>
