@@ -142,13 +142,17 @@ function MaternellePage() {
         <div className="relative grid gap-10 lg:grid-cols-2">
           {/* Gallery */}
           <div>
-            <div className="overflow-hidden rounded-3xl border border-border bg-secondary">
+            <div className="relative overflow-hidden rounded-3xl border border-border bg-secondary">
               <img
                 src={gallery[activeImg]}
                 alt="Blouse scolaire officielle"
                 className="aspect-square w-full object-cover"
                 loading="eager"
               />
+              <span className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-foreground shadow-md ring-1 ring-black/5 backdrop-blur">
+                <FrenchFlag className="h-3 w-5" />
+                Fabriqué en France
+              </span>
             </div>
             <div className="mt-4 grid grid-cols-3 gap-3">
               {gallery.map((img, i) => (
@@ -167,9 +171,14 @@ function MaternellePage() {
 
           {/* Info */}
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
-              <ShieldCheck className="h-3 w-3" /> Tenue officielle de l'établissement
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
+                <ShieldCheck className="h-3 w-3" /> Tenue officielle de l'établissement
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-foreground">
+                <FrenchFlag className="h-3 w-5" /> Fabrication française
+              </span>
+            </div>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               Blouse scolaire officielle SJDC
             </h1>
@@ -186,7 +195,11 @@ function MaternellePage() {
               Blouse officielle du groupe scolaire — portée au quotidien par les élèves. Coton mélangé de couleur bleu
               Riviera, fermeture centrale par 5 boutons pressions jaunes, élastiquage léger autour des poignets, col
               biais, semi contrasté bleu Riviera foncé, écusson du blason de l'école brodé sur le coeur et 1 poche
-              plaquée à gauche au porté. Confectionnée dans nos ateliers français.
+              plaquée à gauche au porté.{" "}
+              <strong className="inline-flex items-center gap-1.5 font-semibold text-foreground">
+                <FrenchFlag className="h-3 w-5" />
+                Confectionnée dans nos ateliers français.
+              </strong>
             </p>
 
             {/* Pour quel enfant — d'abord */}
@@ -287,7 +300,12 @@ function MaternellePage() {
             <div className="mt-8 grid gap-3 rounded-2xl border border-border bg-card p-5 sm:grid-cols-2">
               <Bullet icon={<ShieldCheck className="h-4 w-4" />} text="Conforme aux exigences SJDC " />
               <Bullet icon={<Check className="h-4 w-4" />} text="Coton certifié OEKO-TEX" />
-              <Bullet icon={<Check className="h-4 w-4" />} text="Fabrication française" />
+              <div className="flex items-center gap-2.5 rounded-lg bg-secondary/60 px-2 py-1.5 text-sm font-semibold text-foreground sm:col-span-2">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white ring-1 ring-border">
+                  <FrenchFlag className="h-3 w-5" />
+                </span>
+                Fabrication 100% française
+              </div>
             </div>
           </div>
         </div>
@@ -308,6 +326,16 @@ function MaternellePage() {
               </p>
               <p>Elle protège les vêtements pendant les activités du quotidien.</p>
               <p>Tissu résistant, lavable en machine à 40°C, détachable facilement et séchage rapide.</p>
+            </div>
+          </div>
+          <div className="mt-8 flex flex-col items-center gap-4 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:gap-6 sm:p-8">
+            <FrenchFlag className="h-12 w-20 shrink-0 rounded-md shadow-sm" />
+            <div className="text-center sm:text-left">
+              <h3 className="text-lg font-semibold tracking-tight text-foreground">Fabriqué en France</h3>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                Confection 100% française dans nos ateliers — du tissu à la finition, chaque blouse est réalisée avec
+                un savoir-faire local.
+              </p>
             </div>
           </div>
         </div>
@@ -331,5 +359,19 @@ function Bullet({ icon, text }: { icon: React.ReactNode; text: string }) {
       <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">{icon}</span>
       {text}
     </div>
+  );
+}
+
+function FrenchFlag({ className = "h-3 w-5" }: { className?: string }) {
+  return (
+    <span
+      aria-label="Drapeau français"
+      role="img"
+      className={`inline-flex overflow-hidden rounded-[2px] ring-1 ring-black/10 ${className}`}
+    >
+      <span className="flex-1 bg-[#0055A4]" />
+      <span className="flex-1 bg-white" />
+      <span className="flex-1 bg-[#EF4135]" />
+    </span>
   );
 }
