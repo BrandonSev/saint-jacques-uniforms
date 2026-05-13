@@ -126,8 +126,8 @@ type StoreCtx = {
   updateProfile: (patch: Partial<Omit<Profile, "id" | "email">>) => Promise<void>;
 
   children: Child[];
-  addChild: (c: Omit<Child, "id" | "initials" | "color">) => Promise<void>;
-  updateChild: (id: string, patch: Partial<Omit<Child, "id" | "initials" | "color">>) => Promise<void>;
+  addChild: (c: Omit<Child, "id" | "initials" | "color" | "updated_at">) => Promise<void>;
+  updateChild: (id: string, patch: Partial<Omit<Child, "id" | "initials" | "color" | "updated_at">>) => Promise<void>;
   removeChild: (id: string) => Promise<void>;
 
   parents: FamilyParent[];
