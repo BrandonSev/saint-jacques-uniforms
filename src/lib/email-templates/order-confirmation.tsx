@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Text } from '@react-email/components'
-import { EmailLayout, text, muted } from './_layout'
+import { EmailLayout, text } from './_layout'
 import type { TemplateEntry } from './registry'
 
 interface Item { name: string; size: string; qty: number; price: number; child: string }
