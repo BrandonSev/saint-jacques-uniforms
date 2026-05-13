@@ -14,6 +14,10 @@ export const Route = createFileRoute("/reset-password")({
       { name: "description", content: "Définissez un nouveau mot de passe pour votre espace famille." },
     ],
   }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    token_hash: typeof search.token_hash === "string" ? search.token_hash : undefined,
+    type: typeof search.type === "string" ? search.type : undefined,
+  }),
   component: ResetPasswordPage,
 });
 
@@ -24,6 +28,7 @@ const schema = z.object({
 
 function ResetPasswordPage() {
   const navigate = useNavigate();
+  const search = Route.useSearch();
   const [ready, setReady] = useState(false);
   const [validSession, setValidSession] = useState(false);
   const [password, setPassword] = useState("");
@@ -31,19 +36,30 @@ function ResetPasswordPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Supabase parse le hash (#access_token=...&type=recovery) automatiquement
-    // et déclenche un événement PASSWORD_RECOVERY.
+    // Deux flux possibles :
+    // 1) Lien custom : ?token_hash=...&type=recovery -> verifyOtp pour ouvrir la session.
+    // 2) Lien historique Supabase : #access_token=... (parse automatique).
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && session)) {
         setValidSession(true);
       }
     });
-    supabase.auth.getSession().then(({ data }) => {
+    (async () => {
+      if (search.token_hash) {
+        const { data, error } = await supabase.auth.verifyOtp({
+          type: "recovery",
+          token_hash: search.token_hash,
+        });
+        if (!error && data.session) setValidSession(true);
+        setReady(true);
+        return;
+      }
+      const { data } = await supabase.auth.getSession();
       if (data.session) setValidSession(true);
       setReady(true);
-    });
+    })();
     return () => sub.subscription.unsubscribe();
-  }, []);
+  }, [search.token_hash]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
