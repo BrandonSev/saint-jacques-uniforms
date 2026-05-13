@@ -31,12 +31,12 @@ function CollegePage() {
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       <div className="border-b border-border bg-card">
-        <div className="mx-auto max-w-6xl flex w-full items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
-          <Link to="/boutique" className="hover:text-primary">
+        <div className="mx-auto max-w-6xl flex w-full min-w-0 items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
+          <Link to="/boutique" className="shrink-0 hover:text-primary">
             Boutique
           </Link>
-          <ChevronRight className="h-3 w-3" />
-          <span className="text-foreground">Collège (CM2 → 4ᵉ)</span>
+          <ChevronRight className="h-3 w-3 shrink-0" />
+          <span className="min-w-0 flex-1 truncate text-foreground">Collège (CM2 → 4ᵉ)</span>
         </div>
       </div>
 
