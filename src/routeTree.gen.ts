@@ -16,7 +16,6 @@ import { Route as MaternelleRouteImport } from './routes/maternelle'
 import { Route as LyceeRouteImport } from './routes/lycee'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as FamilleRouteImport } from './routes/famille'
-import { Route as EnfantsRouteImport } from './routes/enfants'
 import { Route as CommandesRouteImport } from './routes/commandes'
 import { Route as CollegeRouteImport } from './routes/college'
 import { Route as BoutiqueRouteImport } from './routes/boutique'
@@ -24,6 +23,7 @@ import { Route as BlouseOfficielleRouteImport } from './routes/blouse-officielle
 import { Route as ApelRouteImport } from './routes/apel'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EnfantsIndexRouteImport } from './routes/enfants.index'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as CommandesRetourPaiementRouteImport } from './routes/commandes.retour-paiement'
 import { Route as AideMentionsLegalesRouteImport } from './routes/aide.mentions-legales'
@@ -78,11 +78,6 @@ const FamilleRoute = FamilleRouteImport.update({
   path: '/famille',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EnfantsRoute = EnfantsRouteImport.update({
-  id: '/enfants',
-  path: '/enfants',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CommandesRoute = CommandesRouteImport.update({
   id: '/commandes',
   path: '/commandes',
@@ -116,6 +111,11 @@ const AdminRoute = AdminRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnfantsIndexRoute = EnfantsIndexRouteImport.update({
+  id: '/enfants/',
+  path: '/enfants/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
@@ -221,7 +221,6 @@ export interface FileRoutesByFullPath {
   '/boutique': typeof BoutiqueRoute
   '/college': typeof CollegeRoute
   '/commandes': typeof CommandesRouteWithChildren
-  '/enfants': typeof EnfantsRouteWithChildren
   '/famille': typeof FamilleRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
@@ -238,6 +237,7 @@ export interface FileRoutesByFullPath {
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
   '/commandes/retour-paiement': typeof CommandesRetourPaiementRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/enfants/': typeof EnfantsIndexRoute
   '/api/public/email-diag': typeof ApiPublicEmailDiagRoute
   '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
@@ -256,7 +256,6 @@ export interface FileRoutesByTo {
   '/boutique': typeof BoutiqueRoute
   '/college': typeof CollegeRoute
   '/commandes': typeof CommandesRouteWithChildren
-  '/enfants': typeof EnfantsRouteWithChildren
   '/famille': typeof FamilleRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
@@ -273,6 +272,7 @@ export interface FileRoutesByTo {
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
   '/commandes/retour-paiement': typeof CommandesRetourPaiementRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/enfants': typeof EnfantsIndexRoute
   '/api/public/email-diag': typeof ApiPublicEmailDiagRoute
   '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
@@ -292,7 +292,6 @@ export interface FileRoutesById {
   '/boutique': typeof BoutiqueRoute
   '/college': typeof CollegeRoute
   '/commandes': typeof CommandesRouteWithChildren
-  '/enfants': typeof EnfantsRouteWithChildren
   '/famille': typeof FamilleRoute
   '/login': typeof LoginRoute
   '/lycee': typeof LyceeRoute
@@ -309,6 +308,7 @@ export interface FileRoutesById {
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
   '/commandes/retour-paiement': typeof CommandesRetourPaiementRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/enfants/': typeof EnfantsIndexRoute
   '/api/public/email-diag': typeof ApiPublicEmailDiagRoute
   '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
@@ -329,7 +329,6 @@ export interface FileRouteTypes {
     | '/boutique'
     | '/college'
     | '/commandes'
-    | '/enfants'
     | '/famille'
     | '/login'
     | '/lycee'
@@ -346,6 +345,7 @@ export interface FileRouteTypes {
     | '/aide/mentions-legales'
     | '/commandes/retour-paiement'
     | '/email/unsubscribe'
+    | '/enfants/'
     | '/api/public/email-diag'
     | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
@@ -364,7 +364,6 @@ export interface FileRouteTypes {
     | '/boutique'
     | '/college'
     | '/commandes'
-    | '/enfants'
     | '/famille'
     | '/login'
     | '/lycee'
@@ -381,6 +380,7 @@ export interface FileRouteTypes {
     | '/aide/mentions-legales'
     | '/commandes/retour-paiement'
     | '/email/unsubscribe'
+    | '/enfants'
     | '/api/public/email-diag'
     | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
@@ -399,7 +399,6 @@ export interface FileRouteTypes {
     | '/boutique'
     | '/college'
     | '/commandes'
-    | '/enfants'
     | '/famille'
     | '/login'
     | '/lycee'
@@ -416,6 +415,7 @@ export interface FileRouteTypes {
     | '/aide/mentions-legales'
     | '/commandes/retour-paiement'
     | '/email/unsubscribe'
+    | '/enfants/'
     | '/api/public/email-diag'
     | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
@@ -435,7 +435,6 @@ export interface RootRouteChildren {
   BoutiqueRoute: typeof BoutiqueRoute
   CollegeRoute: typeof CollegeRoute
   CommandesRoute: typeof CommandesRouteWithChildren
-  EnfantsRoute: typeof EnfantsRouteWithChildren
   FamilleRoute: typeof FamilleRoute
   LoginRoute: typeof LoginRoute
   LyceeRoute: typeof LyceeRoute
@@ -451,6 +450,7 @@ export interface RootRouteChildren {
   AideLivraisonRoute: typeof AideLivraisonRoute
   AideMentionsLegalesRoute: typeof AideMentionsLegalesRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  EnfantsIndexRoute: typeof EnfantsIndexRoute
   ApiPublicEmailDiagRoute: typeof ApiPublicEmailDiagRoute
   ApiPublicPayplugWebhookRoute: typeof ApiPublicPayplugWebhookRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
@@ -512,13 +512,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FamilleRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/enfants': {
-      id: '/enfants'
-      path: '/enfants'
-      fullPath: '/enfants'
-      preLoaderRoute: typeof EnfantsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/commandes': {
       id: '/commandes'
       path: '/commandes'
@@ -566,6 +559,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/enfants/': {
+      id: '/enfants/'
+      path: '/enfants'
+      fullPath: '/enfants/'
+      preLoaderRoute: typeof EnfantsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/email/unsubscribe': {
@@ -709,17 +709,6 @@ const CommandesRouteWithChildren = CommandesRoute._addFileChildren(
   CommandesRouteChildren,
 )
 
-interface EnfantsRouteChildren {
-  EnfantsChildIdHistoriqueRoute: typeof EnfantsChildIdHistoriqueRoute
-}
-
-const EnfantsRouteChildren: EnfantsRouteChildren = {
-  EnfantsChildIdHistoriqueRoute: EnfantsChildIdHistoriqueRoute,
-}
-
-const EnfantsRouteWithChildren =
-  EnfantsRoute._addFileChildren(EnfantsRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -728,7 +717,6 @@ const rootRouteChildren: RootRouteChildren = {
   BoutiqueRoute: BoutiqueRoute,
   CollegeRoute: CollegeRoute,
   CommandesRoute: CommandesRouteWithChildren,
-  EnfantsRoute: EnfantsRouteWithChildren,
   FamilleRoute: FamilleRoute,
   LoginRoute: LoginRoute,
   LyceeRoute: LyceeRoute,
@@ -744,6 +732,7 @@ const rootRouteChildren: RootRouteChildren = {
   AideLivraisonRoute: AideLivraisonRoute,
   AideMentionsLegalesRoute: AideMentionsLegalesRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  EnfantsIndexRoute: EnfantsIndexRoute,
   ApiPublicEmailDiagRoute: ApiPublicEmailDiagRoute,
   ApiPublicPayplugWebhookRoute: ApiPublicPayplugWebhookRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
@@ -756,3 +745,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

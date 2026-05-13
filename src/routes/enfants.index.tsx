@@ -12,7 +12,7 @@ import { recommendSize } from "@/lib/sizeRecommendation";
 import { SizeBadge } from "@/components/SizeBadge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-export const Route = createFileRoute("/enfants")({
+export const Route = createFileRoute("/enfants/")({
   head: () => ({
     meta: [{ title: "Mes enfants — Espace familles" }],
   }),
