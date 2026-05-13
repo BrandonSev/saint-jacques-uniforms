@@ -4,10 +4,15 @@ import { Body, Container, Head, Html, Preview, Section, Text } from "@react-emai
 interface LayoutProps {
   preview: string;
   title: string;
+  /** Nom de la famille destinataire (ex : "Dupont") — affiché en sous-titre d'en-tête. */
+  familyName?: string;
+  /** Fonction/équipe qui signe (ex : "Commandes", "Service après-vente"). */
+  signatureRole?: string;
   children: React.ReactNode;
 }
 
-export function EmailLayout({ preview, title, children }: LayoutProps) {
+export function EmailLayout({ preview, title, familyName, signatureRole, children }: LayoutProps) {
+  const cleanFamily = familyName?.trim();
   return (
     <Html lang="fr" dir="ltr">
       <Head />
@@ -15,14 +20,22 @@ export function EmailLayout({ preview, title, children }: LayoutProps) {
       <Body style={body}>
         <Container style={container}>
           <Section style={header}>
-            <Text style={brand}>SAINT-JACQUES-DE-COMPOSTELLE · DAX</Text>
+            <Text style={brand}>FRANCE UNIFORMES</Text>
             <Text style={titleStyle}>{title}</Text>
+            {cleanFamily ? <Text style={familyStyle}>Famille {cleanFamily}</Text> : null}
           </Section>
-          <Section style={content}>{children}</Section>
+          <Section style={accentBar} />
+          <Section style={content}>
+            {children}
+            {signatureRole ? (
+              <Text style={signature}>
+                Bien cordialement,<br />
+                L'équipe {signatureRole} de France Uniformes
+              </Text>
+            ) : null}
+          </Section>
           <Section style={footer}>
-            <Text style={footerText}>
-              Boutique des uniformes du groupe scolaire Saint-Jacques-de-Compostelle · France Uniformes
-            </Text>
+            <Text style={footerText}>France Uniformes — Uniformes scolaires sur mesure</Text>
             <Text style={footerSmall}>
               Pour toute question, répondez simplement à cet email — il sera reçu par notre équipe.
             </Text>
@@ -63,10 +76,13 @@ const container = {
   border: "1px solid #eeeae0",
   boxShadow: "0 4px 24px rgba(0,0,0,0.04)",
 };
-const header = { backgroundColor: "#0f3a5f", padding: "24px 32px" };
-const brand = { fontSize: "12px", letterSpacing: "2px", color: "#ffffff", opacity: 0.85, margin: 0, fontWeight: 600 };
-const titleStyle = { fontSize: "22px", fontWeight: 600, color: "#ffffff", margin: "6px 0 0" };
+const header = { backgroundColor: "#0a2540", padding: "26px 32px" };
+const brand = { fontSize: "12px", letterSpacing: "3px", color: "#ffffff", opacity: 0.9, margin: 0, fontWeight: 700 };
+const titleStyle = { fontSize: "22px", fontWeight: 600, color: "#ffffff", margin: "8px 0 0" };
+const familyStyle = { fontSize: "13px", color: "#ffffff", opacity: 0.85, margin: "10px 0 0", fontStyle: "italic" as const };
+const accentBar = { height: "3px", backgroundColor: "#c8102e", lineHeight: "3px", fontSize: 0 };
 const content = { padding: "32px", backgroundColor: "#ffffff" };
-const footer = { backgroundColor: "#fafaf7", padding: "20px 32px", textAlign: "center" as const };
-const footerText = { fontSize: "12px", color: "#777777", margin: 0 };
+const signature = { fontSize: "14px", lineHeight: "1.6", color: "#1a1a1a", margin: "28px 0 0" };
+const footer = { backgroundColor: "#f5f5f5", padding: "20px 32px", textAlign: "center" as const };
+const footerText = { fontSize: "12px", color: "#666666", margin: 0, fontWeight: 600 };
 const footerSmall = { fontSize: "11px", color: "#999999", margin: "6px 0 0" };
