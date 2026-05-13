@@ -166,11 +166,23 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
             )}
           </div>
           {recommendation && (
-            <p className="mt-1 text-[10px] italic text-muted-foreground">
-              {product.productKind === "blouse"
-                ? "Pour la blouse livrée à la rentrée de Septembre 2025, nous recommandons explicitement une taille au-dessus."
-                : "Recommandation pour une 1ʳᵉ couche (t-shirt, polo, chemise)."}
-            </p>
+            <div className="mt-1 space-y-1 text-[10px] italic leading-snug text-muted-foreground">
+              {product.productKind === "blouse" ? (
+                <>
+                  <p>
+                    Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la blouse, emmanchures élargies et manches allongées, pour un confort optimal, y compris portée sur un sweat.
+                  </p>
+                  <p>
+                    Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir la bonne taille.
+                  </p>
+                  <p>
+                    En cas de doute, vous pouvez toujours prendre une taille au-dessus.
+                  </p>
+                </>
+              ) : (
+                <p>Recommandation pour une 1ʳᵉ couche (t-shirt, polo, chemise).</p>
+              )}
+            </div>
           )}
           <div className="mt-2 flex flex-wrap gap-1.5">
             {sizes.map((s) => (
@@ -289,10 +301,17 @@ function SizeGuideModalTrigger() {
           <span className="font-semibold text-foreground">3 T</span> : tour de taille ·{" "}
           <span className="font-semibold text-foreground">4 B</span> : tour de bassin (cm)
         </p>
-        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-          Pour la <strong className="text-foreground">blouse livrée à la rentrée de Septembre 2025</strong>,
-          nous recommandons explicitement de prendre une <strong className="text-foreground">taille au-dessus</strong>.
-        </p>
+        <div className="mt-2 space-y-2 text-xs leading-relaxed text-muted-foreground">
+          <p>
+            Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la blouse, emmanchures élargies et manches allongées, pour un confort optimal, y compris portée sur un sweat.
+          </p>
+          <p>
+            Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir la bonne taille.
+          </p>
+          <p>
+            En cas de doute, vous pouvez toujours prendre une taille au-dessus.
+          </p>
+        </div>
         <div className="pt-2">
           <Link to="/aide/guide-tailles" className="text-xs font-semibold text-primary hover:underline">
             Voir le guide complet →
