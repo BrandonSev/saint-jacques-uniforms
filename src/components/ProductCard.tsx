@@ -106,6 +106,10 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
         className="h-full w-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.03]"
         loading="lazy"
       />
+      <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground shadow-md ring-1 ring-black/5 backdrop-blur">
+        <FrenchFlag className="h-2.5 w-4" />
+        Fabrication française
+      </span>
     </div>
   );
 
@@ -210,6 +214,20 @@ function GenreBadge({ genre }: { genre: ProductGenre }) {
       className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${styles}`}
     >
       {genre}
+    </span>
+  );
+}
+
+function FrenchFlag({ className = "h-3 w-5" }: { className?: string }) {
+  return (
+    <span
+      aria-label="Drapeau français"
+      role="img"
+      className={`inline-flex overflow-hidden rounded-[2px] ring-1 ring-black/10 ${className}`}
+    >
+      <span className="flex-1 bg-[#0055A4]" />
+      <span className="flex-1 bg-white" />
+      <span className="flex-1 bg-[#EF4135]" />
     </span>
   );
 }
