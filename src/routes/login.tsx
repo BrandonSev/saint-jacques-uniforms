@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   ArrowLeft,
@@ -28,6 +28,9 @@ export const Route = createFileRoute("/login")({
       { name: "description", content: "Connectez-vous ou créez votre espace famille." },
     ],
   }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    mode: search.mode === "signup" ? ("signup" as const) : undefined,
+  }),
   component: LoginPage,
 });
 
@@ -50,7 +53,8 @@ const signupSchema = z.object({
 });
 
 function LoginPage() {
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const search = useSearch({ from: "/login" });
+  const [mode, setMode] = useState<"signin" | "signup">(search.mode === "signup" ? "signup" : "signin");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { user, authLoading } = useStore();
