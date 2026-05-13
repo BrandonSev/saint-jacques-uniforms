@@ -60,6 +60,18 @@ function CguPage() {
             pour le compte des établissements scolaires partenaires.
           </p>
           <p className="mt-2 text-sm leading-relaxed">
+            Les modalités commerciales (commande, paiement, livraison, retours, garanties) sont régies par les{" "}
+            <a
+              href="https://franceuniformes.fr/cgv"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline hover:no-underline"
+            >
+              Conditions Générales de Vente (CGV)
+            </a>
+            , disponibles sur le site de France Uniformes et applicables à toute commande passée sur la plateforme.
+          </p>
+          <p className="mt-2 text-sm leading-relaxed">
             Tout accès à la plateforme implique l'acceptation sans réserve des présentes CGU. France Uniformes se
             réserve le droit de les modifier à tout moment ; la version en vigueur est celle publiée en ligne à la date
             de connexion de l'utilisateur.
