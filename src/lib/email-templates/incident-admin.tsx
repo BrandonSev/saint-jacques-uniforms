@@ -13,7 +13,7 @@ interface Props { orderNumber?: string; family?: string; productName?: string; t
 
 function IncidentAdminEmail({ orderNumber = '', family = '', productName = '', type = '', description = '', appUrl = APP_URL }: Props) {
   return (
-    <EmailLayout preview={`Incident commande ${orderNumber}`} title="Nouvel incident déclaré">
+    <EmailLayout preview={`Incident commande ${orderNumber}`} title="Nouvel incident déclaré" signatureRole="Service après-vente">
       <Text style={text}>Une famille vient de déclarer un incident :</Text>
       <ul style={list}>
         <li><strong>Commande :</strong> {orderNumber}</li>
