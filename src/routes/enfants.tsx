@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Cake, Info, Plus, Ruler, Sparkles, Trash2 } from "lucide-react";
+import { Cake, Info, Plus, Ruler, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
@@ -9,6 +9,8 @@ import { PurchaseHistoryPreview } from "@/components/PurchaseHistoryPreview";
 import { AddChildDialog } from "@/components/AddChildDialog";
 import { PageWatermark } from "@/components/PageWatermark";
 import { recommendSize } from "@/lib/sizeRecommendation";
+import { SizeBadge } from "@/components/SizeBadge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const Route = createFileRoute("/enfants")({
   head: () => ({
@@ -243,11 +245,38 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
             <div className="min-w-0 flex-1">
               {(!enfant.tour || !enfant.tour_taille || !enfant.tour_bassin) && (
                 <p className="text-[11px] leading-relaxed text-muted-foreground">
-                  💡 Renseignez les tours manquants pour fiabiliser le choix de la taille (voir{" "}
+                  💡{" "}
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="cursor-help underline decoration-dotted underline-offset-2">
+                          N'hésitez pas à mettre à jour
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="max-w-xs text-xs">
+                        Les enfants grandissent vite : des mensurations à jour permettent de proposer
+                        une taille fiable pour chaque vêtement (notamment la blouse, où nous
+                        recommandons une taille au-dessus). Vérifiez-les avant chaque commande.
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>{" "}
+                  les tours manquants pour fiabiliser le choix de la taille (voir{" "}
                   <Link to="/aide/guide-tailles" className="font-semibold text-primary hover:underline">
                     guide des tailles
                   </Link>
                   ).
+                </p>
+              )}
+              {enfant.updated_at && (
+                <p className="mt-1 text-[10px] text-muted-foreground">
+                  Mis à jour le{" "}
+                  <span className="font-medium text-foreground">
+                    {new Date(enfant.updated_at).toLocaleDateString("fr-FR", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </span>
                 </p>
               )}
             </div>
@@ -295,24 +324,10 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
               });
               if (!reco) return null;
               return (
-                <div
-                  title="Taille recommandée pour une 1ʳᵉ couche (t-shirt, polo, chemise)"
-                  className="mr-auto inline-flex items-center gap-3 rounded-2xl px-4 py-2.5 shadow-sm ring-2 ring-inset bg-emerald-50 ring-emerald-700 border-emerald-700"
-                >
-                  <Sparkles className="h-5 w-5 text-emerald-700" />
-                  <div className="flex flex-col leading-tight">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-foreground/70 leading-tight">
-                      Taille recommandée<br />en première couche
-                    </span>
-                    <span className="text-xl font-bold text-emerald-800">
-                      {reco.row.age}
-                    </span>
-                    <span className="text-[9px] italic text-muted-foreground">
-                      1ʳᵉ couche (t-shirt, polo, chemise)
-                    </span>
-                  </div>
-                  <span className="rounded-full bg-emerald-700 px-2 py-0.5 text-[9px] font-bold uppercase text-white">
-                    Reco
+                <div className="mr-auto flex flex-wrap items-center gap-2">
+                  <SizeBadge size={reco.row.age} />
+                  <span className="text-[10px] italic text-muted-foreground">
+                    1ʳᵉ couche (t-shirt, polo, chemise)
                   </span>
                 </div>
               );

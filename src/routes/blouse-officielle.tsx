@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useMemo, useState } from "react";
-import { Check, ChevronRight, Heart, Minus, Plus, ShieldCheck, Sparkles } from "lucide-react";
+import { Check, ChevronRight, Heart, HeartHandshake, Minus, Plus, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
@@ -9,6 +9,8 @@ import { ChildPicker } from "@/components/ChildPicker";
 import { HeadteacherQuote } from "@/components/HeadteacherQuote";
 import { useStore } from "@/lib/store";
 import { recommendSize } from "@/lib/sizeRecommendation";
+import { SizeBadge } from "@/components/SizeBadge";
+import { FrenchFlag } from "@/components/FrenchFlag";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import bloussePliee from "@/assets/blouse-pliee.jpeg";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
@@ -51,12 +53,15 @@ function MaternellePage() {
 
   const recommendation = useMemo(() => {
     if (!selectedChild) return null;
-    const reco = recommendSize({
-      hauteur: selectedChild.hauteur,
-      tour: selectedChild.tour,
-      tour_taille: (selectedChild as any).tour_taille,
-      tour_bassin: (selectedChild as any).tour_bassin,
-    });
+    const reco = recommendSize(
+      {
+        hauteur: selectedChild.hauteur,
+        tour: selectedChild.tour,
+        tour_taille: (selectedChild as any).tour_taille,
+        tour_bassin: (selectedChild as any).tour_bassin,
+      },
+      { product: "blouse" },
+    );
     if (!reco) return null;
     const match = sizes.find((s) => s.trim().toLowerCase() === reco.row.age.trim().toLowerCase());
     return match ? { size: match, consistent: reco.consistent } : null;
@@ -121,16 +126,16 @@ function MaternellePage() {
 
       {/* Breadcrumb */}
       <div className="border-b border-border bg-card">
-        <div className="mx-auto max-w-6xl flex w-full items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
-          <Link to="/boutique" className="hover:text-primary">
+        <div className="mx-auto max-w-6xl flex w-full min-w-0 items-center gap-1.5 px-4 py-3 text-xs text-muted-foreground sm:px-6 lg:px-8">
+          <Link to="/boutique" className="shrink-0 hover:text-primary">
             Boutique
           </Link>
-          <ChevronRight className="h-3 w-3" />
-          <Link to="/maternelle" className="hover:text-primary">
+          <ChevronRight className="h-3 w-3 shrink-0" />
+          <Link to="/maternelle" className="shrink-0 hover:text-primary">
             Maternelle & Élémentaire
           </Link>
-          <ChevronRight className="h-3 w-3" />
-          <span className="text-foreground">Blouse officielle</span>
+          <ChevronRight className="h-3 w-3 shrink-0" />
+          <span className="min-w-0 flex-1 truncate text-foreground">Blouse officielle</span>
         </div>
       </div>
 
@@ -174,9 +179,6 @@ function MaternellePage() {
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
                 <ShieldCheck className="h-3 w-3" /> Tenue officielle de l'établissement
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-foreground">
-                <FrenchFlag className="h-3 w-5" /> Fabrication française
               </span>
             </div>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
@@ -224,18 +226,13 @@ function MaternellePage() {
                   </Link>
                 </div>
                 {recommendation && (
-                  <span
-                    title="Taille recommandée pour une 1ʳᵉ couche (t-shirt, polo, chemise)"
-                    className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm ring-1 ring-inset bg-emerald-50 text-emerald-800 ring-emerald-700"
-                  >
-                    <Sparkles className="h-3.5 w-3.5 text-emerald-700" />
-                    Reco&nbsp;: <span className="font-bold">{recommendation.size}</span>
-                  </span>
+                  <SizeBadge size={recommendation.size} variant="blouse" />
                 )}
               </div>
               {recommendation && (
                 <p className="mt-1 text-[11px] italic text-muted-foreground">
-                  Recommandation calculée pour une 1ʳᵉ couche (t-shirt, polo, chemise).
+                  Pour la blouse livrée à la rentrée de Septembre 2025, nous recommandons explicitement
+                  de prendre une taille au-dessus.
                 </p>
               )}
               <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8">
@@ -300,12 +297,6 @@ function MaternellePage() {
             <div className="mt-8 grid gap-3 rounded-2xl border border-border bg-card p-5 sm:grid-cols-2">
               <Bullet icon={<ShieldCheck className="h-4 w-4" />} text="Conforme aux exigences SJDC " />
               <Bullet icon={<Check className="h-4 w-4" />} text="Coton certifié OEKO-TEX" />
-              <div className="flex items-center gap-2.5 rounded-lg bg-secondary/60 px-2 py-1.5 text-sm font-semibold text-foreground sm:col-span-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white ring-1 ring-border">
-                  <FrenchFlag className="h-3 w-5" />
-                </span>
-                Fabrication 100% française
-              </div>
             </div>
           </div>
         </div>
@@ -328,13 +319,22 @@ function MaternellePage() {
               <p>Tissu résistant, lavable en machine à 40°C, détachable facilement et séchage rapide.</p>
             </div>
           </div>
-          <div className="mt-8 flex flex-col items-center gap-4 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:gap-6 sm:p-8">
-            <FrenchFlag className="h-12 w-20 shrink-0 rounded-md shadow-sm" />
-            <div className="text-center sm:text-left">
-              <h3 className="text-lg font-semibold tracking-tight text-foreground">Fabriqué en France</h3>
+          <div className="mt-8 flex flex-col items-start gap-5 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:items-center sm:gap-6 sm:p-8">
+            <div className="flex shrink-0 items-center gap-3">
+              <FrenchFlag className="h-12 w-20 rounded-md shadow-sm" />
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <HeartHandshake className="h-6 w-6" />
+              </span>
+            </div>
+            <div className="text-left">
+              <h3 className="text-lg font-semibold tracking-tight text-foreground">
+                Fabriqué en France & solidaire
+              </h3>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                Confection 100% française dans nos ateliers — du tissu à la finition, chaque blouse est réalisée avec
-                un savoir-faire local.
+                Confection 100% française réalisée en partie via l'<strong className="text-foreground">économie
+                sociale et solidaire</strong> : nos vêtements sont fabriqués par des personnes en
+                situation de handicap, en reconversion ou en réinsertion professionnelle. Un engagement
+                concret pour un savoir-faire local et utile.
               </p>
             </div>
           </div>
@@ -359,19 +359,5 @@ function Bullet({ icon, text }: { icon: React.ReactNode; text: string }) {
       <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">{icon}</span>
       {text}
     </div>
-  );
-}
-
-function FrenchFlag({ className = "h-3 w-5" }: { className?: string }) {
-  return (
-    <span
-      aria-label="Drapeau français"
-      role="img"
-      className={`inline-flex overflow-hidden rounded-[2px] ring-1 ring-black/10 ${className}`}
-    >
-      <span className="flex-1 bg-[#0055A4]" />
-      <span className="flex-1 bg-white" />
-      <span className="flex-1 bg-[#EF4135]" />
-    </span>
   );
 }

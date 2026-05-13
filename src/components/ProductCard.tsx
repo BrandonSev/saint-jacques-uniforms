@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Ruler, Sparkles } from "lucide-react";
+import { HeartHandshake, Ruler } from "lucide-react";
 import { ChildPicker } from "@/components/ChildPicker";
 import { useStore, type Child } from "@/lib/store";
 import { recommendSize, sizeRows } from "@/lib/sizeRecommendation";
 import guideMesuresImg from "@/assets/guide-tailles-mesures.png";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { FrenchFlag } from "@/components/FrenchFlag";
+import { SizeBadge } from "@/components/SizeBadge";
 
 export type ProductGenre = "Fille" | "Garçon" | "Unisexe";
 
@@ -21,6 +23,8 @@ export type ProductCardData = {
   href?: string;
   /** Genre(s) auquel le vêtement est destiné. Par défaut : Unisexe. */
   genre?: ProductGenre;
+  /** Type de produit pour ajuster la recommandation de taille (ex: "blouse" → +1). */
+  productKind?: "blouse";
 };
 
 type Props = {
@@ -54,17 +58,20 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
 
   const recommendation = useMemo(() => {
     if (!selectedChild) return null;
-    const reco = recommendSize({
-      hauteur: selectedChild.hauteur,
-      tour: selectedChild.tour,
-      tour_taille: (selectedChild as any).tour_taille,
-      tour_bassin: (selectedChild as any).tour_bassin,
-    });
+    const reco = recommendSize(
+      {
+        hauteur: selectedChild.hauteur,
+        tour: selectedChild.tour,
+        tour_taille: (selectedChild as any).tour_taille,
+        tour_bassin: (selectedChild as any).tour_bassin,
+      },
+      product.productKind === "blouse" ? { product: "blouse" } : {},
+    );
     if (!reco) return null;
     // Match recommendation row.age (e.g. "4 ans") with available sizes.
     const match = sizes.find((s) => s.trim().toLowerCase() === reco.row.age.trim().toLowerCase());
     return match ? { size: match, consistent: reco.consistent } : null;
-  }, [selectedChild, sizes]);
+  }, [selectedChild, sizes, product.productKind]);
 
   // Auto-select the recommended size when the child changes.
   useEffect(() => {
@@ -106,10 +113,17 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
         className="h-full w-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.03]"
         loading="lazy"
       />
-      <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground shadow-md ring-1 ring-black/5 backdrop-blur">
-        <FrenchFlag className="h-2.5 w-4" />
-        Fabrication française
-      </span>
+      <div className="absolute left-3 top-3 flex flex-col items-start gap-1">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground shadow-md ring-1 ring-black/5 backdrop-blur">
+          <FrenchFlag className="h-2.5 w-4" />
+          Fabrication française
+        </span>
+        {product.productKind === "blouse" && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50/95 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-emerald-800 shadow-sm ring-1 ring-emerald-700/30 backdrop-blur">
+            <HeartHandshake className="h-2.5 w-2.5" /> Économie sociale &amp; solidaire
+          </span>
+        )}
+      </div>
     </div>
   );
 
@@ -142,21 +156,20 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Taille</span>
-              <SizeGuideHover />
+              <SizeGuideModalTrigger />
             </div>
             {recommendation && (
-              <span
-                title="Taille recommandée pour une 1ʳᵉ couche (t-shirt, polo, chemise)"
-                className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold shadow-sm ring-1 ring-inset bg-emerald-50 text-emerald-800 ring-emerald-700"
-              >
-                <Sparkles className="h-3 w-3 text-emerald-700" />
-                Reco&nbsp;: <span className="font-bold">{recommendation.size}</span>
-              </span>
+              <SizeBadge
+                size={recommendation.size}
+                variant={product.productKind === "blouse" ? "blouse" : "default"}
+              />
             )}
           </div>
           {recommendation && (
             <p className="mt-1 text-[10px] italic text-muted-foreground">
-              Recommandation pour une 1ʳᵉ couche (t-shirt, polo, chemise).
+              {product.productKind === "blouse"
+                ? "Pour la blouse livrée à la rentrée de Septembre 2025, nous recommandons explicitement une taille au-dessus."
+                : "Recommandation pour une 1ʳᵉ couche (t-shirt, polo, chemise)."}
             </p>
           )}
           <div className="mt-2 flex flex-wrap gap-1.5">
@@ -218,51 +231,24 @@ function GenreBadge({ genre }: { genre: ProductGenre }) {
   );
 }
 
-function FrenchFlag({ className = "h-3 w-5" }: { className?: string }) {
+function SizeGuideModalTrigger() {
   return (
-    <span
-      aria-label="Drapeau français"
-      role="img"
-      className={`inline-flex overflow-hidden rounded-[2px] ring-1 ring-black/10 ${className}`}
-    >
-      <span className="flex-1 bg-[#0055A4]" />
-      <span className="flex-1 bg-white" />
-      <span className="flex-1 bg-[#EF4135]" />
-    </span>
-  );
-}
-
-function SizeGuideHover() {
-  const [open, setOpen] = useState(false);
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Link
-          to="/aide/guide-tailles"
-          onMouseEnter={() => setOpen(true)}
-          onMouseLeave={() => setOpen(false)}
-          onFocus={() => setOpen(true)}
-          onBlur={() => setOpen(false)}
+    <Dialog>
+      <DialogTrigger asChild>
+        <button
+          type="button"
           className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-primary hover:underline"
         >
           <Ruler className="h-3 w-3" />
           Guide des tailles
-        </Link>
-      </PopoverTrigger>
-      <PopoverContent
-        side="left"
-        align="center"
-        sideOffset={12}
-        collisionPadding={16}
-        onOpenAutoFocus={(e) => e.preventDefault()}
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
-        className="w-[34rem] max-w-[calc(100vw-2rem)] rounded-2xl border border-border bg-popover p-5 shadow-2xl"
-      >
-        <div className="mb-3 flex items-center gap-2">
-          <Ruler className="h-4 w-4 text-primary" />
-          <h4 className="text-sm font-semibold tracking-tight text-foreground">Guide des tailles</h4>
-        </div>
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-base">
+            <Ruler className="h-4 w-4 text-primary" /> Guide des tailles
+          </DialogTitle>
+        </DialogHeader>
         <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">
           <div className="rounded-lg bg-muted/40 p-2">
             <img
@@ -276,7 +262,7 @@ function SizeGuideHover() {
             <table className="w-full border-collapse text-xs">
               <thead className="bg-muted/60 text-foreground">
                 <tr>
-                  <th className="px-2 py-1.5 text-left font-semibold">Âge</th>
+                  <th className="w-24 whitespace-nowrap px-3 py-1.5 text-left font-semibold">Taille</th>
                   <th className="px-2 py-1.5 text-right font-semibold">1 H</th>
                   <th className="px-2 py-1.5 text-right font-semibold">2 P</th>
                   <th className="px-2 py-1.5 text-right font-semibold">3 T</th>
@@ -286,7 +272,7 @@ function SizeGuideHover() {
               <tbody>
                 {sizeRows.map((r) => (
                   <tr key={r.age} className="border-t border-border odd:bg-background even:bg-muted/20">
-                    <td className="px-2 py-1 font-semibold text-foreground">{r.age}</td>
+                    <td className="whitespace-nowrap px-3 py-1 font-semibold text-foreground">{r.age}</td>
                     <td className="px-2 py-1 text-right tabular-nums text-foreground/80">{r.stature}</td>
                     <td className="px-2 py-1 text-right tabular-nums text-foreground/80">{r.poitrine}</td>
                     <td className="px-2 py-1 text-right tabular-nums text-foreground/80">{r.taille}</td>
@@ -303,7 +289,16 @@ function SizeGuideHover() {
           <span className="font-semibold text-foreground">3 T</span> : tour de taille ·{" "}
           <span className="font-semibold text-foreground">4 B</span> : tour de bassin (cm)
         </p>
-      </PopoverContent>
-    </Popover>
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+          Pour la <strong className="text-foreground">blouse livrée à la rentrée de Septembre 2025</strong>,
+          nous recommandons explicitement de prendre une <strong className="text-foreground">taille au-dessus</strong>.
+        </p>
+        <div className="pt-2">
+          <Link to="/aide/guide-tailles" className="text-xs font-semibold text-primary hover:underline">
+            Voir le guide complet →
+          </Link>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -179,6 +179,7 @@ function IncidentAlert({ status, createdAt }: { status: string; createdAt: strin
 const INCIDENT_TYPES: { value: string; label: string; eligible: boolean }[] = [
   { value: "malfacon", label: "Malfaçon / défaut de fabrication", eligible: true },
   { value: "erreur_envoi", label: "Erreur d'envoi (mauvais produit ou taille)", eligible: true },
+  { value: "erreur_commande", label: "Erreur de commande", eligible: true },
   { value: "article_manquant", label: "Article manquant", eligible: true },
   { value: "taille_inadaptee", label: "Taille inadaptée (non porté)", eligible: false },
   { value: "usure_normale", label: "Usure normale", eligible: false },

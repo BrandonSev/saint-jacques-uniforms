@@ -20,6 +20,7 @@ export type Child = {
   blouse_portee_2025: "" | "oui" | "non";
   taille_blouse_2025: string;
   modele_blouse_2025: "" | "septembre_2025" | "janvier_2026";
+  updated_at: string;
 };
 
 export type Profile = {
@@ -86,7 +87,7 @@ const COLORS = [
 ];
 
 function decorate(
-  c: { id: string; prenom: string; nom: string; naissance: string | null; classe: string | null; section: string | null; taille: string | null; hauteur: string | null; tour: string | null; tour_taille?: string | null; tour_bassin?: string | null; genre?: string | null; blouse_portee_2025?: boolean | null; taille_blouse_2025?: string | null; modele_blouse_2025?: string | null },
+  c: { id: string; prenom: string; nom: string; naissance: string | null; classe: string | null; section: string | null; taille: string | null; hauteur: string | null; tour: string | null; tour_taille?: string | null; tour_bassin?: string | null; genre?: string | null; blouse_portee_2025?: boolean | null; taille_blouse_2025?: string | null; modele_blouse_2025?: string | null; updated_at?: string | null },
   idx: number,
 ): Child {
   const initials = ((c.prenom[0] ?? "") + (c.nom[0] ?? "")).toUpperCase();
@@ -109,6 +110,7 @@ function decorate(
       c.blouse_portee_2025 === true ? "oui" : c.blouse_portee_2025 === false ? "non" : "",
     taille_blouse_2025: c.taille_blouse_2025 ?? "",
     modele_blouse_2025: (c.modele_blouse_2025 as Child["modele_blouse_2025"]) ?? "",
+    updated_at: c.updated_at ?? "",
   };
 }
 
@@ -124,8 +126,8 @@ type StoreCtx = {
   updateProfile: (patch: Partial<Omit<Profile, "id" | "email">>) => Promise<void>;
 
   children: Child[];
-  addChild: (c: Omit<Child, "id" | "initials" | "color">) => Promise<void>;
-  updateChild: (id: string, patch: Partial<Omit<Child, "id" | "initials" | "color">>) => Promise<void>;
+  addChild: (c: Omit<Child, "id" | "initials" | "color" | "updated_at">) => Promise<void>;
+  updateChild: (id: string, patch: Partial<Omit<Child, "id" | "initials" | "color" | "updated_at">>) => Promise<void>;
   removeChild: (id: string) => Promise<void>;
 
   parents: FamilyParent[];

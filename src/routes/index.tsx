@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, CreditCard, MapPin, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, CreditCard, ShieldCheck, Truck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { DirectorQuote } from "@/components/DirectorQuote";
+import { FrenchFlag } from "@/components/FrenchFlag";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
 import schoolLogo from "@/assets/saint-jacques-blason.png";
 
@@ -140,9 +141,9 @@ function Index() {
             text="Vos commandes seront distribuées avant la rentrée par l'APEL dans l'établissement. L'expédition à votre domicile sera disponible en option à partir de l'automne 2026."
           />
           <TrustItem
-            icon={<MapPin className="h-5 w-5" />}
+            icon={<FrenchFlag className="h-3.5 w-5" />}
             title="Fabrication française"
-            text="Dans nos ateliers répartis partout en France."
+            text="Confection 100% française, en partie via l'économie sociale et solidaire (personnes en situation de handicap, en reconversion ou en réinsertion professionnelle)."
           />
           <TrustItem
             icon={<CreditCard className="h-5 w-5" />}

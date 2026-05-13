@@ -61,7 +61,16 @@ export type Measurements = {
   tour_bassin?: string | number | null;
 };
 
-export function recommendSize(m: Measurements): SizeRecommendation | null {
+export type RecommendOptions = {
+  /**
+   * Si "blouse", on applique un décalage de +1 taille (capé sur la dernière ligne).
+   * Cas d'usage : blouse livrée à la rentrée de Septembre 2025, pour laquelle
+   * il est recommandé de prendre une taille au-dessus.
+   */
+  product?: "blouse";
+};
+
+export function recommendSize(m: Measurements, opts: RecommendOptions = {}): SizeRecommendation | null {
   const stature = num(m.hauteur);
   const poitrine = num(m.tour);
   const tailleM = num(m.tour_taille);
@@ -74,5 +83,9 @@ export function recommendSize(m: Measurements): SizeRecommendation | null {
   if (candidates.length === 0) return null;
   const best = candidates.reduce((a, b) => (b.idx > a.idx ? b : a));
   const allSame = candidates.every((c) => c.idx === candidates[0].idx);
-  return { idx: best.idx, row: sizeRows[best.idx], drivers: candidates, consistent: allSame };
+  let idx = best.idx;
+  if (opts.product === "blouse") {
+    idx = Math.min(sizeRows.length - 1, idx + 1);
+  }
+  return { idx, row: sizeRows[idx], drivers: candidates, consistent: allSame };
 }

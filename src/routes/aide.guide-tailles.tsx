@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { Ruler, Sparkles } from "lucide-react";
+import { SizeBadge } from "@/components/SizeBadge";
 import { PageWatermark } from "@/components/PageWatermark";
 import mesuresDiagram from "@/assets/guide-tailles-mesures.png";
 import { useMemo, useState, useEffect } from "react";
@@ -129,6 +130,13 @@ function GuideTaillesPage() {
             possible sur un exemplaire d'un camarade. En cas d'hésitation entre deux tailles, privilégiez la taille
             supérieure.
           </p>
+          <div className="rounded-xl border border-amber-300 bg-amber-50/70 p-3 text-foreground/85">
+            <p className="text-sm leading-relaxed">
+              <b>Cas particulier — Blouse livrée à la rentrée de Septembre 2025 :</b> nous recommandons
+              <b> explicitement de prendre une taille au-dessus</b> de la taille calculée ci-dessous, afin
+              que la blouse reste confortable sur l'année scolaire.
+            </p>
+          </div>
         </div>
 
         {user && (
@@ -148,9 +156,7 @@ function GuideTaillesPage() {
 
             {selectedChild && recommendation && (
               <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 rounded-xl bg-primary/5 px-3 py-2 text-xs">
-                <span className="font-semibold text-foreground leading-relaxed">
-                  Taille recommandée en première couche : <span className="text-primary">{recommendation.row.age}</span>
-                </span>
+                <SizeBadge size={recommendation.row.age} />
                 <span className="text-muted-foreground">
                   {recommendation.drivers.map((d) => `${d.key} ${d.value} cm → ${rows[d.idx].age}`).join(" · ")}
                 </span>
@@ -189,11 +195,11 @@ function GuideTaillesPage() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[520px] border-collapse text-xs sm:text-sm">
                 <colgroup>
-                  <col className="w-[20%]" />
-                  <col className="w-[20%]" />
-                  <col className="w-[20%]" />
-                  <col className="w-[20%]" />
-                  <col className="w-[20%]" />
+                  <col className="w-[32%]" />
+                  <col className="w-[17%]" />
+                  <col className="w-[17%]" />
+                  <col className="w-[17%]" />
+                  <col className="w-[17%]" />
                 </colgroup>
                 <thead>
                   <tr className="bg-secondary text-left text-[10px] uppercase tracking-wider text-muted-foreground sm:text-[11px]">
