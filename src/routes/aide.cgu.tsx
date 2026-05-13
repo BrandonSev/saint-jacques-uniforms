@@ -50,7 +50,7 @@ function CguPage() {
             </a>
           </p>
           <p className="mt-2 text-sm leading-relaxed">
-            L'hébergement du site est assuré par <em>OVH CLOUD</em>.
+            L'hébergement du site est assuré par <em>OVHcloud SAS — 2 Rue Kellermann, 59100 Roubaix, France</em>.
           </p>
 
           <h2 className="mt-6 text-lg font-semibold text-foreground">2. Objet et champ d'application</h2>
