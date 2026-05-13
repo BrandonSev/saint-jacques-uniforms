@@ -70,7 +70,7 @@ function MaternelleListPage() {
         <div className="pointer-events-none absolute inset-0 text-primary">
           <ShellMotif className="absolute -left-32 -bottom-32 h-[480px] w-[480px]" opacity={0.05} />
         </div>
-        <div className="relative mx-auto max-w-6xl grid w-full items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
+        <div className="relative mx-auto max-w-6xl grid w-full items-center gap-10 px-4 pt-6 pb-12 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
               <ShieldCheck className="h-3 w-3" /> Tenue officielle de l'établissement

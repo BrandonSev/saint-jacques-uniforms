@@ -184,7 +184,7 @@ function ApelPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader schoolName={SCHOOL_LABEL} />
-      <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+      <section className="mx-auto w-full max-w-6xl px-4 pt-6 pb-12 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
