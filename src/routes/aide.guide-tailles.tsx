@@ -114,7 +114,7 @@ function GuideTaillesPage() {
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
       <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
-      <section className="mx-auto max-w-6xl px-4 pt-6 pb-14 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
         <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
           <span className="h-px w-6 bg-gold" /> Aide
         </span>
@@ -128,24 +128,32 @@ function GuideTaillesPage() {
             statistiques françaises en vigueur.
           </p>
           <p>
-            Ce tableau ne s'applique pas directement aux vêtements de deuxième ou troisième couche
-            (pulls, sweatshirts, blouses…). Pour ces articles, une recommandation de taille spécifique est indiquée
-            directement sur la page de chaque vêtement, tenant compte de sa coupe et de son aisance.
+            Ce tableau ne s'applique pas directement aux vêtements de deuxième ou troisième couche (pulls, sweatshirts,
+            blouses…). Pour ces articles, une recommandation de taille spécifique est indiquée directement sur la page
+            de chaque vêtement, tenant compte de sa coupe et de son aisance.
           </p>
           <p>
             <b>Avant de commander</b>, nous vous conseillons de faire essayer le vêtement visé à votre enfant, si
             possible sur un exemplaire d'un camarade. En cas d'hésitation entre deux tailles, privilégiez la taille
             supérieure.
           </p>
+          <p>
+            <em>
+              Basé sur les normes et statistiques anthropométriques françaises en vigueur (référentiel NF EN 13402)
+            </em>
+          </p>
           <div className="rounded-xl border border-amber-300 bg-amber-50/70 p-3 text-foreground/85">
             <div className="text-sm leading-relaxed space-y-3">
-              <p><b>Cas particulier — Blouse livrée à la rentrée de Septembre 2025 :</b></p>
               <p>
-                Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la blouse, emmanchures élargies et manches allongées, pour un confort optimal, y compris portée sur un sweat. Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir la bonne taille.
+                <b>Cas particulier — Blouse livrée à la rentrée de Septembre 2025 :</b>
               </p>
               <p>
-                En cas de doute, vous pouvez toujours prendre une taille au-dessus.
+                Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la
+                blouse, emmanchures élargies et manches allongées, pour un confort optimal, y compris portée sur un
+                sweat. Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir
+                la bonne taille.
               </p>
+              <p>En cas de doute, vous pouvez toujours prendre une taille au-dessus.</p>
             </div>
           </div>
         </div>
