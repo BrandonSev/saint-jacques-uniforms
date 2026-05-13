@@ -16,8 +16,14 @@ export type PurchasedItem = {
   lineTotal: number;
 };
 
-/** Statuts considérés comme "livrés" (commande honorée). */
-const DELIVERED_STATUSES = ["Livrée", "Livré", "Envoyée", "Envoyé"];
+/** Statuts considérés comme commandes honorées (payées, expédiées ou livrées). */
+const DELIVERED_STATUSES = [
+  "Paiement validé",
+  "Envoyée",
+  "Envoyé",
+  "Livrée",
+  "Livré",
+];
 
 /** Récupère l'historique d'achats livrés pour un enfant donné, le plus récent d'abord. */
 export async function fetchChildPurchaseHistory(childId: string): Promise<PurchasedItem[]> {
