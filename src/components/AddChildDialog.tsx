@@ -257,7 +257,7 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
                       <div className="flex flex-col gap-1.5">
                         <LabelWithTooltip
                           label="Quel modèle de blouse ?"
-                          tooltip="France Uniformes a fait évoluer la coupe de la blouse en cours d'année. Indiquez la version portée : « Septembre 2025 » correspond au modèle de la rentrée, « Janvier 2026 » au modèle révisé déployé après les vacances de Noël."
+                          tooltip={"Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la blouse — emmanchures élargies et manches allongées — pour un confort optimal, y compris portée sur un sweat. Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir la bonne taille.\n\nEn cas de doute, vous pouvez toujours prendre une taille au-dessus."}
                         />
                         <div className="flex gap-2">
                           {([
