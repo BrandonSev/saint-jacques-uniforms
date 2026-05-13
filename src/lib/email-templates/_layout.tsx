@@ -50,7 +50,7 @@ export const text = { fontSize: "15px", lineHeight: "1.6", color: "#1a1a1a", mar
 export const muted = { fontSize: "13px", lineHeight: "1.5", color: "#666666", margin: "14px 0 0" };
 export const button = {
   display: "inline-block",
-  background: "#0f3a5f",
+  background: "#0a2540",
   color: "#ffffff",
   padding: "12px 24px",
   borderRadius: "8px",
