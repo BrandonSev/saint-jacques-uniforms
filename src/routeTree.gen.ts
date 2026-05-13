@@ -31,6 +31,7 @@ import { Route as AideLivraisonRouteImport } from './routes/aide.livraison'
 import { Route as AideGuideTaillesRouteImport } from './routes/aide.guide-tailles'
 import { Route as AideContactRouteImport } from './routes/aide.contact'
 import { Route as AideConfidentialiteRouteImport } from './routes/aide.confidentialite'
+import { Route as AideCgvRouteImport } from './routes/aide.cgv'
 import { Route as AideCguRouteImport } from './routes/aide.cgu'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as EnfantsChildIdHistoriqueRouteImport } from './routes/enfants.$childId.historique'
@@ -152,6 +153,11 @@ const AideConfidentialiteRoute = AideConfidentialiteRouteImport.update({
   path: '/aide/confidentialite',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AideCgvRoute = AideCgvRouteImport.update({
+  id: '/aide/cgv',
+  path: '/aide/cgv',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AideCguRoute = AideCguRouteImport.update({
   id: '/aide/cgu',
   path: '/aide/cgu',
@@ -224,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/panier': typeof PanierRoute
   '/reset-password': typeof ResetPasswordRoute
   '/aide/cgu': typeof AideCguRoute
+  '/aide/cgv': typeof AideCgvRoute
   '/aide/confidentialite': typeof AideConfidentialiteRoute
   '/aide/contact': typeof AideContactRoute
   '/aide/guide-tailles': typeof AideGuideTaillesRoute
@@ -258,6 +265,7 @@ export interface FileRoutesByTo {
   '/panier': typeof PanierRoute
   '/reset-password': typeof ResetPasswordRoute
   '/aide/cgu': typeof AideCguRoute
+  '/aide/cgv': typeof AideCgvRoute
   '/aide/confidentialite': typeof AideConfidentialiteRoute
   '/aide/contact': typeof AideContactRoute
   '/aide/guide-tailles': typeof AideGuideTaillesRoute
@@ -293,6 +301,7 @@ export interface FileRoutesById {
   '/panier': typeof PanierRoute
   '/reset-password': typeof ResetPasswordRoute
   '/aide/cgu': typeof AideCguRoute
+  '/aide/cgv': typeof AideCgvRoute
   '/aide/confidentialite': typeof AideConfidentialiteRoute
   '/aide/contact': typeof AideContactRoute
   '/aide/guide-tailles': typeof AideGuideTaillesRoute
@@ -329,6 +338,7 @@ export interface FileRouteTypes {
     | '/panier'
     | '/reset-password'
     | '/aide/cgu'
+    | '/aide/cgv'
     | '/aide/confidentialite'
     | '/aide/contact'
     | '/aide/guide-tailles'
@@ -363,6 +373,7 @@ export interface FileRouteTypes {
     | '/panier'
     | '/reset-password'
     | '/aide/cgu'
+    | '/aide/cgv'
     | '/aide/confidentialite'
     | '/aide/contact'
     | '/aide/guide-tailles'
@@ -397,6 +408,7 @@ export interface FileRouteTypes {
     | '/panier'
     | '/reset-password'
     | '/aide/cgu'
+    | '/aide/cgv'
     | '/aide/confidentialite'
     | '/aide/contact'
     | '/aide/guide-tailles'
@@ -432,6 +444,7 @@ export interface RootRouteChildren {
   PanierRoute: typeof PanierRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   AideCguRoute: typeof AideCguRoute
+  AideCgvRoute: typeof AideCgvRoute
   AideConfidentialiteRoute: typeof AideConfidentialiteRoute
   AideContactRoute: typeof AideContactRoute
   AideGuideTaillesRoute: typeof AideGuideTaillesRoute
@@ -604,6 +617,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AideConfidentialiteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/aide/cgv': {
+      id: '/aide/cgv'
+      path: '/aide/cgv'
+      fullPath: '/aide/cgv'
+      preLoaderRoute: typeof AideCgvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/aide/cgu': {
       id: '/aide/cgu'
       path: '/aide/cgu'
@@ -717,6 +737,7 @@ const rootRouteChildren: RootRouteChildren = {
   PanierRoute: PanierRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   AideCguRoute: AideCguRoute,
+  AideCgvRoute: AideCgvRoute,
   AideConfidentialiteRoute: AideConfidentialiteRoute,
   AideContactRoute: AideContactRoute,
   AideGuideTaillesRoute: AideGuideTaillesRoute,
@@ -735,3 +756,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

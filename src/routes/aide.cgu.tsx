@@ -61,14 +61,9 @@ function CguPage() {
           </p>
           <p className="mt-2 text-sm leading-relaxed">
             Les modalités commerciales (commande, paiement, livraison, retours, garanties) sont régies par les{" "}
-            <a
-              href="https://franceuniformes.fr/cgv"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary underline hover:no-underline"
-            >
+            <Link to="/aide/cgv" className="text-primary underline hover:no-underline">
               Conditions Générales de Vente (CGV)
-            </a>
+            </Link>
             , disponibles sur le site de France Uniformes et applicables à toute commande passée sur la plateforme.
           </p>
           <p className="mt-2 text-sm leading-relaxed">
