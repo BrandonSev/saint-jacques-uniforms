@@ -7,7 +7,7 @@ interface Props { link?: string }
 
 function PasswordResetEmail({ link = '#' }: Props) {
   return (
-    <EmailLayout preview="Réinitialisation de votre mot de passe" title="Réinitialisation du mot de passe">
+    <EmailLayout preview="Réinitialisation de votre mot de passe" title="Réinitialisation du mot de passe" signatureRole="Boutique">
       <Text style={text}>Bonjour,</Text>
       <Text style={text}>Vous avez demandé à réinitialiser votre mot de passe. Cliquez sur le bouton ci-dessous pour en définir un nouveau :</Text>
       <Button href={link} style={button}>Réinitialiser mon mot de passe</Button>
