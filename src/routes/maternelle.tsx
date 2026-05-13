@@ -87,7 +87,7 @@ function MaternelleListPage() {
                 Blouse
               </span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">
-                Tailles 4 → 18 ans
+                Tailles 3 → 18 ans
               </span>
               <span className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground">
                 Livraison à l'établissement
