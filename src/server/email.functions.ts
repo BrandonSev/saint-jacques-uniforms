@@ -58,10 +58,10 @@ export const sendTestRandomEmail = createServerFn({ method: "POST" })
 
 // Bienvenue après création de compte (appelable par utilisateur authentifié)
 export const sendWelcome = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ email: z.string().email(), prenom: z.string().min(1).max(100) }).parse(d))
+  .inputValidator((d) => z.object({ email: z.string().email(), prenom: z.string().min(1).max(100), nom: z.string().max(100).optional() }).parse(d))
   .handler(async ({ data }) => {
     try {
-      await sendWelcomeEmail(data.email, data.prenom);
+      await sendWelcomeEmail(data.email, data.prenom, data.nom);
       return { ok: true };
     } catch (e) {
       console.error(e);
