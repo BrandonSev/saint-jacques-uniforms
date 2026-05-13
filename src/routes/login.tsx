@@ -1,6 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, KeyRound, Lock, Mail, MapPin, ShieldCheck, User as UserIcon, Phone, HelpCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  KeyRound,
+  Lock,
+  Mail,
+  MapPin,
+  ShieldCheck,
+  User as UserIcon,
+  Phone,
+  HelpCircle,
+} from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import sjcLogo from "@/assets/saint-jacques-logo-full.png";
@@ -73,19 +83,42 @@ function LoginPage() {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = signinSchema.safeParse({ email, password });
-    if (!parsed.success) { toast.error(parsed.error.issues[0].message); return; }
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0].message);
+      return;
+    }
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: parsed.data.email, password: parsed.data.password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email: parsed.data.email,
+      password: parsed.data.password,
+    });
     setLoading(false);
-    if (error) { toast.error(error.message === "Invalid login credentials" ? "Identifiants invalides" : error.message); return; }
+    if (error) {
+      toast.error(error.message === "Invalid login credentials" ? "Identifiants invalides" : error.message);
+      return;
+    }
     toast.success("Bienvenue !");
     navigate({ to: "/boutique" });
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    const parsed = signupSchema.safeParse({ civilite, prenom, nom, email, telephone, adresse, code_postal: codePostal, ville, password, code_etablissement: codeEtablissement });
-    if (!parsed.success) { toast.error(parsed.error.issues[0].message); return; }
+    const parsed = signupSchema.safeParse({
+      civilite,
+      prenom,
+      nom,
+      email,
+      telephone,
+      adresse,
+      code_postal: codePostal,
+      ville,
+      password,
+      code_etablissement: codeEtablissement,
+    });
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0].message);
+      return;
+    }
     setLoading(true);
     // Validation serveur du code établissement
     try {
@@ -127,17 +160,24 @@ function LoginPage() {
       return;
     }
     // Persiste les infos postales sur le profil après création
-    const { data: { user: u } } = await supabase.auth.getUser();
+    const {
+      data: { user: u },
+    } = await supabase.auth.getUser();
     if (u) {
-      await supabase.from("profiles").update({
-        adresse: parsed.data.adresse,
-        code_postal: parsed.data.code_postal,
-        ville: parsed.data.ville,
-        telephone: parsed.data.telephone || null,
-        code_etablissement: parsed.data.code_etablissement,
-      }).eq("id", u.id);
+      await supabase
+        .from("profiles")
+        .update({
+          adresse: parsed.data.adresse,
+          code_postal: parsed.data.code_postal,
+          ville: parsed.data.ville,
+          telephone: parsed.data.telephone || null,
+          code_etablissement: parsed.data.code_etablissement,
+        })
+        .eq("id", u.id);
       // Email de bienvenue (best-effort)
-      try { await sendWelcome({ data: { email: parsed.data.email, prenom: parsed.data.prenom, nom: parsed.data.nom } }); } catch {}
+      try {
+        await sendWelcome({ data: { email: parsed.data.email, prenom: parsed.data.prenom, nom: parsed.data.nom } });
+      } catch {}
     }
     toast.success("Espace famille créé !");
     navigate({ to: "/boutique" });
@@ -152,13 +192,19 @@ function LoginPage() {
           <Link to="/" className="inline-flex items-center gap-2 text-sm text-white/80 hover:text-white">
             <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
           </Link>
-          <span className="hidden text-xs uppercase tracking-[0.2em] text-white/70 font-semibold sm:inline">Saint-Jacques-de-Compostelle · Dax</span>
+          <span className="hidden text-xs uppercase tracking-[0.2em] text-white/70 font-semibold sm:inline">
+            Saint-Jacques-de-Compostelle · Dax
+          </span>
         </header>
 
         <div className="relative flex flex-1 items-center justify-center px-4 py-8 sm:px-6 sm:py-12 lg:px-10">
           <div className="w-full max-w-md rounded-2xl border border-white/15 bg-card/95 p-6 shadow-[var(--shadow-elegant)] backdrop-blur-md sm:p-8">
             <div className="flex flex-col items-center text-center">
-              <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-24 w-auto object-contain drop-shadow-sm" />
+              <img
+                src={sjcLogo}
+                alt="Saint-Jacques-de-Compostelle"
+                className="h-24 w-auto object-contain drop-shadow-sm"
+              />
               <div className="mt-4 h-1 w-12 rounded-full bg-[var(--rouge)]" />
               <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[var(--teal)]/15 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--teal-deep)]">
                 <ShieldCheck className="h-3 w-3" /> Espace sécurisé
@@ -169,29 +215,52 @@ function LoginPage() {
             </div>
 
             <div className="mt-8 grid grid-cols-2 rounded-xl border border-border bg-secondary p-1 text-sm font-medium">
-              <button type="button" onClick={() => setMode("signin")}
-                className={`h-9 rounded-lg transition-colors ${mode === "signin" ? "bg-card text-primary shadow-sm" : "text-muted-foreground"}`}>
+              <button
+                type="button"
+                onClick={() => setMode("signin")}
+                className={`h-9 rounded-lg transition-colors ${mode === "signin" ? "bg-card text-primary shadow-sm" : "text-muted-foreground"}`}
+              >
                 Connexion
               </button>
-              <button type="button" onClick={() => setMode("signup")}
-                className={`h-9 rounded-lg transition-colors ${mode === "signup" ? "bg-card text-primary shadow-sm" : "text-muted-foreground"}`}>
+              <button
+                type="button"
+                onClick={() => setMode("signup")}
+                className={`h-9 rounded-lg transition-colors ${mode === "signup" ? "bg-card text-primary shadow-sm" : "text-muted-foreground"}`}
+              >
                 Créer un espace
               </button>
             </div>
 
             {mode === "signin" ? (
               <form onSubmit={handleSignIn} className="mt-6 space-y-4">
-                <Field label="Email - Boutique France Uniformes SJDC" icon={<Mail className="h-4 w-4" />}>
-                  <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="vous@exemple.com" className={inputCls} />
+                <Field label="Email" icon={<Mail className="h-4 w-4" />}>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="vous@exemple.com"
+                    className={inputCls}
+                  />
                 </Field>
                 <Field label="Mot de passe" icon={<Lock className="h-4 w-4" />}>
-                  <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className={inputCls} />
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className={inputCls}
+                  />
                 </Field>
                 <button type="submit" disabled={loading} className={primaryBtn}>
                   {loading ? "Connexion…" : "Accéder à la boutique"}
                 </button>
                 <div className="text-right">
-                  <Link to="/mot-de-passe-oublie" className="text-xs font-medium text-[var(--teal-deep)] hover:text-primary hover:underline">
+                  <Link
+                    to="/mot-de-passe-oublie"
+                    className="text-xs font-medium text-[var(--teal-deep)] hover:text-primary hover:underline"
+                  >
                     Mot de passe oublié ?
                   </Link>
                 </div>
@@ -199,11 +268,17 @@ function LoginPage() {
             ) : (
               <form onSubmit={handleSignUp} className="mt-6 space-y-4">
                 <div>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Civilité</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Civilité
+                  </span>
                   <div className="mt-2 grid grid-cols-3 gap-2">
                     {(["Mme", "M.", "Autre"] as const).map((c) => (
-                      <button type="button" key={c} onClick={() => setCivilite(c)}
-                        className={`h-10 rounded-lg border text-sm font-medium transition-colors ${civilite === c ? "border-primary bg-primary/10 text-primary" : "border-border bg-card text-foreground hover:bg-muted"}`}>
+                      <button
+                        type="button"
+                        key={c}
+                        onClick={() => setCivilite(c)}
+                        className={`h-10 rounded-lg border text-sm font-medium transition-colors ${civilite === c ? "border-primary bg-primary/10 text-primary" : "border-border bg-card text-foreground hover:bg-muted"}`}
+                      >
                         {c}
                       </button>
                     ))}
@@ -211,17 +286,44 @@ function LoginPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="Prénom" icon={<UserIcon className="h-4 w-4" />}>
-                    <input type="text" required value={prenom} onChange={(e) => setPrenom(e.target.value)} maxLength={80} className={inputCls} />
+                    <input
+                      type="text"
+                      required
+                      value={prenom}
+                      onChange={(e) => setPrenom(e.target.value)}
+                      maxLength={80}
+                      className={inputCls}
+                    />
                   </Field>
                   <Field label="Nom" icon={<UserIcon className="h-4 w-4" />}>
-                    <input type="text" required value={nom} onChange={(e) => setNom(e.target.value)} maxLength={80} className={inputCls} />
+                    <input
+                      type="text"
+                      required
+                      value={nom}
+                      onChange={(e) => setNom(e.target.value)}
+                      maxLength={80}
+                      className={inputCls}
+                    />
                   </Field>
                 </div>
                 <Field label="Email - Boutique France Uniformes SJDC" icon={<Mail className="h-4 w-4" />}>
-                  <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={inputCls} />
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={inputCls}
+                  />
                 </Field>
                 <Field label="Téléphone (optionnel)" icon={<Phone className="h-4 w-4" />}>
-                  <input type="tel" value={telephone} onChange={(e) => setTelephone(e.target.value)} maxLength={30} placeholder="06 12 34 56 78" className={inputCls} />
+                  <input
+                    type="tel"
+                    value={telephone}
+                    onChange={(e) => setTelephone(e.target.value)}
+                    maxLength={30}
+                    placeholder="06 12 34 56 78"
+                    className={inputCls}
+                  />
                 </Field>
                 <Field label="Adresse postale" icon={<MapPin className="h-4 w-4" />}>
                   <AddressAutocomplete
@@ -238,14 +340,37 @@ function LoginPage() {
                 </Field>
                 <div className="grid grid-cols-[120px_1fr] gap-3">
                   <Field label="Code postal" icon={<MapPin className="h-4 w-4" />}>
-                    <input type="text" required value={codePostal} onChange={(e) => setCodePostal(e.target.value)} maxLength={10} placeholder="40100" className={inputCls} />
+                    <input
+                      type="text"
+                      required
+                      value={codePostal}
+                      onChange={(e) => setCodePostal(e.target.value)}
+                      maxLength={10}
+                      placeholder="40100"
+                      className={inputCls}
+                    />
                   </Field>
                   <Field label="Ville" icon={<MapPin className="h-4 w-4" />}>
-                    <input type="text" required value={ville} onChange={(e) => setVille(e.target.value)} maxLength={100} placeholder="Dax" className={inputCls} />
+                    <input
+                      type="text"
+                      required
+                      value={ville}
+                      onChange={(e) => setVille(e.target.value)}
+                      maxLength={100}
+                      placeholder="Dax"
+                      className={inputCls}
+                    />
                   </Field>
                 </div>
                 <Field label="Mot de passe (8 car. min.)" icon={<Lock className="h-4 w-4" />}>
-                  <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} minLength={8} className={inputCls} />
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    minLength={8}
+                    className={inputCls}
+                  />
                 </Field>
                 <div>
                   <div className="flex items-center justify-between">
@@ -258,7 +383,8 @@ function LoginPage() {
                     >
                       <HelpCircle className="h-3.5 w-3.5" />
                       <span className="pointer-events-none absolute right-0 top-5 z-30 w-64 rounded-lg border border-border bg-card p-3 text-left text-[11px] leading-snug text-foreground opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus:opacity-100">
-                        Le code établissement vous a été transmis par l'école. Si vous ne l'avez pas reçu, contactez le secrétariat de Saint-Jacques-de-Compostelle.
+                        Le code établissement vous a été transmis par l'école. Si vous ne l'avez pas reçu, contactez le
+                        secrétariat de Saint-Jacques-de-Compostelle.
                       </span>
                     </span>
                   </div>
@@ -286,9 +412,14 @@ function LoginPage() {
 
             <p className="mt-6 text-center text-xs text-muted-foreground">
               En continuant, vous acceptez nos{" "}
-              <Link to="/aide/cgu" className="text-[var(--teal-deep)] underline hover:text-primary">CGU</Link>
-              {" "}et notre{" "}
-              <Link to="/aide/confidentialite" className="text-[var(--teal-deep)] underline hover:text-primary">politique de confidentialité</Link>.
+              <Link to="/aide/cgu" className="text-[var(--teal-deep)] underline hover:text-primary">
+                CGU
+              </Link>{" "}
+              et notre{" "}
+              <Link to="/aide/confidentialite" className="text-[var(--teal-deep)] underline hover:text-primary">
+                politique de confidentialité
+              </Link>
+              .
             </p>
           </div>
         </div>
@@ -304,15 +435,19 @@ function LoginPage() {
   );
 }
 
-const inputCls = "h-11 w-full rounded-xl border border-input bg-card pl-10 pr-3 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/15";
-const primaryBtn = "inline-flex h-12 w-full items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] transition-all hover:bg-primary/90 disabled:opacity-60";
+const inputCls =
+  "h-11 w-full rounded-xl border border-input bg-card pl-10 pr-3 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/15";
+const primaryBtn =
+  "inline-flex h-12 w-full items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] transition-all hover:bg-primary/90 disabled:opacity-60";
 
 function Field({ label, icon, children }: { label: string; icon: React.ReactNode; children: React.ReactNode }) {
   return (
     <div>
       <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</label>
       <div className="relative mt-1.5">
-        <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground">{icon}</span>
+        <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground">
+          {icon}
+        </span>
         {children}
       </div>
     </div>
