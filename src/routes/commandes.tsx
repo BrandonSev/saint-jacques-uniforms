@@ -347,6 +347,7 @@ function CommandesPage() {
             {orders.map((o) => {
               const oItems = items.filter((i) => i.order_id === o.id);
               const oIncidents = incidents.filter((i) => i.order_id === o.id);
+              const canDeclareIncident = o.status === "Livrée" || !!(o as { delivered_at?: string | null }).delivered_at;
               const openCount = oIncidents.filter((i) => statusKind(i.status) === "open").length;
               const doneCount = oIncidents.filter((i) => statusKind(i.status) === "done").length;
               const rejectedCount = oIncidents.filter((i) => statusKind(i.status) === "rejected").length;
@@ -505,8 +506,10 @@ function CommandesPage() {
                                 <td className="py-2.5 text-right font-semibold">{Number(i.line_total).toFixed(2)} €</td>
                                 <td className="py-2.5 text-right">
                                   <button
-                                    onClick={() => setIncidentItem(i)}
-                                    className="inline-flex items-center gap-1 rounded-lg border border-border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground hover:border-destructive/40 hover:text-destructive"
+                                    onClick={() => canDeclareIncident && setIncidentItem(i)}
+                                    disabled={!canDeclareIncident}
+                                    title={canDeclareIncident ? "Déclarer un incident" : "Disponible une fois la commande livrée"}
+                                    className="inline-flex items-center gap-1 rounded-lg border border-border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground hover:border-destructive/40 hover:text-destructive disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-border disabled:hover:text-muted-foreground"
                                   >
                                     <AlertTriangle className="h-3 w-3" /> Déclarer un incident
                                   </button>
@@ -560,10 +563,13 @@ function CommandesPage() {
                                 </div>
                               )}
                               <button
-                                onClick={() => setIncidentItem(i)}
-                                className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-muted-foreground hover:border-destructive/40 hover:text-destructive"
+                                onClick={() => canDeclareIncident && setIncidentItem(i)}
+                                disabled={!canDeclareIncident}
+                                title={canDeclareIncident ? "Déclarer un incident" : "Disponible une fois la commande livrée"}
+                                className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-muted-foreground hover:border-destructive/40 hover:text-destructive disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-border disabled:hover:text-muted-foreground"
                               >
-                                <AlertTriangle className="h-3.5 w-3.5" /> Déclarer un incident
+                                <AlertTriangle className="h-3.5 w-3.5" />
+                                {canDeclareIncident ? "Déclarer un incident" : "Incident dispo. après livraison"}
                               </button>
                             </li>
                           );
