@@ -167,7 +167,7 @@ export const sendOrderStatusUpdate = createServerFn({ method: "POST" })
     const { supabase } = context;
     const { data: order } = await supabase
       .from("orders")
-      .select("order_number, status, family_email, family_prenom, tracking_number, tracking_carrier")
+      .select("order_number, status, family_email, family_prenom, family_nom, tracking_number, tracking_carrier")
       .eq("id", data.orderId)
       .maybeSingle();
     if (!order || !order.family_email) return { ok: false, error: "no_recipient" as const };
@@ -176,6 +176,7 @@ export const sendOrderStatusUpdate = createServerFn({ method: "POST" })
         trackingNumber: order.tracking_number,
         trackingCarrier: order.tracking_carrier,
         note: data.note ?? null,
+        familyName: order.family_nom ?? undefined,
       });
       return { ok: true };
     } catch (e) {
@@ -216,6 +217,7 @@ export const sendIncidentNotifications = createServerFn({ method: "POST" })
           item?.product_name ?? "—",
           inc.incident_type,
           inc.eligible,
+          order.family_nom ?? undefined,
         );
       }
       const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.SMTP_USER;
@@ -250,7 +252,7 @@ export const sendIncidentUpdate = createServerFn({ method: "POST" })
     if (!inc) return { ok: false, error: "not_found" as const };
     const { data: order } = await supabase
       .from("orders")
-      .select("order_number, family_email, family_prenom")
+      .select("order_number, family_email, family_prenom, family_nom")
       .eq("id", inc.order_id)
       .maybeSingle();
     const { data: item } = await supabase
@@ -266,6 +268,7 @@ export const sendIncidentUpdate = createServerFn({ method: "POST" })
         order.order_number,
         inc.status,
         item?.product_name ?? "—",
+        order.family_nom ?? undefined,
       );
       return { ok: true };
     } catch (e) {
