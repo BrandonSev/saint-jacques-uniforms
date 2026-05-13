@@ -195,11 +195,11 @@ function GuideTaillesPage() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[520px] border-collapse text-xs sm:text-sm">
                 <colgroup>
-                  <col className="w-[20%]" />
-                  <col className="w-[20%]" />
-                  <col className="w-[20%]" />
-                  <col className="w-[20%]" />
-                  <col className="w-[20%]" />
+                  <col className="w-[32%]" />
+                  <col className="w-[17%]" />
+                  <col className="w-[17%]" />
+                  <col className="w-[17%]" />
+                  <col className="w-[17%]" />
                 </colgroup>
                 <thead>
                   <tr className="bg-secondary text-left text-[10px] uppercase tracking-wider text-muted-foreground sm:text-[11px]">
