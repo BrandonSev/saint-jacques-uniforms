@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Button, Text } from "@react-email/components";
-import { EmailLayout, text, muted, button } from "./_layout";
+import { EmailLayout, text, button } from "./_layout";
 import type { TemplateEntry } from "./registry";
 
 interface Props {
