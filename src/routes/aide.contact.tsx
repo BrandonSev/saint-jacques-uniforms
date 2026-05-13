@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
-import { Mail, Phone, MapPin, Clock, Globe } from "lucide-react";
+import { MapPin, Clock, Globe } from "lucide-react";
 import { PageWatermark } from "@/components/PageWatermark";
 
 export const Route = createFileRoute("/aide/contact")({
@@ -24,13 +24,10 @@ function ContactPage() {
         </span>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Contact établissement</h1>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
           <Item icon={<MapPin className="h-5 w-5" />} title="Adresse">
             32 rue Paul Lahargou<br />
             40100 Dax
-          </Item>
-          <Item icon={<Mail className="h-5 w-5" />} title="Email - Boutique France Uniformes SJDC">
-            <a href="mailto:boutique@franceuniformes.fr" className="text-primary hover:underline">boutique@franceuniformes.fr</a>
           </Item>
           <Item icon={<Clock className="h-5 w-5" />} title="Horaires">
             Lundi : 08:00–12:00, 13:30–17:30<br />
