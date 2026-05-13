@@ -35,7 +35,7 @@ export const Route = createFileRoute("/blouse-officielle")({
   ),
 });
 
-const sizes = ["4 ans", "6 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];
+const sizes = ["3 ans", "4 ans", "6 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];
 
 function MaternellePage() {
   const { addToCart, children } = useStore();
