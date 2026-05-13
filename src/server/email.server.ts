@@ -4,20 +4,20 @@ import { enqueueTransactionalEmail } from "@/lib/email/send.server";
 
 export type OrderEmailItem = { name: string; size: string; qty: number; price: number; child: string };
 
-export async function sendWelcomeEmail(to: string, prenom: string) {
+export async function sendWelcomeEmail(to: string, prenom: string, familyName?: string) {
   await enqueueTransactionalEmail({
     templateName: "welcome",
     recipientEmail: to,
-    templateData: { prenom },
+    templateData: { prenom, familyName },
     idempotencyKey: `welcome-${to}`,
   });
 }
 
-export async function sendOrderConfirmation(to: string, prenom: string, orderNumber: string, items: OrderEmailItem[], total: number) {
+export async function sendOrderConfirmation(to: string, prenom: string, orderNumber: string, items: OrderEmailItem[], total: number, familyName?: string) {
   await enqueueTransactionalEmail({
     templateName: "order-confirmation",
     recipientEmail: to,
-    templateData: { prenom, orderNumber, items, total },
+    templateData: { prenom, familyName, orderNumber, items, total },
     idempotencyKey: `order-confirm-${orderNumber}`,
   });
 }
@@ -45,7 +45,7 @@ export async function sendOrderStatusEmail(
   prenom: string,
   orderNumber: string,
   status: string,
-  extras: { trackingNumber?: string | null; trackingCarrier?: string | null; note?: string | null } = {},
+  extras: { trackingNumber?: string | null; trackingCarrier?: string | null; note?: string | null; familyName?: string } = {},
 ) {
   await enqueueTransactionalEmail({
     templateName: "order-status",
@@ -55,11 +55,11 @@ export async function sendOrderStatusEmail(
   });
 }
 
-export async function sendIncidentOpenedFamily(to: string, prenom: string, orderNumber: string, productName: string, type: string, eligible: boolean) {
+export async function sendIncidentOpenedFamily(to: string, prenom: string, orderNumber: string, productName: string, type: string, eligible: boolean, familyName?: string) {
   await enqueueTransactionalEmail({
     templateName: "incident-family",
     recipientEmail: to,
-    templateData: { prenom, orderNumber, productName, type, eligible },
+    templateData: { prenom, familyName, orderNumber, productName, type, eligible },
     idempotencyKey: `incident-fam-${orderNumber}-${productName}`,
   });
 }
@@ -73,11 +73,11 @@ export async function sendIncidentOpenedAdmin(to: string, orderNumber: string, f
   });
 }
 
-export async function sendIncidentResolutionFamily(to: string, prenom: string, orderNumber: string, status: string, productName: string) {
+export async function sendIncidentResolutionFamily(to: string, prenom: string, orderNumber: string, status: string, productName: string, familyName?: string) {
   await enqueueTransactionalEmail({
     templateName: "incident-resolution",
     recipientEmail: to,
-    templateData: { prenom, orderNumber, status, productName },
+    templateData: { prenom, familyName, orderNumber, status, productName },
     idempotencyKey: `incident-res-${orderNumber}-${productName}-${status}`,
   });
 }

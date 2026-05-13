@@ -137,7 +137,7 @@ function LoginPage() {
         code_etablissement: parsed.data.code_etablissement,
       }).eq("id", u.id);
       // Email de bienvenue (best-effort)
-      try { await sendWelcome({ data: { email: parsed.data.email, prenom: parsed.data.prenom } }); } catch {}
+      try { await sendWelcome({ data: { email: parsed.data.email, prenom: parsed.data.prenom, nom: parsed.data.nom } }); } catch {}
     }
     toast.success("Espace famille créé !");
     navigate({ to: "/boutique" });

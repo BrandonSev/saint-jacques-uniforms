@@ -5,6 +5,7 @@ import type { TemplateEntry } from './registry'
 
 interface Props {
   prenom?: string
+  familyName?: string
   deadline?: string
   appUrl?: string
   customMessage?: string
@@ -12,11 +13,13 @@ interface Props {
 
 const APP_URL = 'https://sjdc-dax.franceuniformes.fr'
 
-function ApelReminder({ prenom, deadline = '30 juin 2026', appUrl = APP_URL, customMessage }: Props) {
+function ApelReminder({ prenom, familyName, deadline = '30 juin 2026', appUrl = APP_URL, customMessage }: Props) {
   return (
     <EmailLayout
       preview="Pensez à commander les uniformes pour la rentrée 2026"
       title="Rappel — Commande pour la rentrée 2026"
+      familyName={familyName}
+      signatureRole="APEL"
     >
       <Text style={text}>Bonjour {prenom || ''},</Text>
       <Text style={text}>
@@ -42,5 +45,5 @@ export const template = {
   component: ApelReminder,
   subject: 'Rappel APEL — Commande des uniformes pour la rentrée 2026',
   displayName: 'Relance APEL (rentrée)',
-  previewData: { prenom: 'Marie', deadline: '30 juin 2026', appUrl: APP_URL },
+  previewData: { prenom: 'Marie', familyName: 'Dupont', deadline: '30 juin 2026', appUrl: APP_URL },
 } satisfies TemplateEntry

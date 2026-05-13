@@ -13,16 +13,16 @@ const STATUS_MAP: Record<string, { title: string; body: string }> = {
   'En attente': { title: 'Incident en attente', body: "Votre incident est en attente d'éléments complémentaires." },
 }
 
-interface Props { prenom?: string; orderNumber?: string; status?: string; productName?: string; appUrl?: string }
+interface Props { prenom?: string; familyName?: string; orderNumber?: string; status?: string; productName?: string; appUrl?: string }
 
 function getMap(status?: string) {
   return (status && STATUS_MAP[status]) || { title: `Incident — ${status ?? ''}`, body: `Votre incident a évolué au statut « ${status ?? ''} ».` }
 }
 
-function IncidentResolutionEmail({ prenom = '', orderNumber = '', status = '', productName = '', appUrl = APP_URL }: Props) {
+function IncidentResolutionEmail({ prenom = '', familyName, orderNumber = '', status = '', productName = '', appUrl = APP_URL }: Props) {
   const m = getMap(status)
   return (
-    <EmailLayout preview={`${m.title} — ${orderNumber}`} title={m.title}>
+    <EmailLayout preview={`${m.title} — ${orderNumber}`} title={m.title} familyName={familyName} signatureRole="Service après-vente">
       <Text style={text}>Bonjour {prenom},</Text>
       <Text style={text}>Mise à jour concernant l'incident sur votre commande <strong>{orderNumber}</strong> (article : {productName}) :</Text>
       <Text style={text}>{m.body}</Text>
@@ -35,5 +35,5 @@ export const template = {
   component: IncidentResolutionEmail,
   subject: (d: Record<string, any>) => `${getMap(d.status).title} — ${d.orderNumber ?? ''}`,
   displayName: 'Incident — résolution famille',
-  previewData: { prenom: 'Marie', orderNumber: 'CMD-20260504-C001-001', status: 'Résolu', productName: 'Polo bleu' },
+  previewData: { prenom: 'Marie', familyName: 'Dupont', orderNumber: 'CMD-20260504-C001-001', status: 'Résolu', productName: 'Polo bleu' },
 } satisfies TemplateEntry

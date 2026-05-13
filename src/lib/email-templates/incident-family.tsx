@@ -9,11 +9,11 @@ const INCIDENT_LABELS: Record<string, string> = {
   taille_inadaptee: 'Taille inadaptée', usure_normale: 'Usure normale', autre: 'Autre',
 }
 
-interface Props { prenom?: string; orderNumber?: string; productName?: string; type?: string; eligible?: boolean; appUrl?: string }
+interface Props { prenom?: string; familyName?: string; orderNumber?: string; productName?: string; type?: string; eligible?: boolean; appUrl?: string }
 
-function IncidentFamilyEmail({ prenom = '', orderNumber = '', productName = '', type = '', eligible = false, appUrl = APP_URL }: Props) {
+function IncidentFamilyEmail({ prenom = '', familyName, orderNumber = '', productName = '', type = '', eligible = false, appUrl = APP_URL }: Props) {
   return (
-    <EmailLayout preview="Incident enregistré" title="Incident enregistré">
+    <EmailLayout preview="Incident enregistré" title="Incident enregistré" familyName={familyName} signatureRole="Service après-vente">
       <Text style={text}>Bonjour {prenom},</Text>
       <Text style={text}>Nous avons bien reçu votre déclaration d'incident concernant la commande <strong>{orderNumber}</strong>.</Text>
       <ul style={list}>
@@ -30,5 +30,5 @@ export const template = {
   component: IncidentFamilyEmail,
   subject: (d: Record<string, any>) => `Incident enregistré — Commande ${d.orderNumber ?? ''}`,
   displayName: 'Incident — confirmation famille',
-  previewData: { prenom: 'Marie', orderNumber: 'CMD-20260504-C001-001', productName: 'Polo bleu', type: 'malfacon', eligible: true },
+  previewData: { prenom: 'Marie', familyName: 'Dupont', orderNumber: 'CMD-20260504-C001-001', productName: 'Polo bleu', type: 'malfacon', eligible: true },
 } satisfies TemplateEntry
