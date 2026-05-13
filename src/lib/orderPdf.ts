@@ -117,9 +117,11 @@ export async function buildOrderPdf(order: PdfOrder): Promise<jsPDF> {
   doc.text("LIVRAISON", W / 2, y);
   doc.setTextColor(20);
   y += 14;
+  const colWidth = (W - M * 2) / 2 - 10;
   const family = `${order.family.civilite ?? ""} ${order.family.prenom} ${order.family.nom}\n${order.family.email}${order.family.telephone ? "\n" + order.family.telephone : ""}`;
-  doc.text(family, M, y);
-  const shipping =
+  const familyLines = doc.splitTextToSize(family, colWidth);
+  doc.text(familyLines, M, y);
+  const shippingRaw =
     order.shipping.mode === "pickup"
       ? [
           "Retrait à l'établissement",
@@ -136,8 +138,10 @@ export async function buildOrderPdf(order: PdfOrder): Promise<jsPDF> {
         ]
           .filter(Boolean)
           .join("\n") || "Adresse non renseignée";
-  doc.text(shipping, W / 2, y);
-  y += order.shipping.mode === "pickup" ? 90 : 60;
+  const shippingLines = doc.splitTextToSize(shippingRaw, colWidth);
+  doc.text(shippingLines, W / 2, y);
+  const blockHeight = Math.max(familyLines.length, shippingLines.length) * 12;
+  y += blockHeight + 16;
 
   // Tableau articles
   autoTable(doc, {
