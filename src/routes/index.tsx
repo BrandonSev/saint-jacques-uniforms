@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, CreditCard, ShieldCheck, Truck, HeartHandshake } from "lucide-react";
+import { ArrowRight, CreditCard, ShieldCheck, Truck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { DirectorQuote } from "@/components/DirectorQuote";
