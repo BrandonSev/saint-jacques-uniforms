@@ -18,16 +18,16 @@ const STATUS_LABELS: Record<string, { title: string; body: string }> = {
   'Annulée': { title: 'Commande annulée', body: 'Votre commande a été annulée.' },
 }
 
-interface Props { prenom?: string; orderNumber?: string; status?: string; trackingNumber?: string | null; trackingCarrier?: string | null; note?: string | null; appUrl?: string }
+interface Props { prenom?: string; familyName?: string; orderNumber?: string; status?: string; trackingNumber?: string | null; trackingCarrier?: string | null; note?: string | null; appUrl?: string }
 
 function getMap(status?: string) {
   return (status && STATUS_LABELS[status]) || { title: `Mise à jour : ${status ?? ''}`, body: `Votre commande est désormais au statut « ${status ?? ''} ».` }
 }
 
-function OrderStatusEmail({ prenom = '', orderNumber = '', status = '', trackingNumber, trackingCarrier, note, appUrl = APP_URL }: Props) {
+function OrderStatusEmail({ prenom = '', familyName, orderNumber = '', status = '', trackingNumber, trackingCarrier, note, appUrl = APP_URL }: Props) {
   const map = getMap(status)
   return (
-    <EmailLayout preview={`${map.title} — ${orderNumber}`} title={map.title}>
+    <EmailLayout preview={`${map.title} — ${orderNumber}`} title={map.title} familyName={familyName} signatureRole="Commandes">
       <Text style={text}>Bonjour {prenom},</Text>
       <Text style={text}>Votre commande <strong>{orderNumber}</strong> a évolué :</Text>
       <Text style={text}>{map.body}</Text>
@@ -44,5 +44,5 @@ export const template = {
   component: OrderStatusEmail,
   subject: (d: Record<string, any>) => `${getMap(d.status).title} — ${d.orderNumber ?? ''}`,
   displayName: 'Mise à jour statut commande',
-  previewData: { prenom: 'Marie', orderNumber: 'CMD-20260504-C001-001', status: 'Paiement validé' },
+  previewData: { prenom: 'Marie', familyName: 'Dupont', orderNumber: 'CMD-20260504-C001-001', status: 'Paiement validé' },
 } satisfies TemplateEntry
