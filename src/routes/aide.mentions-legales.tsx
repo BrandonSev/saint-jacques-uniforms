@@ -29,7 +29,7 @@ function MentionsPage() {
             <p className="mt-2">
               France Uniformes — Société par actions simplifiée<br />
               Siège social : 2 Rue Percheronne, 28000 Chartres<br />
-              Email - Boutique France Uniformes SJDC : <a href="mailto:info@franceuniformes.fr" className="text-primary hover:underline">info@franceuniformes.fr</a>
+              {"EMAIL\n"} : <a href="mailto:info@franceuniformes.fr" className="text-primary hover:underline">info@franceuniformes.fr</a>
             </p>
           </section>
           <section>

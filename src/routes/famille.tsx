@@ -452,7 +452,7 @@ function ParentCard({
             className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
           />
         </Field>
-        <Field label="Email - Boutique France Uniformes SJDC">
+        <Field label={"EMAIL\n"}>
           <div className="flex h-11 items-center gap-2 rounded-lg border border-border bg-background px-3">
             <Mail className="h-4 w-4 text-muted-foreground" />
             <input
