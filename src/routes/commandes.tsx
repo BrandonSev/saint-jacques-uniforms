@@ -347,7 +347,7 @@ function CommandesPage() {
             {orders.map((o) => {
               const oItems = items.filter((i) => i.order_id === o.id);
               const oIncidents = incidents.filter((i) => i.order_id === o.id);
-              const canDeclareIncident = o.status === "Livrée" || !!o.delivered_at;
+              const canDeclareIncident = o.status === "Livrée" || !!(o as { delivered_at?: string | null }).delivered_at;
               const openCount = oIncidents.filter((i) => statusKind(i.status) === "open").length;
               const doneCount = oIncidents.filter((i) => statusKind(i.status) === "done").length;
               const rejectedCount = oIncidents.filter((i) => statusKind(i.status) === "rejected").length;
