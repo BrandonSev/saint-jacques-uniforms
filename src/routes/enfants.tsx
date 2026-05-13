@@ -238,7 +238,7 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
         </div>
 
         <div className="p-6 sm:p-8">
-          <div className="flex items-start gap-3">
+          <div className="gap-3 items-start justify-start flex flex-col">
             <div className="flex shrink-0 items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               <Ruler className="h-3.5 w-3.5" /> Mensurations
             </div>
