@@ -134,18 +134,25 @@ export const sendCustomPasswordReset = createServerFn({ method: "POST" })
         email: data.email,
         options: { redirectTo: data.redirectTo },
       });
-      if (error || !linkData?.properties?.action_link) {
+      const props: any = linkData?.properties ?? {};
+      if (error || (!props.hashed_token && !props.action_link)) {
         await logResetError({
           email: data.email,
           stage: "generateLink",
-          message: error?.message ?? "no_action_link",
+          message: error?.message ?? "no_token",
           status: (error as any)?.status,
           code: (error as any)?.code,
         });
         // Ne pas révéler si le compte existe
         return { ok: true as const };
       }
-      await sendPasswordResetEmail(data.email, linkData.properties.action_link);
+      // Construit un lien direct vers l'app (évite l'URL Supabase brute) :
+      // /reset-password?token_hash=...&type=recovery
+      // La page reset-password appelle supabase.auth.verifyOtp pour ouvrir la session.
+      const link = props.hashed_token
+        ? `${data.redirectTo}?token_hash=${encodeURIComponent(props.hashed_token)}&type=recovery`
+        : props.action_link;
+      await sendPasswordResetEmail(data.email, link);
       return { ok: true as const };
     } catch (e: any) {
       console.error("sendCustomPasswordReset:", e);
