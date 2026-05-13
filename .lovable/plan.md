@@ -1,128 +1,47 @@
-## Vue d'ensemble
+## Objectif
 
-8 chantiers sur la boutique famille. Le SMTP Outlook est déjà branché (edge function `send-email` + helpers `email.server.ts`), donc le point 6 est en réalité déjà actif — on l'étend au point 7. PayPlug sera branché en TEST (sandbox) après ajout de la clé secrète.
+Renforcer la mise en avant du « Made in France » sur la page **Blouse officielle** (`/blouse-officielle`) avec un drapeau français 🇫🇷 et la mention « Fabrication française » à plusieurs endroits clés.
 
----
+## Modifications dans `src/routes/blouse-officielle.tsx`
 
-## 1. Page "Tout voir" — Historique des commandes par enfant
+### 1. Badge drapeau sur la galerie (au-dessus de l'image principale)
+Ajouter un badge superposé en haut à gauche de l'image principale :
+- Drapeau FR (3 bandes bleu/blanc/rouge en CSS pur, pas d'emoji pour un rendu net) + texte « Fabriqué en France »
+- Style : pill blanc avec ombre légère, position `absolute top-3 left-3`
 
-- Nouvelle route `src/routes/enfants.$childId.historique-complet.tsx` (ou réutiliser/étoffer la route existante `enfants.$childId.historique.tsx`).
-- Lien "Tout voir" depuis `PurchaseHistoryPreview` sur `/enfants` → cette page.
-- Affichage : liste complète, filtres (par catégorie, par statut "à remplacer"), tri par date, pagination simple si > 20 lignes.
+### 2. Badge à côté du titre
+Ajouter une seconde pastille à côté du badge « Tenue officielle » existant, ligne 170 :
+- Mini drapeau + « Fabrication française »
+- Même style que la pastille existante (rounded-full, fond clair)
 
-## 2. Choix de l'adresse de livraison + mode
+### 3. Renforcement du paragraphe descriptif (ligne 185-190)
+Mettre en gras la mention finale « **Confectionnée dans nos ateliers français** 🇫🇷 » avec un petit drapeau inline.
 
-Dans la modal de confirmation (`panier.tsx > ConfirmModal`) :
+### 4. Bloc « Trust » en bas (ligne 287-291)
+Remplacer la simple ligne « Fabrication française » par une mise en valeur :
+- Icône drapeau FR (au lieu du `Check`)
+- Texte en `font-semibold`
+- Fond légèrement teinté pour faire ressortir cette ligne par rapport aux autres bullets
 
-- **Mode de livraison** (radios) : `Domicile` / `Retrait à l'établissement`.
-  - Stocké côté admin dans une table `delivery_options` (id, label, active, default) — l'admin active/désactive. Par défaut, "Retrait à l'établissement" = inactif.
-- **Si Domicile** : sélecteur d'adresse listant :
-  - L'adresse principale du profil
-  - Les adresses des `family_parents` (champs `adresse/code_postal/ville` + `shipping_*` si `has_alt_shipping`)
-  - Option "Saisir une autre adresse" (champs ad hoc, non sauvegardés sauf coche "mémoriser")
-- **Si Retrait** : pas d'adresse, mention "À retirer à l'établissement".
-- L'adresse + le mode choisis sont enregistrés sur la commande (nouveaux champs `orders.shipping_mode`, `shipping_label`, `shipping_address`, `shipping_postal`, `shipping_city`, `shipping_recipient`).
+### 5. Nouveau bandeau « Made in France » dans le bloc Description (après ligne 313)
+Ajouter une bande horizontale dans le bloc `bg-secondary` :
+- Grand drapeau français à gauche
+- Titre « Fabriqué en France 🇫🇷 » + sous-texte « Confection 100% française dans nos ateliers, du tissu à la finition. »
+- Border-top pour séparer du contenu existant
 
-## 3. Numérotation `CMD-YYYYMMDD-C{NNN}-{MMM}`
+## Composant drapeau
 
-- Nouvelle table `client_counters (user_id uuid PK, client_number int unique)` — attribution séquentielle au 1er passage.
-- Nouvelle table `order_sequences (user_id uuid PK, last_seq int)` — incrément par client.
-- Fonction PL/pgSQL `generate_order_number(_user_id uuid)` qui :
-  - Récupère ou crée `client_number` (séquence dédiée pour garantir l'unicité globale).
-  - Incrémente `last_seq` du client.
-  - Retourne `CMD-YYYYMMDD-C{client_number padStart 3}-{seq padStart 3}`.
-- Trigger `BEFORE INSERT` sur `orders` qui remplit `order_number` via cette fonction (remplace le `DEFAULT` random actuel).
-- Migration de rattrapage : attribuer un `client_number` aux familles existantes (ordre `created_at`).
-
-## 4. Téléchargement PDF récap commande
-
-- Côté client : génération avec `jspdf` + `jspdf-autotable` (légers, pas de dépendance serveur).
-- Bouton "Télécharger le récap PDF" sur `/commandes` (par commande) et dans la modal de confirmation post-commande.
-- Contenu : en-tête établissement, n° commande, date, famille, adresse livraison, tableau articles (enfant, produit, taille, qté, PU, total), total TTC, mention paiement.
-
-## 5. Suivi de commande
-
-- Statuts (modifiables par admin) :
-  - `Reçue` → `Paiement validé` → `En préparation` → `Prête` → (`Expédiée` + n° suivi si Domicile / `Disponible au retrait` si Établissement) → `Livrée`/`Retirée`
-- Champs ajoutés sur `orders` : `tracking_number text`, `tracking_carrier text`, `delivered_at timestamptz`.
-- Table `order_status_history (order_id, status, note, created_at, created_by)` pour la timeline.
-- UI :
-  - `/commandes` (famille) : timeline visuelle des étapes franchies + n° suivi cliquable.
-  - `/admin` : sélecteur de statut + champ n° suivi/transporteur, bouton "Mettre à jour" (déclenche email + historique).
-
-## 6+7. Emails — Tous les flux via SMTP Outlook (déjà configuré)
-
-L'infra existe (`send-email` edge function + `email.server.ts`). On ajoute les templates et les déclencheurs :
-
-| Événement | Destinataire(s) | Déclencheur |
-|---|---|---|
-| Inscription | Famille | déjà câblé (`sendWelcomeEmail`) |
-| Reset mot de passe | Famille | déjà câblé |
-| Confirmation commande | Famille + Admin | déjà câblé, à enrichir avec adresse + mode livraison |
-| Changement statut commande | Famille | trigger admin dans `/admin` (point 5) |
-| Ouverture incident | Famille (accusé) + Admin | au `INSERT` dans `order_incidents` (server fn appelée depuis modal incident) |
-| Mise à jour incident (résolu/refusé) | Famille | au passage de statut admin |
-| Paiement reçu (PayPlug) | Famille | webhook PayPlug (point 8) |
-
-Tous les helpers ajoutés dans `src/server/email.server.ts`, déclencheurs dans `email.functions.ts`, appelés depuis les pages concernées (panier, commandes, admin).
-
-## 8. Tunnel PayPlug (TEST / sandbox)
-
-Flux retenu : **Lovable Cloud comme orchestrateur, paiement hébergé PayPlug**.
-
-1. **Secret** : ajout de `PAYPLUG_SECRET_KEY` (clé `sk_test_...`) via `add_secret`.
-2. **Création paiement** : nouvelle server fn `createPayplugPayment({ orderId })` :
-   - Lit la commande, appelle `POST https://api.payplug.com/v1/payments` avec montant, devise EUR, billing/shipping, `notification_url` et `return_url`.
-   - Stocke `payplug_payment_id` et `payment_url` sur `orders` (champs ajoutés).
-   - Retourne `payment_url` au front.
-3. **UX panier** :
-   - Bouton "Confirmer ma commande" → crée la commande avec `status='En attente paiement'` → crée le paiement PayPlug → redirige vers `payment_url`.
-   - Page `/commandes/retour-paiement` qui lit la commande et affiche succès/échec/en attente.
-4. **Webhook** : route `src/routes/api/public/payplug-webhook.ts` :
-   - Vérifie l'authenticité (récupération du paiement via API PayPlug avec l'`id` reçu, plutôt que de faire confiance au body).
-   - Si `is_paid === true` : passe la commande à `Paiement validé`, ajoute à `order_status_history`, envoie emails confirmation client + admin.
-   - Si échec : passe à `Paiement échoué`.
-5. **Mode TEST** : la clé sandbox renvoie l'environnement TEST de PayPlug. Cartes de test PayPlug : `4242 4242 4242 4242` (succès), `4000 0000 0000 0002` (refus). Aucun mouvement bancaire réel.
-
----
-
-## Détails techniques (récap migrations)
-
-```text
--- Point 2
-ALTER TABLE orders ADD COLUMN shipping_mode text DEFAULT 'Domicile';
-ALTER TABLE orders ADD COLUMN shipping_label text;
-ALTER TABLE orders ADD COLUMN shipping_recipient text;
-ALTER TABLE orders ADD COLUMN shipping_address text;
-ALTER TABLE orders ADD COLUMN shipping_postal text;
-ALTER TABLE orders ADD COLUMN shipping_city text;
-CREATE TABLE delivery_options (id, label, code, active bool, is_default bool);
--- seed: 'Domicile' active+default, 'Retrait établissement' inactive.
-
--- Point 3
-CREATE TABLE client_counters (user_id uuid PK, client_number int unique);
-CREATE TABLE order_sequences (user_id uuid PK, last_seq int);
-CREATE FUNCTION generate_order_number(uuid) RETURNS text ...;
-CREATE TRIGGER orders_set_number BEFORE INSERT ON orders ...;
-
--- Point 5
-ALTER TABLE orders ADD COLUMN tracking_number text, tracking_carrier text, delivered_at timestamptz;
-CREATE TABLE order_status_history (id, order_id, status, note, created_at, created_by);
--- Politique : admin update orders, user view own history.
-
--- Point 8
-ALTER TABLE orders ADD COLUMN payplug_payment_id text, payment_url text, paid_at timestamptz;
+Créer un petit composant inline `<FrenchFlag />` réutilisable dans le fichier (ou inline avec 3 `<span>` colorés) :
+```tsx
+<span className="inline-flex h-3 w-5 overflow-hidden rounded-sm border border-border">
+  <span className="flex-1 bg-[#0055A4]" />
+  <span className="flex-1 bg-white" />
+  <span className="flex-1 bg-[#EF4135]" />
+</span>
 ```
+Tailles variables (h-3 / h-4 / h-6) selon le contexte.
 
-Permissions admin sur `orders.UPDATE` (actuellement absentes) à ajouter via policy `has_role(auth.uid(),'admin')`.
+## Hors scope
 
-## Ordre d'implémentation suggéré
-
-1. Migrations (points 2/3/5/8) en un seul lot.
-2. Numérotation commande + trigger (vérifiable immédiatement).
-3. Modal panier : adresses + mode livraison.
-4. Pages historique "Tout voir" + PDF récap.
-5. Admin : suivi de commande + déclencheurs emails (incident + statut).
-6. PayPlug : server fns + webhook + UX retour.
-
-Souhaitez-vous qu'on démarre par les migrations + la numérotation, ou prioriser PayPlug d'abord ?
+- Pas de changement sur les autres pages (maternelle, college, lycée, index). L'utilisateur a précisé « partout sur la blouse » → uniquement la page produit.
+- Aucune modification backend.
