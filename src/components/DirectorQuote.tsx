@@ -32,7 +32,7 @@ export function DirectorQuote({ quote, variant = "hero", className = "" }: Props
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
               Le mot du chef d'établissement
             </span>
-            <blockquote className="mt-5 font-display text-lg leading-relaxed text-foreground sm:text-xl">
+            <blockquote className="mt-5 font-display text-base leading-relaxed text-foreground sm:text-xl">
               <p>« {quote} »</p>
             </blockquote>
             <figcaption className="mt-6 flex items-center gap-3">
