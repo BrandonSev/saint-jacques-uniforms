@@ -104,6 +104,7 @@ export const sendOrderEmails = createServerFn({ method: "POST" })
           order.order_number,
           mapped,
           Number(order.total_amount),
+          order.family_nom ?? undefined,
         );
       }
       const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.SMTP_USER;
