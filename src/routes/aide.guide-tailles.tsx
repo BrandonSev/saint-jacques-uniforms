@@ -31,10 +31,8 @@ function GuideTaillesRoute() {
 const rows = [
   { age: "3 ans", stature: "90/97", poitrine: "53", taille: "50", bassin: "56" },
   { age: "4 ans", stature: "98/107", poitrine: "55", taille: "52", bassin: "58" },
-  { age: "5 ans", stature: "108/113", poitrine: "57", taille: "54", bassin: "60" },
-  { age: "6 ans", stature: "114/119", poitrine: "59", taille: "55", bassin: "64" },
-  { age: "7 ans", stature: "120/125", poitrine: "61", taille: "56", bassin: "66" },
-  { age: "8 ans", stature: "126/137", poitrine: "63", taille: "57", bassin: "68" },
+  { age: "6 ans", stature: "108/119", poitrine: "59", taille: "55", bassin: "64" },
+  { age: "8 ans", stature: "120/137", poitrine: "63", taille: "57", bassin: "68" },
   { age: "10 ans", stature: "138/143", poitrine: "71", taille: "62", bassin: "76" },
   { age: "12 ans", stature: "144/155", poitrine: "77", taille: "66", bassin: "81" },
   { age: "14 ans", stature: "156/164", poitrine: "84", taille: "71", bassin: "86" },
