@@ -8,7 +8,7 @@ const APP_URL = 'https://sjdc-dax.franceuniformes.fr'
 
 function AdminOrderEmail({ orderNumber = '', familyName = '', total = 0, itemsCount = 0, appUrl = APP_URL }: Props) {
   return (
-    <EmailLayout preview={`Nouvelle commande ${orderNumber}`} title="Nouvelle commande reçue">
+    <EmailLayout preview={`Nouvelle commande ${orderNumber}`} title="Nouvelle commande reçue" signatureRole="Commandes">
       <Text style={text}>Une nouvelle commande vient d'être passée :</Text>
       <ul style={list}>
         <li><strong>Numéro :</strong> {orderNumber}</li>
