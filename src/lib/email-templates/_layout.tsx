@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Body, Container, Head, Html, Preview, Section, Text } from "@react-email/components";
+import { Body, Container, Head, Html, Img, Preview, Section, Text } from "@react-email/components";
 
 interface LayoutProps {
   preview: string;
@@ -20,7 +20,12 @@ export function EmailLayout({ preview, title, familyName, signatureRole, childre
       <Body style={body}>
         <Container style={container}>
           <Section style={header}>
-            <Text style={brand}>FRANCE UNIFORMES</Text>
+            <Img
+              src="https://uyavawaeytlrjxozxyam.supabase.co/storage/v1/object/public/email-assets/france-uniformes-logo-white.png"
+              width="170"
+              alt="France Uniformes"
+              style={logo}
+            />
             <Text style={titleStyle}>{title}</Text>
             {cleanFamily ? <Text style={familyStyle}>Famille {cleanFamily}</Text> : null}
           </Section>
@@ -77,7 +82,7 @@ const container = {
   boxShadow: "0 4px 24px rgba(0,0,0,0.04)",
 };
 const header = { backgroundColor: "#0a2540", padding: "26px 32px" };
-const brand = { fontSize: "12px", letterSpacing: "3px", color: "#ffffff", opacity: 0.9, margin: 0, fontWeight: 700 };
+const logo = { display: "block", margin: "0 0 6px", height: "auto" };
 const titleStyle = { fontSize: "22px", fontWeight: 600, color: "#ffffff", margin: "8px 0 0" };
 const familyStyle = { fontSize: "13px", color: "#ffffff", opacity: 0.85, margin: "10px 0 0", fontStyle: "italic" as const };
 const accentBar = { height: "3px", backgroundColor: "#c8102e", lineHeight: "3px", fontSize: 0 };

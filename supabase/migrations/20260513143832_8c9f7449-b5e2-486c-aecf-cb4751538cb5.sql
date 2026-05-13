@@ -1,0 +1,1 @@
+do $$ begin if not exists (select 1 from pg_policies where policyname='Public read email-assets' and tablename='objects') then create policy "Public read email-assets" on storage.objects for select using (bucket_id = 'email-assets'); end if; end $$;

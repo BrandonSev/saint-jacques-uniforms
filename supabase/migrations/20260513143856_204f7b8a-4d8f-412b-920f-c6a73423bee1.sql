@@ -1,0 +1,1 @@
+insert into storage.buckets (id, name, public) values ('email-assets','email-assets', true);
