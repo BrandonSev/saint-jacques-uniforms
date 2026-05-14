@@ -20,6 +20,12 @@ export type PayplugCreateInput = {
     country: string;
     deliveryType: "BILLING" | "NEW_ADDRESS" | "SHIP_TO_STORE" | "DIGITAL_GOODS" | "TRAVEL_OR_EVENT";
   };
+  billing?: {
+    address1: string;
+    city: string;
+    postcode: string;
+    country: string;
+  };
   notificationUrl: string;
   returnUrl: string;
   cancelUrl: string;
@@ -38,6 +44,12 @@ export type PayplugPayment = {
 };
 
 export async function createPayplugPayment(input: PayplugCreateInput): Promise<PayplugPayment> {
+  const billing = input.billing ?? {
+    address1: input.shipping.address1,
+    city: input.shipping.city,
+    postcode: input.shipping.postcode,
+    country: input.shipping.country,
+  };
   const body = {
     amount: input.amount,
     currency: input.currency,
@@ -45,15 +57,16 @@ export async function createPayplugPayment(input: PayplugCreateInput): Promise<P
       first_name: input.firstName,
       last_name: input.lastName,
       email: input.email,
-      address1: input.shipping.address1,
-      city: input.shipping.city,
-      postcode: input.shipping.postcode,
-      country: input.shipping.country,
+      address1: billing.address1,
+      city: billing.city,
+      postcode: billing.postcode,
+      country: billing.country,
       language: input.language ?? "fr",
     },
     shipping: {
       first_name: input.firstName,
       last_name: input.lastName,
+      email: input.email,
       address1: input.shipping.address1,
       city: input.shipping.city,
       postcode: input.shipping.postcode,
