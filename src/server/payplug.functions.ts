@@ -69,12 +69,33 @@ export const createOrderPayment = createServerFn({ method: "POST" })
     const amountCents = Math.round(Number(order.total_amount) * 100);
     if (amountCents <= 0) return { ok: false as const, error: "invalid_amount" };
 
+    // Adresse de l'établissement (retrait)
+    const ESTABLISHMENT = {
+      address1: "Ensemble scolaire Saint-Jacques-de-Compostelle, 32 rue Paul Lahargou",
+      city: "Dax",
+      postcode: "40100",
+      country: "FR",
+    };
+
+    // Récupère l'adresse de facturation depuis le profil de l'utilisateur
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("adresse, code_postal, ville")
+      .eq("id", userId)
+      .maybeSingle();
+    const billing = {
+      address1: profile?.adresse || order.shipping_address || ESTABLISHMENT.address1,
+      city: profile?.ville || order.shipping_city || ESTABLISHMENT.city,
+      postcode: profile?.code_postal || order.shipping_postal || ESTABLISHMENT.postcode,
+      country: "FR",
+    };
+
     const isPickup = order.shipping_mode === "pickup";
     const shipping = {
-      address1: isPickup ? "Retrait établissement" : (order.shipping_address ?? "—"),
-      city: isPickup ? "Dax" : (order.shipping_city ?? "Dax"),
-      postcode: isPickup ? "40100" : (order.shipping_postal ?? "40100"),
-      country: "FR",
+      address1: isPickup ? ESTABLISHMENT.address1 : (order.shipping_address ?? billing.address1),
+      city: isPickup ? ESTABLISHMENT.city : (order.shipping_city ?? billing.city),
+      postcode: isPickup ? ESTABLISHMENT.postcode : (order.shipping_postal ?? billing.postcode),
+      country: ESTABLISHMENT.country,
       deliveryType: (isPickup ? "SHIP_TO_STORE" : "BILLING") as "SHIP_TO_STORE" | "BILLING",
     };
 
@@ -87,6 +108,7 @@ export const createOrderPayment = createServerFn({ method: "POST" })
         lastName: order.family_nom || "Saint-Jacques",
         language: "fr",
         shipping,
+        billing,
         notificationUrl: `${base}/api/public/payplug-webhook`,
         returnUrl: `${base}/commandes/retour-paiement?order=${order.id}`,
         cancelUrl: `${base}/commandes/retour-paiement?order=${order.id}&cancel=1`,

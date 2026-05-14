@@ -506,15 +506,16 @@ function ParentCard({
       <div className="mt-5 space-y-3 rounded-2xl border border-border bg-muted/30 p-4">
         <label className="gap-3 items-start justify-start flex flex-col cursor-pointer">
           <input
-            type="checkbox"
+            type="radio"
+            name="shipping_default"
             checked={form.is_shipping_default}
             onChange={(e) => set("is_shipping_default", e.target.checked)}
-            className="mt-0.5 h-4 w-4 rounded border-border accent-primary"
+            className="mt-0.5 h-4 w-4 accent-primary"
           />
           <span className="text-sm text-foreground">
             <span className="font-medium">Adresse de livraison par défaut</span>
             <span className="block text-xs text-muted-foreground">
-              Les commandes seront livrées à l'adresse ci-dessus.
+              Les commandes seront livrées à l'adresse ci-dessus. Une seule adresse par défaut dans la famille.
             </span>
           </span>
         </label>

@@ -386,6 +386,30 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
               "Une erreur est survenu lors de la modification de votre mail. Veuillez indiquer un mail valide",
             );
           }
+
+          // Si on modifie l'email du parent principal (compte), on synchronise
+          // avec l'auth Supabase qui garantit nativement l'unicité (1 compte = 1 mail).
+          const current = parentList.find((p) => p.id === id);
+          if (current?.is_primary && user && patch.email !== user.email) {
+            const { error: authErr } = await supabase.auth.updateUser({ email: patch.email });
+            if (authErr) {
+              throw new Error(
+                authErr.message?.toLowerCase().includes("already")
+                  ? "Cet email est déjà associé à un autre compte."
+                  : `Impossible de mettre à jour l'email du compte : ${authErr.message}`,
+              );
+            }
+          }
+        }
+
+        // Une seule adresse de livraison par défaut : si on coche celle-ci,
+        // on décoche les autres parents de la même famille.
+        if (patch.is_shipping_default === true && user) {
+          await supabase
+            .from("family_parents")
+            .update({ is_shipping_default: false })
+            .eq("user_id", user.id)
+            .neq("id", id);
         }
 
         const { data, error } = await supabase.from("family_parents").update(patch).eq("id", id).select().single();
@@ -393,7 +417,15 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
         if (error) throw error;
 
         if (data) {
-          setParentList((prev) => prev.map((p) => (p.id === id ? (data as FamilyParent) : p)));
+          setParentList((prev) =>
+            prev.map((p) =>
+              p.id === id
+                ? (data as FamilyParent)
+                : patch.is_shipping_default === true
+                  ? { ...p, is_shipping_default: false }
+                  : p,
+            ),
+          );
         }
       },
       removeParent: async (id) => {

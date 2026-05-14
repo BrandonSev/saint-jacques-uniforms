@@ -293,7 +293,7 @@ function ConfirmModal({
     if (p.has_alt_shipping && p.shipping_adresse && p.shipping_code_postal && p.shipping_ville) {
       addresses.push({
         id: `parent-${p.id}-alt`,
-        label: p.shipping_label || `${p.role} (autre)`,
+        label: p.shipping_label || "Autre adresse",
         recipient: `${p.civilite} ${p.prenom} ${p.nom}`.trim(),
         address: p.shipping_adresse,
         postal: p.shipping_code_postal,
