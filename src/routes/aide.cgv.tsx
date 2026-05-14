@@ -145,6 +145,38 @@ function CgvPage() {
             l'article L612-1 du Code de la consommation, le client peut recourir gratuitement au service de médiation
             de la consommation.
           </p>
+          <p className="mt-3 text-sm leading-relaxed">
+            Conformément aux dispositions du Code de la consommation concernant « le processus de médiation des
+            litiges de la consommation », après nous avoir sollicités et à défaut de réponse vous satisfaisant, vous
+            avez la possibilité de recourir gratuitement à une procédure de médiation de la consommation auprès de :
+          </p>
+          <p className="mt-2 text-sm leading-relaxed">
+            <strong>CM2C</strong>
+            <br />
+            49 rue de Ponthieu
+            <br />
+            75008 Paris
+            <br />
+            Tél. :{" "}
+            <a href="tel:+33189470014" className="text-primary hover:underline">
+              01 89 47 00 14
+            </a>
+            <br />
+            Site internet :{" "}
+            <a
+              href="https://www.cm2c.net/declarer-un-litige.php"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              www.cm2c.net/declarer-un-litige.php
+            </a>
+            <br />
+            E-mail :{" "}
+            <a href="mailto:litiges@cm2c.net" className="text-primary hover:underline">
+              litiges@cm2c.net
+            </a>
+          </p>
 
           <p className="mt-8 text-sm leading-relaxed">
             Pour toute question, contactez-nous à{" "}
