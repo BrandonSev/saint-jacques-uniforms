@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import logoUrl from "@/assets/france-uniformes-logo-white.png";
+import logoUrl from "@/assets/france-uniformes-logo-white.svg";
 
 // Couleurs de la charte France Uniformes.
 const FU_NAVY: [number, number, number] = [10, 37, 64];
@@ -17,13 +17,39 @@ let cachedLogo: string | null = null;
 async function getLogoDataUrl(): Promise<string | null> {
   if (cachedLogo) return cachedLogo;
   try {
+    // Charge le SVG et le rend dans un canvas haute résolution pour
+    // garantir un logo net dans le PDF (jsPDF ne sait pas dessiner du SVG).
     const res = await fetch(logoUrl);
-    const blob = await res.blob();
+    const svgText = await res.text();
+    const svgBlob = new Blob([svgText], { type: "image/svg+xml;charset=utf-8" });
+    const svgUrl = URL.createObjectURL(svgBlob);
     cachedLogo = await new Promise<string>((resolve, reject) => {
-      const r = new FileReader();
-      r.onloadend = () => resolve(r.result as string);
-      r.onerror = reject;
-      r.readAsDataURL(blob);
+      const img = new Image();
+      img.onload = () => {
+        // Cible ~520px de large @ 72dpi → équivalent ~4x du rendu PDF (130pt)
+        const targetW = 1040;
+        const ratio = img.height / img.width;
+        const targetH = Math.round(targetW * ratio);
+        const canvas = document.createElement("canvas");
+        canvas.width = targetW;
+        canvas.height = targetH;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          URL.revokeObjectURL(svgUrl);
+          reject(new Error("no canvas ctx"));
+          return;
+        }
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(img, 0, 0, targetW, targetH);
+        URL.revokeObjectURL(svgUrl);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      img.onerror = (e) => {
+        URL.revokeObjectURL(svgUrl);
+        reject(e);
+      };
+      img.src = svgUrl;
     });
     return cachedLogo;
   } catch {
