@@ -17,32 +17,15 @@ import { RequireAuth } from "@/components/RequireAuth";
 import MaternellePage from "@/components/catalogue/MaternellePage";
 import CollegePage from "@/components/catalogue/CollegePage";
 import LyceePage from "@/components/catalogue/LyceePage";
+import { loadTenantContext } from "@/server/tenantContext.functions";
+import { FALLBACK_TENANT } from "@/lib/tenant/types";
+import { buildTenantSeo, tenantSeoTags } from "@/lib/tenant/seo";
 
-const NIVEAU_META = {
-  maternelle: {
-    title: "Uniformes Maternelle & Élémentaire — Saint-Jacques-de-Compostelle",
-    description:
-      "Sélection d'uniformes validée par l'établissement pour les élèves de maternelle et d'élémentaire (PS, MS, GS, CP, CE1, CE2, CM1).",
-    canonical: "/catalogue/maternelle",
-  },
-  college: {
-    title: "Uniformes collège — Saint-Jacques-de-Compostelle",
-    description:
-      "Polos, pulls et t-shirts validés par l'établissement pour les collégiens du Groupe Saint-Jacques-de-Compostelle.",
-    canonical: "/catalogue/college",
-  },
-  lycee: {
-    title: "Uniformes lycée — Saint-Jacques-de-Compostelle",
-    description:
-      "Le trousseau du lycée n'est pas géré par France Uniformes. Pour toute information, rapprochez-vous de l'établissement.",
-    canonical: "/catalogue/lycee",
-  },
-} as const;
-
-type Niveau = keyof typeof NIVEAU_META;
+type Niveau = "maternelle" | "college" | "lycee";
+const NIVEAUX: ReadonlyArray<Niveau> = ["maternelle", "college", "lycee"];
 
 function isNiveau(value: string): value is Niveau {
-  return value in NIVEAU_META;
+  return (NIVEAUX as ReadonlyArray<string>).includes(value);
 }
 
 export const Route = createFileRoute("/catalogue/$niveau")({
@@ -51,19 +34,19 @@ export const Route = createFileRoute("/catalogue/$niveau")({
       throw notFound();
     }
   },
-  head: ({ params }) => {
+  loader: async () => {
+    try {
+      const ctx = await loadTenantContext();
+      return { tenant: ctx.tenant };
+    } catch {
+      return { tenant: FALLBACK_TENANT };
+    }
+  },
+  head: ({ params, loaderData }) => {
     const niveau = (params as { niveau: string }).niveau;
-    const meta = isNiveau(niveau) ? NIVEAU_META[niveau] : null;
-    if (!meta) return {};
-    return {
-      meta: [
-        { title: meta.title },
-        { name: "description", content: meta.description },
-        { property: "og:title", content: meta.title },
-        { property: "og:description", content: meta.description },
-      ],
-      links: [{ rel: "canonical", href: meta.canonical }],
-    };
+    if (!isNiveau(niveau)) return {};
+    const tenant = loaderData?.tenant ?? FALLBACK_TENANT;
+    return tenantSeoTags(buildTenantSeo(tenant, { kind: "catalogue", niveau }));
   },
   component: CatalogueNiveauRoute,
   notFoundComponent: () => (
