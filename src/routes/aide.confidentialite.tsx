@@ -1,14 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PageWatermark } from "@/components/PageWatermark";
+import { loadTenantContext } from "@/server/tenantContext.functions";
+import { FALLBACK_TENANT } from "@/lib/tenant/types";
+import { buildTenantSeo, tenantSeoTags } from "@/lib/tenant/seo";
 
 export const Route = createFileRoute("/aide/confidentialite")({
-  head: () => ({
-    meta: [
-      { title: "Politique de confidentialité — Saint-Jacques-de-Compostelle" },
-      { name: "description", content: "Politique de protection des données personnelles." },
-    ],
-  }),
+  loader: async () => {
+    try {
+      const ctx = await loadTenantContext();
+      return { tenant: ctx.tenant };
+    } catch {
+      return { tenant: FALLBACK_TENANT };
+    }
+  },
+  head: ({ loaderData }) => {
+    const tenant = loaderData?.tenant ?? FALLBACK_TENANT;
+    return tenantSeoTags(buildTenantSeo(tenant, { kind: "aide", section: "confidentialite" }));
+  },
   component: ConfidentialitePage,
 });
 
