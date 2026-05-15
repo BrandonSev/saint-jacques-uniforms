@@ -36,7 +36,7 @@ function ApelReminder({ prenom, familyName, deadline = "24 mai 2026", appUrl = A
         Commander maintenant
       </Button>
       <Text style={muted}>
-        Cet email vous est envoyé par l'APEL via la boutique Saint-Jacques.
+        Cet email vous est envoyé par l'APEL via la boutique du groupe scolaire Saint-Jacques-de-Compostelle.
         <br />
         Si vous avez déjà commandé, merci d'ignorer ce message.
       </Text>
