@@ -143,7 +143,7 @@ function PanierPage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
-      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
+      <SiteHeader />
 
       <section className="relative mx-auto max-w-6xl w-full px-4 pt-4 pb-10 sm:px-6 lg:px-8">
         <BackToSchoolAlert className="mb-6" />

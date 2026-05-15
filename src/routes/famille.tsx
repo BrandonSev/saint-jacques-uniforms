@@ -92,7 +92,7 @@ function FamillePage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
-      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
+      <SiteHeader />
       <section className="mx-auto max-w-6xl px-4 pt-4 pb-10 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-2">
           <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">Espace familles</span>
