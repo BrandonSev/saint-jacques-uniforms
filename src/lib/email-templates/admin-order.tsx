@@ -1,14 +1,15 @@
 import * as React from 'react'
 import { Button, Text } from '@react-email/components'
 import { EmailLayout, text, button, list } from './_layout'
+import type { EmailBrand } from './brand';
 import type { TemplateEntry } from './registry'
 
-interface Props { orderNumber?: string; familyName?: string; total?: number; itemsCount?: number; appUrl?: string }
+interface Props { orderNumber?: string; familyName?: string; total?: number; itemsCount?: number; appUrl?: string ; brand?: Partial<EmailBrand> | null}
 const APP_URL = 'https://sjdc-dax.franceuniformes.fr'
 
-function AdminOrderEmail({ orderNumber = '', familyName = '', total = 0, itemsCount = 0, appUrl = APP_URL }: Props) {
+function AdminOrderEmail({ orderNumber = '', familyName = '', total = 0, itemsCount = 0, appUrl = APP_URL , brand}: Props) {
   return (
-    <EmailLayout preview={`Nouvelle commande ${orderNumber}`} title="Nouvelle commande reçue" signatureRole="Commandes">
+    <EmailLayout preview={`Nouvelle commande ${orderNumber}`} title="Nouvelle commande reçue" signatureRole="Commandes" brand={brand}>
       <Text style={text}>Une nouvelle commande vient d'être passée :</Text>
       <ul style={list}>
         <li><strong>Numéro :</strong> {orderNumber}</li>

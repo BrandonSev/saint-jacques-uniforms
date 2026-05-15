@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Button, Text } from '@react-email/components'
 import { EmailLayout, text, button, muted } from './_layout'
+import type { EmailBrand } from './brand';
 import type { TemplateEntry } from './registry'
 
 const APP_URL = 'https://sjdc-dax.franceuniformes.fr'
@@ -18,16 +19,16 @@ const STATUS_LABELS: Record<string, { title: string; body: string }> = {
   'Annulée': { title: 'Commande annulée', body: 'Votre commande a été annulée.' },
 }
 
-interface Props { prenom?: string; familyName?: string; orderNumber?: string; status?: string; trackingNumber?: string | null; trackingCarrier?: string | null; note?: string | null; appUrl?: string }
+interface Props { prenom?: string; familyName?: string; orderNumber?: string; status?: string; trackingNumber?: string | null; trackingCarrier?: string | null; note?: string | null; appUrl?: string ; brand?: Partial<EmailBrand> | null}
 
 function getMap(status?: string) {
   return (status && STATUS_LABELS[status]) || { title: `Mise à jour : ${status ?? ''}`, body: `Votre commande est désormais au statut « ${status ?? ''} ».` }
 }
 
-function OrderStatusEmail({ prenom = '', familyName, orderNumber = '', status = '', trackingNumber, trackingCarrier, note, appUrl = APP_URL }: Props) {
+function OrderStatusEmail({ prenom = '', familyName, orderNumber = '', status = '', trackingNumber, trackingCarrier, note, appUrl = APP_URL , brand}: Props) {
   const map = getMap(status)
   return (
-    <EmailLayout preview={`${map.title} — ${orderNumber}`} title={map.title} familyName={familyName} signatureRole="Commandes">
+    <EmailLayout preview={`${map.title} — ${orderNumber}`} title={map.title} familyName={familyName} signatureRole="Commandes" brand={brand}>
       <Text style={text}>Bonjour {prenom},</Text>
       <Text style={text}>Votre commande <strong>{orderNumber}</strong> a évolué :</Text>
       <Text style={text}>{map.body}</Text>
