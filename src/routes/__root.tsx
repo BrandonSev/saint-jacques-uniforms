@@ -3,7 +3,9 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import appCss from "../styles.css?url";
 import { StoreProvider } from "@/lib/store";
 import { Toaster } from "@/components/ui/sonner";
-import { loadTenantTheme } from "@/server/tenantTheme.functions";
+import { loadTenantContext } from "@/server/tenantContext.functions";
+import { TenantProvider } from "@/lib/tenant/TenantContext";
+import { FALLBACK_TENANT } from "@/lib/tenant/types";
 
 function NotFoundComponent() {
   return (
@@ -28,15 +30,14 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRoute({
-  // Phase 6 — Charge les theme_tokens du tenant courant.
-  // Tant que ENABLE_DYNAMIC_THEME = false, le serverFn retourne { css: null }
-  // sans toucher la DB ; le rendu reste 100% identique au mono-tenant actuel.
+  // Phases 6 + 8 — Charge l'identité tenant + (si flag ON) les theme_tokens.
+  // En mode mono-tenant, retombe sur FALLBACK_TENANT sans bloquer le rendu.
   loader: async () => {
     try {
-      return await loadTenantTheme();
+      return await loadTenantContext();
     } catch (e) {
-      console.warn("[__root loader] tenant theme load failed:", e);
-      return { css: null, tenantId: null, tenantSlug: null };
+      console.warn("[__root loader] tenant context load failed:", e);
+      return { tenant: FALLBACK_TENANT, themeCss: null };
     }
   },
   head: () => ({
@@ -64,7 +65,7 @@ export const Route = createRootRoute({
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
-  const themeCss = Route.useLoaderData()?.css ?? null;
+  const themeCss = Route.useLoaderData()?.themeCss ?? null;
   return (
     <html lang="fr">
       <head>
@@ -86,10 +87,13 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  const tenant = Route.useLoaderData()?.tenant ?? FALLBACK_TENANT;
   return (
-    <StoreProvider>
-      <Outlet />
-      <Toaster />
-    </StoreProvider>
+    <TenantProvider tenant={tenant}>
+      <StoreProvider>
+        <Outlet />
+        <Toaster />
+      </StoreProvider>
+    </TenantProvider>
   );
 }
