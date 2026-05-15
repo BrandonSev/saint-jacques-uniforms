@@ -1,30 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { RequireAuth } from "@/components/RequireAuth";
+import { Link } from "@tanstack/react-router";
 import { ChevronRight, Info, ShieldCheck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import lycee from "@/assets/lycee-uniformes.jpg";
 import { PageWatermark } from "@/components/PageWatermark";
 
-export const Route = createFileRoute("/lycee")({
-  head: () => ({
-    meta: [
-      { title: "Uniformes lycée — Saint-Jacques-de-Compostelle" },
-      {
-        name: "description",
-        content:
-          "Le trousseau du lycée n'est pas géré par France Uniformes. Pour toute information, rapprochez-vous de l'établissement.",
-      },
-    ],
-  }),
-  component: () => (
-    <RequireAuth>
-      <LyceePage />
-    </RequireAuth>
-  ),
-});
-
-function LyceePage() {
+export default function LyceePage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
