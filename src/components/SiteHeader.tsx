@@ -182,9 +182,14 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
           <div className="border-t border-border bg-background/95 backdrop-blur-md xl:hidden">
             <nav className="mx-auto flex w-full flex-col gap-1 px-4 py-3 text-sm font-medium sm:px-6">
               {isAdmin ? (
-                <MenuLink to="/admin" onClick={() => setMenuOpen(false)} icon={<ShieldCheck className="h-4 w-4" />}>
-                  Administration
-                </MenuLink>
+                <>
+                  <MenuLink to="/admin" onClick={() => setMenuOpen(false)} icon={<ShieldCheck className="h-4 w-4" />}>
+                    Administration
+                  </MenuLink>
+                  <MenuLink to="/apel" onClick={() => setMenuOpen(false)} icon={<Users className="h-4 w-4" />}>
+                    Espace APEL
+                  </MenuLink>
+                </>
               ) : isApel ? (
                 <MenuLink to="/apel" onClick={() => setMenuOpen(false)} icon={<Users className="h-4 w-4" />}>
                   Espace APEL
