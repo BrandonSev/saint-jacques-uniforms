@@ -2,17 +2,18 @@ import { Link } from "@tanstack/react-router";
 import { ChevronRight, CreditCard, ShieldCheck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
-import { ProductCard } from "@/components/ProductCard";
+import { ProductCard, type ProductCardData } from "@/components/ProductCard";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import classeBlouses from "@/assets/elementaire-hero.jpg";
 import courMaternelle from "@/assets/maternelle-cour-blouses.jpg";
 import margueritePortrait from "@/assets/marguerite-de-perignon.jpg";
 import { PageWatermark } from "@/components/PageWatermark";
 import { HeadteacherQuote } from "@/components/HeadteacherQuote";
+import { useCatalog } from "@/lib/catalog/useCatalog";
 
-const sizes = ["3 ans", "4 ans", "6 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];
+const FALLBACK_SIZES = ["3 ans", "4 ans", "6 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];
 
-const products = [
+const FALLBACK_PRODUCTS: ProductCardData[] = [
   {
     id: "blouse-officielle",
     name: "Blouse scolaire officielle SJDC",
@@ -21,13 +22,22 @@ const products = [
     image: blouseProduct,
     tag: "Officielle",
     desc: "Blouse de couleur bleu Riviera, boutons pressions jaunes, col biais, écusson brodé sur le coeur.",
-    href: "/blouse-officielle" as const,
-    genre: "Unisexe" as const,
-    productKind: "blouse" as const,
+    href: "/blouse-officielle",
+    genre: "Unisexe",
+    productKind: "blouse",
   },
 ];
 
 export default function MaternelleListPage() {
+  // Phase 10 — Catalogue dynamique gated par ENABLE_DYNAMIC_CATALOG.
+  // Tant que le flag est OFF, `products`/`sizes` proviennent des constantes
+  // ci-dessus (comportement strictement identique à avant).
+  const { products, sizes } = useCatalog({
+    level: "maternelle",
+    fallbackProducts: FALLBACK_PRODUCTS,
+    fallbackSizes: FALLBACK_SIZES,
+  });
+
   return (
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
