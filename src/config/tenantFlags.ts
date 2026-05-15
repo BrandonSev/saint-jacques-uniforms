@@ -51,5 +51,5 @@ export const DEFAULT_TENANT_SLUG = "saint-jacques" as const;
 export type TenantFlag = keyof typeof TENANT_FLAGS;
 
 export function isTenantFlagEnabled(flag: TenantFlag): boolean {
-  return TENANT_FLAGS[flag] === true;
+  return Boolean(TENANT_FLAGS[flag]);
 }
