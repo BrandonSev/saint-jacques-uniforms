@@ -1,30 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { RequireAuth } from "@/components/RequireAuth";
+import { Link } from "@tanstack/react-router";
 import { ChevronRight, Info, ShieldCheck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import poloPorte from "@/assets/college-polo-porte.jpg";
 import { PageWatermark } from "@/components/PageWatermark";
 
-export const Route = createFileRoute("/college")({
-  head: () => ({
-    meta: [
-      { title: "Uniformes collège — Saint-Jacques-de-Compostelle" },
-      {
-        name: "description",
-        content:
-          "Polos, pulls et t-shirts validés par l'établissement pour les collégiens du Groupe Saint-Jacques-de-Compostelle.",
-      },
-    ],
-  }),
-  component: () => (
-    <RequireAuth>
-      <CollegePage />
-    </RequireAuth>
-  ),
-});
-
-function CollegePage() {
+export default function CollegePage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
