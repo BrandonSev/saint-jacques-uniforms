@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Button, Text } from '@react-email/components'
 import { EmailLayout, text, button, list, muted } from './_layout'
+import type { EmailBrand } from './brand';
 import type { TemplateEntry } from './registry'
 
 const APP_URL = 'https://sjdc-dax.franceuniformes.fr'
@@ -9,11 +10,11 @@ const INCIDENT_LABELS: Record<string, string> = {
   taille_inadaptee: 'Taille inadaptée', usure_normale: 'Usure normale', autre: 'Autre',
 }
 
-interface Props { orderNumber?: string; family?: string; productName?: string; type?: string; description?: string; appUrl?: string }
+interface Props { orderNumber?: string; family?: string; productName?: string; type?: string; description?: string; appUrl?: string ; brand?: Partial<EmailBrand> | null}
 
-function IncidentAdminEmail({ orderNumber = '', family = '', productName = '', type = '', description = '', appUrl = APP_URL }: Props) {
+function IncidentAdminEmail({ orderNumber = '', family = '', productName = '', type = '', description = '', appUrl = APP_URL , brand}: Props) {
   return (
-    <EmailLayout preview={`Incident commande ${orderNumber}`} title="Nouvel incident déclaré" signatureRole="Service après-vente">
+    <EmailLayout preview={`Incident commande ${orderNumber}`} title="Nouvel incident déclaré" signatureRole="Service après-vente" brand={brand}>
       <Text style={text}>Une famille vient de déclarer un incident :</Text>
       <ul style={list}>
         <li><strong>Commande :</strong> {orderNumber}</li>

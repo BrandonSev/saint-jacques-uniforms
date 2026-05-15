@@ -19,14 +19,15 @@ export const TENANT_FLAGS = {
    * Active la résolution dynamique du tenant à partir du Host HTTP.
    * OFF = tous les visiteurs sont mappés sur DEFAULT_TENANT_SLUG.
    */
-  ENABLE_TENANT_RESOLUTION: false,
+  ENABLE_TENANT_RESOLUTION: true,
 
   /**
    * Active les politiques RLS scopées par tenant_id.
-   * OFF = les politiques RLS actuelles (mono-tenant) restent en vigueur.
-   * ATTENTION : ne basculer qu'après backfill complet de tenant_id sur toutes les tables.
+   * Le trigger set_tenant_id + current_tenant_id() v2 garantit que tout
+   * INSERT côté client est attribué au tenant du user (via profiles.tenant_id),
+   * et tout INSERT côté serveur est attribué au tenant injecté via le GUC.
    */
-  ENABLE_TENANT_RLS: false,
+  ENABLE_TENANT_RLS: true,
 
   /**
    * Active le chargement dynamique des tokens de thème (couleurs, typographies)
@@ -40,6 +41,14 @@ export const TENANT_FLAGS = {
    * OFF = utilise le catalogue hardcodé actuel (src/lib/store.tsx).
    */
   ENABLE_DYNAMIC_CATALOG: false,
+
+  /**
+   * Active la résolution dynamique de la configuration email (from, reply_to,
+   * sender_domain, signature) depuis tenants.config.email.
+   * Quand ON et que tenants.config.email est vide pour le tenant courant,
+   * on retombe sur les constantes baked-in (jamais d'écran blanc / mauvais from).
+   */
+  ENABLE_TENANT_EMAIL_CONFIG: true,
 } as const;
 
 /**

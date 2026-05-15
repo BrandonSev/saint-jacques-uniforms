@@ -8,6 +8,7 @@ import { SchoolIdentityBar } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { BackToSchoolBanner } from "@/components/BackToSchoolAlert";
+import { useTenant } from "@/lib/tenant/TenantContext";
 
 interface SiteHeaderProps {
   schoolName?: string;
@@ -17,6 +18,18 @@ interface SiteHeaderProps {
 
 export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHeaderProps) {
   const { cartCount: storeCount, profile, user, signOut, isAdmin, isApel } = useStore();
+  const tenant = useTenant();
+  // Mode "école brandée" = page d'espace familles. Comportement :
+  //  - prop omise (undefined) → on utilise le tenant courant (mode brandé).
+  //  - prop renseignée (string non vide) → mode brandé, label = prop.
+  //  - prop = "" → home générique France Uniformes (cas marketing rare).
+  const branded = schoolName !== "";
+  const displayName = schoolName || tenant.name;
+  const shortDisplay = tenant.shortName || displayName;
+  // Logo : DB d'abord, puis asset bundlé SJC (rétro-compat pixel-perfect),
+  // sinon logo générique France Uniformes.
+  const brandedLogo =
+    tenant.logoUrl || (tenant.slug === "saint-jacques" ? sjcLogo : logo);
   const count = cartCount ?? storeCount;
   const navigate = useNavigate();
   const famName = profile?.family_name || profile?.nom;
@@ -39,15 +52,19 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
         <BackToSchoolBanner />
         <div className="mx-auto max-w-6xl flex h-16 w-full items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link to="/" className="flex items-center gap-3">
-            {schoolName ? (
+            {branded ? (
               <>
-                <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-10 w-auto shrink-0 object-contain" />
+                <img
+                  src={brandedLogo}
+                  alt={displayName}
+                  className="h-10 w-auto shrink-0 object-contain"
+                />
                 <div className="hidden min-w-0 flex-col leading-tight xl:flex">
                   <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                     Espace familles
                   </span>
                   <span className="truncate text-sm font-semibold tracking-tight text-primary">
-                    Saint-Jacques-de-Compostelle
+                    {shortDisplay}
                   </span>
                 </div>
               </>
@@ -61,7 +78,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
             )}
           </Link>
 
-          {schoolName && user && (
+          {branded && user && (
             <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground xl:flex">
               {isAdmin ? (
                 <Link
@@ -164,7 +181,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                 </Link>
               </>
             )}
-            {schoolName && user && (
+            {branded && user && (
               <button
                 type="button"
                 onClick={() => setMenuOpen((v) => !v)}
@@ -178,7 +195,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
           </div>
         </div>
 
-        {schoolName && user && menuOpen && (
+        {branded && user && menuOpen && (
           <div className="border-t border-border bg-background/95 backdrop-blur-md xl:hidden">
             <nav className="mx-auto flex w-full flex-col gap-1 px-4 py-3 text-sm font-medium sm:px-6">
               {isAdmin ? (
@@ -256,24 +273,35 @@ function MenuLink({
 
 export function SiteFooter() {
   const { isAdmin, isApel } = useStore();
+  const tenant = useTenant();
+  // Phase 14 — footer tenant-aware. Avec tenant FALLBACK (flag OFF), le rendu
+  // reste pixel-identique à SJC : nom + logo bundlé + tagline historique.
+  // Pour le footer, on préfère le nom long (tenant.name) sauf override court via short_label SEO.
+  const footerName = tenant.config?.seo?.short_label || tenant.name;
+  const footerLogo = tenant.logoUrl || sjcLogo;
+  const footerTagline =
+    tenant.config?.tagline ||
+    "Groupe scolaire catholique · Dax";
+  const footerDescription =
+    tenant.config?.seo?.tagline ||
+    "Boutique officielle des uniformes du groupe scolaire Saint-Jacques-de-Compostelle. Tenues validées par l'établissement, confectionnées avec soin en France pour le quotidien des élèves.";
   return (
     <footer className="mt-auto border-t border-border" style={{ background: "var(--gradient-hero)" }}>
       <div className="mx-auto max-w-6xl grid w-full grid-cols-2 gap-6 px-4 py-8 text-white sm:px-6 sm:py-14 sm:gap-8 lg:grid-cols-4 lg:px-8">
         <div className="col-span-2 lg:col-span-2">
           <div className="flex items-center gap-3 sm:gap-4">
             <img
-              src={sjcLogo}
-              alt="Saint-Jacques-de-Compostelle"
+              src={footerLogo}
+              alt={footerName}
               className="h-12 w-auto object-contain drop-shadow sm:h-16"
             />
             <div>
-              <div className="text-sm font-semibold sm:text-base">Saint-Jacques-de-Compostelle</div>
-              <div className="mt-0.5 text-[11px] text-white/70 sm:text-xs">Groupe scolaire catholique · Dax</div>
+              <div className="text-sm font-semibold sm:text-base">{footerName}</div>
+              <div className="mt-0.5 text-[11px] text-white/70 sm:text-xs">{footerTagline}</div>
             </div>
           </div>
           <p className="mt-4 hidden max-w-md text-sm leading-relaxed text-white/80 sm:mt-5 sm:block">
-            Boutique officielle des uniformes du groupe scolaire Saint-Jacques-de-Compostelle. Tenues validées par
-            l'établissement, confectionnées avec soin en France pour le quotidien des élèves.
+            {footerDescription}
           </p>
           <div className="mt-4 flex flex-col items-start gap-1.5 sm:mt-6 sm:gap-2">
             <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/60 sm:text-[11px]">

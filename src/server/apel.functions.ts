@@ -4,6 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { withSupabaseAuth } from "@/integrations/supabase/supabase-auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { enqueueTransactionalEmail } from "@/lib/email/send.server";
+import { getTenantFromRequest } from "@/lib/tenant/getTenantFromRequest.server";
 
 type AppRole = "admin" | "apel" | "user";
 async function userHasAnyRole(userId: string, roles: AppRole[]) {
@@ -24,9 +25,11 @@ export const apelListFamilies = createServerFn({ method: "POST" })
     if (!(await userHasAnyRole(userId, ["admin", "apel"]))) {
       return { ok: false as const, error: "forbidden" as const, families: [] };
     }
+    const tenant = await getTenantFromRequest();
     const { data: rows, error } = await supabaseAdmin.rpc("apel_families_overview", {
       _season_start: data.seasonStart ?? "2026-01-01",
-    });
+      _tenant_id: tenant?.id ?? null,
+    } as any);
     if (error) {
       console.error("apelListFamilies:", error);
       return { ok: false as const, error: error.message, families: [] };

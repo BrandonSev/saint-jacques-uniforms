@@ -3,17 +3,18 @@ import { render } from "@react-email/components";
 import { createClient } from "@supabase/supabase-js";
 import { createFileRoute } from "@tanstack/react-router";
 import { TEMPLATES } from "@/lib/email-templates/registry";
+import { TENANT_FLAGS } from "@/config/tenantFlags";
+import {
+  DEFAULT_EMAIL_CONFIG,
+  getTenantEmailConfig,
+  getTenantEmailBrand,
+} from "@/lib/tenant/tenantEmailConfig.server";
+import { DEFAULT_EMAIL_BRAND } from "@/lib/email-templates/brand";
 
-// Configuration baked in at scaffold time
-const SITE_NAME = "France Uniformes";
-// SENDER_DOMAIN is the verified sender subdomain FQDN (e.g., "notify.example.com").
-// It MUST match the subdomain delegated to Lovable's nameservers. NEVER use the root domain.
-const SENDER_DOMAIN = "notify.franceuniformes.fr";
-// FROM_DOMAIN is the domain shown in the From: header (e.g., "example.com").
-// Can be the root domain when display_from_root is enabled — this is cosmetic only.
-const FROM_DOMAIN = "franceuniformes.fr";
-const FROM_LOCALPART = "info";
-const REPLY_TO = "boutique@franceuniformes.fr";
+// Configuration historique (Phase 0). Conservée comme fallback ultime.
+// Quand TENANT_FLAGS.ENABLE_TENANT_EMAIL_CONFIG = true, on lit la config
+// depuis tenants.config.email avec ces mêmes valeurs en defaults par champ.
+const DEFAULTS = DEFAULT_EMAIL_CONFIG;
 
 function redactEmail(email: string | null | undefined): string {
   if (!email) return "***";
@@ -84,6 +85,23 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
           return Response.json({ error: "templateName is required" }, { status: 400 });
         }
 
+        // Phase 9 — Résolution tenant courant + email config.
+        // Gated : tant que ENABLE_TENANT_EMAIL_CONFIG = false, on garde
+        // strictement les constantes historiques (defaults SJC).
+        const { tenantId, config: emailConfig } = TENANT_FLAGS.ENABLE_TENANT_EMAIL_CONFIG
+          ? await getTenantEmailConfig()
+          : { tenantId: null as string | null, config: DEFAULTS };
+
+        // Phase 12 — Branding visuel des templates (logo, couleurs, signature).
+        // Même flag que la config from/replyTo : OFF = templates pixel-identiques SJC.
+        // Le brand fourni par l'appelant dans `templateData.brand` est prioritaire.
+        const tenantBrand = TENANT_FLAGS.ENABLE_TENANT_EMAIL_CONFIG
+          ? (await getTenantEmailBrand(tenantId)).brand
+          : DEFAULT_EMAIL_BRAND;
+        if (TENANT_FLAGS.ENABLE_TENANT_EMAIL_CONFIG && !templateData.brand) {
+          templateData = { ...templateData, brand: tenantBrand };
+        }
+
         // 1. Look up template from registry (early — needed to resolve recipient)
         const template = TEMPLATES[templateName];
 
@@ -133,6 +151,7 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
             template_name: templateName,
             recipient_email: effectiveRecipient,
             status: "suppressed",
+            tenant_id: tenantId,
           });
 
           console.log("Email suppressed", {
@@ -164,6 +183,7 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
             recipient_email: effectiveRecipient,
             status: "failed",
             error_message: "Failed to look up unsubscribe token",
+            tenant_id: tenantId,
           });
           return Response.json({ error: "Failed to prepare email" }, { status: 500 });
         }
@@ -191,6 +211,7 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
               recipient_email: effectiveRecipient,
               status: "failed",
               error_message: "Failed to create unsubscribe token",
+              tenant_id: tenantId,
             });
             return Response.json({ error: "Failed to prepare email" }, { status: 500 });
           }
@@ -214,6 +235,7 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
               recipient_email: effectiveRecipient,
               status: "failed",
               error_message: "Failed to confirm unsubscribe token storage",
+              tenant_id: tenantId,
             });
             return Response.json({ error: "Failed to prepare email" }, { status: 500 });
           }
@@ -230,6 +252,7 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
             recipient_email: effectiveRecipient,
             status: "suppressed",
             error_message: "Unsubscribe token used but email missing from suppressed list",
+            tenant_id: tenantId,
           });
           return Response.json({ success: false, reason: "email_suppressed" });
         }
@@ -252,6 +275,7 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
           template_name: templateName,
           recipient_email: effectiveRecipient,
           status: "pending",
+          tenant_id: tenantId,
         });
 
         const { error: enqueueError } = await supabase.rpc("enqueue_email", {
@@ -259,9 +283,9 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
           payload: {
             message_id: messageId,
             to: effectiveRecipient,
-            from: `${SITE_NAME} <${FROM_LOCALPART}@${FROM_DOMAIN}>`,
-            reply_to: REPLY_TO,
-            sender_domain: SENDER_DOMAIN,
+            from: `${emailConfig.siteName} <${emailConfig.fromLocalpart}@${emailConfig.fromDomain}>`,
+            reply_to: emailConfig.replyTo,
+            sender_domain: emailConfig.senderDomain,
             subject: resolvedSubject,
             html,
             text: plainText,
@@ -269,6 +293,7 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
             label: templateName,
             idempotency_key: idempotencyKey,
             unsubscribe_token: unsubscribeToken,
+            tenant_id: tenantId,
             queued_at: new Date().toISOString(),
           },
         });
@@ -286,6 +311,7 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
             recipient_email: effectiveRecipient,
             status: "failed",
             error_message: "Failed to enqueue email",
+            tenant_id: tenantId,
           });
 
           return Response.json({ error: "Failed to enqueue email" }, { status: 500 });

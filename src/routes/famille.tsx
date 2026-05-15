@@ -8,11 +8,23 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { useStore, type FamilyParent } from "@/lib/store";
 import { PageWatermark } from "@/components/PageWatermark";
 import { AddChildDialog } from "@/components/AddChildDialog";
+import { loadTenantContext } from "@/server/tenantContext.functions";
+import { FALLBACK_TENANT } from "@/lib/tenant/types";
+import { buildTenantSeo, tenantSeoTags } from "@/lib/tenant/seo";
 
 export const Route = createFileRoute("/famille")({
-  head: () => ({
-    meta: [{ title: "Ma famille — Espace familles" }],
-  }),
+  loader: async () => {
+    try {
+      const ctx = await loadTenantContext();
+      return { tenant: ctx.tenant };
+    } catch {
+      return { tenant: FALLBACK_TENANT };
+    }
+  },
+  head: ({ loaderData }) => {
+    const tenant = loaderData?.tenant ?? FALLBACK_TENANT;
+    return tenantSeoTags(buildTenantSeo(tenant, { kind: "famille" }));
+  },
   component: () => (
     <RequireAuth>
       <FamillePage />
@@ -80,7 +92,7 @@ function FamillePage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
-      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
+      <SiteHeader />
       <section className="mx-auto max-w-6xl px-4 pt-4 pb-10 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-2">
           <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">Espace familles</span>

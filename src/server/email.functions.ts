@@ -8,6 +8,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { supabase } from "@/integrations/supabase/client";
 import { enqueueTransactionalEmail } from "@/lib/email/send.server";
 import { TEMPLATES } from "@/lib/email-templates/registry";
+import { getTenantAdminEmail } from "@/lib/tenant/tenantAdminEmail.server";
 import {
   sendWelcomeEmail,
   sendOrderConfirmation,
@@ -77,7 +78,7 @@ export const sendOrderEmails = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: order, error } = await supabase
       .from("orders")
-      .select("id, order_number, total_amount, family_email, family_prenom, family_nom, user_id")
+      .select("id, order_number, total_amount, family_email, family_prenom, family_nom, user_id, tenant_id")
       .eq("id", data.orderId)
       .single();
     if (error || !order) return { ok: false, error: "order_not_found" as const };
@@ -107,7 +108,7 @@ export const sendOrderEmails = createServerFn({ method: "POST" })
           order.family_nom ?? undefined,
         );
       }
-      const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.SMTP_USER;
+      const adminEmail = await getTenantAdminEmail((order as any).tenant_id ?? null);
       if (adminEmail) {
         await sendAdminOrderNotification(
           adminEmail,
@@ -200,7 +201,7 @@ export const sendIncidentNotifications = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: inc } = await supabase
       .from("order_incidents")
-      .select("id, order_id, order_item_id, incident_type, description, eligible, user_id")
+      .select("id, order_id, order_item_id, incident_type, description, eligible, user_id, tenant_id")
       .eq("id", data.incidentId)
       .maybeSingle();
     if (!inc || inc.user_id !== userId) return { ok: false, error: "not_found" as const };
@@ -227,7 +228,7 @@ export const sendIncidentNotifications = createServerFn({ method: "POST" })
           order.family_nom ?? undefined,
         );
       }
-      const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.SMTP_USER;
+      const adminEmail = await getTenantAdminEmail((inc as any).tenant_id ?? null);
       if (adminEmail) {
         await sendIncidentOpenedAdmin(
           adminEmail,

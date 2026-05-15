@@ -299,7 +299,7 @@ function AdminPage() {
   if (authLoading) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
-        <SiteHeader schoolName={SCHOOL_LABEL} />
+        <SiteHeader />
       </div>
     );
   }
@@ -307,7 +307,7 @@ function AdminPage() {
   if (!isAdmin) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
-        <SiteHeader schoolName={SCHOOL_LABEL} />
+        <SiteHeader />
         <section className="mx-auto max-w-3xl px-4 py-20 text-center">
           <ShieldCheck className="mx-auto h-10 w-10 text-muted-foreground" />
           <h1 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">Accès réservé</h1>
@@ -327,7 +327,7 @@ function AdminPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <SiteHeader schoolName={SCHOOL_LABEL} />
+      <SiteHeader />
       <section className="mx-auto max-w-7xl px-4 pt-6 pb-12 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>

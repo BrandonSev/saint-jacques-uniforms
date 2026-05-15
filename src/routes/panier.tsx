@@ -17,11 +17,23 @@ import {
   pickInitialMode,
   type DeliveryOption,
 } from "@/lib/deliveryOptions";
+import { loadTenantContext } from "@/server/tenantContext.functions";
+import { FALLBACK_TENANT } from "@/lib/tenant/types";
+import { buildTenantSeo, tenantSeoTags } from "@/lib/tenant/seo";
 
 export const Route = createFileRoute("/panier")({
-  head: () => ({
-    meta: [{ title: "Mon panier — Espace familles" }],
-  }),
+  loader: async () => {
+    try {
+      const ctx = await loadTenantContext();
+      return { tenant: ctx.tenant };
+    } catch {
+      return { tenant: FALLBACK_TENANT };
+    }
+  },
+  head: ({ loaderData }) => {
+    const tenant = loaderData?.tenant ?? FALLBACK_TENANT;
+    return tenantSeoTags(buildTenantSeo(tenant, { kind: "panier" }));
+  },
   component: () => (
     <RequireAuth>
       <PanierPage />
@@ -131,7 +143,7 @@ function PanierPage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
-      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
+      <SiteHeader />
 
       <section className="relative mx-auto max-w-6xl w-full px-4 pt-4 pb-10 sm:px-6 lg:px-8">
         <BackToSchoolAlert className="mb-6" />

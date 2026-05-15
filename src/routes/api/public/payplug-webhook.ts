@@ -7,6 +7,8 @@ import {
   sendOrderStatusEmail,
   type OrderEmailItem,
 } from "@/server/email.server";
+import { setRequestTenant } from "@/lib/tenant/withTenantGuc.server";
+import { getTenantAdminEmail } from "@/lib/tenant/tenantAdminEmail.server";
 
 export const Route = createFileRoute("/api/public/payplug-webhook")({
   server: {
@@ -35,10 +37,18 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
 
         const { data: order } = await supabaseAdmin
           .from("orders")
-          .select("id, order_number, status, family_email, family_prenom, family_nom, total_amount, paid_at")
+          .select("id, order_number, status, family_email, family_prenom, family_nom, total_amount, paid_at, tenant_id")
           .eq("id", orderId)
           .maybeSingle();
         if (!order) return new Response("order not found", { status: 200 });
+
+        // Positionne le GUC tenant pour les écritures qui suivent : les
+        // INSERTs (ex. email_send_log via la suite d'envoi) sont attribués
+        // au tenant de la commande et la RLS RESTRICTIVE est respectée.
+        const tenantId = (order.tenant_id as string | null) || (payment.metadata?.tenant_id || null);
+        if (tenantId) {
+          await setRequestTenant(supabaseAdmin, tenantId);
+        }
 
         const wasPaid = !!order.paid_at;
 
@@ -66,7 +76,8 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
                 await sendOrderConfirmation(order.family_email, order.family_prenom ?? "", order.order_number, mapped, Number(order.total_amount));
                 await sendOrderStatusEmail(order.family_email, order.family_prenom ?? "", order.order_number, "Paiement validé");
               }
-              const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.SMTP_USER;
+              // Routage tenant-aware via helper centralisé.
+              const adminEmail = await getTenantAdminEmail(tenantId);
               if (adminEmail) {
                 await sendAdminOrderNotification(adminEmail, order.order_number, `${order.family_prenom ?? ""} ${order.family_nom ?? ""}`.trim(), Number(order.total_amount), mapped.reduce((s, i) => s + i.qty, 0));
               }
