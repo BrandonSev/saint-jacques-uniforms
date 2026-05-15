@@ -598,6 +598,80 @@ export type Database = {
         }
         Relationships: []
       }
+      tenant_domains: {
+        Row: {
+          created_at: string
+          hostname: string
+          id: string
+          is_primary: boolean
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          hostname: string
+          id?: string
+          is_primary?: boolean
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          hostname?: string
+          id?: string
+          is_primary?: boolean
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_domains_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenants: {
+        Row: {
+          config: Json
+          created_at: string
+          id: string
+          legacy_code_etablissement: string | null
+          logo_url: string | null
+          name: string
+          short_name: string | null
+          slug: string
+          status: string
+          theme_tokens: Json
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          id?: string
+          legacy_code_etablissement?: string | null
+          logo_url?: string | null
+          name: string
+          short_name?: string | null
+          slug: string
+          status?: string
+          theme_tokens?: Json
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          id?: string
+          legacy_code_etablissement?: string | null
+          logo_url?: string | null
+          name?: string
+          short_name?: string | null
+          slug?: string
+          status?: string
+          theme_tokens?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
