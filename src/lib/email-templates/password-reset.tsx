@@ -1,13 +1,14 @@
 import * as React from 'react'
 import { Button, Text } from '@react-email/components'
 import { EmailLayout, text, button, muted } from './_layout'
+import type { EmailBrand } from './brand';
 import type { TemplateEntry } from './registry'
 
-interface Props { link?: string }
+interface Props { link?: string ; brand?: Partial<EmailBrand> | null}
 
-function PasswordResetEmail({ link = '#' }: Props) {
+function PasswordResetEmail({ link = '#' , brand}: Props) {
   return (
-    <EmailLayout preview="Réinitialisation de votre mot de passe" title="Réinitialisation du mot de passe" signatureRole="Boutique">
+    <EmailLayout preview="Réinitialisation de votre mot de passe" title="Réinitialisation du mot de passe" signatureRole="Boutique" brand={brand}>
       <Text style={text}>Bonjour,</Text>
       <Text style={text}>Vous avez demandé à réinitialiser votre mot de passe. Cliquez sur le bouton ci-dessous pour en définir un nouveau :</Text>
       <Button href={link} style={button}>Réinitialiser mon mot de passe</Button>

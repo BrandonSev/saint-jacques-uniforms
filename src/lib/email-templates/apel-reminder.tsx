@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Button, Text } from "@react-email/components";
 import { EmailLayout, text, muted, button } from "./_layout";
+import type { EmailBrand } from './brand';
 import type { TemplateEntry } from "./registry";
 
 interface Props {
@@ -9,18 +10,18 @@ interface Props {
   deadline?: string;
   appUrl?: string;
   customMessage?: string;
-}
+ brand?: Partial<EmailBrand> | null}
 
 const APP_URL = "https://sjdc-dax.franceuniformes.fr";
 
-function ApelReminder({ prenom, familyName, deadline = "24 mai 2026", appUrl = APP_URL, customMessage }: Props) {
+function ApelReminder({ prenom, familyName, deadline = "24 mai 2026", appUrl = APP_URL, customMessage , brand}: Props) {
   return (
     <EmailLayout
       preview="Pensez à commander les uniformes pour la rentrée 2026"
       title="Rappel — Commande pour la rentrée 2026"
       familyName={familyName}
       signatureRole="APEL"
-    >
+     brand={brand}>
       <Text style={text}>Bonjour {prenom || ""},</Text>
       <Text style={text}>
         L'<strong>Association des Parents d'Élèves</strong> de Saint-Jacques-de-Compostelle vous rappelle que vous

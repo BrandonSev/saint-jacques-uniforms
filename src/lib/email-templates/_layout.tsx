@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Body, Container, Head, Html, Img, Preview, Section, Text } from "@react-email/components";
+import { type EmailBrand, resolveBrand } from "./brand";
 
 interface LayoutProps {
   preview: string;
@@ -8,39 +9,42 @@ interface LayoutProps {
   familyName?: string;
   /** Fonction/équipe qui signe (ex : "Commandes", "Service après-vente"). */
   signatureRole?: string;
+  /** Branding tenant — fusionné avec `DEFAULT_EMAIL_BRAND`. */
+  brand?: Partial<EmailBrand> | null;
   children: React.ReactNode;
 }
 
-export function EmailLayout({ preview, title, familyName, signatureRole, children }: LayoutProps) {
+export function EmailLayout({ preview, title, familyName, signatureRole, brand, children }: LayoutProps) {
   const cleanFamily = familyName?.trim();
+  const b = resolveBrand(brand);
   return (
     <Html lang="fr" dir="ltr">
       <Head />
       <Preview>{preview}</Preview>
       <Body style={body}>
         <Container style={container}>
-          <Section style={header}>
+          <Section style={{ ...header, backgroundColor: b.headerColor }}>
             <Img
-              src="https://uyavawaeytlrjxozxyam.supabase.co/storage/v1/object/public/email-assets/france-uniformes-logo-white.png"
-              width="170"
-              alt="France Uniformes"
+              src={b.logoUrl}
+              width={String(b.logoWidth)}
+              alt={b.logoAlt}
               style={logo}
             />
             <Text style={titleStyle}>{title}</Text>
             {cleanFamily ? <Text style={familyStyle}>Famille {cleanFamily}</Text> : null}
           </Section>
-          <Section style={accentBar} />
+          <Section style={{ ...accentBar, backgroundColor: b.accentColor }} />
           <Section style={content}>
             {children}
             {signatureRole ? (
               <Text style={signature}>
                 Bien cordialement,<br />
-                L'équipe {signatureRole} de France Uniformes
+                L'équipe {signatureRole} {b.signatureSuffix}
               </Text>
             ) : null}
           </Section>
           <Section style={footer}>
-            <Text style={footerText}>France Uniformes — Uniformes scolaires sur mesure</Text>
+            <Text style={footerText}>{b.footerTagline}</Text>
             <Text style={footerSmall}>
               Pour toute question, répondez simplement à cet email — il sera reçu par notre équipe.
             </Text>
