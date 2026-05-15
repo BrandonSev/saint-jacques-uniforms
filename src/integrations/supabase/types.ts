@@ -982,7 +982,9 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
-      generate_order_number: { Args: { _user_id: string }; Returns: string }
+      generate_order_number:
+        | { Args: { _user_id: string }; Returns: string }
+        | { Args: { _tenant_id?: string; _user_id: string }; Returns: string }
       move_to_dlq: {
         Args: {
           dlq_name: string
