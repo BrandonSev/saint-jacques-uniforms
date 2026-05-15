@@ -40,6 +40,15 @@ export const TENANT_FLAGS = {
    * OFF = utilise le catalogue hardcodé actuel (src/lib/store.tsx).
    */
   ENABLE_DYNAMIC_CATALOG: false,
+
+  /**
+   * Active la résolution dynamique de la configuration email (from, reply_to,
+   * sender_domain, signature) depuis tenants.config.email.
+   * OFF = utilise les constantes baked-in dans src/routes/lovable/email/transactional/send.ts.
+   * Quand ON et que tenants.config.email est vide pour le tenant courant,
+   * on retombe sur les constantes baked-in (jamais d'écran blanc / mauvais from).
+   */
+  ENABLE_TENANT_EMAIL_CONFIG: false,
 } as const;
 
 /**
