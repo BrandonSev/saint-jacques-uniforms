@@ -29,7 +29,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
+      <SiteHeader />
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary">
