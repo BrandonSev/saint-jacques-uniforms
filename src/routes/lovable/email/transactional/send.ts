@@ -7,7 +7,9 @@ import { TENANT_FLAGS } from "@/config/tenantFlags";
 import {
   DEFAULT_EMAIL_CONFIG,
   getTenantEmailConfig,
+  getTenantEmailBrand,
 } from "@/lib/tenant/tenantEmailConfig.server";
+import { DEFAULT_EMAIL_BRAND } from "@/lib/email-templates/brand";
 
 // Configuration historique (Phase 0). Conservée comme fallback ultime.
 // Quand TENANT_FLAGS.ENABLE_TENANT_EMAIL_CONFIG = true, on lit la config
@@ -89,6 +91,16 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
         const { tenantId, config: emailConfig } = TENANT_FLAGS.ENABLE_TENANT_EMAIL_CONFIG
           ? await getTenantEmailConfig()
           : { tenantId: null as string | null, config: DEFAULTS };
+
+        // Phase 12 — Branding visuel des templates (logo, couleurs, signature).
+        // Même flag que la config from/replyTo : OFF = templates pixel-identiques SJC.
+        // Le brand fourni par l'appelant dans `templateData.brand` est prioritaire.
+        const tenantBrand = TENANT_FLAGS.ENABLE_TENANT_EMAIL_CONFIG
+          ? (await getTenantEmailBrand(tenantId)).brand
+          : DEFAULT_EMAIL_BRAND;
+        if (TENANT_FLAGS.ENABLE_TENANT_EMAIL_CONFIG && !templateData.brand) {
+          templateData = { ...templateData, brand: tenantBrand };
+        }
 
         // 1. Look up template from registry (early — needed to resolve recipient)
         const template = TEMPLATES[templateName];
