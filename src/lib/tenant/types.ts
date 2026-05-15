@@ -16,8 +16,20 @@ export type TenantConfig = {
   contactAddress?: string | null;
   /** Slogan affiché en sous-titre du header / SEO. */
   tagline?: string | null;
+  /**
+   * Phase 7 — Variants de composants UI.
+   * Permet à un tenant de choisir une présentation alternative sans forker.
+   * Les valeurs absentes retombent sur "classic".
+   */
+  variants?: {
+    header?: HeaderVariant;
+    footer?: FooterVariant;
+  };
   [key: string]: any;
 };
+
+export type HeaderVariant = "classic" | "minimal";
+export type FooterVariant = "classic" | "minimal";
 
 export type TenantContext = {
   id: string;
