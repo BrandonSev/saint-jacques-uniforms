@@ -1,5 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { RequireAuth } from "@/components/RequireAuth";
+import { Link } from "@tanstack/react-router";
 import { ChevronRight, CreditCard, ShieldCheck } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
@@ -10,24 +9,6 @@ import courMaternelle from "@/assets/maternelle-cour-blouses.jpg";
 import margueritePortrait from "@/assets/marguerite-de-perignon.jpg";
 import { PageWatermark } from "@/components/PageWatermark";
 import { HeadteacherQuote } from "@/components/HeadteacherQuote";
-
-export const Route = createFileRoute("/maternelle")({
-  head: () => ({
-    meta: [
-      { title: "Uniformes Maternelle & Élémentaire — Saint-Jacques-de-Compostelle" },
-      {
-        name: "description",
-        content:
-          "Sélection d'uniformes validée par l'établissement pour les élèves de maternelle et d'élémentaire (PS, MS, GS, CP, CE1, CE2, CM1).",
-      },
-    ],
-  }),
-  component: () => (
-    <RequireAuth>
-      <MaternelleListPage />
-    </RequireAuth>
-  ),
-});
 
 const sizes = ["3 ans", "4 ans", "6 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];
 
@@ -46,7 +27,7 @@ const products = [
   },
 ];
 
-function MaternelleListPage() {
+export default function MaternelleListPage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
