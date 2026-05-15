@@ -983,13 +983,6 @@ export type Database = {
         Returns: number
       }
       generate_order_number: { Args: { _user_id: string }; Returns: string }
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
       move_to_dlq: {
         Args: {
           dlq_name: string
