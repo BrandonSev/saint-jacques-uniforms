@@ -3,6 +3,7 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import appCss from "../styles.css?url";
 import { StoreProvider } from "@/lib/store";
 import { Toaster } from "@/components/ui/sonner";
+import { loadTenantTheme } from "@/server/tenantTheme.functions";
 
 function NotFoundComponent() {
   return (
@@ -27,6 +28,17 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRoute({
+  // Phase 6 — Charge les theme_tokens du tenant courant.
+  // Tant que ENABLE_DYNAMIC_THEME = false, le serverFn retourne { css: null }
+  // sans toucher la DB ; le rendu reste 100% identique au mono-tenant actuel.
+  loader: async () => {
+    try {
+      return await loadTenantTheme();
+    } catch (e) {
+      console.warn("[__root loader] tenant theme load failed:", e);
+      return { css: null, tenantId: null, tenantSlug: null };
+    }
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -52,10 +64,18 @@ export const Route = createRootRoute({
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
+  const themeCss = Route.useLoaderData()?.css ?? null;
   return (
     <html lang="fr">
       <head>
         <HeadContent />
+        {themeCss ? (
+          <style
+            data-tenant-theme=""
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{ __html: themeCss }}
+          />
+        ) : null}
       </head>
       <body>
         {children}
