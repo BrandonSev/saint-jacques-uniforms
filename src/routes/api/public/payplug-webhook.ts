@@ -35,7 +35,7 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
 
         const { data: order } = await supabaseAdmin
           .from("orders")
-          .select("id, order_number, status, family_email, family_prenom, family_nom, total_amount, paid_at")
+          .select("id, order_number, status, family_email, family_prenom, family_nom, total_amount, paid_at, tenant_id")
           .eq("id", orderId)
           .maybeSingle();
         if (!order) return new Response("order not found", { status: 200 });
@@ -66,7 +66,26 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
                 await sendOrderConfirmation(order.family_email, order.family_prenom ?? "", order.order_number, mapped, Number(order.total_amount));
                 await sendOrderStatusEmail(order.family_email, order.family_prenom ?? "", order.order_number, "Paiement validé");
               }
-              const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.SMTP_USER;
+              // Routage tenant-aware : si la commande est rattachée à un
+              // tenant qui a configuré un adminEmail, on l'utilise. Sinon
+              // on retombe sur l'env historique (comportement SJC actuel).
+              let adminEmail: string | undefined =
+                process.env.ADMIN_NOTIFICATION_EMAIL || process.env.SMTP_USER;
+              if (order.tenant_id) {
+                try {
+                  const { data: tenantRow } = await supabaseAdmin
+                    .from("tenants")
+                    .select("config")
+                    .eq("id", order.tenant_id)
+                    .maybeSingle();
+                  const tenantAdmin = (tenantRow?.config as any)?.adminEmail;
+                  if (typeof tenantAdmin === "string" && tenantAdmin.trim()) {
+                    adminEmail = tenantAdmin.trim();
+                  }
+                } catch (e) {
+                  console.warn("payplug webhook tenant lookup:", e);
+                }
+              }
               if (adminEmail) {
                 await sendAdminOrderNotification(adminEmail, order.order_number, `${order.family_prenom ?? ""} ${order.family_nom ?? ""}`.trim(), Number(order.total_amount), mapped.reduce((s, i) => s + i.qty, 0));
               }
