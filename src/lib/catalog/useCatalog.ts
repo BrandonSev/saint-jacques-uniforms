@@ -13,15 +13,15 @@
  *   - `image` : si la DB ne fournit pas d'`image_url`, on réutilise l'image
  *     du produit fallback de même slug (assets bundlés). Garantit que SJC
  *     continue d'afficher la bonne photo même quand le catalogue passe en DB.
- *   - `tag`, `genre`, `productKind` : conservés depuis le fallback du même
- *     slug si non exprimés en DB (ces champs UI vivent encore dans le code
- *     pour l'instant ; ils migreront vers `products.metadata` plus tard).
+ *   - `tag`, `genre`, `productKind` : lus depuis `products.metadata` côté DB.
+ *     Le fallback hardcodé sert uniquement de filet de sécurité quand la
+ *     metadata n'est pas (encore) renseignée pour un slug donné.
  */
 
 import { useQuery } from "@tanstack/react-query";
 import { TENANT_FLAGS } from "@/config/tenantFlags";
 import { loadCatalog } from "@/lib/catalog.functions";
-import type { ProductCardData } from "@/components/ProductCard";
+import type { ProductCardData, ProductGenre } from "@/components/ProductCard";
 
 export type UseCatalogOptions = {
   /** Filtre par niveau scolaire (maternelle | college | lycee). Null = tous. */
@@ -63,6 +63,10 @@ export function useCatalog(opts: UseCatalogOptions): UseCatalogResult {
 
   const products: ProductCardData[] = data.products.map((p) => {
     const fb = fallbackBySlug.get(p.slug);
+    // DB en priorité ; fallback hardcodé si la metadata n'est pas encore renseignée.
+    const genre = (p.genre ?? fb?.genre) as ProductGenre | undefined;
+    const productKind =
+      (p.productKind ?? fb?.productKind) === "blouse" ? "blouse" : undefined;
     return {
       id: p.slug,
       name: p.name,
@@ -71,9 +75,9 @@ export function useCatalog(opts: UseCatalogOptions): UseCatalogResult {
       image: p.image ?? fb?.image ?? "",
       desc: p.description ?? fb?.desc,
       href: (p.href ?? fb?.href) as ProductCardData["href"],
-      tag: fb?.tag,
-      genre: fb?.genre,
-      productKind: fb?.productKind,
+      tag: p.tag ?? fb?.tag,
+      genre,
+      productKind,
     };
   });
 

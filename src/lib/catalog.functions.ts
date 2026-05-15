@@ -35,6 +35,12 @@ export type CatalogProductDTO = {
   level: string | null;
   /** Lien vers une page produit dédiée (lu depuis `metadata.href`). */
   href: string | null;
+  /** Badge UI (ex: "Officielle", "Nouveau") — lu depuis `metadata.tag`. */
+  tag: string | null;
+  /** Genre cible — lu depuis `metadata.genre` ("Fille" | "Garçon" | "Unisexe"). */
+  genre: string | null;
+  /** Type produit spécial — lu depuis `metadata.productKind` (ex: "blouse"). */
+  productKind: string | null;
   /** Tailles ACTIVES, triées par `sort_order`. */
   sizes: string[];
 };
@@ -88,6 +94,10 @@ export const loadCatalog = createServerFn({ method: "GET" })
           description: row.description ?? null,
           level: row.level ?? null,
           href: typeof meta.href === "string" ? (meta.href as string) : null,
+          tag: typeof meta.tag === "string" ? (meta.tag as string) : null,
+          genre: typeof meta.genre === "string" ? (meta.genre as string) : null,
+          productKind:
+            typeof meta.productKind === "string" ? (meta.productKind as string) : null,
           sizes,
         };
       });
