@@ -17,11 +17,23 @@ import {
   pickInitialMode,
   type DeliveryOption,
 } from "@/lib/deliveryOptions";
+import { loadTenantContext } from "@/server/tenantContext.functions";
+import { FALLBACK_TENANT } from "@/lib/tenant/types";
+import { buildTenantSeo, tenantSeoTags } from "@/lib/tenant/seo";
 
 export const Route = createFileRoute("/panier")({
-  head: () => ({
-    meta: [{ title: "Mon panier — Espace familles" }],
-  }),
+  loader: async () => {
+    try {
+      const ctx = await loadTenantContext();
+      return { tenant: ctx.tenant };
+    } catch {
+      return { tenant: FALLBACK_TENANT };
+    }
+  },
+  head: ({ loaderData }) => {
+    const tenant = loaderData?.tenant ?? FALLBACK_TENANT;
+    return tenantSeoTags(buildTenantSeo(tenant, { kind: "panier" }));
+  },
   component: () => (
     <RequireAuth>
       <PanierPage />
