@@ -16,7 +16,7 @@ export type TenantConfig = {
   contactAddress?: string | null;
   /** Slogan affiché en sous-titre du header / SEO. */
   tagline?: string | null;
-  [key: string]: unknown;
+  [key: string]: any;
 };
 
 export type TenantContext = {
