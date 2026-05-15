@@ -22,7 +22,62 @@ export type TenantSeoPage =
   | { kind: "enfants" }
   | { kind: "commandes" }
   | { kind: "panier" }
-  | { kind: "login" };
+  | { kind: "login" }
+  | { kind: "mot-de-passe-oublie" }
+  | { kind: "reset-password" }
+  | { kind: "apel" }
+  | {
+      kind: "aide";
+      section:
+        | "cgu"
+        | "cgv"
+        | "confidentialite"
+        | "contact"
+        | "guide-tailles"
+        | "livraison"
+        | "mentions-legales";
+    };
+
+const AIDE_META: Record<
+  Extract<TenantSeoPage, { kind: "aide" }>["section"],
+  { title: string; description: string; path: string }
+> = {
+  cgu: {
+    title: "Conditions générales",
+    description: "Conditions générales d'utilisation et de vente de la boutique d'uniformes",
+    path: "cgu",
+  },
+  cgv: {
+    title: "Conditions Générales de Vente",
+    description: "CGV applicables à toute commande passée sur la boutique d'uniformes",
+    path: "cgv",
+  },
+  confidentialite: {
+    title: "Politique de confidentialité",
+    description: "Politique de protection des données personnelles des familles",
+    path: "confidentialite",
+  },
+  contact: {
+    title: "Contact",
+    description: "Coordonnées de l'établissement et de la boutique d'uniformes",
+    path: "contact",
+  },
+  "guide-tailles": {
+    title: "Guide des tailles",
+    description: "Tableau des tailles et conseils de mesure pour les uniformes",
+    path: "guide-tailles",
+  },
+  livraison: {
+    title: "Livraisons",
+    description: "Modalités de livraison et de retrait des commandes d'uniformes",
+    path: "livraison",
+  },
+  "mentions-legales": {
+    title: "Mentions légales",
+    description: "Informations légales relatives à l'éditeur et à l'hébergeur du site",
+    path: "mentions-legales",
+  },
+};
 
 const NIVEAU_LABEL: Record<"maternelle" | "college" | "lycee", string> = {
   maternelle: "Maternelle & Élémentaire",
@@ -110,6 +165,32 @@ export function buildTenantSeo(
         description: `Connectez-vous ou créez votre espace famille pour commander les uniformes officiels de ${label}.`,
         url: `${SITE_URL}/login`,
       };
+    case "mot-de-passe-oublie":
+      return {
+        title: `Mot de passe oublié — ${label}`,
+        description: `Réinitialisez le mot de passe de votre espace famille ${label}.`,
+        url: `${SITE_URL}/mot-de-passe-oublie`,
+      };
+    case "reset-password":
+      return {
+        title: `Nouveau mot de passe — ${label}`,
+        description: `Définissez un nouveau mot de passe pour votre espace famille ${label}.`,
+        url: `${SITE_URL}/reset-password`,
+      };
+    case "apel":
+      return {
+        title: `APEL — Suivi des commandes — ${label}`,
+        description: `Suivi des commandes d'uniformes des familles ${label} pour l'APEL.`,
+        url: `${SITE_URL}/apel`,
+      };
+    case "aide": {
+      const meta = AIDE_META[page.section];
+      return {
+        title: `${meta.title} — ${label}`,
+        description: `${meta.description} de ${label}.`,
+        url: `${SITE_URL}/aide/${meta.path}`,
+      };
+    }
   }
 }
 

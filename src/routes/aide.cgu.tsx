@@ -1,14 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PageWatermark } from "@/components/PageWatermark";
+import { loadTenantContext } from "@/server/tenantContext.functions";
+import { FALLBACK_TENANT } from "@/lib/tenant/types";
+import { buildTenantSeo, tenantSeoTags } from "@/lib/tenant/seo";
 
 export const Route = createFileRoute("/aide/cgu")({
-  head: () => ({
-    meta: [
-      { title: "Conditions générales — Saint-Jacques-de-Compostelle" },
-      { name: "description", content: "Conditions générales d'utilisation et de vente de la boutique d'uniformes." },
-    ],
-  }),
+  loader: async () => {
+    try {
+      const ctx = await loadTenantContext();
+      return { tenant: ctx.tenant };
+    } catch {
+      return { tenant: FALLBACK_TENANT };
+    }
+  },
+  head: ({ loaderData }) => {
+    const tenant = loaderData?.tenant ?? FALLBACK_TENANT;
+    return tenantSeoTags(buildTenantSeo(tenant, { kind: "aide", section: "cgu" }));
+  },
   component: CguPage,
 });
 
