@@ -1000,6 +1000,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      set_request_tenant: { Args: { _tenant_id: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "user" | "apel"
