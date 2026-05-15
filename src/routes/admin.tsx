@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import { Download, ShieldCheck, AlertTriangle, X, ImageIcon, Truck, Save, Users, Trash2 } from "lucide-react";
@@ -384,6 +384,12 @@ function AdminPage() {
           >
             <Users className="mr-1 inline h-3.5 w-3.5" /> Rôles
           </button>
+          <Link
+            to="/apel"
+            className="inline-flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <Users className="mr-1 inline h-3.5 w-3.5" /> Espace APEL
+          </Link>
         </div>
 
         {tab === "orders" && (
