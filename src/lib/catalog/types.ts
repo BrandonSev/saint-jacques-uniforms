@@ -24,7 +24,7 @@ export type CatalogProduct = {
   description: string | null;
   sizes: CatalogSize[];
   /** Métadonnées libres (ex. variantes, étiquettes). */
-  metadata: Record<string, unknown>;
+  metadata: Record<string, any>;
 };
 
 export type Catalog = {
