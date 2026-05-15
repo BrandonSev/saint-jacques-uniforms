@@ -9,7 +9,7 @@ import { apelListFamilies, sendApelReminders } from "@/server/apel.functions";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
-const DEADLINE = "30 juin 2026";
+const DEADLINE = "24 mai 2026";
 
 export const Route = createFileRoute("/apel")({
   head: () => ({ meta: [{ title: `APEL — Suivi des commandes — ${SCHOOL_SHORT}` }] }),
