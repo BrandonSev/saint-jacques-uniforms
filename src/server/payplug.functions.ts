@@ -4,10 +4,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { withSupabaseAuth } from "@/integrations/supabase/supabase-auth-middleware";
 import { createPayplugPayment, fetchPayplugPayment } from "./payplug.server";
 import { getRequestHost } from "@tanstack/react-start/server";
-import { getTenantFromRequest } from "@/lib/tenant/getTenantFromRequest.server";
-import { getTenantEstablishmentAddress } from "@/lib/tenant/establishmentAddress.server";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { setRequestTenant } from "@/lib/tenant/withTenantGuc.server";
 
 function appBaseUrl() {
   // Privilégie l'URL publiée si disponible, sinon la host courante
@@ -27,18 +23,10 @@ export const createOrderPayment = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ orderId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-
-    // Positionne le GUC tenant pour cette session (utile aux INSERT/UPDATE
-    // qui suivent côté serveur, et garantit l'isolation RLS).
-    const tenant = await getTenantFromRequest();
-    if (tenant) {
-      await setRequestTenant(supabaseAdmin, tenant.id);
-    }
-
     const { data: order, error } = await supabase
       .from("orders")
       .select(
-        "id, order_number, total_amount, status, family_email, family_prenom, family_nom, shipping_mode, shipping_address, shipping_postal, shipping_city, shipping_recipient, payplug_payment_id, payment_url, user_id, tenant_id",
+        "id, order_number, total_amount, status, family_email, family_prenom, family_nom, shipping_mode, shipping_address, shipping_postal, shipping_city, shipping_recipient, payplug_payment_id, payment_url, user_id",
       )
       .eq("id", data.orderId)
       .maybeSingle();
@@ -81,10 +69,13 @@ export const createOrderPayment = createServerFn({ method: "POST" })
     const amountCents = Math.round(Number(order.total_amount) * 100);
     if (amountCents <= 0) return { ok: false as const, error: "invalid_amount" };
 
-    // Adresse de l'établissement (retrait) — lue depuis le tenant de la commande.
-    const establishment = await getTenantEstablishmentAddress(
-      order.tenant_id ?? tenant?.id ?? null,
-    );
+    // Adresse de l'établissement (retrait)
+    const ESTABLISHMENT = {
+      address1: "Ensemble scolaire Saint-Jacques-de-Compostelle, 32 rue Paul Lahargou",
+      city: "Dax",
+      postcode: "40100",
+      country: "FR",
+    };
 
     // Récupère l'adresse de facturation depuis le profil de l'utilisateur
     const { data: profile } = await supabase
@@ -93,18 +84,18 @@ export const createOrderPayment = createServerFn({ method: "POST" })
       .eq("id", userId)
       .maybeSingle();
     const billing = {
-      address1: profile?.adresse || order.shipping_address || establishment.address1,
-      city: profile?.ville || order.shipping_city || establishment.city,
-      postcode: profile?.code_postal || order.shipping_postal || establishment.postcode,
+      address1: profile?.adresse || order.shipping_address || ESTABLISHMENT.address1,
+      city: profile?.ville || order.shipping_city || ESTABLISHMENT.city,
+      postcode: profile?.code_postal || order.shipping_postal || ESTABLISHMENT.postcode,
       country: "FR",
     };
 
     const isPickup = order.shipping_mode === "pickup";
     const shipping = {
-      address1: isPickup ? establishment.address1 : (order.shipping_address ?? billing.address1),
-      city: isPickup ? establishment.city : (order.shipping_city ?? billing.city),
-      postcode: isPickup ? establishment.postcode : (order.shipping_postal ?? billing.postcode),
-      country: establishment.country,
+      address1: isPickup ? ESTABLISHMENT.address1 : (order.shipping_address ?? billing.address1),
+      city: isPickup ? ESTABLISHMENT.city : (order.shipping_city ?? billing.city),
+      postcode: isPickup ? ESTABLISHMENT.postcode : (order.shipping_postal ?? billing.postcode),
+      country: ESTABLISHMENT.country,
       deliveryType: (isPickup ? "SHIP_TO_STORE" : "BILLING") as "SHIP_TO_STORE" | "BILLING",
     };
 
@@ -121,13 +112,7 @@ export const createOrderPayment = createServerFn({ method: "POST" })
         notificationUrl: `${base}/api/public/payplug-webhook`,
         returnUrl: `${base}/commandes/retour-paiement?order=${order.id}`,
         cancelUrl: `${base}/commandes/retour-paiement?order=${order.id}&cancel=1`,
-        // Le tenant_id est repassé en metadata pour que le webhook puisse
-        // router les emails et appliquer le bon GUC sans relire la DB.
-        metadata: {
-          order_id: order.id,
-          order_number: order.order_number,
-          tenant_id: order.tenant_id ?? tenant?.id ?? "",
-        },
+        metadata: { order_id: order.id, order_number: order.order_number },
       });
       const url = payment.hosted_payment?.payment_url;
       if (!url) return { ok: false as const, error: "no_payment_url" };

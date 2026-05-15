@@ -26,7 +26,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as EnfantsIndexRouteImport } from './routes/enfants.index'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as CommandesRetourPaiementRouteImport } from './routes/commandes.retour-paiement'
-import { Route as CatalogueNiveauRouteImport } from './routes/catalogue.$niveau'
 import { Route as AideMentionsLegalesRouteImport } from './routes/aide.mentions-legales'
 import { Route as AideLivraisonRouteImport } from './routes/aide.livraison'
 import { Route as AideGuideTaillesRouteImport } from './routes/aide.guide-tailles'
@@ -128,11 +127,6 @@ const CommandesRetourPaiementRoute = CommandesRetourPaiementRouteImport.update({
   id: '/retour-paiement',
   path: '/retour-paiement',
   getParentRoute: () => CommandesRoute,
-} as any)
-const CatalogueNiveauRoute = CatalogueNiveauRouteImport.update({
-  id: '/catalogue/$niveau',
-  path: '/catalogue/$niveau',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const AideMentionsLegalesRoute = AideMentionsLegalesRouteImport.update({
   id: '/aide/mentions-legales',
@@ -241,7 +235,6 @@ export interface FileRoutesByFullPath {
   '/aide/guide-tailles': typeof AideGuideTaillesRoute
   '/aide/livraison': typeof AideLivraisonRoute
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
-  '/catalogue/$niveau': typeof CatalogueNiveauRoute
   '/commandes/retour-paiement': typeof CommandesRetourPaiementRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/enfants/': typeof EnfantsIndexRoute
@@ -277,7 +270,6 @@ export interface FileRoutesByTo {
   '/aide/guide-tailles': typeof AideGuideTaillesRoute
   '/aide/livraison': typeof AideLivraisonRoute
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
-  '/catalogue/$niveau': typeof CatalogueNiveauRoute
   '/commandes/retour-paiement': typeof CommandesRetourPaiementRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/enfants': typeof EnfantsIndexRoute
@@ -314,7 +306,6 @@ export interface FileRoutesById {
   '/aide/guide-tailles': typeof AideGuideTaillesRoute
   '/aide/livraison': typeof AideLivraisonRoute
   '/aide/mentions-legales': typeof AideMentionsLegalesRoute
-  '/catalogue/$niveau': typeof CatalogueNiveauRoute
   '/commandes/retour-paiement': typeof CommandesRetourPaiementRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/enfants/': typeof EnfantsIndexRoute
@@ -352,7 +343,6 @@ export interface FileRouteTypes {
     | '/aide/guide-tailles'
     | '/aide/livraison'
     | '/aide/mentions-legales'
-    | '/catalogue/$niveau'
     | '/commandes/retour-paiement'
     | '/email/unsubscribe'
     | '/enfants/'
@@ -388,7 +378,6 @@ export interface FileRouteTypes {
     | '/aide/guide-tailles'
     | '/aide/livraison'
     | '/aide/mentions-legales'
-    | '/catalogue/$niveau'
     | '/commandes/retour-paiement'
     | '/email/unsubscribe'
     | '/enfants'
@@ -424,7 +413,6 @@ export interface FileRouteTypes {
     | '/aide/guide-tailles'
     | '/aide/livraison'
     | '/aide/mentions-legales'
-    | '/catalogue/$niveau'
     | '/commandes/retour-paiement'
     | '/email/unsubscribe'
     | '/enfants/'
@@ -461,7 +449,6 @@ export interface RootRouteChildren {
   AideGuideTaillesRoute: typeof AideGuideTaillesRoute
   AideLivraisonRoute: typeof AideLivraisonRoute
   AideMentionsLegalesRoute: typeof AideMentionsLegalesRoute
-  CatalogueNiveauRoute: typeof CatalogueNiveauRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   EnfantsIndexRoute: typeof EnfantsIndexRoute
   ApiPublicEmailDiagRoute: typeof ApiPublicEmailDiagRoute
@@ -595,13 +582,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/commandes/retour-paiement'
       preLoaderRoute: typeof CommandesRetourPaiementRouteImport
       parentRoute: typeof CommandesRoute
-    }
-    '/catalogue/$niveau': {
-      id: '/catalogue/$niveau'
-      path: '/catalogue/$niveau'
-      fullPath: '/catalogue/$niveau'
-      preLoaderRoute: typeof CatalogueNiveauRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/aide/mentions-legales': {
       id: '/aide/mentions-legales'
@@ -752,7 +732,6 @@ const rootRouteChildren: RootRouteChildren = {
   AideGuideTaillesRoute: AideGuideTaillesRoute,
   AideLivraisonRoute: AideLivraisonRoute,
   AideMentionsLegalesRoute: AideMentionsLegalesRoute,
-  CatalogueNiveauRoute: CatalogueNiveauRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   EnfantsIndexRoute: EnfantsIndexRoute,
   ApiPublicEmailDiagRoute: ApiPublicEmailDiagRoute,

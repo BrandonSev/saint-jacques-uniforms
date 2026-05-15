@@ -9,12 +9,6 @@ import { MagicLinkEmail } from "@/lib/email-templates/magic-link";
 import { RecoveryEmail } from "@/lib/email-templates/recovery";
 import { EmailChangeEmail } from "@/lib/email-templates/email-change";
 import { ReauthenticationEmail } from "@/lib/email-templates/reauthentication";
-import { TENANT_FLAGS } from "@/config/tenantFlags";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import {
-  getTenantEmailBrand,
-  getTenantEmailConfig,
-} from "@/lib/tenant/tenantEmailConfig.server";
 
 const EMAIL_SUBJECTS: Record<string, string> = {
   signup: "Confirmez votre adresse email",
@@ -41,28 +35,6 @@ const ROOT_DOMAIN = "franceuniformes.fr";
 const FROM_ADDRESS = process.env.MAILER_FROM || `${SITE_NAME} <boutique@franceuniformes.fr>`;
 const REPLY_TO = "boutique@franceuniformes.fr";
 const SITE_URL = process.env.URL || `https://${ROOT_DOMAIN}`;
-
-/**
- * Phase 14 — Résout le tenant d'un destinataire email auth (signup,
- * recovery, magic-link…). Stratégie : `profiles.email = recipient` →
- * `profiles.tenant_id`. Renvoie `null` si introuvable (signup avant
- * que le trigger handle_new_user n'ait inséré la profile, ou email
- * orphelin), auquel cas le webhook retombe sur les défauts SJC.
- */
-async function resolveTenantIdByEmail(email: string): Promise<string | null> {
-  if (!email) return null;
-  try {
-    const { data, error } = await supabaseAdmin
-      .from("profiles")
-      .select("tenant_id")
-      .eq("email", email)
-      .maybeSingle();
-    if (error || !data?.tenant_id) return null;
-    return data.tenant_id;
-  } catch {
-    return null;
-  }
-}
 
 function redactEmail(email: string | null | undefined): string {
   if (!email) return "***";
@@ -139,32 +111,9 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
         }
 
         // Build template props from payload.data (HookData structure)
-        // Phase 14 — Override siteName/siteUrl/From par tenant (gated).
-        let effectiveSiteName = SITE_NAME;
-        let effectiveSiteUrl = SITE_URL;
-        let effectiveFromAddress = FROM_ADDRESS;
-        let effectiveReplyTo = REPLY_TO;
-        if (TENANT_FLAGS.ENABLE_TENANT_EMAIL_CONFIG) {
-          const tenantId = await resolveTenantIdByEmail(payload.data.email);
-          if (tenantId) {
-            try {
-              const [{ brand }, { config }] = await Promise.all([
-                getTenantEmailBrand(tenantId),
-                getTenantEmailConfig(tenantId),
-              ]);
-              effectiveSiteName = brand.siteName;
-              effectiveSiteUrl = brand.appUrl;
-              effectiveFromAddress = `${config.siteName} <${config.fromLocalpart}@${config.fromDomain}>`;
-              effectiveReplyTo = config.replyTo;
-            } catch (e) {
-              console.warn("[auth-webhook] tenant resolution failed, using defaults", { run_id, error: e });
-            }
-          }
-        }
-
         const templateProps = {
-          siteName: effectiveSiteName,
-          siteUrl: effectiveSiteUrl,
+          siteName: SITE_NAME,
+          siteUrl: SITE_URL,
           recipient: payload.data.email,
           confirmationUrl: payload.data.url,
           token: payload.data.token,
@@ -195,9 +144,9 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
             "X-Idempotency-Key": messageId,
           },
           body: JSON.stringify({
-            from: effectiveFromAddress,
+            from: FROM_ADDRESS,
             to: payload.data.email,
-            replyTo: effectiveReplyTo,
+            replyTo: REPLY_TO,
             subject: EMAIL_SUBJECTS[emailType] || "Notification",
             html,
             text,

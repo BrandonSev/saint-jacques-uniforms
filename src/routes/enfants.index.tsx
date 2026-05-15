@@ -11,23 +11,11 @@ import { PageWatermark } from "@/components/PageWatermark";
 import { recommendSize } from "@/lib/sizeRecommendation";
 import { SizeBadge } from "@/components/SizeBadge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { loadTenantContext } from "@/server/tenantContext.functions";
-import { FALLBACK_TENANT } from "@/lib/tenant/types";
-import { buildTenantSeo, tenantSeoTags } from "@/lib/tenant/seo";
 
 export const Route = createFileRoute("/enfants/")({
-  loader: async () => {
-    try {
-      const ctx = await loadTenantContext();
-      return { tenant: ctx.tenant };
-    } catch {
-      return { tenant: FALLBACK_TENANT };
-    }
-  },
-  head: ({ loaderData }) => {
-    const tenant = loaderData?.tenant ?? FALLBACK_TENANT;
-    return tenantSeoTags(buildTenantSeo(tenant, { kind: "enfants" }));
-  },
+  head: () => ({
+    meta: [{ title: "Mes enfants — Espace familles" }],
+  }),
   validateSearch: (search: Record<string, unknown>): { add?: 1 } => ({
     add: search.add === 1 || search.add === "1" ? 1 : undefined,
   }),
@@ -88,7 +76,7 @@ function EnfantsPage() {
     return (
       <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
-        <SiteHeader />
+        <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
         <section className="mx-auto max-w-xl px-4 py-20 text-center">
           <h1 className="text-2xl font-semibold">Espace administrateur</h1>
           <p className="mt-3 text-sm text-muted-foreground">Cette section est réservée aux familles.</p>
@@ -101,7 +89,7 @@ function EnfantsPage() {
   if (!user) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
-        <SiteHeader />
+        <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
         <section className="mx-auto max-w-xl px-4 py-20 text-center">
           <h1 className="text-2xl font-semibold">Espace réservé aux familles</h1>
           <p className="mt-3 text-sm text-muted-foreground">Connectez-vous pour gérer vos enfants.</p>
@@ -113,7 +101,7 @@ function EnfantsPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <SiteHeader />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       <section className="relative mx-auto max-w-6xl px-4 pt-6 pb-12 sm:px-6 lg:px-8">
         <div className="pointer-events-none absolute -top-10 right-0 -z-0 h-72 w-72 text-primary">

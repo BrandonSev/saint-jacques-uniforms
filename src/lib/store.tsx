@@ -1,7 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
-import { useTenant } from "@/lib/tenant/TenantContext";
 
 export type Child = {
   id: string;
@@ -163,29 +162,12 @@ type StoreCtx = {
 
 const Ctx = createContext<StoreCtx | null>(null);
 
-function useLocal<T>(
-  key: string,
-  initial: T,
-  legacyKeys: string[] = [],
-): [T, (v: T | ((p: T) => T)) => void] {
+function useLocal<T>(key: string, initial: T): [T, (v: T | ((p: T) => T)) => void] {
   const [val, setVal] = useState<T>(initial);
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
     try {
-      let raw = localStorage.getItem(key);
-      if (!raw) {
-        // Migration douce : si le panier est vide sous la clé tenant
-        // courante, on tente de récupérer une éventuelle ancienne clé
-        // (ex. "sjc.cart") puis on la supprime pour ne migrer qu'une fois.
-        for (const lk of legacyKeys) {
-          const legacy = localStorage.getItem(lk);
-          if (legacy) {
-            raw = legacy;
-            try { localStorage.removeItem(lk); } catch {}
-            break;
-          }
-        }
-      }
+      const raw = localStorage.getItem(key);
       if (raw) setVal(JSON.parse(raw));
     } catch {}
     setHydrated(true);
@@ -206,9 +188,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
   const [authLoading, setAuthLoading] = useState(true);
   const [childList, setChildList] = useState<Child[]>([]);
   const [parentList, setParentList] = useState<FamilyParent[]>([]);
-  const tenant = useTenant();
-  const cartKey = `fu.${tenant.slug}.cart`;
-  const [cart, setCart] = useLocal<CartItem[]>(cartKey, [], ["sjc.cart"]);
+  const [cart, setCart] = useLocal<CartItem[]>("sjc.cart", []);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isApel, setIsApel] = useState(false);
 

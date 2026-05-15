@@ -1,25 +1,24 @@
 import * as React from "react";
 import { Button, Text } from "@react-email/components";
 import { EmailLayout, text, button } from "./_layout";
-import type { EmailBrand } from './brand';
 import type { TemplateEntry } from "./registry";
 
 interface Props {
   prenom?: string;
   familyName?: string;
   appUrl?: string;
- brand?: Partial<EmailBrand> | null}
+}
 
 const APP_URL = "https://sjdc-dax.franceuniformes.fr";
 
-function WelcomeEmail({ prenom, familyName, appUrl = APP_URL , brand}: Props) {
+function WelcomeEmail({ prenom, familyName, appUrl = APP_URL }: Props) {
   return (
     <EmailLayout
       preview="Bienvenue sur la boutique France Uniformes"
       title="Bienvenue !"
       familyName={familyName}
       signatureRole="Boutique"
-     brand={brand}>
+    >
       <Text style={text}>Bonjour {prenom || ""},</Text>
       <Text style={text}>
         Votre compte sur la boutique <strong>France Uniformes</strong> a bien été créé.

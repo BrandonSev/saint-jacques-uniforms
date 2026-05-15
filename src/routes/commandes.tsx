@@ -24,23 +24,9 @@ import { PageWatermark } from "@/components/PageWatermark";
 import { downloadOrderPdf, type PdfOrder } from "@/lib/orderPdf";
 import { sendIncidentNotifications } from "@/server/email.functions";
 import { createOrderPayment } from "@/server/payplug.functions";
-import { loadTenantContext } from "@/server/tenantContext.functions";
-import { FALLBACK_TENANT } from "@/lib/tenant/types";
-import { buildTenantSeo, tenantSeoTags } from "@/lib/tenant/seo";
 
 export const Route = createFileRoute("/commandes")({
-  loader: async () => {
-    try {
-      const ctx = await loadTenantContext();
-      return { tenant: ctx.tenant };
-    } catch {
-      return { tenant: FALLBACK_TENANT };
-    }
-  },
-  head: ({ loaderData }) => {
-    const tenant = loaderData?.tenant ?? FALLBACK_TENANT;
-    return tenantSeoTags(buildTenantSeo(tenant, { kind: "commandes" }));
-  },
+  head: () => ({ meta: [{ title: "Mes commandes — Espace familles" }] }),
   component: CommandesPage,
 });
 
@@ -311,7 +297,7 @@ function CommandesPage() {
     return (
       <div className="relative flex min-h-screen flex-col bg-background/80">
         <PageWatermark />
-        <SiteHeader />
+        <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
         <section className="mx-auto max-w-xl px-4 py-20 text-center">
           <h1 className="text-2xl font-semibold">Espace réservé aux familles</h1>
           <p className="mt-3 text-sm text-muted-foreground">Connectez-vous pour consulter vos commandes.</p>
@@ -328,7 +314,7 @@ function CommandesPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <SiteHeader />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
       <section className="relative mx-auto max-w-6xl w-full px-4 pt-6 pb-12 sm:px-6 lg:px-8">
         <div className="pointer-events-none absolute -top-10 right-0 -z-0 h-72 w-72 text-primary">
           <ShellMotif className="h-full w-full" opacity={0.045} />

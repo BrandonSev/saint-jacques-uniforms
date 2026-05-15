@@ -3,9 +3,6 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import appCss from "../styles.css?url";
 import { StoreProvider } from "@/lib/store";
 import { Toaster } from "@/components/ui/sonner";
-import { loadTenantContext } from "@/server/tenantContext.functions";
-import { TenantProvider } from "@/lib/tenant/TenantContext";
-import { FALLBACK_TENANT } from "@/lib/tenant/types";
 
 function NotFoundComponent() {
   return (
@@ -30,16 +27,6 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRoute({
-  // Phases 6 + 8 — Charge l'identité tenant + (si flag ON) les theme_tokens.
-  // En mode mono-tenant, retombe sur FALLBACK_TENANT sans bloquer le rendu.
-  loader: async () => {
-    try {
-      return await loadTenantContext();
-    } catch (e) {
-      console.warn("[__root loader] tenant context load failed:", e);
-      return { tenant: FALLBACK_TENANT, themeCss: null };
-    }
-  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -65,18 +52,10 @@ export const Route = createRootRoute({
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
-  const themeCss = Route.useLoaderData()?.themeCss ?? null;
   return (
     <html lang="fr">
       <head>
         <HeadContent />
-        {themeCss ? (
-          <style
-            data-tenant-theme=""
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: themeCss }}
-          />
-        ) : null}
       </head>
       <body>
         {children}
@@ -87,13 +66,10 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  const tenant = Route.useLoaderData()?.tenant ?? FALLBACK_TENANT;
   return (
-    <TenantProvider tenant={tenant}>
-      <StoreProvider>
-        <Outlet />
-        <Toaster />
-      </StoreProvider>
-    </TenantProvider>
+    <StoreProvider>
+      <Outlet />
+      <Toaster />
+    </StoreProvider>
   );
 }

@@ -58,7 +58,7 @@ function HistoriquePage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
-      <SiteHeader />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
       <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
         <Link
           to="/enfants"

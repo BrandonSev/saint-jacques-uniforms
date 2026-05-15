@@ -56,7 +56,6 @@ async function moveToDlq(
     recipient_email: payload.to,
     status: "dlq",
     error_message: reason,
-    tenant_id: payload.tenant_id ?? null,
   });
   const { error } = await supabase.rpc("move_to_dlq", {
     source_queue: queue,
@@ -272,7 +271,6 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
                 template_name: payload.label || queue,
                 recipient_email: payload.to,
                 status: "sent",
-                tenant_id: payload.tenant_id ?? null,
               });
 
               // Delete from queue
@@ -305,7 +303,6 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
                   recipient_email: payload.to,
                   status: "failed",
                   error_message: errorMsg.slice(0, 1000),
-                  tenant_id: payload.tenant_id ?? null,
                 });
 
                 const retryAfterSecs = getRetryAfterSeconds(error);
@@ -334,7 +331,6 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
                 recipient_email: payload.to,
                 status: "failed",
                 error_message: errorMsg.slice(0, 1000),
-                tenant_id: payload.tenant_id ?? null,
               });
               if (payload?.message_id && typeof payload.message_id === "string") {
                 failedAttemptsByMessageId.set(payload.message_id, failedAttempts + 1);

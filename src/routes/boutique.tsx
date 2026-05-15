@@ -10,23 +10,17 @@ import lycee from "@/assets/lycee-uniformes.jpg";
 import { PageWatermark } from "@/components/PageWatermark";
 import { DirectorQuote } from "@/components/DirectorQuote";
 import { BackToSchoolAlert, daysUntilDeadline } from "@/components/BackToSchoolAlert";
-import { loadTenantContext } from "@/server/tenantContext.functions";
-import { FALLBACK_TENANT } from "@/lib/tenant/types";
-import { buildTenantSeo, tenantSeoTags } from "@/lib/tenant/seo";
 
 export const Route = createFileRoute("/boutique")({
-  loader: async () => {
-    try {
-      const ctx = await loadTenantContext();
-      return { tenant: ctx.tenant };
-    } catch {
-      return { tenant: FALLBACK_TENANT };
-    }
-  },
-  head: ({ loaderData }) => {
-    const tenant = loaderData?.tenant ?? FALLBACK_TENANT;
-    return tenantSeoTags(buildTenantSeo(tenant, { kind: "boutique" }));
-  },
+  head: () => ({
+    meta: [
+      { title: "Choisir le niveau — Boutique Saint-Jacques-de-Compostelle" },
+      {
+        name: "description",
+        content: "Sélectionnez le niveau scolaire de votre enfant pour découvrir la sélection d'uniformes adaptée.",
+      },
+    ],
+  }),
   component: () => (
     <RequireAuth>
       <NiveauPage />
@@ -71,7 +65,7 @@ function NiveauPage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
-      <SiteHeader cartCount={0} />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" cartCount={0} />
 
       <div className="mx-auto w-full max-w-6xl px-4 pt-6 sm:px-6 lg:px-8">
         <BackToSchoolAlert />

@@ -6,30 +6,31 @@ import { DirectorQuote } from "@/components/DirectorQuote";
 import { FrenchFlag } from "@/components/FrenchFlag";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
 import schoolLogo from "@/assets/saint-jacques-blason.png";
-import { loadTenantContext } from "@/server/tenantContext.functions";
-import { FALLBACK_TENANT } from "@/lib/tenant/types";
-import { buildTenantSeo, tenantSeoTags } from "@/lib/tenant/seo";
 
 export const Route = createFileRoute("/")({
-  loader: async () => {
-    try {
-      const ctx = await loadTenantContext();
-      return { tenant: ctx.tenant };
-    } catch {
-      return { tenant: FALLBACK_TENANT };
-    }
-  },
-  head: ({ loaderData }) => {
-    const tenant = loaderData?.tenant ?? FALLBACK_TENANT;
-    return tenantSeoTags(buildTenantSeo(tenant, { kind: "home" }));
-  },
+  head: () => ({
+    meta: [
+      { title: "Boutique groupe scolaire Saint-Jacques-de-Compostelle — Dax" },
+       {
+         name: "description",
+         content:
+           "Espace familles officiel du Groupe scolaire Saint-Jacques-de-Compostelle de Dax. Commandez les tenues officielles en quelques clics.",
+       },
+      { property: "og:title", content: "Boutique groupe scolaire Saint-Jacques-de-Compostelle — Dax" },
+      {
+        property: "og:description",
+        content:
+          "Espace familles officiel — commandez les uniformes du Groupe scolaire Saint-Jacques-de-Compostelle, Dax.",
+      },
+    ],
+  }),
   component: Index,
 });
 
 function Index() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <SiteHeader />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary">

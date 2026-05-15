@@ -53,7 +53,7 @@ function RetourPaiementPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <SiteHeader />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
       <section className="mx-auto max-w-xl px-4 py-16 text-center sm:py-24">
         {loading && !order ? (
           <p className="text-sm text-muted-foreground">Vérification du paiement…</p>

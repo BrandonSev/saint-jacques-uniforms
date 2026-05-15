@@ -1,23 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PageWatermark } from "@/components/PageWatermark";
-import { loadTenantContext } from "@/server/tenantContext.functions";
-import { FALLBACK_TENANT } from "@/lib/tenant/types";
-import { buildTenantSeo, tenantSeoTags } from "@/lib/tenant/seo";
 
 export const Route = createFileRoute("/aide/cgu")({
-  loader: async () => {
-    try {
-      const ctx = await loadTenantContext();
-      return { tenant: ctx.tenant };
-    } catch {
-      return { tenant: FALLBACK_TENANT };
-    }
-  },
-  head: ({ loaderData }) => {
-    const tenant = loaderData?.tenant ?? FALLBACK_TENANT;
-    return tenantSeoTags(buildTenantSeo(tenant, { kind: "aide", section: "cgu" }));
-  },
+  head: () => ({
+    meta: [
+      { title: "Conditions générales — Saint-Jacques-de-Compostelle" },
+      { name: "description", content: "Conditions générales d'utilisation et de vente de la boutique d'uniformes." },
+    ],
+  }),
   component: CguPage,
 });
 
@@ -25,7 +16,7 @@ function CguPage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background/80">
       <PageWatermark />
-      <SiteHeader />
+      <SiteHeader schoolName="Saint-Jacques-de-Compostelle — Dax" />
       <article className="mx-auto max-w-3xl px-4 pt-6 pb-14 sm:px-6 lg:px-8">
         <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
           <span className="h-px w-6 bg-gold" /> Légal

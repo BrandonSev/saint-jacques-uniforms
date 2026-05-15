@@ -1,15 +1,14 @@
 import * as React from 'react'
 import { Text } from '@react-email/components'
 import { EmailLayout, text } from './_layout'
-import type { EmailBrand } from './brand';
 import type { TemplateEntry } from './registry'
 
 interface Item { name: string; size: string; qty: number; price: number; child: string }
-interface Props { prenom?: string; familyName?: string; orderNumber?: string; items?: Item[]; total?: number ; brand?: Partial<EmailBrand> | null}
+interface Props { prenom?: string; familyName?: string; orderNumber?: string; items?: Item[]; total?: number }
 
-function OrderConfirmationEmail({ prenom = '', familyName, orderNumber = '', items = [], total = 0 , brand}: Props) {
+function OrderConfirmationEmail({ prenom = '', familyName, orderNumber = '', items = [], total = 0 }: Props) {
   return (
-    <EmailLayout preview={`Commande ${orderNumber} confirmée`} title={`Commande ${orderNumber} confirmée`} familyName={familyName} signatureRole="Commandes" brand={brand}>
+    <EmailLayout preview={`Commande ${orderNumber} confirmée`} title={`Commande ${orderNumber} confirmée`} familyName={familyName} signatureRole="Commandes">
       <Text style={text}>Bonjour {prenom},</Text>
       <Text style={text}>
         Nous avons bien reçu votre commande <strong>{orderNumber}</strong>. Voici son récapitulatif :
