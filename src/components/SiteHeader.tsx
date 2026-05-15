@@ -8,6 +8,7 @@ import { SchoolIdentityBar } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { BackToSchoolBanner } from "@/components/BackToSchoolAlert";
+import { useTenant } from "@/lib/tenant/TenantContext";
 
 interface SiteHeaderProps {
   schoolName?: string;
@@ -17,6 +18,18 @@ interface SiteHeaderProps {
 
 export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHeaderProps) {
   const { cartCount: storeCount, profile, user, signOut, isAdmin, isApel } = useStore();
+  const tenant = useTenant();
+  // Mode "école brandée" = page d'espace familles. Comportement :
+  //  - prop omise (undefined) → on utilise le tenant courant (mode brandé).
+  //  - prop renseignée (string non vide) → mode brandé, label = prop.
+  //  - prop = "" → home générique France Uniformes (cas marketing rare).
+  const branded = schoolName !== "";
+  const displayName = schoolName || tenant.name;
+  const shortDisplay = tenant.shortName || displayName;
+  // Logo : DB d'abord, puis asset bundlé SJC (rétro-compat pixel-perfect),
+  // sinon logo générique France Uniformes.
+  const brandedLogo =
+    tenant.logoUrl || (tenant.slug === "saint-jacques" ? sjcLogo : logo);
   const count = cartCount ?? storeCount;
   const navigate = useNavigate();
   const famName = profile?.family_name || profile?.nom;
@@ -39,15 +52,19 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
         <BackToSchoolBanner />
         <div className="mx-auto max-w-6xl flex h-16 w-full items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link to="/" className="flex items-center gap-3">
-            {schoolName ? (
+            {branded ? (
               <>
-                <img src={sjcLogo} alt="Saint-Jacques-de-Compostelle" className="h-10 w-auto shrink-0 object-contain" />
+                <img
+                  src={brandedLogo}
+                  alt={displayName}
+                  className="h-10 w-auto shrink-0 object-contain"
+                />
                 <div className="hidden min-w-0 flex-col leading-tight xl:flex">
                   <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                     Espace familles
                   </span>
                   <span className="truncate text-sm font-semibold tracking-tight text-primary">
-                    Saint-Jacques-de-Compostelle
+                    {shortDisplay}
                   </span>
                 </div>
               </>
@@ -61,7 +78,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
             )}
           </Link>
 
-          {schoolName && user && (
+          {branded && user && (
             <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground xl:flex">
               {isAdmin ? (
                 <Link
@@ -164,7 +181,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                 </Link>
               </>
             )}
-            {schoolName && user && (
+            {branded && user && (
               <button
                 type="button"
                 onClick={() => setMenuOpen((v) => !v)}
@@ -178,7 +195,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
           </div>
         </div>
 
-        {schoolName && user && menuOpen && (
+        {branded && user && menuOpen && (
           <div className="border-t border-border bg-background/95 backdrop-blur-md xl:hidden">
             <nav className="mx-auto flex w-full flex-col gap-1 px-4 py-3 text-sm font-medium sm:px-6">
               {isAdmin ? (
