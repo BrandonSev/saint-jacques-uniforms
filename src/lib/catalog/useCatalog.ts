@@ -13,9 +13,9 @@
  *   - `image` : si la DB ne fournit pas d'`image_url`, on réutilise l'image
  *     du produit fallback de même slug (assets bundlés). Garantit que SJC
  *     continue d'afficher la bonne photo même quand le catalogue passe en DB.
- *   - `tag`, `genre`, `productKind` : conservés depuis le fallback du même
- *     slug si non exprimés en DB (ces champs UI vivent encore dans le code
- *     pour l'instant ; ils migreront vers `products.metadata` plus tard).
+ *   - `tag`, `genre`, `productKind` : lus depuis `products.metadata` côté DB.
+ *     Le fallback hardcodé sert uniquement de filet de sécurité quand la
+ *     metadata n'est pas (encore) renseignée pour un slug donné.
  */
 
 import { useQuery } from "@tanstack/react-query";
