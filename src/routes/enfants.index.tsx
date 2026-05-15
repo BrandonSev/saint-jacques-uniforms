@@ -11,11 +11,23 @@ import { PageWatermark } from "@/components/PageWatermark";
 import { recommendSize } from "@/lib/sizeRecommendation";
 import { SizeBadge } from "@/components/SizeBadge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { loadTenantContext } from "@/server/tenantContext.functions";
+import { FALLBACK_TENANT } from "@/lib/tenant/types";
+import { buildTenantSeo, tenantSeoTags } from "@/lib/tenant/seo";
 
 export const Route = createFileRoute("/enfants/")({
-  head: () => ({
-    meta: [{ title: "Mes enfants — Espace familles" }],
-  }),
+  loader: async () => {
+    try {
+      const ctx = await loadTenantContext();
+      return { tenant: ctx.tenant };
+    } catch {
+      return { tenant: FALLBACK_TENANT };
+    }
+  },
+  head: ({ loaderData }) => {
+    const tenant = loaderData?.tenant ?? FALLBACK_TENANT;
+    return tenantSeoTags(buildTenantSeo(tenant, { kind: "enfants" }));
+  },
   validateSearch: (search: Record<string, unknown>): { add?: 1 } => ({
     add: search.add === 1 || search.add === "1" ? 1 : undefined,
   }),
