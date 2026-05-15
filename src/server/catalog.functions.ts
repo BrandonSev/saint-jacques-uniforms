@@ -67,7 +67,7 @@ export const getCatalog = createServerFn({ method: "GET" }).handler(
         level: p.level ?? null,
         imageUrl: p.image_url ?? null,
         description: p.description ?? null,
-        metadata: (p.metadata ?? {}) as Record<string, unknown>,
+        metadata: (p.metadata ?? {}) as Record<string, any>,
         sizes: ((p.product_sizes ?? []) as Array<{ label: string; sort_order: number; active: boolean }>)
           .filter((s) => s.active)
           .sort((a, b) => a.sort_order - b.sort_order)
