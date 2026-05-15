@@ -180,7 +180,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                 </Link>
               </>
             )}
-            {schoolName && user && (
+            {branded && user && (
               <button
                 type="button"
                 onClick={() => setMenuOpen((v) => !v)}
@@ -194,7 +194,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
           </div>
         </div>
 
-        {schoolName && user && menuOpen && (
+        {branded && user && menuOpen && (
           <div className="border-t border-border bg-background/95 backdrop-blur-md xl:hidden">
             <nav className="mx-auto flex w-full flex-col gap-1 px-4 py-3 text-sm font-medium sm:px-6">
               {isAdmin ? (
