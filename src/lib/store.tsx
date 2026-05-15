@@ -434,6 +434,9 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
         if (error) throw error;
         setChildList((p) => p.filter((c) => c.id !== id));
         setCart((p) => p.filter((i) => i.childId !== id));
+        if (user) {
+          await supabase.from("cart_items").delete().eq("user_id", user.id).eq("child_id", id);
+        }
       },
 
       parents: parentList,
