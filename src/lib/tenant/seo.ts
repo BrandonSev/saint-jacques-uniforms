@@ -17,7 +17,12 @@ const SITE_URL = "https://ecole-dash-dax.lovable.app";
 export type TenantSeoPage =
   | { kind: "home" }
   | { kind: "boutique" }
-  | { kind: "catalogue"; niveau: "maternelle" | "college" | "lycee" };
+  | { kind: "catalogue"; niveau: "maternelle" | "college" | "lycee" }
+  | { kind: "famille" }
+  | { kind: "enfants" }
+  | { kind: "commandes" }
+  | { kind: "panier" }
+  | { kind: "login" };
 
 const NIVEAU_LABEL: Record<"maternelle" | "college" | "lycee", string> = {
   maternelle: "Maternelle & Élémentaire",
@@ -75,6 +80,36 @@ export function buildTenantSeo(
         url: `${SITE_URL}/catalogue/${page.niveau}`,
       };
     }
+    case "famille":
+      return {
+        title: `Ma famille — Espace familles ${label}`,
+        description: `Gérez les coordonnées de votre famille et vos adresses de livraison sur l'espace familles ${label}.`,
+        url: `${SITE_URL}/famille`,
+      };
+    case "enfants":
+      return {
+        title: `Mes enfants — Espace familles ${label}`,
+        description: `Ajoutez et mettez à jour les profils de vos enfants scolarisés à ${label} (classe, tailles, mensurations).`,
+        url: `${SITE_URL}/enfants`,
+      };
+    case "commandes":
+      return {
+        title: `Mes commandes — Espace familles ${label}`,
+        description: `Suivez l'état de vos commandes d'uniformes ${label} : préparation, expédition, retraits et paiements.`,
+        url: `${SITE_URL}/commandes`,
+      };
+    case "panier":
+      return {
+        title: `Mon panier — Espace familles ${label}`,
+        description: `Vérifiez vos articles, choisissez le mode de livraison et finalisez votre commande d'uniformes ${label}.`,
+        url: `${SITE_URL}/panier`,
+      };
+    case "login":
+      return {
+        title: `Espace familles — ${label}`,
+        description: `Connectez-vous ou créez votre espace famille pour commander les uniformes officiels de ${label}.`,
+        url: `${SITE_URL}/login`,
+      };
   }
 }
 
