@@ -646,6 +646,110 @@ export type Database = {
           },
         ]
       }
+      product_sizes: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          label: string
+          product_id: string
+          sort_order: number
+          tenant_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          label: string
+          product_id: string
+          sort_order?: number
+          tenant_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          label?: string
+          product_id?: string
+          sort_order?: number
+          tenant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_sizes_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_sizes_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          active: boolean
+          base_price: number
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          level: string | null
+          metadata: Json
+          name: string
+          ref: string | null
+          slug: string
+          sort_order: number
+          tenant_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          base_price?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          level?: string | null
+          metadata?: Json
+          name: string
+          ref?: string | null
+          slug: string
+          sort_order?: number
+          tenant_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          base_price?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          level?: string | null
+          metadata?: Json
+          name?: string
+          ref?: string | null
+          slug?: string
+          sort_order?: number
+          tenant_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           adresse: string | null
