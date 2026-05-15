@@ -328,13 +328,13 @@ function AdminPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader schoolName={SCHOOL_LABEL} />
-      <section className="mx-auto w-full max-w-6xl px-4 pt-6 pb-12 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
-          <div className="min-w-0">
+      <section className="mx-auto max-w-7xl px-4 pt-6 pb-12 sm:px-6 lg:px-8">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
             <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
               <span className="h-px w-6 bg-gold" /> Espace administrateur
             </span>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               Commandes fournisseur
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">Vue consolidée de toutes les commandes familles.</p>
@@ -342,10 +342,9 @@ function AdminPage() {
           <button
             onClick={exportExcel}
             disabled={rows.length === 0}
-            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50 sm:w-auto"
+            className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
           >
-            <Download className="h-4 w-4" />
-            <span className="truncate">Exporter Excel fournisseur</span>
+            <Download className="h-4 w-4" /> Exporter Excel fournisseur
           </button>
         </div>
 
@@ -355,23 +354,22 @@ function AdminPage() {
           <Stat label="Total" value={`${totalCA.toFixed(2)} €`} />
         </div>
 
-        <div className="mt-8 -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-          <div className="inline-flex w-max rounded-xl border border-border bg-card p-1">
+        <div className="mt-8 inline-flex rounded-xl border border-border bg-card p-1">
           <button
             onClick={() => setTab("orders")}
-            className={`whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors sm:px-4 ${tab === "orders" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${tab === "orders" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
           >
             Commandes
           </button>
           <button
             onClick={() => setTab("tracking")}
-            className={`whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors sm:px-4 ${tab === "tracking" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${tab === "tracking" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
           >
             Suivi & expédition
           </button>
           <button
             onClick={() => setTab("incidents")}
-            className={`relative whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors sm:px-4 ${tab === "incidents" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            className={`relative rounded-lg px-4 py-2 text-sm font-medium transition-colors ${tab === "incidents" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
           >
             Incidents
             {incidentsEnAttente > 0 && (
@@ -382,11 +380,10 @@ function AdminPage() {
           </button>
           <button
             onClick={() => setTab("roles")}
-            className={`whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors sm:px-4 ${tab === "roles" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${tab === "roles" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Users className="mr-1 inline h-3.5 w-3.5" /> Rôles
           </button>
-          </div>
         </div>
 
         {tab === "orders" && (
