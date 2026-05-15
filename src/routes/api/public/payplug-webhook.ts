@@ -7,6 +7,8 @@ import {
   sendOrderStatusEmail,
   type OrderEmailItem,
 } from "@/server/email.server";
+import { setRequestTenant } from "@/lib/tenant/withTenantGuc.server";
+import { getTenantAdminEmail } from "@/lib/tenant/tenantAdminEmail.server";
 
 export const Route = createFileRoute("/api/public/payplug-webhook")({
   server: {
@@ -40,6 +42,14 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
           .maybeSingle();
         if (!order) return new Response("order not found", { status: 200 });
 
+        // Positionne le GUC tenant pour les écritures qui suivent : les
+        // INSERTs (ex. email_send_log via la suite d'envoi) sont attribués
+        // au tenant de la commande et la RLS RESTRICTIVE est respectée.
+        const tenantId = (order.tenant_id as string | null) || (payment.metadata?.tenant_id || null);
+        if (tenantId) {
+          await setRequestTenant(supabaseAdmin, tenantId);
+        }
+
         const wasPaid = !!order.paid_at;
 
         if (payment.is_paid) {
@@ -66,26 +76,8 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
                 await sendOrderConfirmation(order.family_email, order.family_prenom ?? "", order.order_number, mapped, Number(order.total_amount));
                 await sendOrderStatusEmail(order.family_email, order.family_prenom ?? "", order.order_number, "Paiement validé");
               }
-              // Routage tenant-aware : si la commande est rattachée à un
-              // tenant qui a configuré un adminEmail, on l'utilise. Sinon
-              // on retombe sur l'env historique (comportement SJC actuel).
-              let adminEmail: string | undefined =
-                process.env.ADMIN_NOTIFICATION_EMAIL || process.env.SMTP_USER;
-              if (order.tenant_id) {
-                try {
-                  const { data: tenantRow } = await supabaseAdmin
-                    .from("tenants")
-                    .select("config")
-                    .eq("id", order.tenant_id)
-                    .maybeSingle();
-                  const tenantAdmin = (tenantRow?.config as any)?.adminEmail;
-                  if (typeof tenantAdmin === "string" && tenantAdmin.trim()) {
-                    adminEmail = tenantAdmin.trim();
-                  }
-                } catch (e) {
-                  console.warn("payplug webhook tenant lookup:", e);
-                }
-              }
+              // Routage tenant-aware via helper centralisé.
+              const adminEmail = await getTenantAdminEmail(tenantId);
               if (adminEmail) {
                 await sendAdminOrderNotification(adminEmail, order.order_number, `${order.family_prenom ?? ""} ${order.family_nom ?? ""}`.trim(), Number(order.total_amount), mapped.reduce((s, i) => s + i.qty, 0));
               }
