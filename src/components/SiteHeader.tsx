@@ -250,7 +250,7 @@ function MenuLink({
 }
 
 export function SiteFooter() {
-  const { isAdmin } = useStore();
+  const { isAdmin, isApel } = useStore();
   return (
     <footer className="mt-auto border-t border-border" style={{ background: "var(--gradient-hero)" }}>
       <div className="mx-auto max-w-6xl grid w-full grid-cols-2 gap-6 px-4 py-8 text-white sm:px-6 sm:py-14 sm:gap-8 lg:grid-cols-4 lg:px-8">
@@ -282,13 +282,26 @@ export function SiteFooter() {
         </div>
         <div>
           <h4 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70 sm:text-xs">
-            {isAdmin ? "Administration" : "Famille"}
+            {isAdmin ? "Administration" : isApel ? "APEL" : "Famille"}
           </h4>
           <ul className="mt-3 space-y-1.5 text-sm text-white/85 sm:mt-4 sm:space-y-2">
             {isAdmin ? (
+              <>
+                <li>
+                  <Link to="/admin" className="hover:text-white hover:underline">
+                    Tableau de bord
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/apel" className="hover:text-white hover:underline">
+                    Espace APEL
+                  </Link>
+                </li>
+              </>
+            ) : isApel ? (
               <li>
-                <Link to="/admin" className="hover:text-white hover:underline">
-                  Tableau de bord
+                <Link to="/apel" className="hover:text-white hover:underline">
+                  Tableau de bord APEL
                 </Link>
               </li>
             ) : (
