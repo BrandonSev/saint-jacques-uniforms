@@ -108,7 +108,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
           )}
 
           <div className="flex items-center gap-2">
-            {showAccount && user && !isAdmin && (
+            {showAccount && user && !isAdmin && !isApel && (
               <Link
                 to="/famille"
                 title="Voir et modifier les coordonnées de la famille"
@@ -129,7 +129,7 @@ export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHe
                 <LogOut className="h-4 w-4" />
               </button>
             )}
-            {!isAdmin && user && (
+            {!isAdmin && !isApel && user && (
               <Link
                 to="/panier"
                 className="relative inline-flex h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground shadow-[var(--shadow-card)] transition-colors hover:bg-primary/90"
