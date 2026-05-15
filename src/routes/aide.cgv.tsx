@@ -1,24 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PageWatermark } from "@/components/PageWatermark";
+import { loadTenantContext } from "@/server/tenantContext.functions";
+import { FALLBACK_TENANT } from "@/lib/tenant/types";
+import { buildTenantSeo, tenantSeoTags } from "@/lib/tenant/seo";
 
 export const Route = createFileRoute("/aide/cgv")({
-  head: () => ({
-    meta: [
-      { title: "Conditions Générales de Vente — France Uniformes" },
-      {
-        name: "description",
-        content:
-          "Conditions Générales de Vente de France Uniformes : commande, paiement, livraison, retours et garanties.",
-      },
-      { property: "og:title", content: "Conditions Générales de Vente — France Uniformes" },
-      {
-        property: "og:description",
-        content:
-          "Conditions Générales de Vente applicables à toute commande passée sur la plateforme France Uniformes.",
-      },
-    ],
-  }),
+  loader: async () => {
+    try {
+      const ctx = await loadTenantContext();
+      return { tenant: ctx.tenant };
+    } catch {
+      return { tenant: FALLBACK_TENANT };
+    }
+  },
+  head: ({ loaderData }) => {
+    const tenant = loaderData?.tenant ?? FALLBACK_TENANT;
+    return tenantSeoTags(buildTenantSeo(tenant, { kind: "aide", section: "cgv" }));
+  },
   component: CgvPage,
 });
 
