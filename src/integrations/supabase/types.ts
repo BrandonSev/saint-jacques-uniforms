@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      cart_items: {
+        Row: {
+          child_id: string | null
+          created_at: string
+          id: string
+          image: string
+          name: string
+          price: number
+          product_id: string
+          qty: number
+          ref: string
+          size: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          child_id?: string | null
+          created_at?: string
+          id?: string
+          image?: string
+          name: string
+          price: number
+          product_id: string
+          qty?: number
+          ref: string
+          size: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          child_id?: string | null
+          created_at?: string
+          id?: string
+          image?: string
+          name?: string
+          price?: number
+          product_id?: string
+          qty?: number
+          ref?: string
+          size?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       children: {
         Row: {
           blouse_portee_2025: boolean | null
