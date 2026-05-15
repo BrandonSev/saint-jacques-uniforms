@@ -24,9 +24,23 @@ import { PageWatermark } from "@/components/PageWatermark";
 import { downloadOrderPdf, type PdfOrder } from "@/lib/orderPdf";
 import { sendIncidentNotifications } from "@/server/email.functions";
 import { createOrderPayment } from "@/server/payplug.functions";
+import { loadTenantContext } from "@/server/tenantContext.functions";
+import { FALLBACK_TENANT } from "@/lib/tenant/types";
+import { buildTenantSeo, tenantSeoTags } from "@/lib/tenant/seo";
 
 export const Route = createFileRoute("/commandes")({
-  head: () => ({ meta: [{ title: "Mes commandes — Espace familles" }] }),
+  loader: async () => {
+    try {
+      const ctx = await loadTenantContext();
+      return { tenant: ctx.tenant };
+    } catch {
+      return { tenant: FALLBACK_TENANT };
+    }
+  },
+  head: ({ loaderData }) => {
+    const tenant = loaderData?.tenant ?? FALLBACK_TENANT;
+    return tenantSeoTags(buildTenantSeo(tenant, { kind: "commandes" }));
+  },
   component: CommandesPage,
 });
 
