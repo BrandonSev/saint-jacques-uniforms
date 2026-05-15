@@ -10,6 +10,17 @@ export type TenantConfig = {
   adminEmail?: string | null;
   /** Date butoir d'inscription / rentrée affichée dans `BackToSchoolAlert`. */
   deadlineDate?: string | null;
+  /**
+   * Phase 11 — Bandeau de rentrée. Si absent, on retombe sur les constantes
+   * historiques de `BackToSchoolAlert` (24 mai 2026, rentrée 2026).
+   * `deadline_iso` doit être une date YYYY-MM-DD valide.
+   */
+  back_to_school?: {
+    deadline_iso?: string | null;
+    deadline_label?: string | null;
+    season_label?: string | null;
+    year?: number | null;
+  } | null;
   /** Numéro de téléphone affiché dans le footer / contact. */
   contactPhone?: string | null;
   /** Coordonnées postales pour le footer / mentions légales. */
