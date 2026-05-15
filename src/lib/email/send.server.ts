@@ -1,6 +1,8 @@
 import * as React from "react";
 import { render } from "@react-email/components";
 import { TEMPLATES } from "@/lib/email-templates/registry";
+import { TENANT_FLAGS } from "@/config/tenantFlags";
+import { getTenantEmailBrand } from "@/lib/tenant/tenantEmailConfig.server";
 
 const SITE_NAME = "Franceuniformes";
 const FROM_DOMAIN = "franceuniformes.fr";
@@ -27,6 +29,17 @@ export async function enqueueTransactionalEmail(params: {
   const effectiveRecipient = template.to || recipientEmail;
   if (!effectiveRecipient) throw new Error("recipientEmail is required");
 
+  // Phase 12 — injection du brand tenant (gated). Caller wins si déjà fourni.
+  let mergedTemplateData = templateData;
+  if (TENANT_FLAGS.ENABLE_TENANT_EMAIL_CONFIG && !mergedTemplateData.brand) {
+    try {
+      const { brand } = await getTenantEmailBrand();
+      mergedTemplateData = { ...mergedTemplateData, brand };
+    } catch (e) {
+      console.warn("[email] tenant brand resolution failed, using defaults", e);
+    }
+  }
+
   const mailerUrl = process.env.MAILER_URL || "https://franceuniformes.fr/api/mailer/send";
   const mailerToken = process.env.MAILER_TOKEN;
   if (!mailerToken) {
@@ -38,10 +51,11 @@ export async function enqueueTransactionalEmail(params: {
   const idemKey = idempotencyKey || messageId;
 
   // Render
-  const element = React.createElement(template.component, templateData);
+  const element = React.createElement(template.component, mergedTemplateData);
   const html = await render(element);
   const plainText = await render(element, { plainText: true });
-  const resolvedSubject = typeof template.subject === "function" ? template.subject(templateData) : template.subject;
+  const resolvedSubject =
+    typeof template.subject === "function" ? template.subject(mergedTemplateData) : template.subject;
 
   const url = `${mailerUrl}${mailerUrl.includes("?") ? "&" : "?"}token=${encodeURIComponent(mailerToken)}`;
   const res = await fetch(url, {
