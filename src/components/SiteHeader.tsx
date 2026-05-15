@@ -19,10 +19,11 @@ interface SiteHeaderProps {
 export function SiteHeader({ schoolName, cartCount, showAccount = true }: SiteHeaderProps) {
   const { cartCount: storeCount, profile, user, signOut, isAdmin, isApel } = useStore();
   const tenant = useTenant();
-  // Mode "école brandée" = page d'espace familles (toujours le cas en prod
-  // SJC). Si la prop est omise, on retombe sur le tenant courant ; si la
-  // prop est explicitement "" on bascule sur la home générique France Uniformes.
-  const branded = schoolName !== "" && (schoolName != null || tenant.slug !== "fallback");
+  // Mode "école brandée" = page d'espace familles. Comportement :
+  //  - prop omise (undefined) → on utilise le tenant courant (mode brandé).
+  //  - prop renseignée (string non vide) → mode brandé, label = prop.
+  //  - prop = "" → home générique France Uniformes (cas marketing rare).
+  const branded = schoolName !== "";
   const displayName = schoolName || tenant.name;
   const shortDisplay = tenant.shortName || displayName;
   // Logo : DB d'abord, puis asset bundlé SJC (rétro-compat pixel-perfect),
