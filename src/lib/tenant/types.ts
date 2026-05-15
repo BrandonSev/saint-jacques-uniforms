@@ -21,6 +21,17 @@ export type TenantConfig = {
     season_label?: string | null;
     year?: number | null;
   } | null;
+  /**
+   * Phase 11 — Méta SEO par tenant. Utilisé par `buildTenantSeo()`
+   * pour générer les `<title>` et `meta description` des routes
+   * principales (`/`, `/boutique`, `/catalogue/$niveau`).
+   */
+  seo?: {
+    /** Libellé court de l'établissement (≈ < 60 chars). */
+    short_label?: string | null;
+    /** Baseline / accroche utilisée comme description par défaut. */
+    tagline?: string | null;
+  } | null;
   /** Numéro de téléphone affiché dans le footer / contact. */
   contactPhone?: string | null;
   /** Coordonnées postales pour le footer / mentions légales. */
