@@ -42,8 +42,9 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
 
         const wasPaid = !!order.paid_at || order.status === "Paiement validé";
 
-        // Ignore les webhooks d'un ancien paiement remplacé par une nouvelle tentative
-        if (order.payplug_payment_id && order.payplug_payment_id !== id) {
+        // Ignore les anciens échecs, mais accepte toujours un paiement confirmé :
+        // si la sauvegarde du nouveau payment_id a été retardée/échouée, le succès doit gagner.
+        if (order.payplug_payment_id && order.payplug_payment_id !== id && !payment.is_paid) {
           return new Response("stale payment id", { status: 200 });
         }
 
@@ -51,7 +52,7 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
           if (!wasPaid) {
             const { error: updateError } = await supabaseAdmin
               .from("orders")
-              .update({ status: "Paiement validé", paid_at: new Date().toISOString() })
+              .update({ status: "Paiement validé", paid_at: new Date().toISOString(), payplug_payment_id: id })
               .eq("id", orderId);
             if (updateError) {
               console.error("payplug webhook paid update:", updateError);
