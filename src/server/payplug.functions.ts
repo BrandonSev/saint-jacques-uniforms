@@ -52,6 +52,13 @@ export const createOrderPayment = createServerFn({ method: "POST" })
         }
         // Si le paiement n'a pas échoué/expiré, on peut réutiliser le lien hébergé
         if (!existing.failure) {
+          // Réinitialise le statut si la commande avait été marquée en échec précédemment
+          if (order.status === "Paiement échoué") {
+            await supabase
+              .from("orders")
+              .update({ status: "En attente paiement" })
+              .eq("id", order.id);
+          }
           return {
             ok: true as const,
             paymentUrl: order.payment_url,
