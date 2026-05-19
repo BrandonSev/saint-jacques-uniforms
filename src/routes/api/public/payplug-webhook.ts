@@ -35,12 +35,17 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
 
         const { data: order } = await supabaseAdmin
           .from("orders")
-          .select("id, order_number, status, family_email, family_prenom, family_nom, total_amount, paid_at")
+          .select("id, order_number, status, family_email, family_prenom, family_nom, total_amount, paid_at, payplug_payment_id")
           .eq("id", orderId)
           .maybeSingle();
         if (!order) return new Response("order not found", { status: 200 });
 
         const wasPaid = !!order.paid_at;
+
+        // Ignore les webhooks d'un ancien paiement remplacé par une nouvelle tentative
+        if (order.payplug_payment_id && order.payplug_payment_id !== id) {
+          return new Response("stale payment id", { status: 200 });
+        }
 
         if (payment.is_paid) {
           if (!wasPaid) {
@@ -75,6 +80,8 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
             }
           }
         } else if (payment.failure) {
+          // N'écrase pas un paiement déjà validé
+          if (wasPaid) return new Response("already paid, ignoring failure", { status: 200 });
           await supabaseAdmin
             .from("orders")
             .update({ status: "Paiement échoué" })
