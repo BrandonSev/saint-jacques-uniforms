@@ -116,7 +116,7 @@ function Index() {
                   </div>
                 </div>
               </div>
-              <div className="absolute -right-4 -top-4 z-0 hidden h-20 w-20 rounded-lg border-2 border-gold/70 bg-white/10 backdrop-blur lg:block" />
+              
             </div>
           </div>
         </div>
