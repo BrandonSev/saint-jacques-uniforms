@@ -92,7 +92,7 @@ function Index() {
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
                 <Link
                   to="/login"
-                  className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-primary shadow-xl transition-all hover:gap-3"
+                  className="inline-flex h-12 items-center gap-2 rounded-full bg-white text-sm font-semibold text-primary shadow-xl transition-all hover:gap-3 px-[24px]"
                 >
                   Accéder à mon espace famille <ArrowRight className="h-4 w-4" />
                 </Link>
