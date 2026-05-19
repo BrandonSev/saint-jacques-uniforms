@@ -88,8 +88,18 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.prenom || !form.nom || !form.naissance || !form.classe || !form.section || !form.hauteur) {
-      toast.error("Merci de remplir les champs obligatoires (prénom, nom, naissance, classe, section et hauteur)");
+    if (
+      !form.prenom ||
+      !form.nom ||
+      !form.naissance ||
+      !form.classe ||
+      !form.section ||
+      !form.hauteur ||
+      !form.tour
+    ) {
+      toast.error(
+        "Merci de remplir les champs obligatoires (prénom, nom, naissance, classe, section, hauteur et tour de poitrine)",
+      );
       return;
     }
     setSaving(true);
@@ -320,11 +330,12 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
                   badge={1}
                 />
                 <Input
-                  label="Tour de poitrine"
+                  label="Tour de poitrine*"
                   value={form.tour}
                   onChange={(v) => setForm({ ...form, tour: v })}
                   placeholder="ex: 62"
                   suffix="cm"
+                  required
                   badge={2}
                 />
                 <Input
