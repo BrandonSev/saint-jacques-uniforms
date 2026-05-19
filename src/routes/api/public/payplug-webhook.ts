@@ -40,7 +40,7 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
           .maybeSingle();
         if (!order) return new Response("order not found", { status: 200 });
 
-        const wasPaid = !!order.paid_at;
+        const wasPaid = !!order.paid_at || order.status === "Paiement validé";
 
         // Ignore les webhooks d'un ancien paiement remplacé par une nouvelle tentative
         if (order.payplug_payment_id && order.payplug_payment_id !== id) {
@@ -49,10 +49,14 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
 
         if (payment.is_paid) {
           if (!wasPaid) {
-            await supabaseAdmin
+            const { error: updateError } = await supabaseAdmin
               .from("orders")
               .update({ status: "Paiement validé", paid_at: new Date().toISOString() })
               .eq("id", orderId);
+            if (updateError) {
+              console.error("payplug webhook paid update:", updateError);
+              return new Response("update failed", { status: 500 });
+            }
 
             // Emails
             try {
