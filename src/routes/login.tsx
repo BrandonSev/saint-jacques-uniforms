@@ -163,10 +163,11 @@ function LoginPage() {
       toast.error(error.message.includes("already") ? "Cet email est déjà utilisé" : error.message);
       return;
     }
-    // Persiste les infos postales sur le profil après création
+    // Persiste les infos postales sur le profil après création (si déjà connecté)
     const {
-      data: { user: u },
-    } = await supabase.auth.getUser();
+      data: { session },
+    } = await supabase.auth.getSession();
+    const u = session?.user ?? null;
     if (u) {
       await supabase
         .from("profiles")
@@ -182,9 +183,14 @@ function LoginPage() {
       try {
         await sendWelcome({ data: { email: parsed.data.email, prenom: parsed.data.prenom, nom: parsed.data.nom } });
       } catch {}
+      toast.success("Espace famille créé !");
+      navigate({ to: "/boutique" });
+      return;
     }
-    toast.success("Espace famille créé !");
-    navigate({ to: "/boutique" });
+    toast.success(
+      "Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.",
+      { duration: 8000 },
+    );
   };
 
   return (
