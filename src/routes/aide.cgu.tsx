@@ -22,7 +22,7 @@ function CguPage() {
           <span className="h-px w-6 bg-gold" /> Légal
         </span>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Conditions générales</h1>
-        <p className="mt-3 text-sm text-muted-foreground">Dernière mise à jour : mai 2026</p>
+        <p className="mt-3 text-sm text-muted-foreground">Dernière mise à jour : mardi 19 mai 2026 (23:21)</p>
 
         <div className="prose prose-sm mt-8 max-w-none text-foreground/85">
           <h2 className="mt-8 text-lg font-semibold text-foreground">1. Éditeur de la plateforme</h2>
@@ -40,13 +40,13 @@ function CguPage() {
             Numéro de TVA intracommunautaire : FR43983587932
             <br />
             Contact :{" "}
-            <a href="mailto:info@franceuniforme.fr" className="text-primary hover:underline">
-              info@franceuniforme.fr
+            <a href="mailto:info@franceuniformes.fr" className="text-primary hover:underline">
+              info@franceuniformes.fr
             </a>
             <br />
             Délégué à la Protection des Données (DPO) :{" "}
-            <a href="mailto:dpo@franceuniforme.fr" className="text-primary hover:underline">
-              dpo@franceuniforme.fr
+            <a href="mailto:dpo@franceuniformes.fr" className="text-primary hover:underline">
+              dpo@franceuniformes.fr
             </a>
           </p>
           <p className="mt-2 text-sm leading-relaxed">
@@ -58,13 +58,6 @@ function CguPage() {
             Les présentes Conditions Générales d'Utilisation (CGU) ont pour objet de définir les règles d'accès et
             d'utilisation de la plateforme de boutique en ligne des uniformes scolaires exploitée par France Uniformes
             pour le compte des établissements scolaires partenaires.
-          </p>
-          <p className="mt-2 text-sm leading-relaxed">
-            Les modalités commerciales (commande, paiement, livraison, retours, garanties) sont régies par les{" "}
-            <Link to="/aide/cgv" className="text-primary underline hover:no-underline">
-              Conditions Générales de Vente (CGV)
-            </Link>
-            , disponibles sur le site de France Uniformes et applicables à toute commande passée sur la plateforme.
           </p>
           <p className="mt-2 text-sm leading-relaxed">
             Tout accès à la plateforme implique l'acceptation sans réserve des présentes CGU. France Uniformes se
@@ -97,8 +90,8 @@ function CguPage() {
             mot de passe). Toute utilisation du compte effectuée à partir de ses identifiants est réputée faite par lui.
             En cas de perte, vol ou utilisation frauduleuse suspectée, l'utilisateur doit en informer immédiatement
             France Uniformes à l'adresse{" "}
-            <a href="mailto:info@franceuniforme.fr" className="text-primary hover:underline">
-              info@franceuniforme.fr
+            <a href="mailto:info@franceuniformes.fr" className="text-primary hover:underline">
+              info@franceuniformes.fr
             </a>
             .
           </p>
@@ -194,32 +187,42 @@ function CguPage() {
               politique de confidentialité
             </Link>{" "}
             ou contacter notre Délégué à la Protection des Données :{" "}
-            <a href="mailto:dpo@franceuniforme.fr" className="text-primary hover:underline">
-              dpo@franceuniforme.fr
+            <a href="mailto:dpo@franceuniformes.fr" className="text-primary hover:underline">
+              dpo@franceuniformes.fr
             </a>
             .
           </p>
 
           <h2 className="mt-6 text-lg font-semibold text-foreground">10. Cookies</h2>
           <p className="mt-2 text-sm leading-relaxed">
-            La plateforme utilise uniquement des cookies techniques nécessaires à son bon fonctionnement (gestion de
-            session, sécurité, panier). Aucun cookie publicitaire ou de traçage tiers n'est utilisé sans le consentement
-            préalable de l'utilisateur.
+            La plateforme n'utilise aucun cookie. La gestion de session est assurée par le localStorage du navigateur,
+            qui ne transmet aucune donnée à des tiers et ne nécessite pas de consentement au sens de la réglementation
+            sur les cookies.
+          </p>
+          <p className="mt-2 text-sm leading-relaxed">
+            Si des cookies venaient à être utilisés à l'avenir (par exemple à des fins d'analyse ou de performance),
+            vous en seriez informé préalablement et un mécanisme de consentement adapté vous serait présenté,
+            conformément aux recommandations de la CNIL.
           </p>
 
           <h2 className="mt-6 text-lg font-semibold text-foreground">11. Droit applicable et juridiction compétente</h2>
           <p className="mt-2 text-sm leading-relaxed">
             Les présentes CGU sont soumises au droit français. En cas de litige relatif à leur interprétation ou à leur
-            exécution, et à défaut de résolution amiable, les tribunaux compétents du ressort du RCS de Chartres seront
+            exécution, et à défaut de résolution amiable, les tribunaux compétents du ressort de Chartres (28000) seront
             seuls compétents.
+          </p>
+          <p className="mt-2 text-sm leading-relaxed">
+            Pour tout litige portant sur un achat effectué via la boutique, le Client peut recourir à la médiation de la
+            consommation dans les conditions prévues par les Conditions Générales de Vente (CGV) disponibles sur la
+            présente boutique.
           </p>
 
           <h2 className="mt-6 text-lg font-semibold text-foreground">12. Contact</h2>
           <p className="mt-2 text-sm leading-relaxed">Pour toute question relative aux présentes CGU :</p>
           <p className="mt-2 text-sm leading-relaxed">
             📧{" "}
-            <a href="mailto:info@franceuniforme.fr" className="text-primary hover:underline">
-              info@franceuniforme.fr
+            <a href="mailto:info@franceuniformes.fr" className="text-primary hover:underline">
+              info@franceuniformes.fr
             </a>
             <br />
             📍 France Uniformes — 2 Rue Percheronne, 28000 Chartres
