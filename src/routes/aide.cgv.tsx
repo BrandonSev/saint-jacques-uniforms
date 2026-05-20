@@ -34,7 +34,7 @@ function CgvPage() {
         <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Conditions Générales de Vente — Familles
         </h1>
-        <p className="mt-3 text-sm text-muted-foreground">Dernière mise à jour : mai 2026</p>
+        <p className="mt-3 text-sm text-muted-foreground">Dernière mise à jour : mardi 19 mai 2026 (23:21)</p>
 
         <div className="prose prose-sm mt-8 max-w-none text-foreground/85">
           <h2 className="mt-8 text-lg font-semibold text-foreground">1. Vendeur</h2>
@@ -50,14 +50,17 @@ function CgvPage() {
             TVA intracommunautaire : FR43983587932
             <br />
             Contact :{" "}
-            <a href="mailto:info@franceuniforme.fr" className="text-primary hover:underline">
-              info@franceuniforme.fr
+            <a href="mailto:info@franceuniformes.fr" className="text-primary hover:underline">
+              info@franceuniformes.fr
             </a>
           </p>
 
           <h2 className="mt-6 text-lg font-semibold text-foreground">2. Objet et champ d'application</h2>
           <p className="mt-2 text-sm leading-relaxed">
             Les présentes Conditions Générales de Vente (CGV) régissent les relations contractuelles entre France Uniformes et toute personne physique (ci-après « le Client » ou « la Famille ») effectuant un achat via la plateforme boutique en ligne de France Uniformes.
+          </p>
+          <p className="mt-2 text-sm leading-relaxed">
+            L'accès à la boutique est strictement réservé aux familles des élèves scolarisés dans l'établissement scolaire partenaire concerné. Il requiert la création d'un espace famille et la saisie d'un code d'établissement communiqué par la direction ou l'association des parents d'élèves. Les présentes CGV s'appliquent à toute commande passée via cet espace.
           </p>
           <p className="mt-2 text-sm leading-relaxed">
             Les produits proposés à la vente sont des uniformes et vêtements scolaires dont les modèles et tarifs ont été validés par l'établissement scolaire partenaire concerné. France Uniformes s'engage à privilégier la fabrication française pour l'ensemble de sa gamme.
@@ -108,7 +111,7 @@ function CgvPage() {
 
           <h3 className="mt-4 text-base font-semibold text-foreground">4.3 Annulation</h3>
           <p className="mt-2 text-sm leading-relaxed">
-            Toute commande validée et payée est transmise en fabrication. En raison de la nature personnalisée des articles (uniformes fabriqués à la commande pour un établissement spécifique), aucune annulation n'est possible après validation du paiement, sauf dans les cas prévus à l'article 8 (droit de rétractation) ou en cas de défaut avéré du produit (article 9).
+            Toute commande validée et payée est transmise en fabrication. En raison de la nature personnalisée des articles (uniformes fabriqués à la commande pour un établissement spécifique), aucune annulation n'est possible après validation du paiement, sauf en cas de défaut avéré du produit (article 9).
           </p>
 
           <h2 className="mt-6 text-lg font-semibold text-foreground">5. Prix</h2>
@@ -243,15 +246,15 @@ function CgvPage() {
               Politique de confidentialité
             </Link>{" "}
             ou contactez :{" "}
-            <a href="mailto:dpo@franceuniforme.fr" className="text-primary hover:underline">
-              dpo@franceuniforme.fr
+            <a href="mailto:dpo@franceuniformes.fr" className="text-primary hover:underline">
+              dpo@franceuniformes.fr
             </a>
             .
           </p>
 
           <h2 className="mt-6 text-lg font-semibold text-foreground">14. Médiation et règlement des litiges</h2>
           <p className="mt-2 text-sm leading-relaxed">
-            En cas de litige non résolu amiablement, le Client peut recourir gratuitement à un médiateur de la consommation. France Uniformes adhère au service de médiation du <strong>CM2C — Centre de Médiation de la Consommation de Conciliateurs de Justice</strong>, 49 rue de Ponthieu, 75008 Paris —{" "}
+            En cas de litige non résolu amiablement, le Client peut recourir gratuitement à un médiateur de la consommation. France Uniformes adhère au service de médiation du <strong>CM2C — Centre de la Médiation de la Consommation de Conciliateurs de justice</strong>, 49 rue de Ponthieu, 75008 Paris —{" "}
             <a
               href="https://www.cm2c.net"
               target="_blank"
@@ -281,8 +284,8 @@ function CgvPage() {
 
           <p className="mt-8 text-sm leading-relaxed">
             Pour toute question, contactez-nous à{" "}
-            <a href="mailto:info@franceuniforme.fr" className="text-primary hover:underline">
-              info@franceuniforme.fr
+            <a href="mailto:info@franceuniformes.fr" className="text-primary hover:underline">
+              info@franceuniformes.fr
             </a>
             .
           </p>
