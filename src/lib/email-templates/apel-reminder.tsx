@@ -4,7 +4,7 @@ import { EmailLayout, text, muted, button } from "./_layout";
 import type { TemplateEntry } from "./registry";
 
 interface Props {
-  prenom?: string;
+  civilite?: string;
   familyName?: string;
   deadline?: string;
   appUrl?: string;
@@ -14,9 +14,9 @@ interface Props {
 const APP_URL = "https://sjdc-dax.franceuniformes.fr";
 
 function ApelReminder({
-  prenom,
+  civilite,
   familyName,
-  deadline = "24 mai 2026 (23h59)",
+  deadline = "ce dimanche 24 mai 2026 (23h59)",
   appUrl = APP_URL,
   customMessage,
 }: Props) {
@@ -27,16 +27,20 @@ function ApelReminder({
       familyName={familyName}
       signatureRole="boutique"
     >
-      <Text style={text}>Bonjour {prenom || ""},</Text>
+      <Text style={text}>Bonjour {civilite || ""},</Text>
 
       <Text style={text}>
-        Nous vous rappelons que vous n'avez pas encore passé commande des uniformes de votre enfant sur la boutique en
-        ligne du groupe scolaire Saint-Jacques-de-Compostelle de Dax.
+        Nous vous remercions d'avoir créé votre espace famille sur le site de la boutique du groupe scolaire
+        Saint-Jacques-de-Compostelle de Dax.
+      </Text>
+
+      <Text style={text}>
+        Nous vous rappelons que vous n'avez pas encore passé commande des blouses de votre enfant.
       </Text>
 
       <Text style={text}>
         Afin de vous garantir les délais de production en France et de pouvoir effectuer une livraison avant la rentrée
-        de septembre, merci de passer votre commande avant le <strong>{deadline}</strong>.
+        de septembre, merci de passer votre commande avant <strong>{deadline}</strong>.
       </Text>
 
       {customMessage && <Text style={text}>{customMessage}</Text>}
@@ -58,12 +62,12 @@ function ApelReminder({
 
 export const template = {
   component: ApelReminder,
-  subject: "Rappel France Uniformes — Commande des uniformes pour la rentrée 2026",
+  subject: "Rappel — Commande des uniformes pour la rentrée 2026",
   displayName: "Relance France Uniformes (rentrée)",
   previewData: {
-    prenom: "Marie",
+    civilite: "Madame",
     familyName: "Dupont",
-    deadline: "24 mai 2026 (23h59)",
+    deadline: "ce dimanche 24 mai 2026 (23h59)",
     appUrl: APP_URL,
   },
 } satisfies TemplateEntry;
