@@ -19,7 +19,7 @@ function ApelReminder({ prenom, familyName, deadline = "24 mai 2026", appUrl = A
       preview="Pensez à commander les uniformes de votre enfant avant la rentrée"
       title="Rappel — Commande pour la rentrée 2026"
       familyName={familyName}
-      signatureRole="France Uniformes"
+      signatureRole="boutique"
     >
       <Text style={text}>Bonjour {prenom || ""},</Text>
 
