@@ -55,7 +55,7 @@ export function EmailLayout({ preview, title, familyName, signatureRole, childre
 export const text = { fontSize: "15px", lineHeight: "1.6", color: "#1a1a1a", margin: "0 0 14px" };
 export const muted = { fontSize: "13px", lineHeight: "1.5", color: "#666666", margin: "14px 0 0" };
 export const button = {
-  display: "inline-block",
+  display: "block",
   background: "#0a2540",
   color: "#ffffff",
   padding: "12px 24px",
@@ -63,8 +63,7 @@ export const button = {
   textDecoration: "none",
   fontWeight: 600,
   fontSize: "14px",
-  marginTop: "8px",
-  marginBottom: "8px",
+  marginBottom: "14px",
 };
 export const list = { fontSize: "14px", lineHeight: "1.7", color: "#1a1a1a", paddingLeft: "20px", margin: "0 0 14px" };
 
