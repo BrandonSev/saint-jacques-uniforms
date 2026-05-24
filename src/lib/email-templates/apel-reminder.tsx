@@ -62,7 +62,7 @@ function ApelReminder({
 
 export const template = {
   component: ApelReminder,
-  subject: "Rappel — Commande des uniformes pour la rentrée 2026",
+  subject: "Rappel - dernier jour pour commander les blouses scolaires pour la rentrée de septembre 2026",
   displayName: "Relance France Uniformes (rentrée)",
   previewData: {
     civilite: "Madame",
