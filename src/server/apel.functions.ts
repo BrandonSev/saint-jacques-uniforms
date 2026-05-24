@@ -7,11 +7,7 @@ import { enqueueTransactionalEmail } from "@/lib/email/send.server";
 
 type AppRole = "admin" | "apel" | "user";
 async function userHasAnyRole(userId: string, roles: AppRole[]) {
-  const { data } = await supabaseAdmin
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", userId)
-    .in("role", roles);
+  const { data } = await supabaseAdmin.from("user_roles").select("role").eq("user_id", userId).in("role", roles);
   return (data ?? []).length > 0;
 }
 
@@ -64,6 +60,7 @@ export const sendApelReminders = createServerFn({ method: "POST" })
           templateName: "apel-reminder",
           recipientEmail: p.email,
           templateData: {
+            civilite: p.civilite ?? "",
             prenom: p.prenom ?? "",
             familyName: (p as any).nom ?? "",
             deadline: data.deadline ?? "30 juin 2026",
@@ -96,25 +93,15 @@ export const setUserRole = createServerFn({ method: "POST" })
     if (!(await userHasAnyRole(userId, ["admin"]))) {
       return { ok: false as const, error: "forbidden" as const };
     }
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
-      .select("id")
-      .eq("email", data.email)
-      .maybeSingle();
+    const { data: profile } = await supabaseAdmin.from("profiles").select("id").eq("email", data.email).maybeSingle();
     if (!profile) return { ok: false as const, error: "user_not_found" as const };
     if (data.action === "grant") {
-      const { error } = await supabaseAdmin
-        .from("user_roles")
-        .insert({ user_id: profile.id, role: data.role });
+      const { error } = await supabaseAdmin.from("user_roles").insert({ user_id: profile.id, role: data.role });
       if (error && !error.message.includes("duplicate")) {
         return { ok: false as const, error: error.message };
       }
     } else {
-      const { error } = await supabaseAdmin
-        .from("user_roles")
-        .delete()
-        .eq("user_id", profile.id)
-        .eq("role", data.role);
+      const { error } = await supabaseAdmin.from("user_roles").delete().eq("user_id", profile.id).eq("role", data.role);
       if (error) return { ok: false as const, error: error.message };
     }
     return { ok: true as const };
