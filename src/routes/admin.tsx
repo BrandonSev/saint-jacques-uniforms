@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/server/email.functions";
-import { listRoleAssignments, setUserRole } from "@/server/apel.functions";
+import { listRoleAssignments, setUserRole, sendTestApelReminder } from "@/server/apel.functions";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
@@ -616,6 +616,24 @@ function RolesPanel() {
 
   return (
     <div className="mt-4 space-y-6">
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <h2 className="text-base font-semibold text-foreground">Test email APEL</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Envoie un email de relance APEL au compte de test{" "}
+          <strong>brandon@franceuniformes.fr</strong>.
+        </p>
+        <button
+          onClick={async () => {
+            const r = await sendTestApelReminder({ data: {} });
+            if (r.ok) toast.success(`Email envoyé à ${r.recipient}`);
+            else toast.error(r.error || "Erreur");
+          }}
+          className="mt-3 h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+        >
+          Envoyer le test
+        </button>
+      </div>
+
       <div className="rounded-2xl border border-border bg-card p-5">
         <h2 className="text-base font-semibold text-foreground">Attribuer un rôle</h2>
         <p className="mt-1 text-xs text-muted-foreground">

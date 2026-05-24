@@ -107,6 +107,39 @@ export const setUserRole = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+// Test : envoi d'une relance APEL au compte de test (admin uniquement)
+export const sendTestApelReminder = createServerFn({ method: "POST" })
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
+  .inputValidator((d) => z.object({}).parse(d))
+  .handler(async ({ context }) => {
+    const { userId } = context;
+    if (!(await userHasAnyRole(userId, ["admin"]))) {
+      return { ok: false as const, error: "forbidden" as const };
+    }
+    const testEmail = "brandon@franceuniformes.fr";
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("id, email, prenom, nom, civilite")
+      .eq("email", testEmail)
+      .maybeSingle();
+    try {
+      await enqueueTransactionalEmail({
+        templateName: "apel-reminder",
+        recipientEmail: testEmail,
+        templateData: {
+          civilite: profile?.civilite ?? "",
+          prenom: profile?.prenom ?? "",
+          familyName: profile?.nom ?? "",
+          deadline: "30 juin 2026",
+        },
+        idempotencyKey: `apel-reminder-test-${Date.now()}`,
+      });
+      return { ok: true as const, recipient: testEmail };
+    } catch (e: any) {
+      return { ok: false as const, error: e?.message ?? "send_failed" };
+    }
+  });
+
 // Liste des utilisateurs ayant un rôle (admin uniquement)
 export const listRoleAssignments = createServerFn({ method: "POST" })
   .middleware([withSupabaseAuth, requireSupabaseAuth])
