@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/server/email.functions";
-import { listRoleAssignments, setUserRole } from "@/server/apel.functions";
+import { listRoleAssignments, setUserRole, sendTestApelReminder } from "@/server/apel.functions";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
