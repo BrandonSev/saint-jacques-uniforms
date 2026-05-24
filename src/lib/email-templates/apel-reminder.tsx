@@ -16,29 +16,31 @@ const APP_URL = "https://sjdc-dax.franceuniformes.fr";
 function ApelReminder({ prenom, familyName, deadline = "24 mai 2026", appUrl = APP_URL, customMessage }: Props) {
   return (
     <EmailLayout
-      preview="Pensez à commander les uniformes pour la rentrée 2026"
+      preview="Il vous reste peu de temps pour commander vos uniformes"
       title="Rappel — Commande pour la rentrée 2026"
       familyName={familyName}
-      signatureRole="APEL"
+      signatureRole="boutique"
     >
       <Text style={text}>Bonjour {prenom || ""},</Text>
-      <Text style={text}>
-        L'<strong>Association des Parents d'Élèves</strong> de Saint-Jacques-de-Compostelle vous rappelle que vous
-        n'avez pas encore passé commande des uniformes pour la rentrée 2026.
-      </Text>
+
+      <Text style={text}>Nous n'avons pas encore reçu votre commande d'uniformes pour la rentrée 2026.</Text>
+
       {customMessage && <Text style={text}>{customMessage}</Text>}
+
       <Text style={text}>
-        Pour garantir la fabrication et la livraison à temps, merci de passer votre commande avant le{" "}
-        <strong>{deadline}</strong>. Au-delà de cette date, nous ne pourrons plus garantir la disponibilité des blouses
-        pour la rentrée.
+        Pour que votre trousseau soit préparé et livré à temps, merci de finaliser votre commande avant le{" "}
+        <strong>{deadline}</strong>. Passé ce délai, nous ne serons plus en mesure de garantir la disponibilité des
+        articles pour la rentrée.
       </Text>
+
       <Button href={`${appUrl}/boutique`} style={button}>
         Commander maintenant
       </Button>
+
       <Text style={muted}>
-        Cet email vous est envoyé par l'APEL via la boutique du groupe scolaire Saint-Jacques-de-Compostelle.
+        Cet email vous est envoyé par <strong>France Uniformes</strong> pour le compte de votre établissement scolaire.
         <br />
-        Si vous avez déjà commandé, merci d'ignorer ce message.
+        Si vous avez déjà passé commande, merci d'ignorer ce message.
       </Text>
     </EmailLayout>
   );
@@ -46,7 +48,12 @@ function ApelReminder({ prenom, familyName, deadline = "24 mai 2026", appUrl = A
 
 export const template = {
   component: ApelReminder,
-  subject: "Rappel APEL — Commande des uniformes pour la rentrée 2026",
-  displayName: "Relance APEL (rentrée)",
-  previewData: { prenom: "Marie", familyName: "Dupont", deadline: "30 juin 2026", appUrl: APP_URL },
+  subject: "Rappel France Uniformes — Commande des uniformes pour la rentrée 2026",
+  displayName: "Relance France Uniformes (rentrée)",
+  previewData: {
+    prenom: "Marie",
+    familyName: "Dupont",
+    deadline: "24 juin 2026",
+    appUrl: APP_URL,
+  },
 } satisfies TemplateEntry;
