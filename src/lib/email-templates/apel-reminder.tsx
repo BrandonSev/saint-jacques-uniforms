@@ -13,7 +13,13 @@ interface Props {
 
 const APP_URL = "https://sjdc-dax.franceuniformes.fr";
 
-function ApelReminder({ prenom, familyName, deadline = "24 mai 2026", appUrl = APP_URL, customMessage }: Props) {
+function ApelReminder({
+  prenom,
+  familyName,
+  deadline = "24 mai 2026 (23h59)",
+  appUrl = APP_URL,
+  customMessage,
+}: Props) {
   return (
     <EmailLayout
       preview="Pensez à commander les uniformes de votre enfant avant la rentrée"
