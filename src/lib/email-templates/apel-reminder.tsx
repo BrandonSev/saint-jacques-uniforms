@@ -53,7 +53,7 @@ export const template = {
   previewData: {
     prenom: "Marie",
     familyName: "Dupont",
-    deadline: "24 juin 2026",
+    deadline: "24 mai 2026",
     appUrl: APP_URL,
   },
 } satisfies TemplateEntry;
