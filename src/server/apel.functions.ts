@@ -49,7 +49,7 @@ export const sendApelReminders = createServerFn({ method: "POST" })
     }
     const { data: profiles } = await supabaseAdmin
       .from("profiles")
-      .select("id, email, prenom, nom")
+      .select("id, email, prenom, nom, civilite")
       .in("id", data.userIds);
     let sent = 0;
     const errors: string[] = [];
