@@ -34,7 +34,8 @@ export function EmailLayout({ preview, title, familyName, signatureRole, childre
             {children}
             {signatureRole ? (
               <Text style={signature}>
-                Bien cordialement,<br />
+                Bien cordialement,
+                <br />
                 L'équipe {signatureRole} de France Uniformes
               </Text>
             ) : null}
@@ -63,6 +64,7 @@ export const button = {
   fontWeight: 600,
   fontSize: "14px",
   marginTop: "8px",
+  marginBottom: "8px",
 };
 export const list = { fontSize: "14px", lineHeight: "1.7", color: "#1a1a1a", paddingLeft: "20px", margin: "0 0 14px" };
 
@@ -84,7 +86,13 @@ const container = {
 const header = { backgroundColor: "#0a2540", padding: "26px 32px" };
 const logo = { display: "block", margin: "0 0 6px", height: "auto" };
 const titleStyle = { fontSize: "22px", fontWeight: 600, color: "#ffffff", margin: "8px 0 0" };
-const familyStyle = { fontSize: "13px", color: "#ffffff", opacity: 0.85, margin: "10px 0 0", fontStyle: "italic" as const };
+const familyStyle = {
+  fontSize: "13px",
+  color: "#ffffff",
+  opacity: 0.85,
+  margin: "10px 0 0",
+  fontStyle: "italic" as const,
+};
 const accentBar = { height: "3px", backgroundColor: "#c8102e", lineHeight: "3px", fontSize: 0 };
 const content = { padding: "32px", backgroundColor: "#ffffff" };
 const signature = { fontSize: "14px", lineHeight: "1.6", color: "#1a1a1a", margin: "28px 0 0" };
