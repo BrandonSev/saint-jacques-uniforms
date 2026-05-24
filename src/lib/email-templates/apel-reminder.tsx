@@ -22,7 +22,7 @@ function ApelReminder({
 }: Props) {
   return (
     <EmailLayout
-      preview="Pensez à commander les uniformes de votre enfant avant la rentrée"
+      preview="Pensez à commander les blouses de votre enfant dès maintenant pour la rentrée"
       title="Rappel — Commande pour la rentrée 2026"
       familyName={familyName}
       signatureRole="boutique"
