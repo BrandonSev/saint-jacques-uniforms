@@ -6,6 +6,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { apelListFamilies, sendApelReminders } from "@/server/apel.functions";
+import { formatCivilite } from "@/lib/utils";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
@@ -109,7 +110,7 @@ function ApelPage() {
       "Statut",
     ];
     const rows = filtered.map((f) => [
-      f.family_civilite ?? "",
+      formatCivilite(f.family_civilite),
       f.family_prenom,
       f.family_nom,
       f.family_email,
@@ -328,7 +329,7 @@ function ApelPage() {
                       />
                     </td>
                     <td className="px-3 py-3 font-medium text-foreground">
-                      {f.family_civilite ?? ""} {f.family_prenom} {f.family_nom}
+                      {formatCivilite(f.family_civilite)} {f.family_prenom} {f.family_nom}
                     </td>
                     <td className="px-3 py-3 text-muted-foreground">{f.family_email}</td>
                     <td className="px-3 py-3 text-muted-foreground">{f.family_telephone ?? "—"}</td>
