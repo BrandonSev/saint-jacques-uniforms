@@ -39,8 +39,9 @@ function ApelReminder({
       </Text>
 
       <Text style={text}>
-        Afin de vous garantir les délais de production en France et de pouvoir effectuer une livraison avant la rentrée
-        de septembre, merci de passer votre commande avant <strong>{deadline}</strong>.
+        Nous avons exceptionnellement prolongé la possibilité de commander en ce lundi de Pentecôte. <br />
+        Ainsi, afin de vous garantir une fabrication et une livraison pour la rentrée de septembre, nous vous invitons à
+        passer commande dès que possible avant ce soir : <strong>lundi 25 mai 2026 à minuit.</strong>
       </Text>
 
       {customMessage && <Text style={text}>{customMessage}</Text>}
