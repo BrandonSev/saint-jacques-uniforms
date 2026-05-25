@@ -20,13 +20,13 @@ export function daysUntilDeadline(now: Date = new Date()): number {
  */
 export function BackToSchoolBanner() {
   return (
-    <div className="w-full border-b border-amber-300/70 bg-amber-100 text-amber-900">
-      <div className="mx-auto flex max-w-6xl w-full items-center justify-center gap-2 px-4 py-2 text-[12px] font-medium leading-snug sm:px-6 sm:text-[13px] lg:px-8">
+    <div className="w-full bg-red-600 text-white">
+      <div className="mx-auto flex max-w-6xl w-full items-center justify-center gap-2 px-4 py-2 text-[12px] font-semibold leading-snug sm:px-6 sm:text-[13px] lg:px-8">
         <CalendarClock className="hidden h-4 w-4 shrink-0 sm:inline" aria-hidden />
          <span className="text-center">
-           <strong className="font-semibold">Prolongation exceptionnelle des commandes en ce lundi de Pentecôte :</strong>{" "}
+           <strong className="font-bold">Prolongation exceptionnelle des commandes en ce lundi de Pentecôte :</strong>{" "}
            Rentrée 2026 : commandez vos blouses jusqu'au lundi{" "}
-           <strong className="whitespace-nowrap">25 mai</strong> à minuit afin de vous garantir une fabrication et une livraison pour la rentrée de septembre.
+           <strong className="whitespace-nowrap underline">25 mai</strong> à minuit afin de vous garantir une fabrication et une livraison pour la rentrée de septembre.
          </span>
       </div>
     </div>
