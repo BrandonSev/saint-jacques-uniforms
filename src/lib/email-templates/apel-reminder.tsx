@@ -23,7 +23,7 @@ function ApelReminder({
   return (
     <EmailLayout
       preview="Pensez à commander les blouses de votre enfant dès maintenant pour la rentrée"
-      title="Rappel — Commande pour la rentrée 2026"
+      title="Profitez d’une prolongation du délai pour commander vos blouses scolaires"
       familyName={familyName}
       signatureRole="boutique"
     >
@@ -63,7 +63,7 @@ function ApelReminder({
 
 export const template = {
   component: ApelReminder,
-  subject: "Rappel - dernier jour pour commander les blouses scolaires pour la rentrée de septembre 2026",
+  subject: "Prolongation exceptionnelle pour commander vos blouses ce lundi de Pentecôte 25 mai",
   displayName: "Relance France Uniformes (rentrée)",
   previewData: {
     civilite: "Madame",
