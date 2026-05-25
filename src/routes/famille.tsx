@@ -8,6 +8,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { useStore, type FamilyParent } from "@/lib/store";
 import { PageWatermark } from "@/components/PageWatermark";
 import { AddChildDialog } from "@/components/AddChildDialog";
+import { formatCivilite } from "@/lib/utils";
 
 export const Route = createFileRoute("/famille")({
   head: () => ({
