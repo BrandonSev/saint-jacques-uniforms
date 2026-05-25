@@ -22,8 +22,8 @@ function ApelReminder({
 }: Props) {
   return (
     <EmailLayout
-      preview="Pensez à commander les blouses de votre enfant dès maintenant pour la rentrée"
-      title="Profitez d’une prolongation du délai pour commander vos blouses scolaires"
+      preview="Profitez d’une prolongation du délai pour commander vos blouses scolaires"
+      title="Rappel — Commande pour la rentrée 2026"
       familyName={familyName}
       signatureRole="boutique"
     >
