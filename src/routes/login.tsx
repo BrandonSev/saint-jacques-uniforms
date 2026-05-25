@@ -40,7 +40,7 @@ const signinSchema = z.object({
 });
 
 const signupSchema = z.object({
-  civilite: z.enum(["M.", "Mme", "Autre"]),
+  civilite: z.enum(["Monsieur", "Madame", "Autre"]),
   prenom: z.string().trim().min(1, "Prénom requis").max(80),
   nom: z.string().trim().min(1, "Nom requis").max(80),
   email: z.string().trim().email("Email invalide").max(255),
@@ -63,7 +63,7 @@ function LoginPage() {
     if (!authLoading && user) navigate({ to: "/boutique" });
   }, [user, authLoading, navigate]);
 
-  const [civilite, setCivilite] = useState<"M." | "Mme" | "Autre">("Mme");
+  const [civilite, setCivilite] = useState<"Monsieur" | "Madame" | "Autre">("Madame");
   const [prenom, setPrenom] = useState("");
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
@@ -282,7 +282,7 @@ function LoginPage() {
                     Civilité
                   </span>
                   <div className="mt-2 grid grid-cols-3 gap-2">
-                    {(["Mme", "M.", "Autre"] as const).map((c) => (
+                    {(["Madame", "Monsieur", "Autre"] as const).map((c) => (
                       <button
                         type="button"
                         key={c}

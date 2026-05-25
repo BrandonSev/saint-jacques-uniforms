@@ -11,6 +11,7 @@ import { createOrderPayment } from "@/server/payplug.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { PageWatermark } from "@/components/PageWatermark";
 import { BackToSchoolAlert } from "@/components/BackToSchoolAlert";
+import { formatCivilite } from "@/lib/utils";
 import {
   filterDeliveryOptions,
   getInitialDeliveryOptions,
@@ -271,7 +272,7 @@ function ConfirmModal({
     addresses.push({
       id: "profile",
       label: "Adresse principale",
-      recipient: `${profile.civilite ?? ""} ${profile.prenom} ${profile.nom}`.trim(),
+      recipient: `${formatCivilite(profile.civilite)} ${profile.prenom} ${profile.nom}`.trim(),
       address: profile.adresse,
       postal: profile.code_postal,
       city: profile.ville,
@@ -283,7 +284,7 @@ function ConfirmModal({
       addresses.push({
         id: `parent-${p.id}`,
         label: p.role || "Parent",
-        recipient: `${p.civilite} ${p.prenom} ${p.nom}`.trim(),
+        recipient: `${formatCivilite(p.civilite)} ${p.prenom} ${p.nom}`.trim(),
         address: p.adresse,
         postal: p.code_postal,
         city: p.ville,
@@ -294,7 +295,7 @@ function ConfirmModal({
       addresses.push({
         id: `parent-${p.id}-alt`,
         label: p.shipping_label || "Autre adresse",
-        recipient: `${p.civilite} ${p.prenom} ${p.nom}`.trim(),
+        recipient: `${formatCivilite(p.civilite)} ${p.prenom} ${p.nom}`.trim(),
         address: p.shipping_adresse,
         postal: p.shipping_code_postal,
         city: p.shipping_ville,

@@ -9,6 +9,7 @@ import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/server/email.functions";
 import { listRoleAssignments, setUserRole, sendTestApelReminder } from "@/server/apel.functions";
+import { formatCivilite } from "@/lib/utils";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
@@ -275,7 +276,7 @@ function AdminPage() {
       "N° Commande": r.order_number,
       Date: new Date(r.created_at).toLocaleDateString("fr-FR"),
       Statut: r.status,
-      Famille: `${r.family_civilite ?? ""} ${r.family_prenom} ${r.family_nom}`.trim(),
+      Famille: `${formatCivilite(r.family_civilite)} ${r.family_prenom} ${r.family_nom}`.trim(),
       Email: r.family_email,
       Téléphone: r.family_telephone ?? "",
       Enfant: `${r.child_prenom} ${r.child_nom}`,

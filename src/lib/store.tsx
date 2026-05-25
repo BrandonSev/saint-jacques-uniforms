@@ -448,7 +448,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
           .insert({
             user_id: user.id,
             role: p.role || (position === 0 ? "Mère" : "Père"),
-            civilite: p.civilite || "Mme",
+            civilite: p.civilite || "Madame",
             prenom: p.prenom || "",
             nom: p.nom || "",
             email: p.email || null,

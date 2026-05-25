@@ -1,6 +1,7 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import logoUrl from "@/assets/france-uniformes-logo-white.svg";
+import { formatCivilite } from "@/lib/utils";
 
 // Couleurs de la charte France Uniformes.
 const FU_NAVY: [number, number, number] = [10, 37, 64];
@@ -144,7 +145,7 @@ export async function buildOrderPdf(order: PdfOrder): Promise<jsPDF> {
   doc.setTextColor(20);
   y += 14;
   const colWidth = (W - M * 2) / 2 - 10;
-  const family = `${order.family.civilite ?? ""} ${order.family.prenom} ${order.family.nom}\n${order.family.email}${order.family.telephone ? "\n" + order.family.telephone : ""}`;
+  const family = `${formatCivilite(order.family.civilite)} ${order.family.prenom} ${order.family.nom}\n${order.family.email}${order.family.telephone ? "\n" + order.family.telephone : ""}`;
   const familyLines = doc.splitTextToSize(family, colWidth);
   doc.text(familyLines, M, y);
   const shippingRaw =
