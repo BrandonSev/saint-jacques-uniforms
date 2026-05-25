@@ -11,6 +11,7 @@ import { createOrderPayment } from "@/server/payplug.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { PageWatermark } from "@/components/PageWatermark";
 import { BackToSchoolAlert } from "@/components/BackToSchoolAlert";
+import { formatCivilite } from "@/lib/utils";
 import {
   filterDeliveryOptions,
   getInitialDeliveryOptions,
