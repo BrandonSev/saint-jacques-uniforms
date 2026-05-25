@@ -41,10 +41,10 @@ export function BackToSchoolAlert({ className = "" }: { className?: string }) {
   return (
     <div
       role="alert"
-      className={`rounded-2xl border border-amber-300 bg-amber-50 p-4 sm:p-5 text-amber-900 shadow-[var(--shadow-card)] ${className}`}
+      className={`rounded-2xl border border-red-400 bg-red-50 p-4 sm:p-5 text-red-900 shadow-[var(--shadow-card)] ${className}`}
     >
       <div className="gap-3 items-start justify-start flex flex-col">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-200/70 text-amber-900">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-200/70 text-red-900">
           <AlertTriangle className="h-5 w-5" aria-hidden />
         </div>
         <div className="min-w-0">
@@ -54,9 +54,9 @@ export function BackToSchoolAlert({ className = "" }: { className?: string }) {
           <p className="mt-1 text-sm leading-relaxed sm:text-[15px]">
             Pour garantir la fabrication dans nos ateliers en France et la livraison à votre enfant pour la rentrée
             de septembre 2026, merci de passer commande avant le{" "}
-            <strong className="whitespace-nowrap">{BACK_TO_SCHOOL_DEADLINE}</strong>.
+            <strong className="whitespace-nowrap underline">{BACK_TO_SCHOOL_DEADLINE}</strong>.
           </p>
-          <p className="mt-1.5 text-[12px] leading-relaxed text-amber-900/80 sm:text-[13px]">
+          <p className="mt-1.5 text-[12px] leading-relaxed text-red-900/70 sm:text-[13px]">
             Les commandes passées au-delà de cette date restent possibles, mais nous ne pourrons pas vous garantir la 
             disponibilité de toutes les tailles, ni la livraison avant la rentrée. Anticipez et commandez dès maintenant !
           </p>
