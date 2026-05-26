@@ -35,7 +35,7 @@ export const Route = createFileRoute("/blouse-officielle")({
   ),
 });
 
-const sizes = ["3 ans", "4 ans", "6 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];
+const sizes = ["4 ans", "6 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];
 
 function MaternellePage() {
   const { addToCart, children } = useStore();
@@ -225,21 +225,20 @@ function MaternellePage() {
                     Guide des tailles
                   </Link>
                 </div>
-                {recommendation && (
-                  <SizeBadge size={recommendation.size} variant="blouse" />
-                )}
+                {recommendation && <SizeBadge size={recommendation.size} variant="blouse" />}
               </div>
               {recommendation && (
                 <div className="mt-1 space-y-2 text-[11px] italic leading-relaxed text-muted-foreground">
                   <p>
-                    Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la blouse, emmanchures élargies et manches allongées, pour un confort optimal, y compris portée sur un sweat.
+                    Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la
+                    blouse, emmanchures élargies et manches allongées, pour un confort optimal, y compris portée sur un
+                    sweat.
                   </p>
                   <p>
-                    Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir la bonne taille.
+                    Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir la
+                    bonne taille.
                   </p>
-                  <p>
-                    En cas de doute, vous pouvez toujours prendre une taille au-dessus.
-                  </p>
+                  <p>En cas de doute, vous pouvez toujours prendre une taille au-dessus.</p>
                 </div>
               )}
               <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8">
@@ -334,14 +333,12 @@ function MaternellePage() {
               </span>
             </div>
             <div className="text-left">
-              <h3 className="text-lg font-semibold tracking-tight text-foreground">
-                Fabriqué en France & solidaire
-              </h3>
+              <h3 className="text-lg font-semibold tracking-tight text-foreground">Fabriqué en France & solidaire</h3>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                Confection 100% française réalisée en partie via l'<strong className="text-foreground">économie
-                sociale et solidaire</strong> : nos vêtements sont fabriqués par des personnes en
-                situation de handicap, en reconversion ou en réinsertion professionnelle. Un engagement
-                concret pour un savoir-faire local et utile.
+                Confection 100% française réalisée en partie via l'
+                <strong className="text-foreground">économie sociale et solidaire</strong> : nos vêtements sont
+                fabriqués par des personnes en situation de handicap, en reconversion ou en réinsertion professionnelle.
+                Un engagement concret pour un savoir-faire local et utile.
               </p>
             </div>
           </div>
