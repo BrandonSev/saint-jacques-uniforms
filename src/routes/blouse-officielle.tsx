@@ -11,6 +11,7 @@ import { useStore } from "@/lib/store";
 import { recommendSize } from "@/lib/sizeRecommendation";
 import { SizeBadge } from "@/components/SizeBadge";
 import { FrenchFlag } from "@/components/FrenchFlag";
+import { supabase } from "@/integrations/supabase/client";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import bloussePliee from "@/assets/blouse-pliee.jpeg";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
@@ -44,7 +45,28 @@ function MaternellePage() {
   const [childId, setChildId] = useState("");
   const [activeImg, setActiveImg] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [stock, setStock] = useState<Record<string, number>>({});
   const gallery = [blouseProduct, classeBlouses, bloussePliee];
+
+  useEffect(() => {
+    let mounted = true;
+    supabase
+      .from("blouse_stock")
+      .select("size, remaining")
+      .then(({ data }) => {
+        if (!mounted || !data) return;
+        const map: Record<string, number> = {};
+        for (const r of data as Array<{ size: string; remaining: number }>) map[r.size] = r.remaining;
+        setStock(map);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const remainingForSize = (s: string) => (s in stock ? stock[s] : null);
+  const selectedRemaining = remainingForSize(size);
+  const outOfStock = selectedRemaining !== null && selectedRemaining <= 0;
 
   // Blouse officielle = Unisexe : aucun blocage par genre.
   const productGenre: "Fille" | "Garçon" | "Unisexe" = "Unisexe";
@@ -104,6 +126,14 @@ function MaternellePage() {
     }
     if (!childId) {
       toast.error("Choisissez un enfant");
+      return;
+    }
+    if (selectedRemaining !== null && selectedRemaining < qty) {
+      toast.error(
+        selectedRemaining <= 0
+          ? `Taille ${size} en rupture de stock`
+          : `Stock insuffisant : ${selectedRemaining} restante(s) en taille ${size}`,
+      );
       return;
     }
     addToCart({
