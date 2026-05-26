@@ -618,6 +618,7 @@ function RolesPanel() {
 
   return (
     <div className="mt-4 space-y-6">
+      <BlouseStockManager />
       <div className="rounded-2xl border border-border bg-card p-5">
         <h2 className="text-base font-semibold text-foreground">Test email APEL</h2>
         <p className="mt-1 text-xs text-muted-foreground">
