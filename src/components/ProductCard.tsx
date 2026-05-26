@@ -235,7 +235,7 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
                           ? `Taille ${s} en rupture de stock`
                           : `${rem} restante(s)`
                     }
-                    className={`relative h-12 px-2 min-w-[3.5rem] rounded-md border text-xs font-medium transition-all ${
+                    className={`relative h-14 px-2 min-w-[3.5rem] rounded-md border text-xs font-medium transition-all ${
                       isOut
                         ? "cursor-not-allowed border-border bg-muted text-muted-foreground line-through opacity-60"
                         : size === s
@@ -256,7 +256,7 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
                               : "text-muted-foreground"
                         }`}
                       >
-                        {isOut ? "Rupture" : `${rem} restant${rem > 1 ? "s" : ""}`}
+                        {isOut ? "Rupture" : <>{rem} restantes <br /> à produire</>}
                       </span>
                     )}
                   </button>
