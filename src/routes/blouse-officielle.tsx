@@ -11,7 +11,6 @@ import { useStore } from "@/lib/store";
 import { recommendSize } from "@/lib/sizeRecommendation";
 import { SizeBadge } from "@/components/SizeBadge";
 import { FrenchFlag } from "@/components/FrenchFlag";
-import { supabase } from "@/integrations/supabase/client";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import bloussePliee from "@/assets/blouse-pliee.jpeg";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
@@ -45,28 +44,7 @@ function MaternellePage() {
   const [childId, setChildId] = useState("");
   const [activeImg, setActiveImg] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [stock, setStock] = useState<Record<string, number>>({});
   const gallery = [blouseProduct, classeBlouses, bloussePliee];
-
-  useEffect(() => {
-    let mounted = true;
-    supabase
-      .from("blouse_stock")
-      .select("size, remaining")
-      .then(({ data }) => {
-        if (!mounted || !data) return;
-        const map: Record<string, number> = {};
-        for (const r of data as Array<{ size: string; remaining: number }>) map[r.size] = r.remaining;
-        setStock(map);
-      });
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  const remainingForSize = (s: string) => (s in stock ? stock[s] : null);
-  const selectedRemaining = remainingForSize(size);
-  const outOfStock = selectedRemaining !== null && selectedRemaining <= 0;
 
   // Blouse officielle = Unisexe : aucun blocage par genre.
   const productGenre: "Fille" | "Garçon" | "Unisexe" = "Unisexe";
@@ -126,14 +104,6 @@ function MaternellePage() {
     }
     if (!childId) {
       toast.error("Choisissez un enfant");
-      return;
-    }
-    if (selectedRemaining !== null && selectedRemaining < qty) {
-      toast.error(
-        selectedRemaining <= 0
-          ? `Taille ${size} en rupture de stock`
-          : `Stock insuffisant : ${selectedRemaining} restante(s) en taille ${size}`,
-      );
       return;
     }
     addToCart({
@@ -271,52 +241,22 @@ function MaternellePage() {
                   <p>En cas de doute, vous pouvez toujours prendre une taille au-dessus.</p>
                 </div>
               )}
-              <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8">
-                {sizes.map((s) => {
-                  const rem = remainingForSize(s);
-                  const isOut = rem !== null && rem <= 0;
-                  const isLow = rem !== null && rem > 0 && rem <= 3;
-                  return (
-                    <button
-                      key={s}
-                      onClick={() => !isOut && setSize(s)}
-                      disabled={isOut}
-                      title={
-                        rem === null
-                          ? undefined
-                          : isOut
-                            ? `Taille ${s} en rupture de stock`
-                            : `${rem} restante(s)`
-                      }
-                      className={`relative h-16 rounded-lg border text-sm font-medium transition-all ${
-                        isOut
-                          ? "cursor-not-allowed border-border bg-muted text-muted-foreground line-through opacity-60"
-                          : size === s
-                            ? "border-primary bg-primary text-primary-foreground"
-                            : recommendation?.size === s
-                              ? "border-emerald-700 bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-700 hover:bg-emerald-100"
-                              : "border-border bg-card text-foreground hover:border-primary/40"
-                      }`}
-                    >
-                      <span>{s}</span>
-                      {rem !== null && (
-                        <span
-                          className={`mt-0.5 block text-[10px] font-normal leading-none ${
-                            isOut
-                              ? "text-red-600"
-                              : isLow
-                                ? "text-red-600"
-                                : size === s
-                                  ? "text-primary-foreground/80"
-                                  : "text-muted-foreground"
-                          }`}
-                        >
-                          {isOut ? "Rupture" : <>{rem} restantes <br /> à produire</>}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
+              <div className="mt-3 grid grid-cols-4 gap-2">
+                {sizes.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setSize(s)}
+                    className={`h-12 rounded-lg border text-sm font-medium transition-all ${
+                      size === s
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : recommendation?.size === s
+                          ? "border-emerald-700 bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-700 hover:bg-emerald-100"
+                          : "border-border bg-card text-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -339,16 +279,10 @@ function MaternellePage() {
               </div>
               <button
                 onClick={handleAdd}
-                disabled={children.length === 0 || !childId || outOfStock}
+                disabled={children.length === 0 || !childId}
                 className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {children.length === 0
-                  ? "Ajoutez un enfant"
-                  : !childId
-                    ? "Choisir un enfant"
-                    : outOfStock
-                      ? "Taille en rupture"
-                      : "Ajouter au panier"}
+                {children.length === 0 ? "Ajoutez un enfant" : !childId ? "Choisir un enfant" : "Ajouter au panier"}
               </button>
               <button
                 onClick={toggleFavorite}
