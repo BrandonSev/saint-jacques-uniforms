@@ -9,6 +9,7 @@ import guideMesuresImg from "@/assets/guide-tailles-mesures.png";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { FrenchFlag } from "@/components/FrenchFlag";
 import { SizeBadge } from "@/components/SizeBadge";
+import { supabase } from "@/integrations/supabase/client";
 
 export type ProductGenre = "Fille" | "Garçon" | "Unisexe";
 
@@ -43,6 +44,30 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
   const [size, setSize] = useState(defaultSize ?? sizes[0]);
   const [qty, setQty] = useState(1);
   const [childId, setChildId] = useState<string>("");
+  const [stock, setStock] = useState<Record<string, number>>({});
+
+  const isBlouse = product.productKind === "blouse";
+
+  useEffect(() => {
+    if (!isBlouse) return;
+    let mounted = true;
+    supabase
+      .from("blouse_stock")
+      .select("size, remaining")
+      .then(({ data }) => {
+        if (!mounted || !data) return;
+        const map: Record<string, number> = {};
+        for (const r of data as Array<{ size: string; remaining: number }>) map[r.size] = r.remaining;
+        setStock(map);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [isBlouse]);
+
+  const remainingForSize = (s: string) => (isBlouse && s in stock ? stock[s] : null);
+  const selectedRemaining = remainingForSize(size);
+  const outOfStock = selectedRemaining !== null && selectedRemaining <= 0;
 
   const productGenre: ProductGenre = product.genre ?? "Unisexe";
   const genreFilter = (c: Child) => {
@@ -87,6 +112,14 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
     if (!childId) { toast.error("Choisissez un enfant"); return; }
     if (genreMismatch) {
       toast.error(`Ce modèle est réservé aux ${productGenre === "Fille" ? "filles" : "garçons"}.`);
+      return;
+    }
+    if (selectedRemaining !== null && selectedRemaining < qty) {
+      toast.error(
+        selectedRemaining <= 0
+          ? `Taille ${size} en rupture de stock`
+          : `Stock insuffisant : ${selectedRemaining} restante(s) en taille ${size}`,
+      );
       return;
     }
     addToCart({
@@ -186,19 +219,49 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
           )}
           <div className="mt-2 flex flex-wrap gap-1.5">
             {sizes.map((s) => (
-              <button
-                key={s}
-                onClick={() => setSize(s)}
-                className={`relative h-9 px-2 min-w-[3.5rem] rounded-md border text-xs font-medium transition-all ${
-                  size === s
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : recommendation?.size === s
-                    ? "border-emerald-700 bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-700 hover:bg-emerald-100"
-                    : "border-border bg-card text-foreground hover:border-primary/40"
-                }`}
-              >
-                {s}
-              </button>
+              (() => {
+                const rem = remainingForSize(s);
+                const isOut = rem !== null && rem <= 0;
+                const isLow = rem !== null && rem > 0 && rem <= 3;
+                return (
+                  <button
+                    key={s}
+                    onClick={() => !isOut && setSize(s)}
+                    disabled={isOut}
+                    title={
+                      rem === null
+                        ? undefined
+                        : isOut
+                          ? `Taille ${s} en rupture de stock`
+                          : `${rem} restante(s)`
+                    }
+                    className={`relative h-12 px-2 min-w-[3.5rem] rounded-md border text-xs font-medium transition-all ${
+                      isOut
+                        ? "cursor-not-allowed border-border bg-muted text-muted-foreground line-through opacity-60"
+                        : size === s
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : recommendation?.size === s
+                        ? "border-emerald-700 bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-700 hover:bg-emerald-100"
+                        : "border-border bg-card text-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    <span className="block">{s}</span>
+                    {rem !== null && (
+                      <span
+                        className={`mt-0.5 block text-[9px] font-normal leading-none ${
+                          isOut || isLow
+                            ? "text-red-600"
+                            : size === s
+                              ? "text-primary-foreground/80"
+                              : "text-muted-foreground"
+                        }`}
+                      >
+                        {isOut ? "Rupture" : `${rem} restant${rem > 1 ? "s" : ""}`}
+                      </span>
+                    )}
+                  </button>
+                );
+              })()
             ))}
           </div>
         </div>
@@ -209,7 +272,7 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
             <span className="w-7 text-center text-sm font-semibold">{qty}</span>
             <button onClick={() => setQty(qty + 1)} className="px-3 text-muted-foreground hover:text-foreground">+</button>
           </div>
-          <button onClick={handleAdd} disabled={disabled || children.length === 0 || !childId || genreMismatch}
+          <button onClick={handleAdd} disabled={disabled || children.length === 0 || !childId || genreMismatch || outOfStock}
             className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">
             {disabled
               ? (disabledLabel ?? "Bientôt disponible")
@@ -219,6 +282,8 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
               ? "Choisir un enfant"
               : genreMismatch
               ? "Genre non compatible"
+              : outOfStock
+              ? "Taille en rupture"
               : "Ajouter au panier"}
           </button>
         </div>
