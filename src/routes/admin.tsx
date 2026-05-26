@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/server/email.functions";
 import { listRoleAssignments, setUserRole, sendTestApelReminder } from "@/server/apel.functions";
 import { formatCivilite } from "@/lib/utils";
+import { BlouseStockManager } from "@/components/BlouseStockManager";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
