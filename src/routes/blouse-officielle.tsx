@@ -288,7 +288,7 @@ function MaternellePage() {
                             ? `Taille ${s} en rupture de stock`
                             : `${rem} restante(s)`
                       }
-                      className={`relative h-14 rounded-lg border text-sm font-medium transition-all ${
+                      className={`relative h-16 rounded-lg border text-sm font-medium transition-all ${
                         isOut
                           ? "cursor-not-allowed border-border bg-muted text-muted-foreground line-through opacity-60"
                           : size === s
@@ -311,7 +311,7 @@ function MaternellePage() {
                                   : "text-muted-foreground"
                           }`}
                         >
-                          {isOut ? "Rupture" : `${rem} restant${rem > 1 ? "s" : ""}`}
+                          {isOut ? "Rupture" : <>{rem} restantes <br /> à produire</>}
                         </span>
                       )}
                     </button>
