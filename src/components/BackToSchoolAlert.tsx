@@ -24,9 +24,10 @@ export function BackToSchoolBanner() {
       <div className="mx-auto flex max-w-6xl w-full items-center justify-center gap-2 px-4 py-2 text-[12px] font-semibold leading-snug sm:px-6 sm:text-[13px] lg:px-8">
         <CalendarClock className="hidden h-4 w-4 shrink-0 sm:inline" aria-hidden />
         <span className="text-center">
-          <strong className="font-bold">Prolongation exceptionnelle des commandes en ce lundi de Pentecôte :</strong>{" "}
-          commandez vos blouses jusqu'au lundi <strong className="whitespace-nowrap underline">25 mai</strong> à minuit
-          afin de vous garantir une fabrication et une livraison pour la rentrée de septembre 2026.
+          <strong>Précommande garantie terminée.</strong> Vous pouvez encore commander selon les blouses disponibles à
+          produire.
+          <br />
+          Nous ferons notre maximum pour intégrer les commandes reçues rapidement à la production.
         </span>
       </div>
     </div>
