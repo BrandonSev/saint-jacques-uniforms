@@ -20,7 +20,7 @@ export function daysUntilDeadline(now: Date = new Date()): number {
  */
 export function BackToSchoolBanner() {
   return (
-    <div className="w-full bg-green-200 text-green-400">
+    <div className="w-full bg-green-200 text-green-700">
       <div className="mx-auto flex max-w-6xl w-full items-center justify-center gap-2 px-4 py-2 text-[12px] font-semibold leading-snug sm:px-6 sm:text-[13px] lg:px-8">
         <CalendarClock className="hidden h-4 w-4 shrink-0 sm:inline" aria-hidden />
         <span className="text-center">
