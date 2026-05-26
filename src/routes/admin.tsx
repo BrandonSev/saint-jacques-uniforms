@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/server/email.functions";
 import { listRoleAssignments, setUserRole, sendTestApelReminder } from "@/server/apel.functions";
 import { formatCivilite } from "@/lib/utils";
+import { BlouseStockManager } from "@/components/BlouseStockManager";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
@@ -617,6 +618,7 @@ function RolesPanel() {
 
   return (
     <div className="mt-4 space-y-6">
+      <BlouseStockManager />
       <div className="rounded-2xl border border-border bg-card p-5">
         <h2 className="text-base font-semibold text-foreground">Test email APEL</h2>
         <p className="mt-1 text-xs text-muted-foreground">

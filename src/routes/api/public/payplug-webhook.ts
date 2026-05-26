@@ -59,6 +59,13 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
               return new Response("update failed", { status: 500 });
             }
 
+            // Déduit le stock des blouses officielles (silencieux en cas d'erreur)
+            try {
+              await supabaseAdmin.rpc("decrement_blouse_stock", { _order_id: orderId });
+            } catch (e) {
+              console.error("payplug webhook decrement_blouse_stock:", e);
+            }
+
             // Emails
             try {
               const { data: items } = await supabaseAdmin
