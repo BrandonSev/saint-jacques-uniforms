@@ -272,21 +272,51 @@ function MaternellePage() {
                 </div>
               )}
               <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8">
-                {sizes.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setSize(s)}
-                    className={`h-12 rounded-lg border text-sm font-medium transition-all ${
-                      size === s
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : recommendation?.size === s
-                          ? "border-emerald-700 bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-700 hover:bg-emerald-100"
-                          : "border-border bg-card text-foreground hover:border-primary/40"
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
+                {sizes.map((s) => {
+                  const rem = remainingForSize(s);
+                  const isOut = rem !== null && rem <= 0;
+                  const isLow = rem !== null && rem > 0 && rem <= 3;
+                  return (
+                    <button
+                      key={s}
+                      onClick={() => !isOut && setSize(s)}
+                      disabled={isOut}
+                      title={
+                        rem === null
+                          ? undefined
+                          : isOut
+                            ? `Taille ${s} en rupture de stock`
+                            : `${rem} restante(s)`
+                      }
+                      className={`relative h-14 rounded-lg border text-sm font-medium transition-all ${
+                        isOut
+                          ? "cursor-not-allowed border-border bg-muted text-muted-foreground line-through opacity-60"
+                          : size === s
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : recommendation?.size === s
+                              ? "border-emerald-700 bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-700 hover:bg-emerald-100"
+                              : "border-border bg-card text-foreground hover:border-primary/40"
+                      }`}
+                    >
+                      <span>{s}</span>
+                      {rem !== null && (
+                        <span
+                          className={`mt-0.5 block text-[10px] font-normal leading-none ${
+                            isOut
+                              ? "text-red-600"
+                              : isLow
+                                ? "text-red-600"
+                                : size === s
+                                  ? "text-primary-foreground/80"
+                                  : "text-muted-foreground"
+                          }`}
+                        >
+                          {isOut ? "Rupture" : `${rem} restant${rem > 1 ? "s" : ""}`}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
