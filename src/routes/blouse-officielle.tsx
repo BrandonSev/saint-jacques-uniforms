@@ -339,10 +339,16 @@ function MaternellePage() {
               </div>
               <button
                 onClick={handleAdd}
-                disabled={children.length === 0 || !childId}
+                disabled={children.length === 0 || !childId || outOfStock}
                 className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {children.length === 0 ? "Ajoutez un enfant" : !childId ? "Choisir un enfant" : "Ajouter au panier"}
+                {children.length === 0
+                  ? "Ajoutez un enfant"
+                  : !childId
+                    ? "Choisir un enfant"
+                    : outOfStock
+                      ? "Taille en rupture"
+                      : "Ajouter au panier"}
               </button>
               <button
                 onClick={toggleFavorite}
