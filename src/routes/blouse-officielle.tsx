@@ -282,11 +282,7 @@ function MaternellePage() {
                       onClick={() => !isOut && setSize(s)}
                       disabled={isOut}
                       title={
-                        rem === null
-                          ? undefined
-                          : isOut
-                            ? `Taille ${s} en rupture de stock`
-                            : `${rem} restante(s)`
+                        rem === null ? undefined : isOut ? `Taille ${s} en rupture de stock` : `${rem} restante(s)`
                       }
                       className={`relative h-14 rounded-lg border px-2 text-sm font-medium transition-all ${
                         isOut
@@ -309,7 +305,13 @@ function MaternellePage() {
                                 : "text-muted-foreground"
                           }`}
                         >
-                          {isOut ? "Rupture" : <>{rem} restantes <br /> à produire</>}
+                          {isOut ? (
+                            "Rupture"
+                          ) : (
+                            <>
+                              {rem} disponibles <br /> à produire
+                            </>
+                          )}
                         </span>
                       )}
                     </button>
