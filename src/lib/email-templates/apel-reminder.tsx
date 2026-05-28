@@ -46,6 +46,7 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
       </Text>
       <Text style={{ ...text, paddingLeft: "16px" }}>
         2) Renseignez leurs mensurations (pour obtenir la recommandation de taille)
+      </Text>
       <Text style={{ ...text, paddingLeft: "16px" }}>3) Sélectionnez la taille souhaitée et validez la commande.</Text>
 
       {customMessage && <Text style={text}>{customMessage}</Text>}
