@@ -6,43 +6,50 @@ import type { TemplateEntry } from "./registry";
 interface Props {
   civilite?: string;
   familyName?: string;
-  deadline?: string;
   appUrl?: string;
   customMessage?: string;
 }
 
 const APP_URL = "https://sjdc-dax.franceuniformes.fr";
 
-function ApelReminder({
-  civilite,
-  familyName,
-  deadline = "ce dimanche 24 mai 2026 (23h59)",
-  appUrl = APP_URL,
-  customMessage,
-}: Props) {
+function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }: Props) {
   return (
     <EmailLayout
-      preview="Profitez d’une prolongation du délai pour commander vos blouses scolaires"
-      title="Rappel — Commande pour la rentrée 2026"
+      preview="blouses rentrée 2026 — dernière possibilité (précommande garantie terminée)"
+      title="Commande de blouses — SJDC Dax"
       familyName={familyName}
       signatureRole="boutique"
     >
-      <Text style={text}>Bonjour {civilite || ""},</Text>
+      <Text style={text}>Bonjour{civilite ? ` ${civilite}` : ""},</Text>
+
+      <Text style={text}>Merci d'avoir créé votre compte sur la boutique des blouses SJDC (Dax).</Text>
 
       <Text style={text}>
-        Nous vous remercions d'avoir créé votre espace famille sur le site de la boutique du groupe scolaire
-        Saint-Jacques-de-Compostelle de Dax.
+        La période de précommande garantie est désormais terminée (initialement prévue jusqu'au dimanche 24 mai,
+        prolongée exceptionnellement jusqu'au lundi 25 mai).
       </Text>
 
       <Text style={text}>
-        Nous vous rappelons que vous n'avez pas encore passé commande des blouses de votre enfant.
+        👉 <strong>Dernière possibilité :</strong> nous laissons encore la commande ouverte uniquement dans la limite
+        des blouses disponibles à produire (stocks indiqués par taille sur le site).
       </Text>
 
       <Text style={text}>
-        Nous avons exceptionnellement prolongé la possibilité de commander en ce lundi de Pentecôte. <br />
-        Ainsi, afin de vous garantir une fabrication et une livraison pour la rentrée de septembre, nous vous invitons à
-        passer commande dès que possible avant ce soir : <strong>lundi 25 mai 2026 à minuit.</strong>
+        Plus vous commandez tôt, plus nous avons de chances d'intégrer votre commande à la production,{" "}
+        <strong>sans pouvoir garantir une livraison pour la rentrée.</strong>
       </Text>
+
+      <Text style={text}>Pour finaliser votre commande :</Text>
+
+      <Text style={{ ...text, paddingLeft: "16px" }}>
+        1) Vérifiez que votre/vos enfant(s) sont bien ajoutés dans <strong>« Mes enfants »</strong>
+      </Text>
+      <Text style={{ ...text, paddingLeft: "16px" }}>
+        2) Renseignez leurs mensurations (pour obtenir la recommandation de taille) — notamment :
+      </Text>
+      <Text style={{ ...text, paddingLeft: "32px" }}>3) Tour de taille</Text>
+      <Text style={{ ...text, paddingLeft: "32px" }}>4) Tour de bassin</Text>
+      <Text style={{ ...text, paddingLeft: "16px" }}>5) Sélectionnez la taille souhaitée et validez la commande.</Text>
 
       {customMessage && <Text style={text}>{customMessage}</Text>}
 
@@ -50,7 +57,11 @@ function ApelReminder({
         Commander maintenant
       </Button>
 
-      <Text style={text}>Nous vous remercions par avance et restons à votre disposition pour toute question.</Text>
+      <Text style={text}>
+        Merci pour votre réactivité.
+        <br />
+        Bien cordialement,
+      </Text>
 
       <Text style={muted}>
         Cet email vous est envoyé par <strong>France Uniformes</strong> pour le compte de votre établissement scolaire.
@@ -63,12 +74,11 @@ function ApelReminder({
 
 export const template = {
   component: ApelReminder,
-  subject: "Prolongation exceptionnelle pour commander vos blouses ce lundi de Pentecôte 25 mai",
-  displayName: "Relance France Uniformes (rentrée)",
+  subject: "Dernière possibilité de commander — selon blouses disponibles à produire",
+  displayName: "Relance France Uniformes (hors délai garanti)",
   previewData: {
     civilite: "Madame",
     familyName: "Dupont",
-    deadline: "ce dimanche 24 mai 2026 (23h59)",
     appUrl: APP_URL,
   },
 } satisfies TemplateEntry;
