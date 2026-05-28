@@ -16,7 +16,7 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
   return (
     <EmailLayout
       preview="blouses rentrée 2026 — dernière possibilité (précommande garantie terminée)"
-      title="Rappel — Commande pour la rentrée 2026"
+      title="Blouse scolaire — Dernière opportunité de commande pour la rentrée 2026"
       familyName={familyName}
       signatureRole="boutique"
     >
