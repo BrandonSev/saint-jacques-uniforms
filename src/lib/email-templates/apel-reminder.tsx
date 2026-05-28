@@ -36,7 +36,7 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
 
       <Text style={text}>
         Plus vous commandez tôt, plus nous avons de chances d'intégrer votre commande à la production,{" "}
-        <strong>sans pouvoir garantir une livraison pour la rentrée.</strong>
+        <strong>sans pouvoir garantir une livraison pour la rentrée pour les commandes tardives.</strong>
       </Text>
 
       <Text style={text}>Pour finaliser votre commande :</Text>
@@ -45,11 +45,8 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
         1) Vérifiez que votre/vos enfant(s) sont bien ajoutés dans <strong>« Mes enfants »</strong>
       </Text>
       <Text style={{ ...text, paddingLeft: "16px" }}>
-        2) Renseignez leurs mensurations (pour obtenir la recommandation de taille) — notamment :
-      </Text>
-      <Text style={{ ...text, paddingLeft: "32px" }}>3) Tour de taille</Text>
-      <Text style={{ ...text, paddingLeft: "32px" }}>4) Tour de bassin</Text>
-      <Text style={{ ...text, paddingLeft: "16px" }}>5) Sélectionnez la taille souhaitée et validez la commande.</Text>
+        2) Renseignez leurs mensurations (pour obtenir la recommandation de taille)
+      <Text style={{ ...text, paddingLeft: "16px" }}>3) Sélectionnez la taille souhaitée et validez la commande.</Text>
 
       {customMessage && <Text style={text}>{customMessage}</Text>}
 
