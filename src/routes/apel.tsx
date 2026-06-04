@@ -5,7 +5,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
-import { apelListFamilies, sendApelReminders } from "@/server/apel.functions";
+import { apelListFamilies, sendApelReminders } from "@/lib/apel.functions";
 import { formatCivilite } from "@/lib/utils";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";

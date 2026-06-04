@@ -3,7 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { withSupabaseAuth } from "@/integrations/supabase/supabase-auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { createPayplugPayment, fetchPayplugPayment } from "./payplug.server";
+import { createPayplugPayment, fetchPayplugPayment } from "@/server/payplug.server";
 import { getRequestHost } from "@tanstack/react-start/server";
 
 function appBaseUrl() {
