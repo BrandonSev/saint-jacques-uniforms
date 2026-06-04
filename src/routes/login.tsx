@@ -18,8 +18,8 @@ import { AuthHeroBackground } from "@/components/AuthHeroBackground";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
-import { verifyEstablishmentCode } from "@/server/establishment.functions";
-import { sendWelcome } from "@/server/email.functions";
+import { verifyEstablishmentCode } from "@/lib/server/establishment.functions";
+import { sendWelcome } from "@/lib/server/email.functions";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
