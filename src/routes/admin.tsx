@@ -325,6 +325,7 @@ function AdminPage() {
   const totalCommandes = new Set(rows.map((r) => r.order_number)).size;
   const totalArticles = rows.reduce((s, r) => s + r.quantity, 0);
   const totalCA = rows.reduce((s, r) => s + r.line_total, 0);
+  const totalCA_HT = totalCA / 1.2;
   const incidentsEnAttente = incidents.filter((i) => ["À traiter", "En attente"].includes(i.status)).length;
 
   return (
@@ -350,10 +351,11 @@ function AdminPage() {
           </button>
         </div>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+        <div className="mt-6 grid gap-3 sm:grid-cols-4">
           <Stat label="Commandes" value={totalCommandes.toString()} />
           <Stat label="Articles" value={totalArticles.toString()} />
-          <Stat label="Total" value={`${totalCA.toFixed(2)} €`} />
+          <Stat label="Total HT" value={`${totalCA_HT.toFixed(2)} €`} />
+          <Stat label="Total TTC" value={`${totalCA.toFixed(2)} €`} />
         </div>
 
         <div className="mt-8 inline-flex rounded-xl border border-border bg-card p-1">
