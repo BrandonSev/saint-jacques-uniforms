@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import sjcLogo from "@/assets/saint-jacques-logo-full.png";
 import { AuthHeroBackground } from "@/components/AuthHeroBackground";
 import { useServerFn } from "@tanstack/react-start";
-import { sendCustomPasswordReset } from "@/lib/server/email.functions";
+import { sendCustomPasswordReset } from "@/lib/email.functions";
 
 export const Route = createFileRoute("/mot-de-passe-oublie")({
   head: () => ({

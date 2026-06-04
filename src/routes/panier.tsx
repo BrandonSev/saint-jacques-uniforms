@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore, type CartItem, type Child, type Profile, type ShippingChoice, type FamilyParent } from "@/lib/store";
-import { createOrderPayment } from "@/lib/server/payplug.functions";
+import { createOrderPayment } from "@/lib/payplug.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { PageWatermark } from "@/components/PageWatermark";
 import { BackToSchoolAlert } from "@/components/BackToSchoolAlert";
