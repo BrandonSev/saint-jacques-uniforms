@@ -145,16 +145,19 @@ function AdminPage() {
           `
           child_prenom, child_nom, child_classe, child_section,
           product_name, product_ref, size, quantity, unit_price, line_total,
-          orders!inner ( order_number, created_at, status, family_civilite, family_nom, family_prenom, family_email, family_telephone )
+          orders!inner ( order_number, created_at, status, paid_at, family_civilite, family_nom, family_prenom, family_email, family_telephone )
         `,
         )
+        .not("orders.paid_at", "is", null)
         .order("created_at", { foreignTable: "orders", ascending: false });
       if (error) {
         toast.error(error.message);
         setLoading(false);
         return;
       }
-      const flat: Row[] = (data ?? []).map((r: any) => ({
+      const flat: Row[] = (data ?? [])
+        .filter((r: any) => r.orders?.paid_at != null && r.orders?.status !== "Annulée")
+        .map((r: any) => ({
         order_number: r.orders.order_number,
         created_at: r.orders.created_at,
         status: r.orders.status,
