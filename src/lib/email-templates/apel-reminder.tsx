@@ -25,10 +25,10 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
 
       <Text style={text}>
         Nous vous remercions d'avoir créé votre compte famille sur la boutique des blouses de Saint‑Jacques de
-        Compostelle de Dax (SJDC). À ce jour, nous n'avons toutefois pas reçu de commande de votre part.
+        Compostelle de Dax (SJDC). <strong>À ce jour, nous n'avons toutefois pas reçu de commande de votre part.</strong>
       </Text>
 
-      <Text style={text}>La période de <strong>précommande garantie</strong> est désormais terminée.</Text>
+      <Text style={text}>La période de précommande garantie est désormais terminée.</Text>
 
       <Text style={text}>
         Néanmoins, dans le cadre de la production en cours, les tissus déjà coupés nous permettent encore, <strong>sur
@@ -41,8 +41,7 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
       </Text>
 
       <Text style={text}>
-        Plus vous commandez tôt, plus nous avons de chances d'intégrer votre commande à la production. En revanche,{" "}
-        <strong>nous ne pourrons pas garantir une livraison pour la rentrée pour les commandes trop tardives.</strong>
+        <strong>Plus vous commandez tôt, plus nous avons de chances d'intégrer votre commande à la production.</strong> En revanche, nous ne pourrons pas garantir une livraison pour la rentrée pour les commandes trop tardives.
       </Text>
 
       <Text style={text}><strong>Pour finaliser votre commande :</strong></Text>
@@ -54,7 +53,7 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
         • Renseignez leurs mensurations (pour obtenir la recommandation de taille)
       </Text>
       <Text style={{ ...text, paddingLeft: "16px" }}>
-        • Sélectionnez la taille souhaitée, puis validez et payez la commande dès que possible.
+        • Sélectionnez la taille souhaitée, puis validez et payez la commande <strong>dès que possible</strong>.
       </Text>
 
       {customMessage && <Text style={text}>{customMessage}</Text>}
