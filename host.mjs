@@ -25,7 +25,9 @@ let serverEntry = candidates.find((p) => existsSync(p));
 // Certains hébergeurs lancent la commande de démarrage directement depuis les
 // sources sans exécuter le Dockerfile. Dans ce cas, on reconstruit une seule
 // fois avant d'abandonner, au lieu de démarrer sans build serveur.
-if (!serverEntry && existsSync(join(__dirname, "vite.config.ts")) && existsSync(join(__dirname, "src"))) {
+const canRebuild = existsSync(join(__dirname, "package.json")) && existsSync(join(__dirname, "vite.config.ts")) && existsSync(join(__dirname, "src"));
+
+if (!serverEntry && canRebuild) {
   console.log("[server] Build serveur absent, exécution de `bun run build` avant démarrage...");
   const build = spawnSync("bun", ["run", "build"], {
     cwd: __dirname,
@@ -35,7 +37,11 @@ if (!serverEntry && existsSync(join(__dirname, "vite.config.ts")) && existsSync(
 
   if (build.status === 0) {
     serverEntry = candidates.find((p) => existsSync(p));
+  } else {
+    console.error(`[server] La reconstruction a échoué avec le code ${build.status ?? "inconnu"}.`);
   }
+} else if (!serverEntry) {
+  console.error("[server] Build serveur absent et sources de reconstruction absentes dans l'image runtime.");
 }
 
 if (!serverEntry) {
