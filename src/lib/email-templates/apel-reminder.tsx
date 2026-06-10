@@ -15,39 +15,47 @@ const APP_URL = "https://sjdc-dax.franceuniformes.fr";
 function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }: Props) {
   return (
     <EmailLayout
-      preview="blouses rentrée 2026 — dernière possibilité (précommande garantie terminée)"
-      title="Blouse scolaire — Dernière opportunité de commande pour la rentrée 2026"
+      preview="Dernière possibilité de commander une blouse neuve pour votre enfant — avant clôture des garanties de livraison pour la rentrée 2026"
+      title="Blouse scolaire de Dax — Vous n'avez pas encore passé commande !"
       familyName={familyName}
       signatureRole="boutique"
     >
       <Text style={text}>Bonjour{civilite ? ` ${civilite}` : ""},</Text>
 
-      <Text style={text}>Merci d'avoir créé votre compte sur la boutique des blouses SJDC (Dax).</Text>
+      <Text style={text}>
+        Nous vous remercions d'avoir créé votre compte famille sur la boutique des blouses de Saint‑Jacques de
+        Compostelle de Dax (SJDC). À ce jour, nous n'avons toutefois pas reçu de commande de votre part.
+      </Text>
+
+      <Text style={text}>La période de précommande garantie est terminée depuis le 25 mai.</Text>
 
       <Text style={text}>
-        La période de précommande garantie est désormais terminée (initialement prévue jusqu'au dimanche 24 mai,
-        prolongée exceptionnellement jusqu'au lundi 25 mai).
+        Néanmoins, dans le cadre de la production en cours, les tissus déjà coupés nous permettent encore, sur
+        certaines tailles, de produire quelques pièces pour la rentrée pour les familles n'ayant pas encore commandé de
+        blouse pour leur (ou leurs) enfant(s), dans la limite des stocks disponibles indiqués par taille sur le site.
       </Text>
 
       <Text style={text}>
-        👉 <strong>Dernière possibilité :</strong> nous laissons encore la commande ouverte uniquement dans la limite
-        des blouses disponibles à produire (stocks indiqués par taille sur le site).
+        👉 Pour commander, voici la dernière possibilité : la commande reste ouverte uniquement dans la limite des
+        blouses encore disponibles à produire.
       </Text>
 
       <Text style={text}>
-        Plus vous commandez tôt, plus nous avons de chances d'intégrer votre commande à la production,{" "}
-        <strong>sans pouvoir garantir une livraison pour la rentrée pour les commandes tardives.</strong>
+        Plus vous commandez tôt, plus nous avons de chances d'intégrer votre commande à la production. En revanche,{" "}
+        <strong>nous ne pouvons pas garantir une livraison pour la rentrée pour les commandes trop tardives.</strong>
       </Text>
 
       <Text style={text}>Pour finaliser votre commande :</Text>
 
       <Text style={{ ...text, paddingLeft: "16px" }}>
-        1) Vérifiez que votre/vos enfant(s) sont bien ajoutés dans <strong>« Mes enfants »</strong>
+        • Vérifiez que votre/vos enfant(s) sont bien ajoutés dans <strong>« Mes enfants »</strong>
       </Text>
       <Text style={{ ...text, paddingLeft: "16px" }}>
-        2) Renseignez leurs mensurations (pour obtenir la recommandation de taille)
+        • Renseignez leurs mensurations (pour obtenir la recommandation de taille)
       </Text>
-      <Text style={{ ...text, paddingLeft: "16px" }}>3) Sélectionnez la taille souhaitée et validez la commande.</Text>
+      <Text style={{ ...text, paddingLeft: "16px" }}>
+        • Sélectionnez la taille souhaitée, puis validez et payez la commande dès que possible.
+      </Text>
 
       {customMessage && <Text style={text}>{customMessage}</Text>}
 
@@ -56,7 +64,7 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
       </Button>
 
       <Text style={text}>
-        Merci pour votre réactivité.
+        Merci par avance pour votre compréhension et votre réactivité.
         <br />
         Bien cordialement,
       </Text>
@@ -72,7 +80,7 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
 
 export const template = {
   component: ApelReminder,
-  subject: "Dernière possibilité de commander — selon blouses disponibles à produire",
+  subject: "Une blouse neuve pour votre enfant — rentrée scolaire 2026 à SJDC de DAX",
   displayName: "Relance France Uniformes (hors délai garanti)",
   previewData: {
     civilite: "Madame",
