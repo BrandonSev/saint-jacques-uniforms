@@ -18,7 +18,7 @@ import {
   sendIncidentOpenedAdmin,
   sendIncidentResolutionFamily,
   type OrderEmailItem,
-} from "./email.server";
+} from "@/server/email.server";
 
 async function logResetError(payload: Record<string, any>) {
   const line = JSON.stringify({ ts: new Date().toISOString(), ...payload }) + "\n";
