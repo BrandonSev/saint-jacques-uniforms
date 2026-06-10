@@ -10,14 +10,25 @@ import { dirname, join } from "node:path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const distDir = join(__dirname, "dist");
 const clientDir = join(distDir, "client");
-const serverEntryMjs = join(distDir, "server", "index.mjs");
-const serverEntryJs = join(distDir, "server", "index.js");
-const serverEntry = existsSync(serverEntryMjs) ? serverEntryMjs : serverEntryJs;
 
-if (!existsSync(serverEntry)) {
-  console.error(`[server] Build introuvable: ${serverEntryMjs}. Lance "bun run build" d'abord.`);
+// Cherche l'entrée serveur dans tous les emplacements possibles
+// (dist/server = preset cloudflare actuel, .output/server = défaut Nitro).
+const candidates = [
+  join(distDir, "server", "index.mjs"),
+  join(distDir, "server", "index.js"),
+  join(__dirname, ".output", "server", "index.mjs"),
+  join(__dirname, ".output", "server", "index.js"),
+];
+const serverEntry = candidates.find((p) => existsSync(p));
+
+if (!serverEntry) {
+  console.error(
+    `[server] Build introuvable. Emplacements testés:\n  - ${candidates.join("\n  - ")}\n` +
+      `Lance "bun run build" avant de démarrer (et vide le cache de build Coolify si l'erreur persiste).`
+  );
   process.exit(1);
 }
+console.log(`[server] Entrée serveur: ${serverEntry}`);
 
 // Charge le handler worker (export default { fetch })
 const mod = await import(serverEntry);
