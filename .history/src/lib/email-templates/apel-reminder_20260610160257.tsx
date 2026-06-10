@@ -69,7 +69,7 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
         Bien cordialement,
       </Text>
 
-      <Text style={{ ...muted, color: "#de6a19" }}>
+      <Text style={muted}>
         Cet email vous est envoyé par <strong>France Uniformes</strong> pour le compte de votre établissement scolaire.
         <br />
         Si vous avez déjà passé commande, merci d'ignorer ce message.

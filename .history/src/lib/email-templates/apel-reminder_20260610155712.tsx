@@ -27,16 +27,16 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
         Compostelle de Dax (SJDC). À ce jour, nous n'avons toutefois pas reçu de commande de votre part.
       </Text>
 
-      <Text style={text}>La période de <strong>précommande garantie</strong> est terminée depuis le <strong>précommande garantie</strong>.</Text>
+      <Text style={text}>La période de précommande garantie est terminée depuis le 25 mai.</Text>
 
       <Text style={text}>
-        Néanmoins, dans le cadre de la production en cours, les tissus déjà coupés nous permettent encore, <strong>sur
-        certaines tailles</strong>, de produire quelques pièces pour la rentrée pour les familles n'ayant pas encore commandé de
-        blouse pour leur (ou leurs) enfant(s), <strong>dans la limite des stocks disponibles indiqués par taille sur le site</strong>.
+        Néanmoins, dans le cadre de la production en cours, les tissus déjà coupés nous permettent encore, sur
+        certaines tailles, de produire quelques pièces pour la rentrée pour les familles n'ayant pas encore commandé de
+        blouse pour leur (ou leurs) enfant(s), dans la limite des stocks disponibles indiqués par taille sur le site.
       </Text>
 
       <Text style={text}>
-        👉 <strong>Pour commander, voici la dernière possibilité :</strong> la commande reste ouverte uniquement dans la limite des
+        👉 Pour commander, voici la dernière possibilité : la commande reste ouverte uniquement dans la limite des
         blouses encore disponibles à produire.
       </Text>
 
@@ -45,7 +45,7 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
         <strong>nous ne pouvons pas garantir une livraison pour la rentrée pour les commandes trop tardives.</strong>
       </Text>
 
-      <Text style={text}><strong>Pour finaliser votre commande :</strong></Text>
+      <Text style={text}>Pour finaliser votre commande :</Text>
 
       <Text style={{ ...text, paddingLeft: "16px" }}>
         • Vérifiez que votre/vos enfant(s) sont bien ajoutés dans <strong>« Mes enfants »</strong>
@@ -69,7 +69,7 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
         Bien cordialement,
       </Text>
 
-      <Text style={{ ...muted, color: "#de6a19" }}>
+      <Text style={muted}>
         Cet email vous est envoyé par <strong>France Uniformes</strong> pour le compte de votre établissement scolaire.
         <br />
         Si vous avez déjà passé commande, merci d'ignorer ce message.

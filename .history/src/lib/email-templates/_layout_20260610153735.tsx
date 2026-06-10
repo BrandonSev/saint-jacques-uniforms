@@ -94,7 +94,7 @@ const familyStyle = {
 };
 const accentBar = { height: "3px", backgroundColor: "#c8102e", lineHeight: "3px", fontSize: 0 };
 const content = { padding: "32px", backgroundColor: "#ffffff" };
-const signature = { fontSize: "14px", lineHeight: "1.6", color: "#1a1a1a", margin: "28px 0 0", fontWeight: "bold" };
+const signature = { fontSize: "14px", lineHeight: "1.6", color: "#1a1a1a", margin: "28px 0 0" };
 const footer = { backgroundColor: "#f5f5f5", padding: "20px 32px", textAlign: "center" as const };
 const footerText = { fontSize: "12px", color: "#666666", margin: 0, fontWeight: 600 };
 const footerSmall = { fontSize: "11px", color: "#999999", margin: "6px 0 0" };
