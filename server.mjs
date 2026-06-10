@@ -10,10 +10,12 @@ import { dirname, join } from "node:path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const distDir = join(__dirname, "dist");
 const clientDir = join(distDir, "client");
-const serverEntry = join(distDir, "server", "index.js");
+const serverEntryMjs = join(distDir, "server", "index.mjs");
+const serverEntryJs = join(distDir, "server", "index.js");
+const serverEntry = existsSync(serverEntryMjs) ? serverEntryMjs : serverEntryJs;
 
 if (!existsSync(serverEntry)) {
-  console.error(`[server] Build introuvable: ${serverEntry}. Lance "bun run build" d'abord.`);
+  console.error(`[server] Build introuvable: ${serverEntryMjs}. Lance "bun run build" d'abord.`);
   process.exit(1);
 }
 
