@@ -28,22 +28,21 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
         Compostelle de Dax (SJDC). À ce jour, nous n'avons toutefois pas reçu de commande de votre part.
       </Text>
 
-      <Text style={text}>La période de <strong>précommande garantie</strong> est terminée depuis le <strong>précommande garantie</strong>.</Text>
+      <Text style={text}>La période de <strong>précommande garantie</strong> est désormais terminée.</Text>
 
       <Text style={text}>
         Néanmoins, dans le cadre de la production en cours, les tissus déjà coupés nous permettent encore, <strong>sur
         certaines tailles</strong>, de produire quelques pièces pour la rentrée pour les familles n'ayant pas encore commandé de
-        blouse pour leur (ou leurs) enfant(s), <strong>dans la limite des stocks disponibles indiqués par taille sur le site</strong>.
+        blouse pour leur(s) enfant(s), <strong>dans la limite des stocks disponibles indiqués par taille sur le site</strong>.
       </Text>
 
       <Text style={text}>
-        👉 <strong>Pour commander, voici la dernière possibilité :</strong> la commande reste ouverte uniquement dans la limite des
-        blouses encore disponibles à produire.
+        👉 <strong>Pour commander, voici la dernière possibilité :</strong>
       </Text>
 
       <Text style={text}>
         Plus vous commandez tôt, plus nous avons de chances d'intégrer votre commande à la production. En revanche,{" "}
-        <strong>nous ne pouvons pas garantir une livraison pour la rentrée pour les commandes trop tardives.</strong>
+        <strong>nous ne pourrons pas garantir une livraison pour la rentrée pour les commandes trop tardives.</strong>
       </Text>
 
       <Text style={text}><strong>Pour finaliser votre commande :</strong></Text>
