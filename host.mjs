@@ -13,8 +13,10 @@ const distDir = join(__dirname, "dist");
 const clientDir = join(distDir, "client");
 
 // Cherche l'entrée serveur dans tous les emplacements possibles
-// (dist/server = preset cloudflare actuel, .output/server = défaut Nitro).
+// (dist/ssr = @cloudflare/vite-plugin + TanStack Start, dist/server = fallback Nitro/défaut, .output/server = Nitro classique).
 const candidates = [
+  join(distDir, "ssr", "index.mjs"),
+  join(distDir, "ssr", "index.js"),
   join(distDir, "server", "index.mjs"),
   join(distDir, "server", "index.js"),
   join(__dirname, ".output", "server", "index.mjs"),
