@@ -84,7 +84,7 @@ const container = {
 };
 const header = { backgroundColor: "#0a2540", padding: "26px 32px" };
 const logo = { display: "block", margin: "0 0 6px", height: "auto" };
-const titleStyle = { fontSize: "22px", fontWeight: 600, color: "#ffffff", margin: "20px 0 0" };
+const titleStyle = { fontSize: "22px", fontWeight: 600, color: "#ffffff", margin: "22px 0 0" };
 const familyStyle = {
   fontSize: "13px",
   color: "#ffffff",
