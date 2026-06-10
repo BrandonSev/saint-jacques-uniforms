@@ -4,6 +4,7 @@ import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
 import { readFileSync, existsSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -19,7 +20,23 @@ const candidates = [
   join(__dirname, ".output", "server", "index.mjs"),
   join(__dirname, ".output", "server", "index.js"),
 ];
-const serverEntry = candidates.find((p) => existsSync(p));
+let serverEntry = candidates.find((p) => existsSync(p));
+
+// Certains hébergeurs lancent la commande de démarrage directement depuis les
+// sources sans exécuter le Dockerfile. Dans ce cas, on reconstruit une seule
+// fois avant d'abandonner, au lieu de démarrer sans build serveur.
+if (!serverEntry && existsSync(join(__dirname, "vite.config.ts")) && existsSync(join(__dirname, "src"))) {
+  console.log("[server] Build serveur absent, exécution de `bun run build` avant démarrage...");
+  const build = spawnSync("bun", ["run", "build"], {
+    cwd: __dirname,
+    stdio: "inherit",
+    env: process.env,
+  });
+
+  if (build.status === 0) {
+    serverEntry = candidates.find((p) => existsSync(p));
+  }
+}
 
 if (!serverEntry) {
   console.error(
