@@ -15,6 +15,8 @@ const clientDir = join(distDir, "client");
 // Cherche l'entrée serveur dans tous les emplacements possibles
 // (dist/ssr = @cloudflare/vite-plugin + TanStack Start, dist/server = fallback Nitro/défaut, .output/server = Nitro classique).
 const candidates = [
+  join(distDir, "server", "server.js"),
+  join(distDir, "server", "server.mjs"),
   join(distDir, "ssr", "index.mjs"),
   join(distDir, "ssr", "index.js"),
   join(distDir, "server", "index.mjs"),
@@ -39,6 +41,14 @@ if (!serverEntry && canRebuild) {
 
   if (build.status === 0) {
     serverEntry = candidates.find((p) => existsSync(p));
+    if (!serverEntry) {
+      const { readdirSync } = await import("node:fs");
+      const distServer = join(distDir, "server");
+      const distSsr = join(distDir, "ssr");
+      const listDir = (d) => { try { return readdirSync(d).join(", "); } catch { return "(absent)"; } };
+      console.error(`[server] dist/server: ${listDir(distServer)}`);
+      console.error(`[server] dist/ssr: ${listDir(distSsr)}`);
+    }
   } else {
     console.error(`[server] La reconstruction a échoué avec le code ${build.status ?? "inconnu"}.`);
   }
