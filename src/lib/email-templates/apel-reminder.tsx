@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Button, Text } from "@react-email/components";
-import { EmailLayout, text, muted, button } from "./_layout";
+import { EmailLayout, text, button } from "./_layout";
 import type { TemplateEntry } from "./registry";
 
 interface Props {
@@ -19,6 +19,7 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
       title="Blouse scolaire de Dax — Vous n'avez pas encore passé commande !"
       familyName={familyName}
       signatureRole="boutique"
+      disclaimer={<>Cet email vous est envoyé par <strong>France Uniformes</strong> pour le compte de votre établissement scolaire.<br />Si vous avez déjà passé commande, merci d'ignorer ce message.</>}
     >
       <Text style={text}>Bonjour{civilite ? ` ${civilite}` : ""},</Text>
 
@@ -65,15 +66,8 @@ function ApelReminder({ civilite, familyName, appUrl = APP_URL, customMessage }:
 
       <Text style={text}>
         Merci par avance pour votre compréhension et votre réactivité.
-        <br />
-        Bien cordialement,
       </Text>
 
-      <Text style={{ ...muted, color: "#de6a19" }}>
-        Cet email vous est envoyé par <strong>France Uniformes</strong> pour le compte de votre établissement scolaire.
-        <br />
-        Si vous avez déjà passé commande, merci d'ignorer ce message.
-      </Text>
     </EmailLayout>
   );
 }
