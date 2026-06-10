@@ -39,6 +39,13 @@ COPY --from=builder /app/host.mjs ./host.mjs
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 
+# Fallback Coolify : si un cache ou une commande de démarrage lance l'app sans
+# artefacts dist, le wrapper peut reconstruire au démarrage au lieu de sortir.
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/vite.config.ts ./vite.config.ts
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
+COPY --from=builder /app/wrangler.jsonc ./wrangler.jsonc
+
 EXPOSE 3000
 
 CMD ["bun", "run", "start"]
