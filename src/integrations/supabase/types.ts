@@ -602,6 +602,7 @@ export type Database = {
           code_etablissement: string | null
           code_postal: string | null
           created_at: string
+          deleted_at: string | null
           email: string
           family_name: string | null
           id: string
@@ -617,6 +618,7 @@ export type Database = {
           code_etablissement?: string | null
           code_postal?: string | null
           created_at?: string
+          deleted_at?: string | null
           email: string
           family_name?: string | null
           id: string
@@ -632,6 +634,7 @@ export type Database = {
           code_etablissement?: string | null
           code_postal?: string | null
           created_at?: string
+          deleted_at?: string | null
           email?: string
           family_name?: string | null
           id?: string
