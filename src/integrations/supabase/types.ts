@@ -14,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      blouse_stock: {
+        Row: {
+          created_at: string
+          id: string
+          remaining: number
+          size: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          remaining?: number
+          size: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          remaining?: number
+          size?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      cart_items: {
+        Row: {
+          child_id: string | null
+          created_at: string
+          id: string
+          image: string
+          name: string
+          price: number
+          product_id: string
+          qty: number
+          ref: string
+          size: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          child_id?: string | null
+          created_at?: string
+          id?: string
+          image?: string
+          name: string
+          price: number
+          product_id: string
+          qty?: number
+          ref: string
+          size: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          child_id?: string | null
+          created_at?: string
+          id?: string
+          image?: string
+          name?: string
+          price?: number
+          product_id?: string
+          qty?: number
+          ref?: string
+          size?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       children: {
         Row: {
           blouse_portee_2025: boolean | null
@@ -533,6 +602,7 @@ export type Database = {
           code_etablissement: string | null
           code_postal: string | null
           created_at: string
+          deleted_at: string | null
           email: string
           family_name: string | null
           id: string
@@ -548,6 +618,7 @@ export type Database = {
           code_etablissement?: string | null
           code_postal?: string | null
           created_at?: string
+          deleted_at?: string | null
           email: string
           family_name?: string | null
           id: string
@@ -563,6 +634,7 @@ export type Database = {
           code_etablissement?: string | null
           code_postal?: string | null
           created_at?: string
+          deleted_at?: string | null
           email?: string
           family_name?: string | null
           id?: string
@@ -641,6 +713,10 @@ export type Database = {
           user_id: string
           ville: string
         }[]
+      }
+      decrement_blouse_stock: {
+        Args: { _order_id: string }
+        Returns: undefined
       }
       delete_email: {
         Args: { message_id: number; queue_name: string }

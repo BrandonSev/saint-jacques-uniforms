@@ -18,8 +18,8 @@ import { AuthHeroBackground } from "@/components/AuthHeroBackground";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
-import { verifyEstablishmentCode } from "@/server/establishment.functions";
-import { sendWelcome } from "@/server/email.functions";
+import { verifyEstablishmentCode } from "@/lib/establishment.functions";
+import { sendWelcome } from "@/lib/email.functions";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -40,7 +40,7 @@ const signinSchema = z.object({
 });
 
 const signupSchema = z.object({
-  civilite: z.enum(["M.", "Mme", "Autre"]),
+  civilite: z.enum(["Monsieur", "Madame", "Autre"]),
   prenom: z.string().trim().min(1, "Prénom requis").max(80),
   nom: z.string().trim().min(1, "Nom requis").max(80),
   email: z.string().trim().email("Email invalide").max(255),
@@ -63,7 +63,7 @@ function LoginPage() {
     if (!authLoading && user) navigate({ to: "/boutique" });
   }, [user, authLoading, navigate]);
 
-  const [civilite, setCivilite] = useState<"M." | "Mme" | "Autre">("Mme");
+  const [civilite, setCivilite] = useState<"Monsieur" | "Madame" | "Autre">("Madame");
   const [prenom, setPrenom] = useState("");
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
@@ -163,10 +163,11 @@ function LoginPage() {
       toast.error(error.message.includes("already") ? "Cet email est déjà utilisé" : error.message);
       return;
     }
-    // Persiste les infos postales sur le profil après création
+    // Persiste les infos postales sur le profil après création (si déjà connecté)
     const {
-      data: { user: u },
-    } = await supabase.auth.getUser();
+      data: { session },
+    } = await supabase.auth.getSession();
+    const u = session?.user ?? null;
     if (u) {
       await supabase
         .from("profiles")
@@ -182,9 +183,14 @@ function LoginPage() {
       try {
         await sendWelcome({ data: { email: parsed.data.email, prenom: parsed.data.prenom, nom: parsed.data.nom } });
       } catch {}
+      toast.success("Espace famille créé !");
+      navigate({ to: "/boutique" });
+      return;
     }
-    toast.success("Espace famille créé !");
-    navigate({ to: "/boutique" });
+    toast.success(
+      "Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.",
+      { duration: 8000 },
+    );
   };
 
   return (
@@ -276,7 +282,7 @@ function LoginPage() {
                     Civilité
                   </span>
                   <div className="mt-2 grid grid-cols-3 gap-2">
-                    {(["Mme", "M.", "Autre"] as const).map((c) => (
+                    {(["Madame", "Monsieur", "Autre"] as const).map((c) => (
                       <button
                         type="button"
                         key={c}

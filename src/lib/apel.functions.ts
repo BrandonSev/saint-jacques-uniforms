@@ -4,14 +4,11 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { withSupabaseAuth } from "@/integrations/supabase/supabase-auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { enqueueTransactionalEmail } from "@/lib/email/send.server";
+import { formatCivilite } from "@/lib/utils";
 
 type AppRole = "admin" | "apel" | "user";
 async function userHasAnyRole(userId: string, roles: AppRole[]) {
-  const { data } = await supabaseAdmin
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", userId)
-    .in("role", roles);
+  const { data } = await supabaseAdmin.from("user_roles").select("role").eq("user_id", userId).in("role", roles);
   return (data ?? []).length > 0;
 }
 
@@ -53,7 +50,7 @@ export const sendApelReminders = createServerFn({ method: "POST" })
     }
     const { data: profiles } = await supabaseAdmin
       .from("profiles")
-      .select("id, email, prenom, nom")
+      .select("id, email, prenom, nom, civilite")
       .in("id", data.userIds);
     let sent = 0;
     const errors: string[] = [];
@@ -64,6 +61,7 @@ export const sendApelReminders = createServerFn({ method: "POST" })
           templateName: "apel-reminder",
           recipientEmail: p.email,
           templateData: {
+            civilite: formatCivilite(p.civilite),
             prenom: p.prenom ?? "",
             familyName: (p as any).nom ?? "",
             deadline: data.deadline ?? "30 juin 2026",
@@ -96,28 +94,51 @@ export const setUserRole = createServerFn({ method: "POST" })
     if (!(await userHasAnyRole(userId, ["admin"]))) {
       return { ok: false as const, error: "forbidden" as const };
     }
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
-      .select("id")
-      .eq("email", data.email)
-      .maybeSingle();
+    const { data: profile } = await supabaseAdmin.from("profiles").select("id").eq("email", data.email).maybeSingle();
     if (!profile) return { ok: false as const, error: "user_not_found" as const };
     if (data.action === "grant") {
-      const { error } = await supabaseAdmin
-        .from("user_roles")
-        .insert({ user_id: profile.id, role: data.role });
+      const { error } = await supabaseAdmin.from("user_roles").insert({ user_id: profile.id, role: data.role });
       if (error && !error.message.includes("duplicate")) {
         return { ok: false as const, error: error.message };
       }
     } else {
-      const { error } = await supabaseAdmin
-        .from("user_roles")
-        .delete()
-        .eq("user_id", profile.id)
-        .eq("role", data.role);
+      const { error } = await supabaseAdmin.from("user_roles").delete().eq("user_id", profile.id).eq("role", data.role);
       if (error) return { ok: false as const, error: error.message };
     }
     return { ok: true as const };
+  });
+
+// Test : envoi d'une relance APEL au compte de test (admin uniquement)
+export const sendTestApelReminder = createServerFn({ method: "POST" })
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
+  .inputValidator((d) => z.object({}).parse(d))
+  .handler(async ({ context }) => {
+    const { userId } = context;
+    if (!(await userHasAnyRole(userId, ["admin"]))) {
+      return { ok: false as const, error: "forbidden" as const };
+    }
+    const testEmail = "brandon@franceuniformes.fr";
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("id, email, prenom, nom, civilite")
+      .eq("email", testEmail)
+      .maybeSingle();
+    try {
+      await enqueueTransactionalEmail({
+        templateName: "apel-reminder",
+        recipientEmail: testEmail,
+        templateData: {
+          civilite: formatCivilite(profile?.civilite),
+          prenom: profile?.prenom ?? "",
+          familyName: profile?.nom ?? "",
+          deadline: "30 juin 2026",
+        },
+        idempotencyKey: `apel-reminder-test-${Date.now()}`,
+      });
+      return { ok: true as const, recipient: testEmail };
+    } catch (e: any) {
+      return { ok: false as const, error: e?.message ?? "send_failed" };
+    }
   });
 
 // Liste des utilisateurs ayant un rôle (admin uniquement)

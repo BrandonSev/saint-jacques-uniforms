@@ -8,12 +8,10 @@ interface LayoutProps {
   familyName?: string;
   /** Fonction/équipe qui signe (ex : "Commandes", "Service après-vente"). */
   signatureRole?: string;
-  /** Mention légale/disclaimer affichée après la signature (ex : "Si vous avez déjà passé commande…"). */
-  disclaimer?: React.ReactNode;
   children: React.ReactNode;
 }
 
-export function EmailLayout({ preview, title, familyName, signatureRole, disclaimer, children }: LayoutProps) {
+export function EmailLayout({ preview, title, familyName, signatureRole, children }: LayoutProps) {
   const cleanFamily = familyName?.trim();
   return (
     <Html lang="fr" dir="ltr">
@@ -38,10 +36,9 @@ export function EmailLayout({ preview, title, familyName, signatureRole, disclai
               <Text style={signature}>
                 Bien cordialement,
                 <br />
-                <strong>L'équipe {signatureRole} de France Uniformes</strong>
+                L'équipe {signatureRole} de France Uniformes
               </Text>
             ) : null}
-            {disclaimer ? <Text style={disclaimerStyle}>{disclaimer}</Text> : null}
           </Section>
           <Section style={footer}>
             <Text style={footerText}>France Uniformes — Uniformes scolaires sur mesure</Text>
@@ -87,7 +84,7 @@ const container = {
 };
 const header = { backgroundColor: "#0a2540", padding: "26px 32px" };
 const logo = { display: "block", margin: "0 0 6px", height: "auto" };
-const titleStyle = { fontSize: "22px", fontWeight: 600, color: "#ffffff", margin: "20px 0 0" };
+const titleStyle = { fontSize: "22px", fontWeight: 600, color: "#ffffff", margin: "8px 0 0" };
 const familyStyle = {
   fontSize: "13px",
   color: "#ffffff",
@@ -97,8 +94,7 @@ const familyStyle = {
 };
 const accentBar = { height: "3px", backgroundColor: "#c8102e", lineHeight: "3px", fontSize: 0 };
 const content = { padding: "32px", backgroundColor: "#ffffff" };
-const signature = { fontSize: "14px", lineHeight: "1.6", color: "#1a1a1a", margin: "28px 0 0" };
-const disclaimerStyle = { fontSize: "13px", lineHeight: "1.5", margin: "14px 0 0" };
+const signature = { fontSize: "14px", lineHeight: "1.6", color: "#1a1a1a", margin: "28px 0 0", fontWeight: "bold" };
 const footer = { backgroundColor: "#f5f5f5", padding: "20px 32px", textAlign: "center" as const };
 const footerText = { fontSize: "12px", color: "#666666", margin: 0, fontWeight: 600 };
 const footerSmall = { fontSize: "11px", color: "#999999", margin: "6px 0 0" };

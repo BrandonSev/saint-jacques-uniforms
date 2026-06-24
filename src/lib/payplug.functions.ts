@@ -2,7 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { withSupabaseAuth } from "@/integrations/supabase/supabase-auth-middleware";
-import { createPayplugPayment, fetchPayplugPayment } from "./payplug.server";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { createPayplugPayment, fetchPayplugPayment } from "@/server/payplug.server";
 import { getRequestHost } from "@tanstack/react-start/server";
 
 function appBaseUrl() {
@@ -44,7 +45,7 @@ export const createOrderPayment = createServerFn({ method: "POST" })
         const existing = await fetchPayplugPayment(order.payplug_payment_id);
         if (existing.is_paid) {
           // Sync DB et empêche un re-paiement
-          await supabase
+          await supabaseAdmin
             .from("orders")
             .update({ status: "Paiement validé", paid_at: new Date().toISOString() })
             .eq("id", order.id);
@@ -52,6 +53,13 @@ export const createOrderPayment = createServerFn({ method: "POST" })
         }
         // Si le paiement n'a pas échoué/expiré, on peut réutiliser le lien hébergé
         if (!existing.failure) {
+          // Réinitialise le statut si la commande avait été marquée en échec précédemment
+          if (order.status === "Paiement échoué") {
+            await supabaseAdmin
+              .from("orders")
+              .update({ status: "En attente paiement" })
+              .eq("id", order.id);
+          }
           return {
             ok: true as const,
             paymentUrl: order.payment_url,
@@ -117,10 +125,11 @@ export const createOrderPayment = createServerFn({ method: "POST" })
       const url = payment.hosted_payment?.payment_url;
       if (!url) return { ok: false as const, error: "no_payment_url" };
 
-      await supabase
+      const { error: updateError } = await supabaseAdmin
         .from("orders")
         .update({ payplug_payment_id: payment.id, payment_url: url, status: "En attente paiement" })
         .eq("id", order.id);
+      if (updateError) throw updateError;
 
       return { ok: true as const, paymentUrl: url, paymentId: payment.id, reused: false };
     } catch (e: any) {

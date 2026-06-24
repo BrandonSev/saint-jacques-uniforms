@@ -7,8 +7,10 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
-import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/server/email.functions";
-import { listRoleAssignments, setUserRole } from "@/server/apel.functions";
+import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/lib/email.functions";
+import { listRoleAssignments, setUserRole, sendTestApelReminder } from "@/lib/apel.functions";
+import { formatCivilite } from "@/lib/utils";
+import { BlouseStockManager } from "@/components/BlouseStockManager";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
@@ -143,16 +145,19 @@ function AdminPage() {
           `
           child_prenom, child_nom, child_classe, child_section,
           product_name, product_ref, size, quantity, unit_price, line_total,
-          orders!inner ( order_number, created_at, status, family_civilite, family_nom, family_prenom, family_email, family_telephone )
+          orders!inner ( order_number, created_at, status, paid_at, family_civilite, family_nom, family_prenom, family_email, family_telephone )
         `,
         )
+        .not("orders.paid_at", "is", null)
         .order("created_at", { foreignTable: "orders", ascending: false });
       if (error) {
         toast.error(error.message);
         setLoading(false);
         return;
       }
-      const flat: Row[] = (data ?? []).map((r: any) => ({
+      const flat: Row[] = (data ?? [])
+        .filter((r: any) => r.orders?.paid_at != null && r.orders?.status !== "Annulée")
+        .map((r: any) => ({
         order_number: r.orders.order_number,
         created_at: r.orders.created_at,
         status: r.orders.status,
@@ -275,7 +280,7 @@ function AdminPage() {
       "N° Commande": r.order_number,
       Date: new Date(r.created_at).toLocaleDateString("fr-FR"),
       Statut: r.status,
-      Famille: `${r.family_civilite ?? ""} ${r.family_prenom} ${r.family_nom}`.trim(),
+      Famille: `${formatCivilite(r.family_civilite)} ${r.family_prenom} ${r.family_nom}`.trim(),
       Email: r.family_email,
       Téléphone: r.family_telephone ?? "",
       Enfant: `${r.child_prenom} ${r.child_nom}`,
@@ -323,12 +328,13 @@ function AdminPage() {
   const totalCommandes = new Set(rows.map((r) => r.order_number)).size;
   const totalArticles = rows.reduce((s, r) => s + r.quantity, 0);
   const totalCA = rows.reduce((s, r) => s + r.line_total, 0);
+  const totalCA_HT = totalCA / 1.2;
   const incidentsEnAttente = incidents.filter((i) => ["À traiter", "En attente"].includes(i.status)).length;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader schoolName={SCHOOL_LABEL} />
-      <section className="mx-auto max-w-7xl px-4 pt-6 pb-12 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-6xl w-full px-4 pt-6 pb-12 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
@@ -348,10 +354,11 @@ function AdminPage() {
           </button>
         </div>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+        <div className="mt-6 grid gap-3 sm:grid-cols-4">
           <Stat label="Commandes" value={totalCommandes.toString()} />
           <Stat label="Articles" value={totalArticles.toString()} />
-          <Stat label="Total" value={`${totalCA.toFixed(2)} €`} />
+          <Stat label="Total HT" value={`${totalCA_HT.toFixed(2)} €`} />
+          <Stat label="Total TTC" value={`${totalCA.toFixed(2)} €`} />
         </div>
 
         <div className="mt-8 inline-flex rounded-xl border border-border bg-card p-1">
@@ -616,6 +623,25 @@ function RolesPanel() {
 
   return (
     <div className="mt-4 space-y-6">
+      <BlouseStockManager />
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <h2 className="text-base font-semibold text-foreground">Test email APEL</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Envoie un email de relance APEL au compte de test{" "}
+          <strong>brandon@franceuniformes.fr</strong>.
+        </p>
+        <button
+          onClick={async () => {
+            const r = await sendTestApelReminder({ data: {} });
+            if (r.ok) toast.success(`Email envoyé à ${r.recipient}`);
+            else toast.error(r.error || "Erreur");
+          }}
+          className="mt-3 h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+        >
+          Envoyer le test
+        </button>
+      </div>
+
       <div className="rounded-2xl border border-border bg-card p-5">
         <h2 className="text-base font-semibold text-foreground">Attribuer un rôle</h2>
         <p className="mt-1 text-xs text-muted-foreground">
