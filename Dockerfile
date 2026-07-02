@@ -13,7 +13,7 @@ COPY package.json bun.lock* bun.lockb* ./
 RUN bun install --frozen-lockfile
 
 COPY . .
-RUN bun run build
+RUN bun run build && mkdir -p dist && cp -r .output/server dist/server && cp -r .output/public dist/client
 
 # ---- Runtime stage ----
 FROM oven/bun:1-slim AS runtime
@@ -34,7 +34,7 @@ ENV VITE_SUPABASE_PUBLISHABLE_KEY=$VITE_SUPABASE_PUBLISHABLE_KEY
 ENV VITE_SUPABASE_PROJECT_ID=$VITE_SUPABASE_PROJECT_ID
 
 # Copie le build et les deps runtime (hono + @hono/node-server)
-COPY --from=builder /app/.output ./dist
+COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/host.mjs ./host.mjs
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
