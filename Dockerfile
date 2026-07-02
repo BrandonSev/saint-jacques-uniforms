@@ -13,7 +13,7 @@ COPY package.json bun.lock* bun.lockb* ./
 RUN bun install --frozen-lockfile
 
 COPY . .
-RUN bun run build && mkdir -p dist && cp -r .output/server dist/server && cp -r .output/public dist/client
+RUN bun run build
 
 # ---- Runtime stage ----
 FROM oven/bun:1-slim AS runtime
