@@ -188,7 +188,7 @@ function LoginPage() {
       return;
     }
       // Envoi manuel de l'email de confirmation (contourne le webhook Lovable)
-      sendSignupConfirmation({
+      const confirmation = await sendSignupConfirmation({
         data: {
           email: parsed.data.email,
           password: parsed.data.password,
@@ -196,11 +196,18 @@ function LoginPage() {
           nom: parsed.data.nom,
           redirectTo: `${window.location.origin}/boutique`,
         },
-      }).catch(() => {});
-      toast.success(
-        "Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.",
-        { duration: 8000 },
-      );
+      }).catch(() => ({ ok: false as const, error: "send_failed" as const }));
+      if (confirmation?.ok) {
+        toast.success(
+          "Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.",
+          { duration: 8000 },
+        );
+      } else {
+        toast.error(
+          "Compte créé, mais l'email de confirmation n'a pas pu être envoyé. Contactez-nous ou réessayez plus tard.",
+          { duration: 8000 },
+        );
+      }
   };
 
   return (
