@@ -66,7 +66,6 @@ export const sendSignupConfirmation = createServerFn({ method: "POST" })
     redirectTo: z.string().url(),
   }).parse(d))
   .handler(async ({ data }) => {
-    const siteUrl = process.env.URL || "https://sjdc-dax.franceuniformes.fr";
     try {
       const { data: linkData, error } = await supabaseAdmin.auth.admin.generateLink({
         type: "invite",
@@ -83,7 +82,6 @@ export const sendSignupConfirmation = createServerFn({ method: "POST" })
         recipientEmail: data.email,
         templateData: {
           siteName: "France Uniformes",
-          siteUrl,
           recipient: data.email,
           confirmationUrl,
         },

@@ -1,61 +1,37 @@
-import * as React from 'react'
-import type { TemplateEntry } from './registry'
+import * as React from "react";
+import { Button, Text } from "@react-email/components";
+import { EmailLayout, text, button } from "./_layout";
+import type { TemplateEntry } from "./registry";
 
-import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Link,
-  Preview,
-  Text,
-} from '@react-email/components'
-
-interface SignupEmailProps {
-  siteName: string
-  siteUrl: string
-  recipient: string
-  confirmationUrl: string
+interface Props {
+  siteName: string;
+  confirmationUrl: string;
 }
 
-export const SignupEmail = ({
-  siteName,
-  siteUrl,
-  recipient,
-  confirmationUrl,
-}: SignupEmailProps) => (
-  <Html lang="en" dir="ltr">
-    <Head />
-    <Preview>Confirm your email for {siteName}</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Heading style={h1}>Confirm your email</Heading>
-        <Text style={text}>
-          Thanks for signing up for{' '}
-          <Link href={siteUrl} style={link}>
-            <strong>{siteName}</strong>
-          </Link>
-          !
-        </Text>
-        <Text style={text}>
-          Please confirm your email address (
-          <Link href={`mailto:${recipient}`} style={link}>
-            {recipient}
-          </Link>
-          ) by clicking the button below:
-        </Text>
-        <Button style={button} href={confirmationUrl}>
-          Verify Email
-        </Button>
-        <Text style={footer}>
-          If you didn't create an account, you can safely ignore this email.
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-)
+function SignupEmail({ siteName, confirmationUrl }: Props) {
+  return (
+    <EmailLayout
+      preview="Confirmez votre adresse email"
+      title="Confirmez votre inscription"
+      signatureRole="Boutique"
+    >
+      <Text style={text}>Bonjour,</Text>
+      <Text style={text}>
+        Merci de vous être inscrit sur la boutique <strong>{siteName}</strong>.
+      </Text>
+      <Text style={text}>
+        Pour finaliser votre inscription, veuillez confirmer votre adresse email
+        en cliquant sur le bouton ci-dessous :
+      </Text>
+      <Button href={confirmationUrl} style={button}>
+        Confirmer mon email
+      </Button>
+      <Text style={text}>
+        Si vous n'avez pas créé de compte, vous pouvez ignorer cet email.
+      </Text>
+    </EmailLayout>
+  );
+}
 
 export const template = {
   component: SignupEmail,
@@ -63,33 +39,6 @@ export const template = {
   displayName: "Confirmation d'inscription",
   previewData: {
     siteName: "France Uniformes",
-    siteUrl: "https://sjdc-dax.franceuniformes.fr",
-    recipient: "user@example.com",
     confirmationUrl: "https://sjdc-dax.franceuniformes.fr/boutique",
   },
 } satisfies TemplateEntry;
-
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
-const link = { color: 'inherit', textDecoration: 'underline' }
-const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
-  fontSize: '14px',
-  borderRadius: '8px',
-  padding: '12px 20px',
-  textDecoration: 'none',
-}
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
