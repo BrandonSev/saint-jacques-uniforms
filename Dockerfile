@@ -34,7 +34,7 @@ ENV VITE_SUPABASE_PUBLISHABLE_KEY=$VITE_SUPABASE_PUBLISHABLE_KEY
 ENV VITE_SUPABASE_PROJECT_ID=$VITE_SUPABASE_PROJECT_ID
 
 # Copie le build et les deps runtime (hono + @hono/node-server)
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/.output ./dist
 COPY --from=builder /app/host.mjs ./host.mjs
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
