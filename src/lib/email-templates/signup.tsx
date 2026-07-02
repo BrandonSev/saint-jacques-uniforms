@@ -8,7 +8,7 @@ interface Props {
   confirmationUrl: string;
 }
 
-function SignupEmail({ siteName, confirmationUrl }: Props) {
+export function SignupEmail({ siteName, confirmationUrl }: Props) {
   return (
     <EmailLayout
       preview="Confirmez votre adresse email"
