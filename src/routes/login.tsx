@@ -19,7 +19,7 @@ import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { verifyEstablishmentCode } from "@/lib/establishment.functions";
-import { sendWelcome } from "@/lib/email.functions";
+import { sendWelcome, sendSignupConfirmation } from "@/lib/email.functions";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -187,10 +187,19 @@ function LoginPage() {
       navigate({ to: "/boutique" });
       return;
     }
-    toast.success(
-      "Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.",
-      { duration: 8000 },
-    );
+      // Envoi manuel de l'email de confirmation (contourne le webhook Lovable)
+      sendSignupConfirmation({
+        data: {
+          email: parsed.data.email,
+          prenom: parsed.data.prenom,
+          nom: parsed.data.nom,
+          redirectTo: `${window.location.origin}/boutique`,
+        },
+      }).catch(() => {});
+      toast.success(
+        "Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.",
+        { duration: 8000 },
+      );
   };
 
   return (

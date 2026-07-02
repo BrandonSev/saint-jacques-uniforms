@@ -56,6 +56,46 @@ export const sendTestRandomEmail = createServerFn({ method: "POST" })
     }
   });
 
+// Confirmation d'inscription — génère un lien de confirmation via Admin API et l'envoie par email.
+// Remplace le webhook Lovable qui nécessite LOVABLE_API_KEY.
+export const sendSignupConfirmation = createServerFn({ method: "POST" })
+  .inputValidator((d) => z.object({
+    email: z.string().email(),
+    prenom: z.string().min(1).max(100),
+    nom: z.string().max(100).optional(),
+    redirectTo: z.string().url(),
+  }).parse(d))
+  .handler(async ({ data }) => {
+    const siteUrl = process.env.URL || "https://sjdc-dax.franceuniformes.fr";
+    try {
+      const { data: linkData, error } = await supabaseAdmin.auth.admin.generateLink({
+        type: "invite",
+        email: data.email,
+        options: { redirectTo: data.redirectTo },
+      });
+      if (error || !linkData?.properties?.action_link) {
+        console.error("[signup-confirmation] generateLink failed", { error: error?.message });
+        return { ok: false as const, error: "generate_link_failed" as const };
+      }
+      const confirmationUrl = linkData.properties.action_link;
+      await enqueueTransactionalEmail({
+        templateName: "signup",
+        recipientEmail: data.email,
+        templateData: {
+          siteName: "France Uniformes",
+          siteUrl,
+          recipient: data.email,
+          confirmationUrl,
+        },
+        idempotencyKey: `signup-${data.email}-${Date.now()}`,
+      });
+      return { ok: true as const };
+    } catch (e) {
+      console.error("[signup-confirmation]", e);
+      return { ok: false as const, error: "send_failed" as const };
+    }
+  });
+
 // Bienvenue après création de compte (appelable par utilisateur authentifié)
 export const sendWelcome = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ email: z.string().email(), prenom: z.string().min(1).max(100), nom: z.string().max(100).optional() }).parse(d))

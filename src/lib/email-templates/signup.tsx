@@ -1,4 +1,5 @@
 import * as React from 'react'
+import type { TemplateEntry } from './registry'
 
 import {
   Body,
@@ -56,7 +57,17 @@ export const SignupEmail = ({
   </Html>
 )
 
-export default SignupEmail
+export const template = {
+  component: SignupEmail,
+  subject: "Confirmez votre adresse email",
+  displayName: "Confirmation d'inscription",
+  previewData: {
+    siteName: "France Uniformes",
+    siteUrl: "https://sjdc-dax.franceuniformes.fr",
+    recipient: "user@example.com",
+    confirmationUrl: "https://sjdc-dax.franceuniformes.fr/boutique",
+  },
+} satisfies TemplateEntry;
 
 const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
 const container = { padding: '20px 25px' }

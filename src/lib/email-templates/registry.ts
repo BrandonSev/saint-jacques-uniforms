@@ -18,9 +18,11 @@ import { template as incidentAdmin } from './incident-admin'
 import { template as incidentResolution } from './incident-resolution'
 import { template as passwordReset } from './password-reset'
 import { template as apelReminder } from './apel-reminder'
+import { template as signup } from './signup'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome': welcome,
+  'signup': signup,
   'order-confirmation': orderConfirmation,
   'admin-order': adminOrder,
   'order-status': orderStatus,
