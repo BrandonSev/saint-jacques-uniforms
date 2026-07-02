@@ -61,15 +61,19 @@ export const sendTestRandomEmail = createServerFn({ method: "POST" })
 export const sendSignupConfirmation = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({
     email: z.string().email(),
+    password: z.string().min(1),
     prenom: z.string().min(1).max(100),
     nom: z.string().max(100).optional(),
     redirectTo: z.string().url(),
   }).parse(d))
   .handler(async ({ data }) => {
     try {
+      // Le compte vient d'être créé (non confirmé) par supabase.auth.signUp côté client,
+      // donc on régénère le lien de confirmation avec type "signup" (invite refuse un email existant).
       const { data: linkData, error } = await supabaseAdmin.auth.admin.generateLink({
-        type: "invite",
+        type: "signup",
         email: data.email,
+        password: data.password,
         options: { redirectTo: data.redirectTo },
       });
       if (error || !linkData?.properties?.action_link) {

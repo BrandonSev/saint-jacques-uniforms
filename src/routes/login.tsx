@@ -191,6 +191,7 @@ function LoginPage() {
       sendSignupConfirmation({
         data: {
           email: parsed.data.email,
+          password: parsed.data.password,
           prenom: parsed.data.prenom,
           nom: parsed.data.nom,
           redirectTo: `${window.location.origin}/boutique`,
