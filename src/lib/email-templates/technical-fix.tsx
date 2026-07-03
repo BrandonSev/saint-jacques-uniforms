@@ -16,7 +16,7 @@ function TechnicalFixEmail({ familyName, appUrl = APP_URL }: Props) {
       preview="Le souci technique de connexion a été résolu — vous pouvez à nouveau accéder à votre espace"
       title="Votre espace est à nouveau accessible"
       familyName={familyName}
-      signatureRole="équipe technique"
+      signatureRole="technique"
     >
       <Text style={text}>Bonjour,</Text>
       <Text style={text}>
