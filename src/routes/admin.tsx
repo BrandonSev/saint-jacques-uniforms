@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
 import { Download, ShieldCheck, AlertTriangle, X, ImageIcon, Truck, Save, Users, Trash2 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
@@ -8,7 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/lib/email.functions";
-import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, listAllFamilies } from "@/lib/apel.functions";
+import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, listAllFamilies, apelListFamilies } from "@/lib/apel.functions";
+import { listCustomTemplates, saveCustomTemplate, sendCustomBulkEmail } from "@/lib/email-templates-admin.functions";
 import { formatCivilite } from "@/lib/utils";
 import { BlouseStockManager } from "@/components/BlouseStockManager";
 
@@ -110,7 +111,7 @@ function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [incidentsLoading, setIncidentsLoading] = useState(true);
-  const [tab, setTab] = useState<"orders" | "tracking" | "incidents" | "roles">("orders");
+  const [tab, setTab] = useState<"orders" | "tracking" | "incidents" | "roles" | "emails">("orders");
   const [orderRows, setOrderRows] = useState<OrderRow[]>([]);
   const [orderRowsLoading, setOrderRowsLoading] = useState(true);
   const [openIncident, setOpenIncident] = useState<Incident | null>(null);
@@ -391,6 +392,12 @@ function AdminPage() {
           >
             <Users className="mr-1 inline h-3.5 w-3.5" /> Rôles
           </button>
+          <button
+            onClick={() => setTab("emails")}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${tab === "emails" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            Emails
+          </button>
           <Link
             to="/apel"
             className="inline-flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -545,6 +552,7 @@ function AdminPage() {
         )}
 
         {tab === "roles" && <RolesPanel />}
+        {tab === "emails" && <EmailsPanel />}
       </section>
 
       {openIncident && (
@@ -1163,6 +1171,403 @@ function TrackingPanel({
             })}
           </tbody>
         </table>
+      </div>
+    </div>
+  );
+}
+
+type CustomTemplate = {
+  id: string;
+  name: string;
+  header_title: string;
+  body: string;
+  button_label: string | null;
+  button_url: string | null;
+  signature_role: string;
+  updated_at: string;
+};
+
+type FamilyRow = {
+  user_id: string;
+  family_prenom: string;
+  family_nom: string;
+  family_email: string;
+};
+
+function EmailsPanel() {
+  const [templates, setTemplates] = useState<CustomTemplate[]>([]);
+  const [templateId, setTemplateId] = useState<string | undefined>(undefined);
+  const [name, setName] = useState("");
+  const [headerTitle, setHeaderTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [buttonLabel, setButtonLabel] = useState("");
+  const [buttonUrl, setButtonUrl] = useState("");
+  const [signatureRole, setSignatureRole] = useState("technique");
+  const [saving, setSaving] = useState(false);
+
+  const [recipientTab, setRecipientTab] = useState<"families" | "raw">("families");
+  const [families, setFamilies] = useState<FamilyRow[]>([]);
+  const [familiesLoading, setFamiliesLoading] = useState(true);
+  const [familySearch, setFamilySearch] = useState("");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [rawEmailsText, setRawEmailsText] = useState("");
+  const [sending, setSending] = useState(false);
+  const [lastResult, setLastResult] = useState<{ sent: number; total: number; errors: Array<{ email: string; reason: string }> } | null>(null);
+
+  const refreshTemplates = async () => {
+    const r = await listCustomTemplates({ data: {} });
+    if (r.ok) setTemplates(r.templates as CustomTemplate[]);
+    else toast.error(r.error || "Erreur de chargement des templates");
+  };
+
+  useEffect(() => {
+    refreshTemplates();
+    (async () => {
+      setFamiliesLoading(true);
+      const r = await apelListFamilies({ data: {} });
+      if (r.ok) setFamilies(r.families as FamilyRow[]);
+      setFamiliesLoading(false);
+    })();
+  }, []);
+
+  const loadTemplate = (id: string) => {
+    const t = templates.find((tpl) => tpl.id === id);
+    if (!t) return;
+    setTemplateId(t.id);
+    setName(t.name);
+    setHeaderTitle(t.header_title);
+    setBody(t.body);
+    setButtonLabel(t.button_label ?? "");
+    setButtonUrl(t.button_url ?? "");
+    setSignatureRole(t.signature_role);
+  };
+
+  const handleSave = async () => {
+    if (!name.trim() || !headerTitle.trim() || !body.trim()) {
+      toast.error("Nom, titre et corps du message sont requis");
+      return;
+    }
+    setSaving(true);
+    const r = await saveCustomTemplate({
+      data: {
+        id: templateId,
+        name: name.trim(),
+        headerTitle: headerTitle.trim(),
+        body,
+        buttonLabel: buttonLabel.trim() || undefined,
+        buttonUrl: buttonUrl.trim() || undefined,
+        signatureRole: signatureRole.trim() || "technique",
+      },
+    });
+    setSaving(false);
+    if (!r.ok) {
+      toast.error(r.error || "Échec de la sauvegarde");
+      return;
+    }
+    toast.success("Template enregistré");
+    setTemplateId(r.id);
+    refreshTemplates();
+  };
+
+  const filteredFamilies = useMemo(() => {
+    const q = familySearch.trim().toLowerCase();
+    if (!q) return families;
+    return families.filter(
+      (f) =>
+        f.family_nom?.toLowerCase().includes(q) ||
+        f.family_prenom?.toLowerCase().includes(q) ||
+        f.family_email?.toLowerCase().includes(q),
+    );
+  }, [families, familySearch]);
+
+  const toggleAll = () => {
+    if (selected.size === filteredFamilies.length) setSelected(new Set());
+    else setSelected(new Set(filteredFamilies.map((f) => f.user_id)));
+  };
+  const toggleOne = (id: string) => {
+    setSelected((prev) => {
+      const n = new Set(prev);
+      if (n.has(id)) n.delete(id);
+      else n.add(id);
+      return n;
+    });
+  };
+
+  const parsedRawEmails = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          rawEmailsText
+            .split(/[\n,]+/)
+            .map((e) => e.trim())
+            .filter((e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)),
+        ),
+      ),
+    [rawEmailsText],
+  );
+
+  const recipientCount = selected.size + parsedRawEmails.length;
+
+  const handleSend = async () => {
+    if (!headerTitle.trim() || !body.trim()) {
+      toast.error("Titre et corps du message sont requis");
+      return;
+    }
+    if (recipientCount === 0) {
+      toast.error("Sélectionnez au moins un destinataire");
+      return;
+    }
+    if (!confirm(`Envoyer cet email à ${recipientCount} destinataire(s) ?`)) return;
+    setSending(true);
+    setLastResult(null);
+    try {
+      const r = await sendCustomBulkEmail({
+        data: {
+          profileIds: Array.from(selected),
+          rawEmails: parsedRawEmails,
+          headerTitle: headerTitle.trim(),
+          body,
+          buttonLabel: buttonLabel.trim() || undefined,
+          buttonUrl: buttonUrl.trim() || undefined,
+          signatureRole: signatureRole.trim() || "technique",
+        },
+      });
+      if (!r.ok) {
+        toast.error(r.error || "Échec de l'envoi");
+      } else {
+        toast.success(`${r.sent} email(s) envoyé(s) sur ${r.total}`);
+        setLastResult({ sent: r.sent, total: r.total, errors: r.errors });
+        setSelected(new Set());
+        setRawEmailsText("");
+      }
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erreur");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const previewParagraphs = body.split(/\n\s*\n/).filter((p) => p.trim().length > 0);
+
+  return (
+    <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <h2 className="text-base font-semibold text-foreground">Composer un email</h2>
+
+        <label className="mt-4 block text-xs font-medium text-muted-foreground">Charger un template existant</label>
+        <select
+          className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+          value={templateId ?? ""}
+          onChange={(e) => (e.target.value ? loadTemplate(e.target.value) : setTemplateId(undefined))}
+        >
+          <option value="">— Nouveau template —</option>
+          {templates.map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.name}
+            </option>
+          ))}
+        </select>
+
+        <label className="mt-4 block text-xs font-medium text-muted-foreground">Nom du template</label>
+        <input
+          className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Ex: Relance inscription résolue"
+        />
+
+        <label className="mt-4 block text-xs font-medium text-muted-foreground">Titre du header</label>
+        <input
+          className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+          value={headerTitle}
+          onChange={(e) => setHeaderTitle(e.target.value)}
+        />
+
+        <label className="mt-4 block text-xs font-medium text-muted-foreground">Corps du message</label>
+        <textarea
+          className="mt-1 h-32 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          placeholder="Séparez les paragraphes par une ligne vide"
+        />
+
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-medium text-muted-foreground">Texte du bouton</label>
+            <input
+              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+              value={buttonLabel}
+              onChange={(e) => setButtonLabel(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-muted-foreground">Lien du bouton</label>
+            <input
+              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+              value={buttonUrl}
+              onChange={(e) => setButtonUrl(e.target.value)}
+              placeholder="https://..."
+            />
+          </div>
+        </div>
+
+        <label className="mt-4 block text-xs font-medium text-muted-foreground">Signature</label>
+        <input
+          className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+          value={signatureRole}
+          onChange={(e) => setSignatureRole(e.target.value)}
+        />
+
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="mt-4 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
+        >
+          {saving ? "Enregistrement…" : "Enregistrer le template"}
+        </button>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <h2 className="text-base font-semibold text-foreground">Aperçu</h2>
+        <div className="mt-3 overflow-hidden rounded-xl border border-border">
+          <div style={{ backgroundColor: "#0a2540", padding: "26px 32px" }}>
+            <p style={{ fontSize: "22px", fontWeight: 600, color: "#ffffff", margin: 0 }}>{headerTitle || "Titre du header"}</p>
+          </div>
+          <div style={{ height: "3px", backgroundColor: "#c8102e" }} />
+          <div style={{ padding: "24px", backgroundColor: "#ffffff" }}>
+            <p style={{ fontSize: "15px", color: "#1a1a1a", margin: "0 0 14px" }}>Bonjour,</p>
+            {previewParagraphs.length === 0 ? (
+              <p style={{ fontSize: "15px", color: "#999999", margin: "0 0 14px" }}>Corps du message…</p>
+            ) : (
+              previewParagraphs.map((p, i) => (
+                <p key={i} style={{ fontSize: "15px", color: "#1a1a1a", margin: "0 0 14px" }}>
+                  {p}
+                </p>
+              ))
+            )}
+            {buttonLabel && buttonUrl ? (
+              <span
+                style={{
+                  display: "inline-block",
+                  background: "#0a2540",
+                  color: "#ffffff",
+                  padding: "12px 24px",
+                  borderRadius: "8px",
+                  fontWeight: 600,
+                  fontSize: "14px",
+                }}
+              >
+                {buttonLabel}
+              </span>
+            ) : null}
+          </div>
+          <div style={{ backgroundColor: "#f5f5f5", padding: "16px 24px", textAlign: "center" }}>
+            <p style={{ fontSize: "12px", color: "#666666", margin: 0, fontWeight: 600 }}>France Uniformes — Uniformes scolaires sur mesure</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card p-5 lg:col-span-2">
+        <h2 className="text-base font-semibold text-foreground">Destinataires</h2>
+        <div className="mt-3 inline-flex rounded-xl border border-border bg-muted p-1">
+          <button
+            onClick={() => setRecipientTab("families")}
+            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${recipientTab === "families" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Familles
+          </button>
+          <button
+            onClick={() => setRecipientTab("raw")}
+            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${recipientTab === "raw" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Emails collés
+          </button>
+        </div>
+
+        {recipientTab === "families" && (
+          <div className="mt-4">
+            <input
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+              placeholder="Rechercher une famille…"
+              value={familySearch}
+              onChange={(e) => setFamilySearch(e.target.value)}
+            />
+            {familiesLoading ? (
+              <p className="mt-3 text-sm text-muted-foreground">Chargement…</p>
+            ) : (
+              <div className="mt-3 max-h-64 overflow-y-auto rounded-lg border border-border">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border bg-muted/50">
+                      <th className="w-8 p-2">
+                        <input
+                          type="checkbox"
+                          checked={filteredFamilies.length > 0 && selected.size === filteredFamilies.length}
+                          onChange={toggleAll}
+                        />
+                      </th>
+                      <th className="p-2 text-left">Nom</th>
+                      <th className="p-2 text-left">Email</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredFamilies.map((f) => (
+                      <tr key={f.user_id} className="border-b border-border last:border-0">
+                        <td className="p-2">
+                          <input type="checkbox" checked={selected.has(f.user_id)} onChange={() => toggleOne(f.user_id)} />
+                        </td>
+                        <td className="p-2">
+                          {f.family_prenom} {f.family_nom}
+                        </td>
+                        <td className="p-2 text-muted-foreground">{f.family_email}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {recipientTab === "raw" && (
+          <div className="mt-4">
+            <textarea
+              className="h-32 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+              placeholder={"une adresse par ligne, ou séparées par des virgules"}
+              value={rawEmailsText}
+              onChange={(e) => setRawEmailsText(e.target.value)}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">{parsedRawEmails.length} adresse(s) valide(s) détectée(s)</p>
+          </div>
+        )}
+
+        <div className="mt-4 flex items-center justify-between">
+          <span className="text-sm text-muted-foreground">{recipientCount} destinataire(s) sélectionné(s)</span>
+          <button
+            onClick={handleSend}
+            disabled={sending || recipientCount === 0}
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
+          >
+            {sending ? "Envoi…" : `Envoyer à ${recipientCount} destinataire(s)`}
+          </button>
+        </div>
+
+        {lastResult && (
+          <div className="mt-4 rounded-lg border border-border bg-muted/30 p-3 text-sm">
+            <p>
+              {lastResult.sent} envoyé(s) sur {lastResult.total}.
+            </p>
+            {lastResult.errors.length > 0 && (
+              <ul className="mt-2 list-disc pl-5 text-xs text-destructive">
+                {lastResult.errors.map((e, i) => (
+                  <li key={i}>
+                    {e.email} — {e.reason}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
