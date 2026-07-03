@@ -169,3 +169,55 @@ export const listRoleAssignments = createServerFn({ method: "POST" })
     }));
     return { ok: true as const, assignments };
   });
+
+// Envoi du message "souci technique résolu" à toutes les familles inscrites (admin uniquement)
+export const sendTechnicalFixNotice = createServerFn({ method: "POST" })
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
+  .inputValidator((d) => z.object({ testEmail: z.string().email().optional() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    if (!(await userHasAnyRole(userId, ["admin"]))) {
+      return { ok: false as const, error: "forbidden" as const, sent: 0, total: 0 };
+    }
+
+    // Mode test : un seul destinataire
+    if (data.testEmail) {
+      try {
+        const { data: profile } = await supabaseAdmin
+          .from("profiles")
+          .select("nom")
+          .eq("email", data.testEmail)
+          .maybeSingle();
+        await enqueueTransactionalEmail({
+          templateName: "technical-fix",
+          recipientEmail: data.testEmail,
+          templateData: { familyName: (profile as any)?.nom ?? "" },
+          idempotencyKey: `technical-fix-test-${Date.now()}`,
+        });
+        return { ok: true as const, sent: 1, total: 1, errors: [] as string[] };
+      } catch (e: any) {
+        return { ok: false as const, error: e?.message ?? "send_failed", sent: 0, total: 1 };
+      }
+    }
+
+    // Mode diffusion : toutes les familles inscrites
+    const { data: profiles } = await supabaseAdmin.from("profiles").select("id, email, nom");
+    let sent = 0;
+    const errors: string[] = [];
+    const day = new Date().toISOString().slice(0, 10);
+    for (const p of profiles ?? []) {
+      if (!p.email) continue;
+      try {
+        await enqueueTransactionalEmail({
+          templateName: "technical-fix",
+          recipientEmail: p.email,
+          templateData: { familyName: (p as any).nom ?? "" },
+          idempotencyKey: `technical-fix-${p.id}-${day}`,
+        });
+        sent++;
+      } catch (e: any) {
+        errors.push(`${p.email}: ${e?.message ?? e}`);
+      }
+    }
+    return { ok: true as const, sent, total: profiles?.length ?? 0, errors };
+  });
