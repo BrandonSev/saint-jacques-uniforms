@@ -591,13 +591,14 @@ function RolesPanel() {
   const [busy, setBusy] = useState(false);
   const [fixTestEmail, setFixTestEmail] = useState("");
   const [fixBusy, setFixBusy] = useState(false);
-  const [fixMode, setFixMode] = useState<"all" | "select">("all");
+  const [fixMode, setFixMode] = useState<"all" | "select" | "manual">("all");
   const [fixFamilies, setFixFamilies] = useState<
     Array<{ id: string; email: string; prenom: string; nom: string }>
   >([]);
   const [fixSelected, setFixSelected] = useState<Record<string, boolean>>({});
   const [fixSearch, setFixSearch] = useState("");
   const [fixLoaded, setFixLoaded] = useState(false);
+  const [fixRawEmails, setFixRawEmails] = useState("");
 
   const loadFixFamilies = async () => {
     const r = await listAllFamilies({ data: {} });
@@ -718,6 +719,12 @@ function RolesPanel() {
             >
               Sélectionner
             </button>
+            <button
+              onClick={() => setFixMode("manual")}
+              className={`h-8 rounded-lg px-3 text-xs font-semibold ${fixMode === "manual" ? "bg-primary text-primary-foreground" : "border border-border text-foreground hover:bg-muted/40"}`}
+            >
+              Saisir manuellement
+            </button>
           </div>
 
           {fixMode === "select" && (
@@ -779,11 +786,45 @@ function RolesPanel() {
             </div>
           )}
 
+          {fixMode === "manual" && (
+            <div className="mt-3">
+              <label className="text-xs font-medium text-muted-foreground">
+                Emails (séparés par des virgules)
+              </label>
+              <textarea
+                value={fixRawEmails}
+                onChange={(e) => setFixRawEmails(e.target.value)}
+                placeholder="email1@example.com, email2@example.com, …"
+                rows={4}
+                className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
+              />
+            </div>
+          )}
+
           <button
             onClick={async () => {
               const ids = Object.keys(fixSelected).filter((id) => fixSelected[id]);
               if (fixMode === "select" && ids.length === 0) {
                 toast.error("Sélectionnez au moins une famille");
+                return;
+              }
+              if (fixMode === "manual") {
+                const emails = fixRawEmails.split(",").map((e) => e.trim()).filter(Boolean);
+                if (emails.length === 0) {
+                  toast.error("Saisissez au moins un email");
+                  return;
+                }
+                const invalid = emails.filter((e) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
+                if (invalid.length > 0) {
+                  toast.error(`Emails invalides : ${invalid.join(", ")}`);
+                  return;
+                }
+                if (!confirm(`Envoyer cet email à ${emails.length} adresse(s) ?`)) return;
+                setFixBusy(true);
+                const r = await sendTechnicalFixNotice({ data: { rawEmails: emails } });
+                setFixBusy(false);
+                if (r.ok) toast.success(`Email envoyé à ${r.sent} / ${r.total} destinataire(s)`);
+                else toast.error((r as any).error || "Erreur");
                 return;
               }
               const label = fixMode === "all" ? "TOUTES les familles inscrites" : `${ids.length} famille(s) sélectionnée(s)`;
@@ -797,7 +838,9 @@ function RolesPanel() {
             disabled={fixBusy}
             className="mt-4 h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
           >
-            {fixMode === "all" ? "Envoyer à toutes les familles" : "Envoyer aux familles sélectionnées"}
+            {fixMode === "all" && "Envoyer à toutes les familles"}
+            {fixMode === "select" && "Envoyer aux familles sélectionnées"}
+            {fixMode === "manual" && "Envoyer aux adresses saisies"}
           </button>
         </div>
       </div>

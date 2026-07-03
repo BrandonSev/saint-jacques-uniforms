@@ -196,6 +196,7 @@ export const sendTechnicalFixNotice = createServerFn({ method: "POST" })
       .object({
         testEmail: z.string().email().optional(),
         userIds: z.array(z.string().uuid()).max(2000).optional(),
+        rawEmails: z.array(z.string().email()).max(200).optional(),
       })
       .parse(d),
   )
@@ -223,6 +224,31 @@ export const sendTechnicalFixNotice = createServerFn({ method: "POST" })
       } catch (e: any) {
         return { ok: false as const, error: e?.message ?? "send_failed", sent: 0, total: 1 };
       }
+    }
+
+    // Mode saisie manuelle : liste d'emails fournie directement
+    if (data.rawEmails && data.rawEmails.length > 0) {
+      let sent = 0;
+      const errors: string[] = [];
+      for (const email of data.rawEmails) {
+        try {
+          const { data: profile } = await supabaseAdmin
+            .from("profiles")
+            .select("nom")
+            .eq("email", email)
+            .maybeSingle();
+          await enqueueTransactionalEmail({
+            templateName: "technical-fix",
+            recipientEmail: email,
+            templateData: { familyName: (profile as any)?.nom ?? "" },
+            idempotencyKey: `technical-fix-raw-${Date.now()}-${sent}`,
+          });
+          sent++;
+        } catch (e: any) {
+          errors.push(`${email}: ${e?.message ?? e}`);
+        }
+      }
+      return { ok: true as const, sent, total: data.rawEmails.length, errors };
     }
 
     // Mode diffusion : familles sélectionnées, sinon toutes les familles inscrites
