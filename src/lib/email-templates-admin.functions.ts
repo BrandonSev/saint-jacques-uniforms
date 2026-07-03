@@ -128,11 +128,15 @@ export const sendCustomBulkEmail = createServerFn({ method: "POST" })
       const { data: rows } = await supabaseAdmin
         .from("profiles")
         .select("id, email, prenom, nom, civilite")
-        .in("id", data.profileIds);
+        .in("id", data.profileIds)
+        .is("deleted_at", null);
       profiles = rows ?? [];
     }
 
-    const rawEmails = Array.from(new Set((data.rawEmails ?? []).filter((e) => EMAIL_RE.test(e))));
+    const profileEmailsLower = new Set(profiles.filter((p) => p.email).map((p) => p.email.toLowerCase()));
+    const rawEmails = Array.from(new Set((data.rawEmails ?? []).filter((e) => EMAIL_RE.test(e)))).filter(
+      (e) => !profileEmailsLower.has(e.toLowerCase()),
+    );
 
     const dateKey = new Date().toISOString().slice(0, 10);
     let sent = 0;
