@@ -583,6 +583,21 @@ function RolesPanel() {
   const [busy, setBusy] = useState(false);
   const [fixTestEmail, setFixTestEmail] = useState("");
   const [fixBusy, setFixBusy] = useState(false);
+  const [fixMode, setFixMode] = useState<"all" | "select">("all");
+  const [fixFamilies, setFixFamilies] = useState<
+    Array<{ id: string; email: string; prenom: string; nom: string }>
+  >([]);
+  const [fixSelected, setFixSelected] = useState<Record<string, boolean>>({});
+  const [fixSearch, setFixSearch] = useState("");
+  const [fixLoaded, setFixLoaded] = useState(false);
+
+  const loadFixFamilies = async () => {
+    const r = await listAllFamilies({ data: {} });
+    if (r.ok) {
+      setFixFamilies(r.families as any);
+      setFixLoaded(true);
+    } else toast.error((r as any).error || "Erreur de chargement");
+  };
 
   const refresh = async () => {
     setLoading(true);
