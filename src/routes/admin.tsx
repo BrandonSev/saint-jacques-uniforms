@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/lib/email.functions";
-import { listRoleAssignments, setUserRole, sendTestApelReminder } from "@/lib/apel.functions";
+import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice } from "@/lib/apel.functions";
 import { formatCivilite } from "@/lib/utils";
 import { BlouseStockManager } from "@/components/BlouseStockManager";
 
@@ -581,6 +581,8 @@ function RolesPanel() {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<"apel" | "admin">("apel");
   const [busy, setBusy] = useState(false);
+  const [fixTestEmail, setFixTestEmail] = useState("");
+  const [fixBusy, setFixBusy] = useState(false);
 
   const refresh = async () => {
     setLoading(true);
@@ -640,6 +642,54 @@ function RolesPanel() {
         >
           Envoyer le test
         </button>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <h2 className="text-base font-semibold text-foreground">Email « souci technique résolu »</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Informe les familles inscrites que le problème de connexion / création de compte est résolu et qu'elles
+          peuvent à nouveau accéder à leur espace et commander.
+        </p>
+        <div className="mt-4 flex flex-wrap items-end gap-3">
+          <div className="flex-1 min-w-[220px]">
+            <label className="text-xs font-medium text-muted-foreground">Envoyer un test à</label>
+            <input
+              type="email"
+              value={fixTestEmail}
+              onChange={(e) => setFixTestEmail(e.target.value)}
+              placeholder="test@example.com"
+              className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm focus:border-primary focus:outline-none"
+            />
+          </div>
+          <button
+            onClick={async () => {
+              if (!fixTestEmail.trim()) return;
+              setFixBusy(true);
+              const r = await sendTechnicalFixNotice({ data: { testEmail: fixTestEmail.trim() } });
+              setFixBusy(false);
+              if (r.ok) toast.success(`Email de test envoyé à ${fixTestEmail.trim()}`);
+              else toast.error((r as any).error || "Erreur");
+            }}
+            disabled={fixBusy || !fixTestEmail.trim()}
+            className="h-10 rounded-lg border border-border px-4 text-sm font-semibold text-foreground hover:bg-muted/40 disabled:opacity-50"
+          >
+            Envoyer un test
+          </button>
+          <button
+            onClick={async () => {
+              if (!confirm("Envoyer cet email à TOUTES les familles inscrites ?")) return;
+              setFixBusy(true);
+              const r = await sendTechnicalFixNotice({ data: {} });
+              setFixBusy(false);
+              if (r.ok) toast.success(`Email envoyé à ${r.sent} / ${r.total} famille(s)`);
+              else toast.error((r as any).error || "Erreur");
+            }}
+            disabled={fixBusy}
+            className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          >
+            Envoyer à toutes les familles
+          </button>
+        </div>
       </div>
 
       <div className="rounded-2xl border border-border bg-card p-5">
