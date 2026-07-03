@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/lib/email.functions";
-import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice } from "@/lib/apel.functions";
+import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, listAllFamilies } from "@/lib/apel.functions";
 import { formatCivilite } from "@/lib/utils";
 import { BlouseStockManager } from "@/components/BlouseStockManager";
 
