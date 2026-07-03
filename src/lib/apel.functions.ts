@@ -170,10 +170,35 @@ export const listRoleAssignments = createServerFn({ method: "POST" })
     return { ok: true as const, assignments };
   });
 
-// Envoi du message "souci technique résolu" à toutes les familles inscrites (admin uniquement)
+// Liste de toutes les familles inscrites (admin uniquement) — pour choisir les destinataires
+export const listAllFamilies = createServerFn({ method: "POST" })
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
+  .inputValidator((d) => z.object({}).parse(d))
+  .handler(async ({ context }) => {
+    const { userId } = context;
+    if (!(await userHasAnyRole(userId, ["admin"]))) {
+      return { ok: false as const, error: "forbidden" as const, families: [] };
+    }
+    const { data: profiles } = await supabaseAdmin
+      .from("profiles")
+      .select("id, email, prenom, nom, civilite")
+      .is("deleted_at", null)
+      .order("nom", { ascending: true });
+    const families = (profiles ?? []).filter((p: any) => p.email);
+    return { ok: true as const, families };
+  });
+
+// Envoi du message "souci technique résolu" (admin uniquement)
 export const sendTechnicalFixNotice = createServerFn({ method: "POST" })
   .middleware([withSupabaseAuth, requireSupabaseAuth])
-  .inputValidator((d) => z.object({ testEmail: z.string().email().optional() }).parse(d))
+  .inputValidator((d) =>
+    z
+      .object({
+        testEmail: z.string().email().optional(),
+        userIds: z.array(z.string().uuid()).max(2000).optional(),
+      })
+      .parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { userId } = context;
     if (!(await userHasAnyRole(userId, ["admin"]))) {
@@ -200,8 +225,12 @@ export const sendTechnicalFixNotice = createServerFn({ method: "POST" })
       }
     }
 
-    // Mode diffusion : toutes les familles inscrites
-    const { data: profiles } = await supabaseAdmin.from("profiles").select("id, email, nom");
+    // Mode diffusion : familles sélectionnées, sinon toutes les familles inscrites
+    let query = supabaseAdmin.from("profiles").select("id, email, nom").is("deleted_at", null);
+    if (data.userIds && data.userIds.length > 0) {
+      query = query.in("id", data.userIds);
+    }
+    const { data: profiles } = await query;
     let sent = 0;
     const errors: string[] = [];
     const day = new Date().toISOString().slice(0, 10);

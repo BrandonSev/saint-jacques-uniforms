@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/lib/email.functions";
-import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice } from "@/lib/apel.functions";
+import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, listAllFamilies } from "@/lib/apel.functions";
 import { formatCivilite } from "@/lib/utils";
 import { BlouseStockManager } from "@/components/BlouseStockManager";
 
@@ -583,6 +583,21 @@ function RolesPanel() {
   const [busy, setBusy] = useState(false);
   const [fixTestEmail, setFixTestEmail] = useState("");
   const [fixBusy, setFixBusy] = useState(false);
+  const [fixMode, setFixMode] = useState<"all" | "select">("all");
+  const [fixFamilies, setFixFamilies] = useState<
+    Array<{ id: string; email: string; prenom: string; nom: string }>
+  >([]);
+  const [fixSelected, setFixSelected] = useState<Record<string, boolean>>({});
+  const [fixSearch, setFixSearch] = useState("");
+  const [fixLoaded, setFixLoaded] = useState(false);
+
+  const loadFixFamilies = async () => {
+    const r = await listAllFamilies({ data: {} });
+    if (r.ok) {
+      setFixFamilies(r.families as any);
+      setFixLoaded(true);
+    } else toast.error((r as any).error || "Erreur de chargement");
+  };
 
   const refresh = async () => {
     setLoading(true);
@@ -675,19 +690,106 @@ function RolesPanel() {
           >
             Envoyer un test
           </button>
+        </div>
+
+        <div className="mt-5 border-t border-border pt-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground">Destinataires :</span>
+            <button
+              onClick={() => setFixMode("all")}
+              className={`h-8 rounded-lg px-3 text-xs font-semibold ${fixMode === "all" ? "bg-primary text-primary-foreground" : "border border-border text-foreground hover:bg-muted/40"}`}
+            >
+              Toutes les familles
+            </button>
+            <button
+              onClick={() => {
+                setFixMode("select");
+                if (!fixLoaded) loadFixFamilies();
+              }}
+              className={`h-8 rounded-lg px-3 text-xs font-semibold ${fixMode === "select" ? "bg-primary text-primary-foreground" : "border border-border text-foreground hover:bg-muted/40"}`}
+            >
+              Sélectionner
+            </button>
+          </div>
+
+          {fixMode === "select" && (
+            <div className="mt-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  type="search"
+                  value={fixSearch}
+                  onChange={(e) => setFixSearch(e.target.value)}
+                  placeholder="Rechercher (nom, prénom, email)…"
+                  className="h-9 flex-1 min-w-[200px] rounded-lg border border-border bg-background px-3 text-sm focus:border-primary focus:outline-none"
+                />
+                <button
+                  onClick={() => {
+                    const visible = fixFamilies.filter((f) => {
+                      const q = fixSearch.trim().toLowerCase();
+                      if (!q) return true;
+                      return `${f.prenom} ${f.nom} ${f.email}`.toLowerCase().includes(q);
+                    });
+                    const next = { ...fixSelected };
+                    visible.forEach((f) => (next[f.id] = true));
+                    setFixSelected(next);
+                  }}
+                  className="h-9 rounded-lg border border-border px-3 text-xs font-semibold hover:bg-muted/40"
+                >
+                  Tout cocher
+                </button>
+                <button
+                  onClick={() => setFixSelected({})}
+                  className="h-9 rounded-lg border border-border px-3 text-xs font-semibold hover:bg-muted/40"
+                >
+                  Tout décocher
+                </button>
+              </div>
+              <div className="mt-3 max-h-64 overflow-y-auto rounded-lg border border-border divide-y divide-border">
+                {!fixLoaded && <p className="px-3 py-4 text-sm text-muted-foreground">Chargement…</p>}
+                {fixLoaded &&
+                  fixFamilies
+                    .filter((f) => {
+                      const q = fixSearch.trim().toLowerCase();
+                      if (!q) return true;
+                      return `${f.prenom} ${f.nom} ${f.email}`.toLowerCase().includes(q);
+                    })
+                    .map((f) => (
+                      <label key={f.id} className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-muted/30">
+                        <input
+                          type="checkbox"
+                          checked={!!fixSelected[f.id]}
+                          onChange={(e) => setFixSelected((s) => ({ ...s, [f.id]: e.target.checked }))}
+                        />
+                        <span className="font-medium">{f.prenom} {f.nom}</span>
+                        <span className="text-muted-foreground">{f.email}</span>
+                      </label>
+                    ))}
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                {Object.values(fixSelected).filter(Boolean).length} famille(s) sélectionnée(s)
+              </p>
+            </div>
+          )}
+
           <button
             onClick={async () => {
-              if (!confirm("Envoyer cet email à TOUTES les familles inscrites ?")) return;
+              const ids = Object.keys(fixSelected).filter((id) => fixSelected[id]);
+              if (fixMode === "select" && ids.length === 0) {
+                toast.error("Sélectionnez au moins une famille");
+                return;
+              }
+              const label = fixMode === "all" ? "TOUTES les familles inscrites" : `${ids.length} famille(s) sélectionnée(s)`;
+              if (!confirm(`Envoyer cet email à ${label} ?`)) return;
               setFixBusy(true);
-              const r = await sendTechnicalFixNotice({ data: {} });
+              const r = await sendTechnicalFixNotice({ data: fixMode === "select" ? { userIds: ids } : {} });
               setFixBusy(false);
               if (r.ok) toast.success(`Email envoyé à ${r.sent} / ${r.total} famille(s)`);
               else toast.error((r as any).error || "Erreur");
             }}
             disabled={fixBusy}
-            className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            className="mt-4 h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
           >
-            Envoyer à toutes les familles
+            {fixMode === "all" ? "Envoyer à toutes les familles" : "Envoyer aux familles sélectionnées"}
           </button>
         </div>
       </div>
