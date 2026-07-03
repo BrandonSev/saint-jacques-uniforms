@@ -20,6 +20,7 @@ import { template as passwordReset } from './password-reset'
 import { template as apelReminder } from './apel-reminder'
 import { template as signup } from './signup'
 import { template as technicalFix } from './technical-fix'
+import { template as customBulk } from './custom-bulk'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome': welcome,
@@ -33,4 +34,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'password-reset': passwordReset,
   'apel-reminder': apelReminder,
   'technical-fix': technicalFix,
+  'custom-bulk': customBulk,
 }
