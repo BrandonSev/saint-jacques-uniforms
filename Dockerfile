@@ -33,19 +33,9 @@ ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
 ENV VITE_SUPABASE_PUBLISHABLE_KEY=$VITE_SUPABASE_PUBLISHABLE_KEY
 ENV VITE_SUPABASE_PROJECT_ID=$VITE_SUPABASE_PROJECT_ID
 
-# Copie le build et les deps runtime (hono + @hono/node-server)
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/host.mjs ./host.mjs
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
-
-# Fallback Coolify : si un cache ou une commande de démarrage lance l'app sans
-# artefacts dist, le wrapper peut reconstruire au démarrage au lieu de sortir.
-COPY --from=builder /app/src ./src
-COPY --from=builder /app/vite.config.ts ./vite.config.ts
-COPY --from=builder /app/tsconfig.json ./tsconfig.json
-COPY --from=builder /app/wrangler.jsonc ./wrangler.jsonc
+# Build Nitro (node-server) : serveur Node autonome, aucun wrapper nécessaire.
+COPY --from=builder /app/.output ./.output
 
 EXPOSE 3000
 
-CMD ["bun", "run", "start"]
+CMD ["bun", ".output/server/index.mjs"]
