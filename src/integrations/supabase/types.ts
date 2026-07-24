@@ -398,6 +398,51 @@ export type Database = {
         }
         Relationships: []
       }
+      order_corrections: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          field: string
+          id: string
+          new_value: string
+          note: string | null
+          old_value: string
+          order_id: string
+          order_item_id: string
+          requester_email: string
+          resolved_at: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          field?: string
+          id?: string
+          new_value: string
+          note?: string | null
+          old_value: string
+          order_id: string
+          order_item_id: string
+          requester_email: string
+          resolved_at?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          field?: string
+          id?: string
+          new_value?: string
+          note?: string | null
+          old_value?: string
+          order_id?: string
+          order_item_id?: string
+          requester_email?: string
+          resolved_at?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       order_incidents: {
         Row: {
           created_at: string
