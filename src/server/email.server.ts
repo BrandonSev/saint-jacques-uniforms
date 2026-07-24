@@ -81,3 +81,20 @@ export async function sendIncidentResolutionFamily(to: string, prenom: string, o
     idempotencyKey: `incident-res-${orderNumber}-${productName}-${status}`,
   });
 }
+
+export async function sendOrderCorrectionResolutionFamily(
+  to: string,
+  prenom: string,
+  orderNumber: string,
+  productName: string,
+  oldSize: string,
+  newSize: string,
+  familyName?: string,
+) {
+  await enqueueTransactionalEmail({
+    templateName: "order-correction-resolution",
+    recipientEmail: to,
+    templateData: { prenom, familyName, orderNumber, productName, oldSize, newSize },
+    idempotencyKey: `order-correction-${orderNumber}-${productName}-${newSize}`,
+  });
+}

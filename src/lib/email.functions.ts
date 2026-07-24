@@ -17,6 +17,7 @@ import {
   sendIncidentOpenedFamily,
   sendIncidentOpenedAdmin,
   sendIncidentResolutionFamily,
+  sendOrderCorrectionResolutionFamily,
   type OrderEmailItem,
 } from "@/server/email.server";
 
@@ -322,6 +323,46 @@ export const sendIncidentUpdate = createServerFn({ method: "POST" })
       return { ok: true };
     } catch (e) {
       console.error("sendIncidentUpdate:", e);
+      return { ok: false, error: "send_failed" as const };
+    }
+  });
+
+// Notification de résolution d'une correction de commande (admin → famille)
+export const sendOrderCorrectionUpdate = createServerFn({ method: "POST" })
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
+  .inputValidator((d) => z.object({ correctionId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { data: corr } = await supabase
+      .from("order_corrections")
+      .select("order_id, order_item_id, old_value, new_value, requester_email")
+      .eq("id", data.correctionId)
+      .maybeSingle();
+    if (!corr) return { ok: false, error: "not_found" as const };
+    const { data: order } = await supabase
+      .from("orders")
+      .select("order_number, family_prenom, family_nom")
+      .eq("id", corr.order_id)
+      .maybeSingle();
+    const { data: item } = await supabase
+      .from("order_items")
+      .select("product_name")
+      .eq("id", corr.order_item_id)
+      .maybeSingle();
+    if (!order || !corr.requester_email) return { ok: false, error: "no_recipient" as const };
+    try {
+      await sendOrderCorrectionResolutionFamily(
+        corr.requester_email,
+        order.family_prenom ?? "",
+        order.order_number,
+        item?.product_name ?? "—",
+        corr.old_value,
+        corr.new_value,
+        order.family_nom ?? undefined,
+      );
+      return { ok: true };
+    } catch (e) {
+      console.error("sendOrderCorrectionUpdate:", e);
       return { ok: false, error: "send_failed" as const };
     }
   });
