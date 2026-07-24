@@ -7,7 +7,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
-import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/lib/email.functions";
+import { sendOrderStatusUpdate, sendIncidentUpdate, sendOrderCorrectionUpdate, sendTestRandomEmail } from "@/lib/email.functions";
 import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, listAllFamilies, apelListFamilies } from "@/lib/apel.functions";
 import { listCustomTemplates, saveCustomTemplate, sendCustomBulkEmail } from "@/lib/email-templates-admin.functions";
 import { formatCivilite } from "@/lib/utils";
@@ -71,6 +71,29 @@ type Incident = {
   child_nom?: string;
 };
 
+type Correction = {
+  id: string;
+  order_id: string;
+  order_item_id: string;
+  field: string;
+  old_value: string;
+  new_value: string;
+  status: string;
+  note: string | null;
+  requester_email: string;
+  created_at: string;
+  resolved_at: string | null;
+  order_number?: string;
+  family_prenom?: string;
+  family_nom?: string;
+  order_status?: string;
+  product_name?: string;
+  child_prenom?: string;
+  child_nom?: string;
+};
+
+const CORRECTION_STATUSES = ["À traiter", "Résolu", "Annulé"] as const;
+
 const INCIDENT_TYPE_LABELS: Record<string, string> = {
   malfacon: "Malfaçon / défaut de fabrication",
   erreur_envoi: "Erreur d'envoi",
@@ -111,17 +134,21 @@ function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [incidentsLoading, setIncidentsLoading] = useState(true);
-  const [tab, setTab] = useState<"orders" | "tracking" | "incidents" | "roles" | "emails">("orders");
+  const [tab, setTab] = useState<"orders" | "tracking" | "incidents" | "corrections" | "roles" | "emails">("orders");
   const [orderRows, setOrderRows] = useState<OrderRow[]>([]);
   const [orderRowsLoading, setOrderRowsLoading] = useState(true);
   const [openIncident, setOpenIncident] = useState<Incident | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [corrections, setCorrections] = useState<Correction[]>([]);
+  const [correctionsLoading, setCorrectionsLoading] = useState(true);
+  const [correctionModalOpen, setCorrectionModalOpen] = useState(false);
 
   useEffect(() => {
     if (!isAdmin) {
       setLoading(false);
       setIncidentsLoading(false);
       setOrderRowsLoading(false);
+      setCorrectionsLoading(false);
       return;
     }
     (async () => {
@@ -237,6 +264,45 @@ function AdminPage() {
       setIncidents(flat);
       setIncidentsLoading(false);
     })();
+    (async () => {
+      const { data, error } = await supabase
+        .from("order_corrections")
+        .select(
+          `
+          id, order_id, order_item_id, field, old_value, new_value, status, note, requester_email, created_at, resolved_at,
+          orders!inner ( order_number, status, family_prenom, family_nom ),
+          order_items!inner ( product_name, child_prenom, child_nom )
+        `,
+        )
+        .order("created_at", { ascending: false });
+      if (error) {
+        toast.error(error.message);
+        setCorrectionsLoading(false);
+        return;
+      }
+      const flat: Correction[] = (data ?? []).map((r: any) => ({
+        id: r.id,
+        order_id: r.order_id,
+        order_item_id: r.order_item_id,
+        field: r.field,
+        old_value: r.old_value,
+        new_value: r.new_value,
+        status: r.status,
+        note: r.note,
+        requester_email: r.requester_email,
+        created_at: r.created_at,
+        resolved_at: r.resolved_at,
+        order_number: r.orders?.order_number,
+        order_status: r.orders?.status,
+        family_prenom: r.orders?.family_prenom,
+        family_nom: r.orders?.family_nom,
+        product_name: r.order_items?.product_name,
+        child_prenom: r.order_items?.child_prenom,
+        child_nom: r.order_items?.child_nom,
+      }));
+      setCorrections(flat);
+      setCorrectionsLoading(false);
+    })();
   }, [isAdmin]);
 
   const updateIncidentStatus = async (incident: Incident, status: string) => {
@@ -249,6 +315,47 @@ function AdminPage() {
     if (openIncident?.id === incident.id) setOpenIncident({ ...openIncident, status });
     sendIncidentUpdate({ data: { incidentId: incident.id } }).catch(() => {});
     toast.success("Statut mis à jour");
+  };
+
+  const applyCorrection = async (correction: Correction) => {
+    const { error: itemError } = await supabase
+      .from("order_items")
+      .update({ size: correction.new_value })
+      .eq("id", correction.order_item_id);
+    if (itemError) {
+      toast.error(itemError.message);
+      return;
+    }
+    const resolvedAt = new Date().toISOString();
+    const { error } = await supabase
+      .from("order_corrections")
+      .update({ status: "Résolu", resolved_at: resolvedAt })
+      .eq("id", correction.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setCorrections((prev) =>
+      prev.map((c) => (c.id === correction.id ? { ...c, status: "Résolu", resolved_at: resolvedAt } : c)),
+    );
+    sendOrderCorrectionUpdate({ data: { correctionId: correction.id } }).catch(() => {});
+    toast.success("Taille corrigée et famille notifiée");
+  };
+
+  const cancelCorrection = async (correction: Correction) => {
+    const resolvedAt = new Date().toISOString();
+    const { error } = await supabase
+      .from("order_corrections")
+      .update({ status: "Annulé", resolved_at: resolvedAt })
+      .eq("id", correction.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setCorrections((prev) =>
+      prev.map((c) => (c.id === correction.id ? { ...c, status: "Annulé", resolved_at: resolvedAt } : c)),
+    );
+    toast.success("Demande annulée");
   };
 
   const updateOrder = async (
