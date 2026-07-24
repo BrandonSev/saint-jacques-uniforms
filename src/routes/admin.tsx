@@ -92,8 +92,6 @@ type Correction = {
   child_nom?: string;
 };
 
-const CORRECTION_STATUSES = ["À traiter", "Résolu", "Annulé"] as const;
-
 const INCIDENT_TYPE_LABELS: Record<string, string> = {
   malfacon: "Malfaçon / défaut de fabrication",
   erreur_envoi: "Erreur d'envoi",
@@ -688,6 +686,7 @@ function AdminPage() {
                       <th className="px-4 py-3">Date</th>
                       <th className="px-4 py-3">Commande</th>
                       <th className="px-4 py-3">Famille</th>
+                      <th className="px-4 py-3">Enfant</th>
                       <th className="px-4 py-3">Article</th>
                       <th className="px-4 py-3">Taille actuelle → demandée</th>
                       <th className="px-4 py-3">Statut</th>
@@ -697,14 +696,14 @@ function AdminPage() {
                   <tbody className="divide-y divide-border">
                     {correctionsLoading && (
                       <tr>
-                        <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
+                        <td colSpan={8} className="px-4 py-6 text-center text-muted-foreground">
                           Chargement…
                         </td>
                       </tr>
                     )}
                     {!correctionsLoading && corrections.length === 0 && (
                       <tr>
-                        <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
+                        <td colSpan={8} className="px-4 py-6 text-center text-muted-foreground">
                           Aucune demande de correction.
                         </td>
                       </tr>
@@ -724,6 +723,9 @@ function AdminPage() {
                         </td>
                         <td className="px-4 py-3">
                           {c.family_prenom} {c.family_nom}
+                        </td>
+                        <td className="px-4 py-3 text-muted-foreground">
+                          {c.child_prenom} {c.child_nom}
                         </td>
                         <td className="px-4 py-3">{c.product_name ?? "—"}</td>
                         <td className="px-4 py-3">
