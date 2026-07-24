@@ -33,8 +33,9 @@ function OrderCorrectionResolutionEmail({
     >
       <Text style={text}>Bonjour {prenom},</Text>
       <Text style={text}>
-        Comme convenu, nous avons corrigé la taille de l'article <strong>{productName}</strong> sur votre
-        commande <strong>{orderNumber}</strong> : {oldSize} → <strong>{newSize}</strong>.
+        Votre demande de correction a bien été prise en charge. Nous avons corrigé la taille de l'article{' '}
+        <strong>{productName}</strong> sur votre commande <strong>{orderNumber}</strong> : {oldSize} →{' '}
+        <strong>{newSize}</strong>.
       </Text>
       <Text style={text}>Aucune autre démarche n'est nécessaire de votre part.</Text>
       <Button href={`${appUrl}/commandes`} style={button}>Voir mes commandes</Button>
