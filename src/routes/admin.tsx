@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendTestRandomEmail } from "@/lib/email.functions";
-import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, listAllFamilies, apelListFamilies } from "@/lib/apel.functions";
+import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, sendUrgentOrderReminder, listAllFamilies, apelListFamilies } from "@/lib/apel.functions";
 import { listCustomTemplates, saveCustomTemplate, sendCustomBulkEmail } from "@/lib/email-templates-admin.functions";
 import { formatCivilite } from "@/lib/utils";
 import { BlouseStockManager } from "@/components/BlouseStockManager";
@@ -600,6 +600,26 @@ function RolesPanel() {
   const [fixLoaded, setFixLoaded] = useState(false);
   const [fixRawEmails, setFixRawEmails] = useState("");
 
+  const [urgentDeadline, setUrgentDeadline] = useState("dimanche 26 juillet 2026");
+  const [urgentTestEmail, setUrgentTestEmail] = useState("");
+  const [urgentBusy, setUrgentBusy] = useState(false);
+  const [urgentMode, setUrgentMode] = useState<"all" | "select" | "manual">("all");
+  const [urgentFamilies, setUrgentFamilies] = useState<
+    Array<{ id: string; email: string; prenom: string; nom: string }>
+  >([]);
+  const [urgentSelected, setUrgentSelected] = useState<Record<string, boolean>>({});
+  const [urgentSearch, setUrgentSearch] = useState("");
+  const [urgentLoaded, setUrgentLoaded] = useState(false);
+  const [urgentRawEmails, setUrgentRawEmails] = useState("");
+
+  const loadUrgentFamilies = async () => {
+    const r = await listAllFamilies({ data: {} });
+    if (r.ok) {
+      setUrgentFamilies(r.families as any);
+      setUrgentLoaded(true);
+    } else toast.error((r as any).error || "Erreur de chargement");
+  };
+
   const loadFixFamilies = async () => {
     const r = await listAllFamilies({ data: {} });
     if (r.ok) {
@@ -841,6 +861,209 @@ function RolesPanel() {
             {fixMode === "all" && "Envoyer à toutes les familles"}
             {fixMode === "select" && "Envoyer aux familles sélectionnées"}
             {fixMode === "manual" && "Envoyer aux adresses saisies"}
+          </button>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <h2 className="text-base font-semibold text-foreground">Email « relance urgente commande groupée »</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Relance les familles n'ayant pas encore commandé, en précisant que passé la date limite indiquée ci-dessous,
+          les commandes ne pourront plus être intégrées à la livraison groupée de l'établissement et seront livrées
+          individuellement.
+        </p>
+
+        <div className="mt-4">
+          <label className="text-xs font-medium text-muted-foreground">Date limite (affichée dans le mail)</label>
+          <input
+            type="text"
+            value={urgentDeadline}
+            onChange={(e) => setUrgentDeadline(e.target.value)}
+            placeholder="ex : 15 août 2026"
+            className="mt-1 h-10 w-full max-w-xs rounded-lg border border-border bg-background px-3 text-sm focus:border-primary focus:outline-none"
+          />
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-end gap-3">
+          <div className="flex-1 min-w-[220px]">
+            <label className="text-xs font-medium text-muted-foreground">Envoyer un test à</label>
+            <input
+              type="email"
+              value={urgentTestEmail}
+              onChange={(e) => setUrgentTestEmail(e.target.value)}
+              placeholder="test@example.com"
+              className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm focus:border-primary focus:outline-none"
+            />
+          </div>
+          <button
+            onClick={async () => {
+              if (!urgentTestEmail.trim() || !urgentDeadline.trim()) return;
+              setUrgentBusy(true);
+              const r = await sendUrgentOrderReminder({
+                data: { testEmail: urgentTestEmail.trim(), deadline: urgentDeadline.trim() },
+              });
+              setUrgentBusy(false);
+              if (r.ok) toast.success(`Email de test envoyé à ${urgentTestEmail.trim()}`);
+              else toast.error((r as any).error || "Erreur");
+            }}
+            disabled={urgentBusy || !urgentTestEmail.trim() || !urgentDeadline.trim()}
+            className="h-10 rounded-lg border border-border px-4 text-sm font-semibold text-foreground hover:bg-muted/40 disabled:opacity-50"
+          >
+            Envoyer un test
+          </button>
+        </div>
+
+        <div className="mt-5 border-t border-border pt-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground">Destinataires :</span>
+            <button
+              onClick={() => setUrgentMode("all")}
+              className={`h-8 rounded-lg px-3 text-xs font-semibold ${urgentMode === "all" ? "bg-primary text-primary-foreground" : "border border-border text-foreground hover:bg-muted/40"}`}
+            >
+              Toutes les familles
+            </button>
+            <button
+              onClick={() => {
+                setUrgentMode("select");
+                if (!urgentLoaded) loadUrgentFamilies();
+              }}
+              className={`h-8 rounded-lg px-3 text-xs font-semibold ${urgentMode === "select" ? "bg-primary text-primary-foreground" : "border border-border text-foreground hover:bg-muted/40"}`}
+            >
+              Sélectionner
+            </button>
+            <button
+              onClick={() => setUrgentMode("manual")}
+              className={`h-8 rounded-lg px-3 text-xs font-semibold ${urgentMode === "manual" ? "bg-primary text-primary-foreground" : "border border-border text-foreground hover:bg-muted/40"}`}
+            >
+              Saisir manuellement
+            </button>
+          </div>
+
+          {urgentMode === "select" && (
+            <div className="mt-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  type="search"
+                  value={urgentSearch}
+                  onChange={(e) => setUrgentSearch(e.target.value)}
+                  placeholder="Rechercher (nom, prénom, email)…"
+                  className="h-9 flex-1 min-w-[200px] rounded-lg border border-border bg-background px-3 text-sm focus:border-primary focus:outline-none"
+                />
+                <button
+                  onClick={() => {
+                    const visible = urgentFamilies.filter((f) => {
+                      const q = urgentSearch.trim().toLowerCase();
+                      if (!q) return true;
+                      return `${f.prenom} ${f.nom} ${f.email}`.toLowerCase().includes(q);
+                    });
+                    const next = { ...urgentSelected };
+                    visible.forEach((f) => (next[f.id] = true));
+                    setUrgentSelected(next);
+                  }}
+                  className="h-9 rounded-lg border border-border px-3 text-xs font-semibold hover:bg-muted/40"
+                >
+                  Tout cocher
+                </button>
+                <button
+                  onClick={() => setUrgentSelected({})}
+                  className="h-9 rounded-lg border border-border px-3 text-xs font-semibold hover:bg-muted/40"
+                >
+                  Tout décocher
+                </button>
+              </div>
+              <div className="mt-3 max-h-64 overflow-y-auto rounded-lg border border-border divide-y divide-border">
+                {!urgentLoaded && <p className="px-3 py-4 text-sm text-muted-foreground">Chargement…</p>}
+                {urgentLoaded &&
+                  urgentFamilies
+                    .filter((f) => {
+                      const q = urgentSearch.trim().toLowerCase();
+                      if (!q) return true;
+                      return `${f.prenom} ${f.nom} ${f.email}`.toLowerCase().includes(q);
+                    })
+                    .map((f) => (
+                      <label key={f.id} className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-muted/30">
+                        <input
+                          type="checkbox"
+                          checked={!!urgentSelected[f.id]}
+                          onChange={(e) => setUrgentSelected((s) => ({ ...s, [f.id]: e.target.checked }))}
+                        />
+                        <span className="font-medium">{f.prenom} {f.nom}</span>
+                        <span className="text-muted-foreground">{f.email}</span>
+                      </label>
+                    ))}
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                {Object.values(urgentSelected).filter(Boolean).length} famille(s) sélectionnée(s)
+              </p>
+            </div>
+          )}
+
+          {urgentMode === "manual" && (
+            <div className="mt-3">
+              <label className="text-xs font-medium text-muted-foreground">
+                Emails (séparés par des virgules)
+              </label>
+              <textarea
+                value={urgentRawEmails}
+                onChange={(e) => setUrgentRawEmails(e.target.value)}
+                placeholder="email1@example.com, email2@example.com, …"
+                rows={4}
+                className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
+              />
+            </div>
+          )}
+
+          <button
+            onClick={async () => {
+              if (!urgentDeadline.trim()) {
+                toast.error("Renseignez la date limite");
+                return;
+              }
+              const ids = Object.keys(urgentSelected).filter((id) => urgentSelected[id]);
+              if (urgentMode === "select" && ids.length === 0) {
+                toast.error("Sélectionnez au moins une famille");
+                return;
+              }
+              if (urgentMode === "manual") {
+                const emails = urgentRawEmails.split(",").map((e) => e.trim()).filter(Boolean);
+                if (emails.length === 0) {
+                  toast.error("Saisissez au moins un email");
+                  return;
+                }
+                const invalid = emails.filter((e) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
+                if (invalid.length > 0) {
+                  toast.error(`Emails invalides : ${invalid.join(", ")}`);
+                  return;
+                }
+                if (!confirm(`Envoyer cet email à ${emails.length} adresse(s) ?`)) return;
+                setUrgentBusy(true);
+                const r = await sendUrgentOrderReminder({
+                  data: { rawEmails: emails, deadline: urgentDeadline.trim() },
+                });
+                setUrgentBusy(false);
+                if (r.ok) toast.success(`Email envoyé à ${r.sent} / ${r.total} destinataire(s)`);
+                else toast.error((r as any).error || "Erreur");
+                return;
+              }
+              const label = urgentMode === "all" ? "TOUTES les familles inscrites" : `${ids.length} famille(s) sélectionnée(s)`;
+              if (!confirm(`Envoyer cet email à ${label} ?`)) return;
+              setUrgentBusy(true);
+              const r = await sendUrgentOrderReminder({
+                data: {
+                  deadline: urgentDeadline.trim(),
+                  ...(urgentMode === "select" ? { userIds: ids } : {}),
+                },
+              });
+              setUrgentBusy(false);
+              if (r.ok) toast.success(`Email envoyé à ${r.sent} / ${r.total} famille(s)`);
+              else toast.error((r as any).error || "Erreur");
+            }}
+            disabled={urgentBusy}
+            className="mt-4 h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          >
+            {urgentMode === "all" && "Envoyer à toutes les familles"}
+            {urgentMode === "select" && "Envoyer aux familles sélectionnées"}
+            {urgentMode === "manual" && "Envoyer aux adresses saisies"}
           </button>
         </div>
       </div>

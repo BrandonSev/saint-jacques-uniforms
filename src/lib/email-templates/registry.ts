@@ -21,6 +21,7 @@ import { template as apelReminder } from './apel-reminder'
 import { template as signup } from './signup'
 import { template as technicalFix } from './technical-fix'
 import { template as customBulk } from './custom-bulk'
+import { template as urgentOrderReminder } from './urgent-order-reminder'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome': welcome,
@@ -35,4 +36,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'apel-reminder': apelReminder,
   'technical-fix': technicalFix,
   'custom-bulk': customBulk,
+  'urgent-order-reminder': urgentOrderReminder,
 }

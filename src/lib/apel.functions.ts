@@ -77,6 +77,108 @@ export const sendApelReminders = createServerFn({ method: "POST" })
     return { ok: true as const, sent, total: profiles?.length ?? 0, errors };
   });
 
+// Envoi de la relance urgente "commande groupée" (admin uniquement)
+export const sendUrgentOrderReminder = createServerFn({ method: "POST" })
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
+  .inputValidator((d) =>
+    z
+      .object({
+        deadline: z.string().min(1).max(50),
+        testEmail: z.string().email().optional(),
+        userIds: z.array(z.string().uuid()).max(2000).optional(),
+        rawEmails: z.array(z.string().email()).max(200).optional(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    if (!(await userHasAnyRole(userId, ["admin"]))) {
+      return { ok: false as const, error: "forbidden" as const, sent: 0, total: 0 };
+    }
+
+    // Mode test : un seul destinataire
+    if (data.testEmail) {
+      try {
+        const { data: profile } = await supabaseAdmin
+          .from("profiles")
+          .select("nom, civilite")
+          .eq("email", data.testEmail)
+          .maybeSingle();
+        await enqueueTransactionalEmail({
+          templateName: "urgent-order-reminder",
+          recipientEmail: data.testEmail,
+          templateData: {
+            civilite: formatCivilite((profile as any)?.civilite),
+            familyName: (profile as any)?.nom ?? "",
+            deadline: data.deadline,
+          },
+          idempotencyKey: `urgent-order-reminder-test-${Date.now()}`,
+        });
+        return { ok: true as const, sent: 1, total: 1, errors: [] as string[] };
+      } catch (e: any) {
+        return { ok: false as const, error: e?.message ?? "send_failed", sent: 0, total: 1 };
+      }
+    }
+
+    // Mode saisie manuelle : liste d'emails fournie directement
+    if (data.rawEmails && data.rawEmails.length > 0) {
+      let sent = 0;
+      const errors: string[] = [];
+      for (const email of data.rawEmails) {
+        try {
+          const { data: profile } = await supabaseAdmin
+            .from("profiles")
+            .select("nom, civilite")
+            .eq("email", email)
+            .maybeSingle();
+          await enqueueTransactionalEmail({
+            templateName: "urgent-order-reminder",
+            recipientEmail: email,
+            templateData: {
+              civilite: formatCivilite((profile as any)?.civilite),
+              familyName: (profile as any)?.nom ?? "",
+              deadline: data.deadline,
+            },
+            idempotencyKey: `urgent-order-reminder-raw-${Date.now()}-${sent}`,
+          });
+          sent++;
+        } catch (e: any) {
+          errors.push(`${email}: ${e?.message ?? e}`);
+        }
+      }
+      return { ok: true as const, sent, total: data.rawEmails.length, errors };
+    }
+
+    // Mode diffusion : familles sélectionnées, sinon toutes les familles inscrites
+    let query = supabaseAdmin.from("profiles").select("id, email, nom, civilite").is("deleted_at", null);
+    if (data.userIds && data.userIds.length > 0) {
+      query = query.in("id", data.userIds);
+    }
+    const { data: profiles } = await query;
+    let sent = 0;
+    const errors: string[] = [];
+    const day = new Date().toISOString().slice(0, 10);
+    for (const p of profiles ?? []) {
+      if (!p.email) continue;
+      try {
+        await enqueueTransactionalEmail({
+          templateName: "urgent-order-reminder",
+          recipientEmail: p.email,
+          templateData: {
+            civilite: formatCivilite((p as any).civilite),
+            familyName: (p as any).nom ?? "",
+            deadline: data.deadline,
+          },
+          idempotencyKey: `urgent-order-reminder-${p.id}-${day}`,
+        });
+        sent++;
+      } catch (e: any) {
+        errors.push(`${p.email}: ${e?.message ?? e}`);
+      }
+    }
+    return { ok: true as const, sent, total: profiles?.length ?? 0, errors };
+  });
+
 // Attribution / révocation du rôle APEL (admin uniquement)
 export const setUserRole = createServerFn({ method: "POST" })
   .middleware([withSupabaseAuth, requireSupabaseAuth])
