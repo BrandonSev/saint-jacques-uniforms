@@ -7,7 +7,8 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
-import { sendOrderStatusUpdate, sendIncidentUpdate, sendOrderCorrectionUpdate, sendTestRandomEmail } from "@/lib/email.functions";
+import { sendOrderStatusUpdate, sendIncidentUpdate, sendOrderCorrectionUpdate, sendTestRandomEmail, sendOrderCancellation, sendOrderRefund } from "@/lib/email.functions";
+import { refundOrder, listOrderRefunds, type OrderRefundRow } from "@/lib/order-refunds.functions";
 import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, sendUrgentOrderReminder, listAllFamilies, apelListFamilies, applyOrderCorrectionStock } from "@/lib/apel.functions";
 import { listCustomTemplates, saveCustomTemplate, sendCustomBulkEmail } from "@/lib/email-templates-admin.functions";
 import { formatCivilite } from "@/lib/utils";
@@ -125,6 +126,7 @@ type OrderRow = {
   shipping_mode: string;
   tracking_number: string | null;
   tracking_carrier: string | null;
+  payplug_payment_id: string | null;
 };
 
 function AdminPage() {
@@ -154,7 +156,7 @@ function AdminPage() {
       const { data, error } = await supabase
         .from("orders")
         .select(
-          "id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, shipping_mode, tracking_number, tracking_carrier",
+          "id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, shipping_mode, tracking_number, tracking_carrier, payplug_payment_id",
         )
         .order("created_at", { ascending: false });
       if (error) {
@@ -1567,6 +1569,133 @@ function Field({ label, value }: { label: string; value: string }) {
   );
 }
 
+type OrderItemRow = { id: string; product_name: string; size: string; line_total: number };
+
+function RefundPanel({ orderId, disabled }: { orderId: string; disabled: boolean }) {
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState<OrderItemRow[]>([]);
+  const [refunds, setRefunds] = useState<OrderRefundRow[]>([]);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [reason, setReason] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    const [{ data: itemRows }, refundsResult] = await Promise.all([
+      supabase.from("order_items").select("id, product_name, size, line_total").eq("order_id", orderId),
+      listOrderRefunds({ data: { orderId } }),
+    ]);
+    setItems((itemRows ?? []) as OrderItemRow[]);
+    if (refundsResult.ok) setRefunds(refundsResult.refunds);
+    setLoading(false);
+  };
+
+  const toggle = (id: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
+  const alreadyRefundedIds = new Set(refunds.filter((r) => r.status === "Réussi").flatMap((r) => r.order_item_ids));
+  const total = items.filter((i) => selected.has(i.id)).reduce((s, i) => s + Number(i.line_total), 0);
+
+  const submit = async () => {
+    if (selected.size === 0) return;
+    setSubmitting(true);
+    const result = await refundOrder({ data: { orderId, orderItemIds: Array.from(selected), reason: reason || undefined } });
+    setSubmitting(false);
+    if (!result.ok) {
+      toast.error(`Remboursement échoué : ${result.error}`);
+      await load();
+      return;
+    }
+    toast.success(`Remboursement de ${result.amount.toFixed(2)} € effectué`);
+    sendOrderRefund({ data: { refundId: result.refundId } }).catch(() => {});
+    setSelected(new Set());
+    setReason("");
+    await load();
+  };
+
+  if (!open) {
+    return (
+      <button
+        onClick={() => {
+          setOpen(true);
+          load();
+        }}
+        disabled={disabled}
+        className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-[11px] font-semibold text-foreground hover:bg-muted disabled:opacity-50"
+        title={disabled ? "Commande non payée via PayPlug" : undefined}
+      >
+        Rembourser
+      </button>
+    );
+  }
+
+  return (
+    <div className="mt-2 rounded-lg border border-border bg-muted/20 p-3 text-xs">
+      {loading && <p className="text-muted-foreground">Chargement…</p>}
+      {!loading && (
+        <>
+          <div className="space-y-1">
+            {items.map((i) => {
+              const refunded = alreadyRefundedIds.has(i.id);
+              return (
+                <label key={i.id} className={`flex items-center gap-2 ${refunded ? "opacity-40" : ""}`}>
+                  <input
+                    type="checkbox"
+                    disabled={refunded}
+                    checked={selected.has(i.id)}
+                    onChange={() => toggle(i.id)}
+                  />
+                  {i.product_name} — {i.size} ({Number(i.line_total).toFixed(2)} €)
+                  {refunded && <span className="italic"> déjà remboursé</span>}
+                </label>
+              );
+            })}
+          </div>
+          <input
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder="Motif (optionnel)"
+            className="mt-2 h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
+          />
+          <div className="mt-2 flex items-center justify-between">
+            <span className="font-semibold">Total sélectionné : {total.toFixed(2)} €</span>
+            <button
+              onClick={submit}
+              disabled={selected.size === 0 || submitting}
+              className="rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            >
+              {submitting ? "…" : `Rembourser ${total.toFixed(2)} €`}
+            </button>
+          </div>
+          {refunds.length > 0 && (
+            <div className="mt-3 border-t border-border pt-2">
+              <p className="mb-1 font-semibold text-muted-foreground">Historique</p>
+              {refunds.map((r) => (
+                <div key={r.id} className="flex items-center justify-between text-[11px] text-muted-foreground">
+                  <span>
+                    {new Date(r.created_at).toLocaleDateString("fr-FR")} — {Number(r.amount).toFixed(2)} €
+                    {r.reason ? ` (${r.reason})` : ""}
+                  </span>
+                  <span className={r.status === "Réussi" ? "text-emerald-600" : "text-destructive"}>{r.status}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          <button onClick={() => setOpen(false)} className="mt-2 text-[11px] text-muted-foreground hover:underline">
+            Fermer
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
 function TrackingPanel({
   orders,
   loading,
@@ -1676,21 +1805,40 @@ function TrackingPanel({
                     />
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <button
-                      onClick={() =>
-                        onUpdate(
-                          o.id,
-                          {
-                            tracking_number: d.tracking_number || null,
-                            tracking_carrier: d.tracking_carrier || null,
-                          },
-                          true,
-                        )
-                      }
-                      className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90"
-                    >
-                      <Save className="h-3 w-3" /> Enregistrer
-                    </button>
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => {
+                          const blocking = ["Expédiée", "Livrée", "Annulée", "Remboursée"].includes(o.status);
+                          const confirmMsg = blocking
+                            ? `Cette commande est déjà "${o.status}". Confirmer l'annulation quand même ?`
+                            : `Annuler la commande ${o.order_number} ?`;
+                          if (!window.confirm(confirmMsg)) return;
+                          const reason = window.prompt("Motif de l'annulation (optionnel)") ?? undefined;
+                          onUpdate(o.id, { status: "Annulée" }, false).then(() => {
+                            sendOrderCancellation({ data: { orderId: o.id, reason } }).catch(() => {});
+                          });
+                        }}
+                        className="inline-flex items-center gap-1 rounded-md border border-destructive/40 px-3 py-1.5 text-[11px] font-semibold text-destructive hover:bg-destructive/10"
+                      >
+                        Annuler
+                      </button>
+                      <RefundPanel orderId={o.id} disabled={!o.payplug_payment_id} />
+                      <button
+                        onClick={() =>
+                          onUpdate(
+                            o.id,
+                            {
+                              tracking_number: d.tracking_number || null,
+                              tracking_carrier: d.tracking_carrier || null,
+                            },
+                            true,
+                          )
+                        }
+                        className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90"
+                      >
+                        <Save className="h-3 w-3" /> Enregistrer
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );
