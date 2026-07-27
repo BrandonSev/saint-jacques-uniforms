@@ -111,7 +111,7 @@ const INCIDENT_STATUSES = [
   "Refusé",
 ] as const;
 
-const ORDER_STATUSES = ["En attente", "Paiement validé", "En préparation", "Expédiée", "Livrée", "Annulée"] as const;
+const ORDER_STATUSES = ["En attente", "Paiement validé", "En préparation", "Expédiée", "Livrée", "Annulée", "Remboursée"] as const;
 
 type OrderRow = {
   id: string;
