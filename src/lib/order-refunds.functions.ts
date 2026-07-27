@@ -71,22 +71,34 @@ export const refundOrder = createServerFn({ method: "POST" })
       .in("id", data.orderItemIds);
     if (itemsError || !items || items.length === 0) return { ok: false as const, error: "no_items" as const };
 
-    // Cast : table ajoutée par la migration 20260727140000, types Supabase pas encore régénérés.
-    const { data: previousRefunds } = await (supabaseAdmin.from as any)("order_refunds")
-      .select("order_item_ids, amount, status")
-      .eq("order_id", data.orderId)
-      .eq("status", "Réussi");
-
-    // Un item déjà couvert par un remboursement réussi antérieur ne peut pas être re-sélectionné.
-    const alreadyRefundedItemIds = new Set(
-      (previousRefunds ?? []).flatMap((r: any) => r.order_item_ids as string[]),
-    );
-    const duplicate = data.orderItemIds.find((id) => alreadyRefundedItemIds.has(id));
-    if (duplicate) return { ok: false as const, error: "already_refunded" as const };
-
     const amount = items.reduce((sum: number, item: any) => sum + Number(item.line_total), 0);
     const amountCents = Math.round(amount * 100);
 
+    // Réservation atomique : verrouille la ligne order (SELECT ... FOR UPDATE côté serveur)
+    // et re-vérifie qu'aucun item sélectionné n'est déjà couvert par un remboursement réussi,
+    // le tout dans une seule transaction Postgres — empêche deux appels concurrents de passer
+    // tous les deux la vérification avant qu'un insert n'atterrisse (TOCTOU).
+    // Cast : fonction ajoutée par la migration 20260727150000, types Supabase pas encore régénérés.
+    const { data: reservedRefundId, error: reserveError } = await (supabaseAdmin.rpc as any)(
+      "reserve_order_refund",
+      {
+        _order_id: data.orderId,
+        _order_item_ids: data.orderItemIds,
+        _amount: amount,
+        _reason: data.reason ?? null,
+        _created_by: userId,
+      },
+    );
+    if (reserveError) {
+      if (String(reserveError.message ?? "").includes("already_refunded")) {
+        return { ok: false as const, error: "already_refunded" as const };
+      }
+      return { ok: false as const, error: reserveError.message };
+    }
+    const refundId = reservedRefundId as string;
+
+    // L'appel réseau PayPlug se fait hors du verrou (le verrou a déjà été relâché : la
+    // transaction de reserve_order_refund a commité dès son retour).
     let payplugResult: { refundId: string | null; status: "Réussi" | "Échoué"; errorMessage: string | null };
     try {
       const refund = await refundPayplugPayment(order.payplug_payment_id, amountCents);
@@ -95,20 +107,15 @@ export const refundOrder = createServerFn({ method: "POST" })
       payplugResult = { refundId: null, status: "Échoué", errorMessage: e?.message ?? String(e) };
     }
 
-    const { data: inserted, error: insertError } = await (supabaseAdmin.from as any)("order_refunds")
-      .insert({
-        order_id: data.orderId,
-        order_item_ids: data.orderItemIds,
-        amount,
-        reason: data.reason ?? null,
-        payplug_refund_id: payplugResult.refundId,
+    // Cast : table ajoutée par la migration 20260727140000, types Supabase pas encore régénérés.
+    const { error: updateError } = await (supabaseAdmin.from as any)("order_refunds")
+      .update({
         status: payplugResult.status,
+        payplug_refund_id: payplugResult.refundId,
         error_message: payplugResult.errorMessage,
-        created_by: userId,
       })
-      .select("id")
-      .single();
-    if (insertError) return { ok: false as const, error: insertError.message };
+      .eq("id", refundId);
+    if (updateError) return { ok: false as const, error: updateError.message };
 
     if (payplugResult.status === "Échoué") {
       return { ok: false as const, error: payplugResult.errorMessage ?? "refund_failed" };
@@ -124,5 +131,5 @@ export const refundOrder = createServerFn({ method: "POST" })
       await supabaseAdmin.from("orders").update({ status: "Remboursée" }).eq("id", data.orderId);
     }
 
-    return { ok: true as const, refundId: inserted.id as string, amount };
+    return { ok: true as const, refundId, amount };
   });
