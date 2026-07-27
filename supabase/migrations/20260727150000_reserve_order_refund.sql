@@ -28,12 +28,19 @@ BEGIN
     RAISE EXCEPTION 'order_not_found';
   END IF;
 
+  -- Une réservation 'En cours' ne bloque que si elle est récente : passé 2 minutes
+  -- (largement suffisant pour un aller-retour PayPlug normal), on considère qu'elle est
+  -- bloquée (crash serveur, timeout, échec de la finalisation) et on la laisse expirer
+  -- pour ne pas bloquer indéfiniment un ré-remboursement des mêmes items.
   SELECT EXISTS (
     SELECT 1
     FROM public.order_refunds
     WHERE order_id = _order_id
-      AND status IN ('Réussi', 'En cours')
       AND order_item_ids && _order_item_ids
+      AND (
+        status = 'Réussi'
+        OR (status = 'En cours' AND created_at > now() - interval '2 minutes')
+      )
   ) INTO already_refunded;
 
   IF already_refunded THEN
