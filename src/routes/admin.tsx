@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
 import { Download, ShieldCheck, AlertTriangle, X, ImageIcon, Truck, Save, Users, Trash2 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
@@ -7,7 +7,8 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
-import { sendOrderStatusUpdate, sendIncidentUpdate, sendOrderCorrectionUpdate, sendTestRandomEmail } from "@/lib/email.functions";
+import { sendOrderStatusUpdate, sendIncidentUpdate, sendOrderCorrectionUpdate, sendTestRandomEmail, sendOrderCancellation, sendOrderRefund } from "@/lib/email.functions";
+import { refundOrder, listOrderRefunds, type OrderRefundRow } from "@/lib/order-refunds.functions";
 import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, sendUrgentOrderReminder, listAllFamilies, apelListFamilies, applyOrderCorrectionStock } from "@/lib/apel.functions";
 import { listCustomTemplates, saveCustomTemplate, sendCustomBulkEmail } from "@/lib/email-templates-admin.functions";
 import { formatCivilite } from "@/lib/utils";
@@ -111,7 +112,7 @@ const INCIDENT_STATUSES = [
   "Refusé",
 ] as const;
 
-const ORDER_STATUSES = ["En attente", "Paiement validé", "En préparation", "Expédiée", "Livrée", "Annulée"] as const;
+const ORDER_STATUSES = ["En attente", "Paiement validé", "En préparation", "Expédiée", "Livrée", "Annulée", "Remboursée"] as const;
 
 type OrderRow = {
   id: string;
@@ -125,6 +126,7 @@ type OrderRow = {
   shipping_mode: string;
   tracking_number: string | null;
   tracking_carrier: string | null;
+  payplug_payment_id: string | null;
 };
 
 function AdminPage() {
@@ -154,7 +156,7 @@ function AdminPage() {
       const { data, error } = await supabase
         .from("orders")
         .select(
-          "id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, shipping_mode, tracking_number, tracking_carrier",
+          "id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, shipping_mode, tracking_number, tracking_carrier, payplug_payment_id",
         )
         .order("created_at", { ascending: false });
       if (error) {
@@ -370,19 +372,20 @@ function AdminPage() {
     orderId: string,
     patch: Partial<Pick<OrderRow, "status" | "tracking_number" | "tracking_carrier">>,
     notify: boolean,
-  ) => {
+  ): Promise<boolean> => {
     const update: any = { ...patch };
     if (patch.status === "Livrée") update.delivered_at = new Date().toISOString();
     const { error } = await supabase.from("orders").update(update).eq("id", orderId);
     if (error) {
       toast.error(error.message);
-      return;
+      return false;
     }
     setOrderRows((prev) => prev.map((o) => (o.id === orderId ? { ...o, ...patch } : o)));
     if (notify) {
       sendOrderStatusUpdate({ data: { orderId } }).catch(() => {});
     }
     toast.success("Commande mise à jour");
+    return true;
   };
 
   const getSignedPhotoUrl = async (path: string): Promise<string | null> => {
@@ -1567,6 +1570,138 @@ function Field({ label, value }: { label: string; value: string }) {
   );
 }
 
+type OrderItemRow = { id: string; product_name: string; size: string; line_total: number };
+
+// Bouton déclencheur, prévu pour rester dans la rangée de boutons (le <td> d'actions) : le
+// panneau déplié, lui, est rendu par RefundPanelContent dans une <tr> pleine largeur séparée
+// (voir TrackingPanel) car il est trop grand pour tenir dans cette cellule.
+function RefundTriggerButton({ disabled, open, onOpen }: { disabled: boolean; open: boolean; onOpen: () => void }) {
+  if (open) return null;
+  return (
+    <button
+      onClick={onOpen}
+      disabled={disabled}
+      className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-[11px] font-semibold text-foreground hover:bg-muted disabled:opacity-50"
+      title={disabled ? "Commande non payée via PayPlug" : undefined}
+    >
+      Rembourser
+    </button>
+  );
+}
+
+function RefundPanelContent({ orderId, onClose }: { orderId: string; onClose: () => void }) {
+  const [items, setItems] = useState<OrderItemRow[]>([]);
+  const [refunds, setRefunds] = useState<OrderRefundRow[]>([]);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [reason, setReason] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    const [{ data: itemRows }, refundsResult] = await Promise.all([
+      supabase.from("order_items").select("id, product_name, size, line_total").eq("order_id", orderId),
+      listOrderRefunds({ data: { orderId } }),
+    ]);
+    setItems((itemRows ?? []) as OrderItemRow[]);
+    if (refundsResult.ok) setRefunds(refundsResult.refunds);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderId]);
+
+  const toggle = (id: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
+  const alreadyRefundedIds = new Set(refunds.filter((r) => r.status === "Réussi").flatMap((r) => r.order_item_ids));
+  const total = items.filter((i) => selected.has(i.id)).reduce((s, i) => s + Number(i.line_total), 0);
+
+  const submit = async () => {
+    if (selected.size === 0) return;
+    setSubmitting(true);
+    const result = await refundOrder({ data: { orderId, orderItemIds: Array.from(selected), reason: reason || undefined } });
+    setSubmitting(false);
+    if (!result.ok) {
+      toast.error(`Remboursement échoué : ${result.error}`);
+      await load();
+      return;
+    }
+    toast.success(`Remboursement de ${result.amount.toFixed(2)} € effectué`);
+    sendOrderRefund({ data: { refundId: result.refundId } }).catch(() => {});
+    setSelected(new Set());
+    setReason("");
+    await load();
+  };
+
+  return (
+    <div className="rounded-lg border border-border bg-muted/20 p-3 text-xs">
+      {loading && <p className="text-muted-foreground">Chargement…</p>}
+      {!loading && (
+        <>
+          <div className="space-y-1">
+            {items.map((i) => {
+              const refunded = alreadyRefundedIds.has(i.id);
+              return (
+                <label key={i.id} className={`flex items-center gap-2 ${refunded ? "opacity-40" : ""}`}>
+                  <input
+                    type="checkbox"
+                    disabled={refunded}
+                    checked={selected.has(i.id)}
+                    onChange={() => toggle(i.id)}
+                  />
+                  {i.product_name} — {i.size} ({Number(i.line_total).toFixed(2)} €)
+                  {refunded && <span className="italic"> déjà remboursé</span>}
+                </label>
+              );
+            })}
+          </div>
+          <input
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder="Motif (optionnel)"
+            className="mt-2 h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
+          />
+          <div className="mt-2 flex items-center justify-between">
+            <span className="font-semibold">Total sélectionné : {total.toFixed(2)} €</span>
+            <button
+              onClick={submit}
+              disabled={selected.size === 0 || submitting}
+              className="rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            >
+              {submitting ? "…" : `Rembourser ${total.toFixed(2)} €`}
+            </button>
+          </div>
+          {refunds.length > 0 && (
+            <div className="mt-3 border-t border-border pt-2">
+              <p className="mb-1 font-semibold text-muted-foreground">Historique</p>
+              {refunds.map((r) => (
+                <div key={r.id} className="flex items-center justify-between text-[11px] text-muted-foreground">
+                  <span>
+                    {new Date(r.created_at).toLocaleDateString("fr-FR")} — {Number(r.amount).toFixed(2)} €
+                    {r.reason ? ` (${r.reason})` : ""}
+                  </span>
+                  <span className={r.status === "Réussi" ? "text-emerald-600" : "text-destructive"}>{r.status}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          <button onClick={onClose} className="mt-2 text-[11px] text-muted-foreground hover:underline">
+            Fermer
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
 function TrackingPanel({
   orders,
   loading,
@@ -1578,9 +1713,10 @@ function TrackingPanel({
     orderId: string,
     patch: Partial<Pick<OrderRow, "status" | "tracking_number" | "tracking_carrier">>,
     notify: boolean,
-  ) => Promise<void>;
+  ) => Promise<boolean>;
 }) {
   const [drafts, setDrafts] = useState<Record<string, { tracking_number: string; tracking_carrier: string }>>({});
+  const [refundOpenOrderId, setRefundOpenOrderId] = useState<string | null>(null);
 
   const draftFor = (o: OrderRow) =>
     drafts[o.id] ?? {
@@ -1623,8 +1759,10 @@ function TrackingPanel({
             )}
             {orders.map((o) => {
               const d = draftFor(o);
+              const refundOpen = refundOpenOrderId === o.id;
               return (
-                <tr key={o.id} className="hover:bg-muted/30">
+                <Fragment key={o.id}>
+                  <tr className="hover:bg-muted/30">
                   <td className="px-4 py-3 font-medium text-foreground">
                     {o.order_number}
                     <div className="text-[11px] text-muted-foreground">
@@ -1676,23 +1814,55 @@ function TrackingPanel({
                     />
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <button
-                      onClick={() =>
-                        onUpdate(
-                          o.id,
-                          {
-                            tracking_number: d.tracking_number || null,
-                            tracking_carrier: d.tracking_carrier || null,
-                          },
-                          true,
-                        )
-                      }
-                      className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90"
-                    >
-                      <Save className="h-3 w-3" /> Enregistrer
-                    </button>
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => {
+                          const blocking = ["Expédiée", "Livrée", "Annulée", "Remboursée"].includes(o.status);
+                          const confirmMsg = blocking
+                            ? `Cette commande est déjà "${o.status}". Confirmer l'annulation quand même ?`
+                            : `Annuler la commande ${o.order_number} ?`;
+                          if (!window.confirm(confirmMsg)) return;
+                          const reason = window.prompt("Motif de l'annulation (optionnel)") ?? undefined;
+                          onUpdate(o.id, { status: "Annulée" }, false).then((success) => {
+                            if (!success) return;
+                            sendOrderCancellation({ data: { orderId: o.id, reason } }).catch(() => {});
+                          });
+                        }}
+                        className="inline-flex items-center gap-1 rounded-md border border-destructive/40 px-3 py-1.5 text-[11px] font-semibold text-destructive hover:bg-destructive/10"
+                      >
+                        Annuler
+                      </button>
+                      <RefundTriggerButton
+                        disabled={!o.payplug_payment_id}
+                        open={refundOpen}
+                        onOpen={() => setRefundOpenOrderId(o.id)}
+                      />
+                      <button
+                        onClick={() =>
+                          onUpdate(
+                            o.id,
+                            {
+                              tracking_number: d.tracking_number || null,
+                              tracking_carrier: d.tracking_carrier || null,
+                            },
+                            true,
+                          )
+                        }
+                        className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90"
+                      >
+                        <Save className="h-3 w-3" /> Enregistrer
+                      </button>
+                    </div>
                   </td>
-                </tr>
+                  </tr>
+                  {refundOpen && (
+                    <tr>
+                      <td colSpan={7} className="bg-muted/10 px-4 py-3">
+                        <RefundPanelContent orderId={o.id} onClose={() => setRefundOpenOrderId(null)} />
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
               );
             })}
           </tbody>

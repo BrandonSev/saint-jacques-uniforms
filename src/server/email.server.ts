@@ -98,3 +98,51 @@ export async function sendOrderCorrectionResolutionFamily(
     idempotencyKey: `order-correction-${orderNumber}-${productName}-${newSize}`,
   });
 }
+
+export async function sendOrderCancellationEmail(
+  to: string,
+  prenom: string,
+  orderNumber: string,
+  reason: string | null,
+  familyName?: string,
+) {
+  await enqueueTransactionalEmail({
+    templateName: "order-cancellation",
+    recipientEmail: to,
+    templateData: { prenom, familyName, orderNumber, reason: reason ?? undefined },
+    idempotencyKey: `order-cancel-${orderNumber}-${Date.now()}`,
+  });
+}
+
+export async function sendOrderRefundEmail(
+  to: string,
+  prenom: string,
+  orderNumber: string,
+  amount: number,
+  itemNames: string[],
+  familyName?: string,
+) {
+  await enqueueTransactionalEmail({
+    templateName: "order-refund",
+    recipientEmail: to,
+    templateData: { prenom, familyName, orderNumber, amount, itemNames },
+    idempotencyKey: `order-refund-${orderNumber}-${amount}-${Date.now()}`,
+  });
+}
+
+export async function sendAdminOrderActionNotification(
+  to: string,
+  orderNumber: string,
+  familyName: string,
+  action: "Annulation" | "Remboursement",
+  amount: number | null,
+  reason: string | null,
+  actorEmail: string,
+) {
+  await enqueueTransactionalEmail({
+    templateName: "admin-order-action",
+    recipientEmail: to,
+    templateData: { orderNumber, familyName, action, amount: amount ?? undefined, reason: reason ?? undefined, actorEmail },
+    idempotencyKey: `admin-action-${orderNumber}-${action}-${Date.now()}`,
+  });
+}

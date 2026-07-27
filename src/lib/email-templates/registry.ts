@@ -17,6 +17,9 @@ import { template as incidentFamily } from './incident-family'
 import { template as incidentAdmin } from './incident-admin'
 import { template as incidentResolution } from './incident-resolution'
 import { template as orderCorrectionResolution } from './order-correction-resolution'
+import { template as orderCancellation } from './order-cancellation'
+import { template as orderRefund } from './order-refund'
+import { template as adminOrderAction } from './admin-order-action'
 import { template as passwordReset } from './password-reset'
 import { template as apelReminder } from './apel-reminder'
 import { template as signup } from './signup'
@@ -34,6 +37,9 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'incident-admin': incidentAdmin,
   'incident-resolution': incidentResolution,
   'order-correction-resolution': orderCorrectionResolution,
+  'order-cancellation': orderCancellation,
+  'order-refund': orderRefund,
+  'admin-order-action': adminOrderAction,
   'password-reset': passwordReset,
   'apel-reminder': apelReminder,
   'technical-fix': technicalFix,
