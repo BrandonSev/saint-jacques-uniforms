@@ -18,6 +18,9 @@ import {
   sendIncidentOpenedAdmin,
   sendIncidentResolutionFamily,
   sendOrderCorrectionResolutionFamily,
+  sendOrderCancellationEmail,
+  sendOrderRefundEmail,
+  sendAdminOrderActionNotification,
   type OrderEmailItem,
 } from "@/server/email.server";
 
@@ -363,6 +366,97 @@ export const sendOrderCorrectionUpdate = createServerFn({ method: "POST" })
       return { ok: true };
     } catch (e) {
       console.error("sendOrderCorrectionUpdate:", e);
+      return { ok: false, error: "send_failed" as const };
+    }
+  });
+
+// Notification d'annulation de commande (admin → famille + admin)
+export const sendOrderCancellation = createServerFn({ method: "POST" })
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
+  .inputValidator((d) => z.object({ orderId: z.string().uuid(), reason: z.string().max(500).optional() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { data: order } = await supabase
+      .from("orders")
+      .select("order_number, family_email, family_prenom, family_nom")
+      .eq("id", data.orderId)
+      .maybeSingle();
+    if (!order || !order.family_email) return { ok: false, error: "no_recipient" as const };
+    try {
+      await sendOrderCancellationEmail(
+        order.family_email,
+        order.family_prenom ?? "",
+        order.order_number,
+        data.reason ?? null,
+        order.family_nom ?? undefined,
+      );
+      const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.SMTP_USER;
+      if (adminEmail) {
+        await sendAdminOrderActionNotification(
+          adminEmail,
+          order.order_number,
+          `${order.family_prenom ?? ""} ${order.family_nom ?? ""}`.trim(),
+          "Annulation",
+          null,
+          data.reason ?? null,
+          (context.claims as any)?.email ?? "admin",
+        );
+      }
+      return { ok: true };
+    } catch (e) {
+      console.error("sendOrderCancellation:", e);
+      return { ok: false, error: "send_failed" as const };
+    }
+  });
+
+// Notification de remboursement de commande (admin → famille + admin)
+export const sendOrderRefund = createServerFn({ method: "POST" })
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
+  .inputValidator((d) => z.object({ refundId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    // Cast : table ajoutée par la migration 20260727140000, types Supabase pas encore régénérés
+    // (même convention que src/lib/order-refunds.functions.ts).
+    const { data: refund } = await (supabase.from as any)("order_refunds")
+      .select("order_id, amount, reason, order_item_ids")
+      .eq("id", data.refundId)
+      .maybeSingle();
+    if (!refund) return { ok: false, error: "not_found" as const };
+    const { data: order } = await supabase
+      .from("orders")
+      .select("order_number, family_email, family_prenom, family_nom")
+      .eq("id", refund.order_id)
+      .maybeSingle();
+    if (!order || !order.family_email) return { ok: false, error: "no_recipient" as const };
+    const { data: items } = await supabase
+      .from("order_items")
+      .select("product_name")
+      .in("id", refund.order_item_ids as string[]);
+    const itemNames = (items ?? []).map((i: any) => i.product_name);
+    try {
+      await sendOrderRefundEmail(
+        order.family_email,
+        order.family_prenom ?? "",
+        order.order_number,
+        Number(refund.amount),
+        itemNames,
+        order.family_nom ?? undefined,
+      );
+      const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.SMTP_USER;
+      if (adminEmail) {
+        await sendAdminOrderActionNotification(
+          adminEmail,
+          order.order_number,
+          `${order.family_prenom ?? ""} ${order.family_nom ?? ""}`.trim(),
+          "Remboursement",
+          Number(refund.amount),
+          refund.reason,
+          (context.claims as any)?.email ?? "admin",
+        );
+      }
+      return { ok: true };
+    } catch (e) {
+      console.error("sendOrderRefund:", e);
       return { ok: false, error: "send_failed" as const };
     }
   });
