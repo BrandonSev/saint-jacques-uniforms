@@ -110,7 +110,7 @@ export async function sendOrderCancellationEmail(
     templateName: "order-cancellation",
     recipientEmail: to,
     templateData: { prenom, familyName, orderNumber, reason: reason ?? undefined },
-    idempotencyKey: `order-cancel-${orderNumber}`,
+    idempotencyKey: `order-cancel-${orderNumber}-${Date.now()}`,
   });
 }
 

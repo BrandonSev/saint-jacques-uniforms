@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
 import { Download, ShieldCheck, AlertTriangle, X, ImageIcon, Truck, Save, Users, Trash2 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
@@ -372,19 +372,20 @@ function AdminPage() {
     orderId: string,
     patch: Partial<Pick<OrderRow, "status" | "tracking_number" | "tracking_carrier">>,
     notify: boolean,
-  ) => {
+  ): Promise<boolean> => {
     const update: any = { ...patch };
     if (patch.status === "Livrée") update.delivered_at = new Date().toISOString();
     const { error } = await supabase.from("orders").update(update).eq("id", orderId);
     if (error) {
       toast.error(error.message);
-      return;
+      return false;
     }
     setOrderRows((prev) => prev.map((o) => (o.id === orderId ? { ...o, ...patch } : o)));
     if (notify) {
       sendOrderStatusUpdate({ data: { orderId } }).catch(() => {});
     }
     toast.success("Commande mise à jour");
+    return true;
   };
 
   const getSignedPhotoUrl = async (path: string): Promise<string | null> => {
@@ -1571,8 +1572,24 @@ function Field({ label, value }: { label: string; value: string }) {
 
 type OrderItemRow = { id: string; product_name: string; size: string; line_total: number };
 
-function RefundPanel({ orderId, disabled }: { orderId: string; disabled: boolean }) {
-  const [open, setOpen] = useState(false);
+// Bouton déclencheur, prévu pour rester dans la rangée de boutons (le <td> d'actions) : le
+// panneau déplié, lui, est rendu par RefundPanelContent dans une <tr> pleine largeur séparée
+// (voir TrackingPanel) car il est trop grand pour tenir dans cette cellule.
+function RefundTriggerButton({ disabled, open, onOpen }: { disabled: boolean; open: boolean; onOpen: () => void }) {
+  if (open) return null;
+  return (
+    <button
+      onClick={onOpen}
+      disabled={disabled}
+      className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-[11px] font-semibold text-foreground hover:bg-muted disabled:opacity-50"
+      title={disabled ? "Commande non payée via PayPlug" : undefined}
+    >
+      Rembourser
+    </button>
+  );
+}
+
+function RefundPanelContent({ orderId, onClose }: { orderId: string; onClose: () => void }) {
   const [items, setItems] = useState<OrderItemRow[]>([]);
   const [refunds, setRefunds] = useState<OrderRefundRow[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -1590,6 +1607,11 @@ function RefundPanel({ orderId, disabled }: { orderId: string; disabled: boolean
     if (refundsResult.ok) setRefunds(refundsResult.refunds);
     setLoading(false);
   };
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderId]);
 
   const toggle = (id: string) =>
     setSelected((prev) => {
@@ -1619,24 +1641,8 @@ function RefundPanel({ orderId, disabled }: { orderId: string; disabled: boolean
     await load();
   };
 
-  if (!open) {
-    return (
-      <button
-        onClick={() => {
-          setOpen(true);
-          load();
-        }}
-        disabled={disabled}
-        className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-[11px] font-semibold text-foreground hover:bg-muted disabled:opacity-50"
-        title={disabled ? "Commande non payée via PayPlug" : undefined}
-      >
-        Rembourser
-      </button>
-    );
-  }
-
   return (
-    <div className="mt-2 rounded-lg border border-border bg-muted/20 p-3 text-xs">
+    <div className="rounded-lg border border-border bg-muted/20 p-3 text-xs">
       {loading && <p className="text-muted-foreground">Chargement…</p>}
       {!loading && (
         <>
@@ -1687,7 +1693,7 @@ function RefundPanel({ orderId, disabled }: { orderId: string; disabled: boolean
               ))}
             </div>
           )}
-          <button onClick={() => setOpen(false)} className="mt-2 text-[11px] text-muted-foreground hover:underline">
+          <button onClick={onClose} className="mt-2 text-[11px] text-muted-foreground hover:underline">
             Fermer
           </button>
         </>
@@ -1707,9 +1713,10 @@ function TrackingPanel({
     orderId: string,
     patch: Partial<Pick<OrderRow, "status" | "tracking_number" | "tracking_carrier">>,
     notify: boolean,
-  ) => Promise<void>;
+  ) => Promise<boolean>;
 }) {
   const [drafts, setDrafts] = useState<Record<string, { tracking_number: string; tracking_carrier: string }>>({});
+  const [refundOpenOrderId, setRefundOpenOrderId] = useState<string | null>(null);
 
   const draftFor = (o: OrderRow) =>
     drafts[o.id] ?? {
@@ -1752,8 +1759,10 @@ function TrackingPanel({
             )}
             {orders.map((o) => {
               const d = draftFor(o);
+              const refundOpen = refundOpenOrderId === o.id;
               return (
-                <tr key={o.id} className="hover:bg-muted/30">
+                <Fragment key={o.id}>
+                  <tr className="hover:bg-muted/30">
                   <td className="px-4 py-3 font-medium text-foreground">
                     {o.order_number}
                     <div className="text-[11px] text-muted-foreground">
@@ -1814,7 +1823,8 @@ function TrackingPanel({
                             : `Annuler la commande ${o.order_number} ?`;
                           if (!window.confirm(confirmMsg)) return;
                           const reason = window.prompt("Motif de l'annulation (optionnel)") ?? undefined;
-                          onUpdate(o.id, { status: "Annulée" }, false).then(() => {
+                          onUpdate(o.id, { status: "Annulée" }, false).then((success) => {
+                            if (!success) return;
                             sendOrderCancellation({ data: { orderId: o.id, reason } }).catch(() => {});
                           });
                         }}
@@ -1822,7 +1832,11 @@ function TrackingPanel({
                       >
                         Annuler
                       </button>
-                      <RefundPanel orderId={o.id} disabled={!o.payplug_payment_id} />
+                      <RefundTriggerButton
+                        disabled={!o.payplug_payment_id}
+                        open={refundOpen}
+                        onOpen={() => setRefundOpenOrderId(o.id)}
+                      />
                       <button
                         onClick={() =>
                           onUpdate(
@@ -1840,7 +1854,15 @@ function TrackingPanel({
                       </button>
                     </div>
                   </td>
-                </tr>
+                  </tr>
+                  {refundOpen && (
+                    <tr>
+                      <td colSpan={7} className="bg-muted/10 px-4 py-3">
+                        <RefundPanelContent orderId={o.id} onClose={() => setRefundOpenOrderId(null)} />
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
               );
             })}
           </tbody>

@@ -69,7 +69,9 @@ export const refundOrder = createServerFn({ method: "POST" })
       .select("id, line_total")
       .eq("order_id", data.orderId)
       .in("id", data.orderItemIds);
-    if (itemsError || !items || items.length === 0) return { ok: false as const, error: "no_items" as const };
+    if (itemsError || !items || items.length !== data.orderItemIds.length) {
+      return { ok: false as const, error: "no_items" as const };
+    }
 
     const amount = items.reduce((sum: number, item: any) => sum + Number(item.line_total), 0);
     const amountCents = Math.round(amount * 100);
@@ -108,14 +110,36 @@ export const refundOrder = createServerFn({ method: "POST" })
     }
 
     // Cast : table ajoutée par la migration 20260727140000, types Supabase pas encore régénérés.
-    const { error: updateError } = await (supabaseAdmin.from as any)("order_refunds")
-      .update({
-        status: payplugResult.status,
-        payplug_refund_id: payplugResult.refundId,
-        error_message: payplugResult.errorMessage,
-      })
-      .eq("id", refundId);
-    if (updateError) return { ok: false as const, error: updateError.message };
+    const finalizeUpdate = () =>
+      (supabaseAdmin.from as any)("order_refunds")
+        .update({
+          status: payplugResult.status,
+          payplug_refund_id: payplugResult.refundId,
+          error_message: payplugResult.errorMessage,
+        })
+        .eq("id", refundId);
+
+    let { error: updateError } = await finalizeUpdate();
+
+    if (updateError && payplugResult.status === "Réussi") {
+      // Le remboursement PayPlug a bien eu lieu (l'argent est parti) : on ne peut pas se
+      // contenter de renvoyer une erreur générique ici, sous peine de laisser la ligne
+      // order_refunds bloquée à "En cours" — elle deviendrait re-tentable après expiration
+      // de la réservation (2 minutes) et provoquerait un second remboursement PayPlug réel.
+      // On retente quelques fois avant d'abandonner.
+      for (let attempt = 0; attempt < 2 && updateError; attempt++) {
+        ({ error: updateError } = await finalizeUpdate());
+      }
+      if (updateError) {
+        console.error(
+          `[refundOrder] Remboursement PayPlug réussi (payplug_refund_id=${payplugResult.refundId}) mais échec de l'enregistrement en base pour order_refunds.id=${refundId} après plusieurs tentatives :`,
+          updateError,
+        );
+        return { ok: false as const, error: "refund_succeeded_but_not_recorded" as const };
+      }
+    } else if (updateError) {
+      return { ok: false as const, error: updateError.message };
+    }
 
     if (payplugResult.status === "Échoué") {
       return { ok: false as const, error: payplugResult.errorMessage ?? "refund_failed" };
@@ -127,7 +151,7 @@ export const refundOrder = createServerFn({ method: "POST" })
       .eq("order_id", data.orderId)
       .eq("status", "Réussi");
     const totalRefunded = (successfulRefunds ?? []).reduce((s: number, r: any) => s + Number(r.amount), 0);
-    if (totalRefunded >= Number(order.total_amount)) {
+    if (Math.round(totalRefunded * 100) >= Math.round(Number(order.total_amount) * 100)) {
       await supabaseAdmin.from("orders").update({ status: "Remboursée" }).eq("id", data.orderId);
     }
 
