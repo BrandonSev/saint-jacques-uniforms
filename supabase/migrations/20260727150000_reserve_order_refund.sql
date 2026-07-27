@@ -32,7 +32,7 @@ BEGIN
     SELECT 1
     FROM public.order_refunds
     WHERE order_id = _order_id
-      AND status = 'Réussi'
+      AND status IN ('Réussi', 'En cours')
       AND order_item_ids && _order_item_ids
   ) INTO already_refunded;
 
