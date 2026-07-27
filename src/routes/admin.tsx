@@ -8,13 +8,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendOrderCorrectionUpdate, sendTestRandomEmail } from "@/lib/email.functions";
-import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, sendUrgentOrderReminder, listAllFamilies, apelListFamilies } from "@/lib/apel.functions";
+import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, sendUrgentOrderReminder, listAllFamilies, apelListFamilies, applyOrderCorrectionStock } from "@/lib/apel.functions";
 import { listCustomTemplates, saveCustomTemplate, sendCustomBulkEmail } from "@/lib/email-templates-admin.functions";
 import { formatCivilite } from "@/lib/utils";
 import { BlouseStockManager } from "@/components/BlouseStockManager";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
+const STANDARD_SIZES = ["4 ans", "6 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: `Espace administrateur — ${SCHOOL_SHORT}` }] }),
@@ -316,6 +317,15 @@ function AdminPage() {
   };
 
   const applyCorrection = async (correction: Correction) => {
+    const stockResult = await applyOrderCorrectionStock({ data: { correctionId: correction.id } });
+    if (!stockResult.ok) {
+      toast.error(
+        (stockResult as any).error === "stock_exhausted"
+          ? `Stock épuisé pour la taille ${correction.new_value} — choisissez une autre taille`
+          : (stockResult as any).error || "Erreur lors de l'ajustement du stock",
+      );
+      return;
+    }
     const { error: itemError } = await supabase
       .from("order_items")
       .update({ size: correction.new_value })
@@ -2103,22 +2113,35 @@ function CorrectionCreateModal({
 }) {
   const [orderNumber, setOrderNumber] = useState("");
   const [searching, setSearching] = useState(false);
-  const [foundOrder, setFoundOrder] = useState<{ id: string; order_number: string; status: string } | null>(null);
-  const [orderItems, setOrderItems] = useState<{ id: string; product_name: string; size: string }[]>([]);
+  const [foundOrder, setFoundOrder] = useState<{ id: string; order_number: string; status: string; family_email: string } | null>(null);
+  const [orderItems, setOrderItems] = useState<{ id: string; product_name: string; product_id: string; size: string }[]>([]);
   const [selectedItemId, setSelectedItemId] = useState("");
   const [newSize, setNewSize] = useState("");
   const [requesterEmail, setRequesterEmail] = useState("");
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
+  const [blouseStock, setBlouseStock] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    supabase
+      .from("blouse_stock")
+      .select("size, remaining")
+      .then(({ data }) => {
+        const map: Record<string, number> = {};
+        for (const r of (data ?? []) as Array<{ size: string; remaining: number }>) map[r.size] = r.remaining;
+        setBlouseStock(map);
+      });
+  }, []);
 
   const searchOrder = async () => {
     setSearching(true);
     setFoundOrder(null);
     setOrderItems([]);
     setSelectedItemId("");
+    setRequesterEmail("");
     const { data: order, error } = await supabase
       .from("orders")
-      .select("id, order_number, status")
+      .select("id, order_number, status, family_email")
       .eq("order_number", orderNumber.trim())
       .maybeSingle();
     setSearching(false);
@@ -2127,14 +2150,16 @@ function CorrectionCreateModal({
       return;
     }
     setFoundOrder(order);
+    setRequesterEmail(order.family_email ?? "");
     const { data: itemsData } = await supabase
       .from("order_items")
-      .select("id, product_name, size")
+      .select("id, product_name, product_id, size")
       .eq("order_id", order.id);
-    setOrderItems((itemsData ?? []) as { id: string; product_name: string; size: string }[]);
+    setOrderItems((itemsData ?? []) as { id: string; product_name: string; product_id: string; size: string }[]);
   };
 
   const selectedItem = orderItems.find((i) => i.id === selectedItemId);
+  const isBlouse = selectedItem?.product_id === "blouse-officielle";
 
   const submit = async () => {
     if (!foundOrder || !selectedItem || !newSize.trim() || !requesterEmail.trim()) {
@@ -2205,7 +2230,10 @@ function CorrectionCreateModal({
               <label className="text-xs font-medium text-foreground">Article concerné</label>
               <select
                 value={selectedItemId}
-                onChange={(e) => setSelectedItemId(e.target.value)}
+                onChange={(e) => {
+                  setSelectedItemId(e.target.value);
+                  setNewSize("");
+                }}
                 className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm"
               >
                 <option value="">— Choisir —</option>
@@ -2221,12 +2249,51 @@ function CorrectionCreateModal({
           {selectedItem && (
             <div>
               <label className="text-xs font-medium text-foreground">Nouvelle taille</label>
-              <input
-                value={newSize}
-                onChange={(e) => setNewSize(e.target.value)}
-                className="mt-1 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm"
-                placeholder="6 ans"
-              />
+              <div className="mt-1 flex flex-wrap gap-1.5">
+                {STANDARD_SIZES.map((s) => {
+                  const rem = isBlouse ? (blouseStock[s] ?? null) : null;
+                  const isOut = rem !== null && rem <= 0;
+                  const isCurrent = s === selectedItem.size;
+                  return (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => !isOut && setNewSize(s)}
+                      disabled={isOut}
+                      title={
+                        isCurrent
+                          ? "Taille actuelle"
+                          : rem === null
+                            ? undefined
+                            : isOut
+                              ? `Taille ${s} en rupture de stock`
+                              : `${rem} restante(s)`
+                      }
+                      className={`relative h-12 min-w-[3.5rem] rounded-md border px-2 text-xs font-medium transition-all ${
+                        isOut
+                          ? "cursor-not-allowed border-border bg-muted text-muted-foreground line-through opacity-60"
+                          : newSize === s
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border bg-card text-foreground hover:border-primary/40"
+                      }`}
+                    >
+                      <span className="block">
+                        {s}
+                        {isCurrent && <span className="ml-1 text-[9px]">(actuelle)</span>}
+                      </span>
+                      {rem !== null && (
+                        <span
+                          className={`mt-0.5 block text-[9px] font-normal leading-none ${
+                            isOut ? "text-red-600" : newSize === s ? "text-primary-foreground/80" : "text-muted-foreground"
+                          }`}
+                        >
+                          {isOut ? "Rupture" : `${rem} dispo.`}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
 

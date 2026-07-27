@@ -378,3 +378,22 @@ export const sendTechnicalFixNotice = createServerFn({ method: "POST" })
     }
     return { ok: true as const, sent, total: profiles?.length ?? 0, errors };
   });
+
+// Ajuste le stock des blouses lors de l'application d'une correction de taille (admin uniquement)
+export const applyOrderCorrectionStock = createServerFn({ method: "POST" })
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
+  .inputValidator((d) => z.object({ correctionId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    if (!(await userHasAnyRole(userId, ["admin"]))) {
+      return { ok: false as const, error: "forbidden" as const };
+    }
+    // Cast : fonction ajoutée par la migration 20260724130000, types Supabase pas encore régénérés.
+    const { error } = await (supabaseAdmin.rpc as any)("apply_order_correction_stock", {
+      _correction_id: data.correctionId,
+    });
+    if (error) {
+      return { ok: false as const, error: error.message.includes("stock_exhausted") ? "stock_exhausted" : error.message };
+    }
+    return { ok: true as const };
+  });
