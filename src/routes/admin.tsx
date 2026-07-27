@@ -814,6 +814,13 @@ function AdminPage() {
                 requester_email: c.requester_email,
                 created_at: c.created_at,
                 resolved_at: c.resolved_at,
+                order_number: c.order_number,
+                order_status: c.order_status,
+                family_prenom: c.family_prenom,
+                family_nom: c.family_nom,
+                product_name: c.product_name,
+                child_prenom: c.child_prenom,
+                child_nom: c.child_nom,
               },
               ...prev,
             ])
@@ -2109,12 +2116,23 @@ function CorrectionCreateModal({
     requester_email: string;
     created_at: string;
     resolved_at: string | null;
+    order_number: string;
+    order_status: string;
+    family_prenom: string;
+    family_nom: string;
+    product_name: string;
+    child_prenom: string;
+    child_nom: string;
   }) => void;
 }) {
   const [orderNumber, setOrderNumber] = useState("");
   const [searching, setSearching] = useState(false);
-  const [foundOrder, setFoundOrder] = useState<{ id: string; order_number: string; status: string; family_email: string } | null>(null);
-  const [orderItems, setOrderItems] = useState<{ id: string; product_name: string; product_id: string; size: string }[]>([]);
+  const [foundOrder, setFoundOrder] = useState<
+    { id: string; order_number: string; status: string; family_email: string; family_prenom: string; family_nom: string } | null
+  >(null);
+  const [orderItems, setOrderItems] = useState<
+    { id: string; product_name: string; product_id: string; size: string; child_prenom: string; child_nom: string }[]
+  >([]);
   const [selectedItemId, setSelectedItemId] = useState("");
   const [newSize, setNewSize] = useState("");
   const [requesterEmail, setRequesterEmail] = useState("");
@@ -2141,7 +2159,7 @@ function CorrectionCreateModal({
     setRequesterEmail("");
     const { data: order, error } = await supabase
       .from("orders")
-      .select("id, order_number, status, family_email")
+      .select("id, order_number, status, family_email, family_prenom, family_nom")
       .eq("order_number", orderNumber.trim())
       .maybeSingle();
     setSearching(false);
@@ -2153,9 +2171,18 @@ function CorrectionCreateModal({
     setRequesterEmail(order.family_email ?? "");
     const { data: itemsData } = await supabase
       .from("order_items")
-      .select("id, product_name, product_id, size")
+      .select("id, product_name, product_id, size, child_prenom, child_nom")
       .eq("order_id", order.id);
-    setOrderItems((itemsData ?? []) as { id: string; product_name: string; product_id: string; size: string }[]);
+    setOrderItems(
+      (itemsData ?? []) as {
+        id: string;
+        product_name: string;
+        product_id: string;
+        size: string;
+        child_prenom: string;
+        child_nom: string;
+      }[],
+    );
   };
 
   const selectedItem = orderItems.find((i) => i.id === selectedItemId);
@@ -2185,7 +2212,16 @@ function CorrectionCreateModal({
       return;
     }
     toast.success("Demande créée");
-    onCreated(data as any);
+    onCreated({
+      ...(data as any),
+      order_number: foundOrder.order_number,
+      order_status: foundOrder.status,
+      family_prenom: foundOrder.family_prenom,
+      family_nom: foundOrder.family_nom,
+      product_name: selectedItem.product_name,
+      child_prenom: selectedItem.child_prenom,
+      child_nom: selectedItem.child_nom,
+    });
     onClose();
   };
 
@@ -2239,7 +2275,7 @@ function CorrectionCreateModal({
                 <option value="">— Choisir —</option>
                 {orderItems.map((i) => (
                   <option key={i.id} value={i.id}>
-                    {i.product_name} (taille actuelle : {i.size})
+                    {i.child_prenom} {i.child_nom} — {i.product_name} (taille actuelle : {i.size})
                   </option>
                 ))}
               </select>
