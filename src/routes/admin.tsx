@@ -127,6 +127,7 @@ type OrderRow = {
   tracking_number: string | null;
   tracking_carrier: string | null;
   payplug_payment_id: string | null;
+  paid_at: string | null;
 };
 
 function AdminPage() {
@@ -156,15 +157,19 @@ function AdminPage() {
       const { data, error } = await supabase
         .from("orders")
         .select(
-          "id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, shipping_mode, tracking_number, tracking_carrier, payplug_payment_id",
+          "id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, shipping_mode, tracking_number, tracking_carrier, payplug_payment_id, paid_at",
         )
+        .not("paid_at", "is", null)
         .order("created_at", { ascending: false });
       if (error) {
         toast.error(error.message);
         setOrderRowsLoading(false);
         return;
       }
-      setOrderRows((data ?? []) as OrderRow[]);
+      const paidOrders = (data ?? []).filter(
+        (o: any) => o.status !== "Annulée" && o.status !== "Remboursée",
+      );
+      setOrderRows(paidOrders as OrderRow[]);
       setOrderRowsLoading(false);
     })();
     (async () => {
