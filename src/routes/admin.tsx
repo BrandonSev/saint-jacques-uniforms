@@ -9,6 +9,7 @@ import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendOrderCorrectionUpdate, sendTestRandomEmail, sendOrderCancellation, sendOrderRefund } from "@/lib/email.functions";
 import { refundOrder, listOrderRefunds, type OrderRefundRow } from "@/lib/order-refunds.functions";
+import { getOrderBilling, saveOrderBilling, type OrderBillingRow } from "@/lib/order-billing.functions";
 import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, sendUrgentOrderReminder, listAllFamilies, apelListFamilies, applyOrderCorrectionStock } from "@/lib/apel.functions";
 import { listCustomTemplates, saveCustomTemplate, sendCustomBulkEmail } from "@/lib/email-templates-admin.functions";
 import { formatCivilite } from "@/lib/utils";
@@ -1707,6 +1708,155 @@ function RefundPanelContent({ orderId, onClose }: { orderId: string; onClose: ()
   );
 }
 
+// Édition de facturation réservée aux commandes déjà "Livrée" (voir saveOrderBilling) : une fois
+// la commande livrée, seules d'éventuelles corrections de facturation restent possibles.
+function BillingTriggerButton({ disabled, open, onOpen }: { disabled: boolean; open: boolean; onOpen: () => void }) {
+  if (open) return null;
+  return (
+    <button
+      onClick={onOpen}
+      disabled={disabled}
+      className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-[11px] font-semibold text-foreground hover:bg-muted disabled:opacity-50"
+      title={disabled ? "Disponible une fois la commande livrée" : undefined}
+    >
+      Facturation
+    </button>
+  );
+}
+
+function BillingPanelContent({
+  orderId,
+  defaultName,
+  onClose,
+}: {
+  orderId: string;
+  defaultName: string;
+  onClose: () => void;
+}) {
+  const [billing, setBilling] = useState<OrderBillingRow | null>(null);
+  const [form, setForm] = useState({
+    billingName: "",
+    billingAddress: "",
+    billingPostal: "",
+    billingCity: "",
+    invoiceNumber: "",
+    note: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    const result = await getOrderBilling({ data: { orderId } });
+    if (result.ok) {
+      setBilling(result.billing);
+      setForm({
+        billingName: result.billing?.billing_name ?? defaultName,
+        billingAddress: result.billing?.billing_address ?? "",
+        billingPostal: result.billing?.billing_postal ?? "",
+        billingCity: result.billing?.billing_city ?? "",
+        invoiceNumber: result.billing?.invoice_number ?? "",
+        note: result.billing?.note ?? "",
+      });
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderId]);
+
+  const submit = async () => {
+    setSaving(true);
+    const result = await saveOrderBilling({
+      data: {
+        orderId,
+        billingName: form.billingName || undefined,
+        billingAddress: form.billingAddress || undefined,
+        billingPostal: form.billingPostal || undefined,
+        billingCity: form.billingCity || undefined,
+        invoiceNumber: form.invoiceNumber || undefined,
+        note: form.note || undefined,
+      },
+    });
+    setSaving(false);
+    if (!result.ok) {
+      toast.error(`Enregistrement échoué : ${result.error}`);
+      return;
+    }
+    toast.success("Facturation mise à jour");
+    await load();
+  };
+
+  return (
+    <div className="rounded-lg border border-border bg-muted/20 p-3 text-xs">
+      {loading && <p className="text-muted-foreground">Chargement…</p>}
+      {!loading && (
+        <>
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              value={form.billingName}
+              onChange={(e) => setForm((f) => ({ ...f, billingName: e.target.value }))}
+              placeholder="Nom / raison sociale"
+              className="h-8 rounded-md border border-border bg-background px-2 text-xs"
+            />
+            <input
+              value={form.invoiceNumber}
+              onChange={(e) => setForm((f) => ({ ...f, invoiceNumber: e.target.value }))}
+              placeholder="N° de facture"
+              className="h-8 rounded-md border border-border bg-background px-2 text-xs font-mono"
+            />
+            <input
+              value={form.billingAddress}
+              onChange={(e) => setForm((f) => ({ ...f, billingAddress: e.target.value }))}
+              placeholder="Adresse de facturation"
+              className="col-span-2 h-8 rounded-md border border-border bg-background px-2 text-xs"
+            />
+            <input
+              value={form.billingPostal}
+              onChange={(e) => setForm((f) => ({ ...f, billingPostal: e.target.value }))}
+              placeholder="Code postal"
+              className="h-8 rounded-md border border-border bg-background px-2 text-xs"
+            />
+            <input
+              value={form.billingCity}
+              onChange={(e) => setForm((f) => ({ ...f, billingCity: e.target.value }))}
+              placeholder="Ville"
+              className="h-8 rounded-md border border-border bg-background px-2 text-xs"
+            />
+          </div>
+          <input
+            value={form.note}
+            onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
+            placeholder="Note (optionnel)"
+            className="mt-2 h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
+          />
+          <div className="mt-2 flex items-center justify-between">
+            {billing?.updated_at ? (
+              <span className="text-[11px] text-muted-foreground">
+                Dernière modification : {new Date(billing.updated_at).toLocaleString("fr-FR")}
+              </span>
+            ) : (
+              <span />
+            )}
+            <button
+              onClick={submit}
+              disabled={saving}
+              className="rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            >
+              {saving ? "…" : "Enregistrer"}
+            </button>
+          </div>
+          <button onClick={onClose} className="mt-2 text-[11px] text-muted-foreground hover:underline">
+            Fermer
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
 function TrackingPanel({
   orders,
   loading,
@@ -1722,6 +1872,7 @@ function TrackingPanel({
 }) {
   const [drafts, setDrafts] = useState<Record<string, { tracking_number: string; tracking_carrier: string }>>({});
   const [refundOpenOrderId, setRefundOpenOrderId] = useState<string | null>(null);
+  const [billingOpenOrderId, setBillingOpenOrderId] = useState<string | null>(null);
 
   const draftFor = (o: OrderRow) =>
     drafts[o.id] ?? {
@@ -1765,6 +1916,7 @@ function TrackingPanel({
             {orders.map((o) => {
               const d = draftFor(o);
               const refundOpen = refundOpenOrderId === o.id;
+              const billingOpen = billingOpenOrderId === o.id;
               return (
                 <Fragment key={o.id}>
                   <tr className="hover:bg-muted/30">
@@ -1842,6 +1994,11 @@ function TrackingPanel({
                         open={refundOpen}
                         onOpen={() => setRefundOpenOrderId(o.id)}
                       />
+                      <BillingTriggerButton
+                        disabled={o.status !== "Livrée"}
+                        open={billingOpen}
+                        onOpen={() => setBillingOpenOrderId(o.id)}
+                      />
                       <button
                         onClick={() =>
                           onUpdate(
@@ -1864,6 +2021,17 @@ function TrackingPanel({
                     <tr>
                       <td colSpan={7} className="bg-muted/10 px-4 py-3">
                         <RefundPanelContent orderId={o.id} onClose={() => setRefundOpenOrderId(null)} />
+                      </td>
+                    </tr>
+                  )}
+                  {billingOpen && (
+                    <tr>
+                      <td colSpan={7} className="bg-muted/10 px-4 py-3">
+                        <BillingPanelContent
+                          orderId={o.id}
+                          defaultName={`${o.family_prenom} ${o.family_nom}`.trim()}
+                          onClose={() => setBillingOpenOrderId(null)}
+                        />
                       </td>
                     </tr>
                   )}
