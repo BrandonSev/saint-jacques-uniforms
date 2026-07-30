@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendOrderCorrectionUpdate, sendTestRandomEmail, sendOrderCancellation, sendOrderRefund } from "@/lib/email.functions";
 import { refundOrder, listOrderRefunds, type OrderRefundRow } from "@/lib/order-refunds.functions";
 import { getOrderBilling, saveOrderBilling, type OrderBillingRow } from "@/lib/order-billing.functions";
+import { updateOrderStatus, getOrderInvoice, getInvoiceDownloadUrl, type OrderInvoiceRow } from "@/lib/order-invoices.functions";
 import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, sendUrgentOrderReminder, listAllFamilies, apelListFamilies, applyOrderCorrectionStock } from "@/lib/apel.functions";
 import { listCustomTemplates, saveCustomTemplate, sendCustomBulkEmail } from "@/lib/email-templates-admin.functions";
 import { formatCivilite } from "@/lib/utils";
@@ -379,9 +380,30 @@ function AdminPage() {
     patch: Partial<Pick<OrderRow, "status" | "tracking_number" | "tracking_carrier">>,
     notify: boolean,
   ): Promise<boolean> => {
-    const update: any = { ...patch };
-    if (patch.status === "Livrée") update.delivered_at = new Date().toISOString();
-    const { error } = await supabase.from("orders").update(update).eq("id", orderId);
+    // Le changement de statut passe par une server function (plutôt qu'un update client direct) :
+    // le passage à "Livrée" doit déclencher la génération atomique de la facture (numéro
+    // comptable séquentiel + PDF), ce qui ne peut pas se faire de façon fiable côté client.
+    if (patch.status !== undefined) {
+      const result = await updateOrderStatus({
+        data: {
+          orderId,
+          status: patch.status,
+          trackingNumber: patch.tracking_number,
+          trackingCarrier: patch.tracking_carrier,
+        },
+      });
+      if (!result.ok) {
+        toast.error(result.error);
+        return false;
+      }
+      setOrderRows((prev) => prev.map((o) => (o.id === orderId ? { ...o, ...patch } : o)));
+      if (notify) sendOrderStatusUpdate({ data: { orderId } }).catch(() => {});
+      if (result.invoiceNumber) toast.success(`Commande mise à jour — facture ${result.invoiceNumber} générée`);
+      else toast.success("Commande mise à jour");
+      return true;
+    }
+
+    const { error } = await supabase.from("orders").update(patch).eq("id", orderId);
     if (error) {
       toast.error(error.message);
       return false;
@@ -1734,20 +1756,24 @@ function BillingPanelContent({
   onClose: () => void;
 }) {
   const [billing, setBilling] = useState<OrderBillingRow | null>(null);
+  const [invoice, setInvoice] = useState<OrderInvoiceRow | null>(null);
   const [form, setForm] = useState({
     billingName: "",
     billingAddress: "",
     billingPostal: "",
     billingCity: "",
-    invoiceNumber: "",
     note: "",
   });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   const load = async () => {
     setLoading(true);
-    const result = await getOrderBilling({ data: { orderId } });
+    const [result, invoiceResult] = await Promise.all([
+      getOrderBilling({ data: { orderId } }),
+      getOrderInvoice({ data: { orderId } }),
+    ]);
     if (result.ok) {
       setBilling(result.billing);
       setForm({
@@ -1755,10 +1781,10 @@ function BillingPanelContent({
         billingAddress: result.billing?.billing_address ?? "",
         billingPostal: result.billing?.billing_postal ?? "",
         billingCity: result.billing?.billing_city ?? "",
-        invoiceNumber: result.billing?.invoice_number ?? "",
         note: result.billing?.note ?? "",
       });
     }
+    if (invoiceResult.ok) setInvoice(invoiceResult.invoice);
     setLoading(false);
   };
 
@@ -1776,7 +1802,6 @@ function BillingPanelContent({
         billingAddress: form.billingAddress || undefined,
         billingPostal: form.billingPostal || undefined,
         billingCity: form.billingCity || undefined,
-        invoiceNumber: form.invoiceNumber || undefined,
         note: form.note || undefined,
       },
     });
@@ -1789,23 +1814,47 @@ function BillingPanelContent({
     await load();
   };
 
+  const download = async () => {
+    setDownloading(true);
+    const result = await getInvoiceDownloadUrl({ data: { orderId } });
+    setDownloading(false);
+    if (!result.ok || !result.url) {
+      toast.error("Téléchargement impossible");
+      return;
+    }
+    window.open(result.url, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div className="rounded-lg border border-border bg-muted/20 p-3 text-xs">
       {loading && <p className="text-muted-foreground">Chargement…</p>}
       {!loading && (
         <>
+          {invoice ? (
+            <div className="mb-3 flex items-center justify-between rounded-md border border-border bg-background px-3 py-2">
+              <span>
+                Facture <span className="font-mono font-semibold">{invoice.invoice_number}</span> — générée le{" "}
+                {new Date(invoice.created_at).toLocaleDateString("fr-FR")}
+              </span>
+              <button
+                onClick={download}
+                disabled={downloading || !invoice.pdf_path}
+                className="rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+              >
+                {downloading ? "…" : "Télécharger"}
+              </button>
+            </div>
+          ) : (
+            <p className="mb-3 text-muted-foreground">
+              Aucune facture générée (créée automatiquement au passage au statut « Livrée »).
+            </p>
+          )}
           <div className="grid grid-cols-2 gap-2">
             <input
               value={form.billingName}
               onChange={(e) => setForm((f) => ({ ...f, billingName: e.target.value }))}
               placeholder="Nom / raison sociale"
-              className="h-8 rounded-md border border-border bg-background px-2 text-xs"
-            />
-            <input
-              value={form.invoiceNumber}
-              onChange={(e) => setForm((f) => ({ ...f, invoiceNumber: e.target.value }))}
-              placeholder="N° de facture"
-              className="h-8 rounded-md border border-border bg-background px-2 text-xs font-mono"
+              className="col-span-2 h-8 rounded-md border border-border bg-background px-2 text-xs"
             />
             <input
               value={form.billingAddress}
