@@ -34,7 +34,7 @@ export const generateOrderInvoice = createServerFn({ method: "POST" })
 
     const { data: order, error: orderError } = await supabaseAdmin
       .from("orders")
-      .select("id, order_number, status, total_amount, family_civilite, family_nom, family_prenom, family_email")
+      .select("id, order_number, status, total_amount, paid_at, family_civilite, family_nom, family_prenom, family_email")
       .eq("id", data.orderId)
       .maybeSingle();
     if (orderError || !order) return { ok: false as const, error: "order_not_found" as const };
@@ -67,7 +67,7 @@ export const generateOrderInvoice = createServerFn({ method: "POST" })
     const pdfBuffer = buildOrderInvoicePdf({
       invoiceNumber,
       orderNumber: order.order_number,
-      issuedAt: new Date().toISOString(),
+      paidAt: order.paid_at,
       totalAmount: Number(order.total_amount),
       family: {
         civilite: order.family_civilite,
