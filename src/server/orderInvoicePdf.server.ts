@@ -8,9 +8,15 @@ const FU_BAND: [number, number, number] = [228, 243, 249]; // #e4f3f9
 
 const ISSUER = {
   name: "France Uniformes",
-  legal1: "SAS au capital de 2 500 € — RCS Chartres — SIRET 983 587 932 00010",
-  legal2: "TVA FR43 983 587 932 — Code NAF/APE 4791B",
-  address: "2 rue Percheronne, 28000 Chartres, France",
+  address: "2 rue Percheronne",
+  postalCity: "28000 Chartres",
+  country: "France",
+  email: "boutique@franceuniformes.fr",
+};
+
+const ISSUER_LEGAL = {
+  line1: "France Uniformes — SAS au capital de 2 500 € — RCS Chartres — SIRET 983 587 932 00010",
+  line2: "TVA FR43 983 587 932 — Code NAF/APE 4791B — Siège social : 2 rue Percheronne, 28000 Chartres, France",
 };
 
 export type InvoiceItem = {
@@ -97,7 +103,7 @@ export function buildOrderInvoicePdf(data: InvoiceData): Buffer {
   doc.setTextColor(20);
   y += 14;
   const colWidth = (W - M * 2) / 2 - 10;
-  const issuer = `${ISSUER.name}\n${ISSUER.address}\n${ISSUER.legal1}\n${ISSUER.legal2}`;
+  const issuer = `${ISSUER.name}\n${ISSUER.address}\n${ISSUER.postalCity}\n${ISSUER.country}\n${ISSUER.email}`;
   const issuerLines = doc.splitTextToSize(issuer, colWidth);
   doc.text(issuerLines, M, y);
   const recipient = `${formatCivilite(data.family.civilite)} ${data.family.prenom} ${data.family.nom}\n${data.family.email}${
@@ -133,6 +139,12 @@ export function buildOrderInvoicePdf(data: InvoiceData): Buffer {
   doc.text("Total TTC", W - M - 120, finalY);
   doc.setFontSize(14);
   doc.text(eur(data.totalAmount), W - M, finalY, { align: "right" });
+
+  const pageH = doc.internal.pageSize.getHeight();
+  doc.setFontSize(7);
+  doc.setTextColor(140);
+  doc.text(ISSUER_LEGAL.line1, W / 2, pageH - 32, { align: "center" });
+  doc.text(ISSUER_LEGAL.line2, W / 2, pageH - 22, { align: "center" });
 
   return Buffer.from(doc.output("arraybuffer"));
 }
