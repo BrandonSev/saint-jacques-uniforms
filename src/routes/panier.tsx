@@ -18,6 +18,7 @@ import {
   pickInitialMode,
   type DeliveryOption,
 } from "@/lib/deliveryOptions";
+import { getShippingSettings } from "@/lib/shipping-settings.functions";
 
 export const Route = createFileRoute("/panier")({
   head: () => ({
@@ -62,6 +63,8 @@ function PanierPage() {
   const [deliveryOptions, setDeliveryOptions] = useState<DeliveryOption[]>(
     () => getInitialDeliveryOptions(),
   );
+  const [individualShippingFee, setIndividualShippingFee] = useState(0);
+  const [isIndividualDelivery, setIsIndividualDelivery] = useState(false);
 
   useEffect(() => {
     supabase
@@ -79,6 +82,18 @@ function PanierPage() {
         const filtered = filterDeliveryOptions(mapped);
         if (filtered) setDeliveryOptions(filtered);
       });
+    getShippingSettings().then((settings) => {
+      const deadline = settings.group_order_deadline ? new Date(settings.group_order_deadline) : null;
+      const individual = !!deadline && Date.now() > deadline.getTime();
+      setIsIndividualDelivery(individual);
+      setIndividualShippingFee(settings.individual_shipping_fee);
+      if (individual) {
+        setDeliveryOptions((prev) => {
+          const homeOnly = prev.filter((o) => o.code !== "pickup");
+          return homeOnly.length ? homeOnly : [{ code: "home", label: "Livraison à domicile", description: null }];
+        });
+      }
+    });
   }, []);
 
   const groups = useMemo<Group[]>(() => {
@@ -93,7 +108,8 @@ function PanierPage() {
   }, [cart, children]);
 
   const subtotal = cart.reduce((s, i) => s + i.qty * i.price, 0);
-  const total = subtotal;
+  const shippingFee = isIndividualDelivery ? individualShippingFee : 0;
+  const total = subtotal + shippingFee;
 
   const openConfirm = () => {
     if (!user) {
@@ -187,11 +203,19 @@ function PanierPage() {
                   <Row label={`Articles`} value={`${cartCount}`} />
                   <Row label="Enfants concernés" value={`${groups.length}`} />
                   <Row label="Sous-total" value={formatEUR(subtotal)} />
-                   <Row 
-                     label="Livraison" 
-                     value="Gratuite pour la rentrée de sept. 2026" 
-                     subValue="À retirer auprès de l'APEL fin août"
-                   />
+                  {isIndividualDelivery ? (
+                    <Row
+                      label="Frais de livraison individuelle"
+                      value={formatEUR(shippingFee)}
+                      subValue="Date limite de la commande groupée dépassée"
+                    />
+                  ) : (
+                    <Row
+                      label="Livraison"
+                      value="Gratuite pour la rentrée de sept. 2026"
+                      subValue="À retirer auprès de l'APEL fin août"
+                    />
+                  )}
                 </dl>
                 <div className="my-5 h-px bg-border" />
                 <div className="flex items-baseline justify-between">
@@ -226,6 +250,8 @@ function PanierPage() {
         <ConfirmModal
           groups={groups}
           subtotal={subtotal}
+          shippingFee={shippingFee}
+          isIndividualDelivery={isIndividualDelivery}
           processing={processing}
           sizeConfirmed={sizeConfirmed}
           profile={profile}
@@ -245,6 +271,8 @@ function PanierPage() {
 function ConfirmModal({
   groups,
   subtotal,
+  shippingFee,
+  isIndividualDelivery,
   processing,
   sizeConfirmed,
   profile,
@@ -256,6 +284,8 @@ function ConfirmModal({
 }: {
   groups: Group[];
   subtotal: number;
+  shippingFee: number;
+  isIndividualDelivery: boolean;
   processing: boolean;
   sizeConfirmed: boolean;
   profile: Profile | null;
@@ -361,6 +391,18 @@ function ConfirmModal({
         </header>
 
         <div className="max-h-[55vh] overflow-y-auto px-6 py-5">
+          {isIndividualDelivery && (
+            <div className="mb-4 gap-3 items-start justify-start flex flex-col rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+              <div>
+                <p className="font-semibold">Date limite de la commande groupée dépassée</p>
+                <p className="mt-1 opacity-90">
+                  Votre commande sera expédiée individuellement à votre domicile. Des frais de livraison de{" "}
+                  {formatEUR(shippingFee)} s'appliquent.
+                </p>
+              </div>
+            </div>
+          )}
           {/* Mode de livraison */}
           <div className="mb-4">
             <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Mode de livraison</p>
@@ -519,9 +561,10 @@ function ConfirmModal({
               <div className="text-xs text-muted-foreground">
                 {groups.reduce((s, g) => s + g.items.reduce((ss, it) => ss + it.qty, 0), 0)} article(s) ·{" "}
                 {groups.length} enfant(s)
+                {shippingFee > 0 && <> · + {formatEUR(shippingFee)} de livraison</>}
               </div>
             </div>
-            <div className="text-xl font-semibold text-primary">{formatEUR(subtotal)}</div>
+            <div className="text-xl font-semibold text-primary">{formatEUR(subtotal + shippingFee)}</div>
           </div>
 
           <div className="mt-3 flex items-center justify-end gap-2">

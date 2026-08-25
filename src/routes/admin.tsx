@@ -11,6 +11,13 @@ import { sendOrderStatusUpdate, sendIncidentUpdate, sendOrderCorrectionUpdate, s
 import { refundOrder, listOrderRefunds, type OrderRefundRow } from "@/lib/order-refunds.functions";
 import { getOrderBilling, saveOrderBilling, type OrderBillingRow } from "@/lib/order-billing.functions";
 import { updateOrderStatus, getOrderInvoice, getInvoiceDownloadUrl, type OrderInvoiceRow } from "@/lib/order-invoices.functions";
+import {
+  getShippingSettings,
+  saveShippingSettings,
+  getOrderShippingSlip,
+  getShippingSlipDownloadUrl,
+  type OrderShippingSlipRow,
+} from "@/lib/shipping-settings.functions";
 import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, sendUrgentOrderReminder, listAllFamilies, apelListFamilies, applyOrderCorrectionStock } from "@/lib/apel.functions";
 import { listCustomTemplates, saveCustomTemplate, sendCustomBulkEmail } from "@/lib/email-templates-admin.functions";
 import { formatCivilite } from "@/lib/utils";
@@ -126,6 +133,7 @@ type OrderRow = {
   family_nom: string;
   family_email: string;
   shipping_mode: string;
+  delivery_type: string;
   tracking_number: string | null;
   tracking_carrier: string | null;
   payplug_payment_id: string | null;
@@ -159,7 +167,7 @@ function AdminPage() {
       const { data, error } = await supabase
         .from("orders")
         .select(
-          "id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, shipping_mode, tracking_number, tracking_carrier, payplug_payment_id, paid_at",
+          "id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, shipping_mode, delivery_type, tracking_number, tracking_carrier, payplug_payment_id, paid_at",
         )
         .not("paid_at", "is", null)
         .order("created_at", { ascending: false });
@@ -171,7 +179,7 @@ function AdminPage() {
       const paidOrders = (data ?? []).filter(
         (o: any) => o.status !== "Annulée" && o.status !== "Remboursée",
       );
-      setOrderRows(paidOrders as OrderRow[]);
+      setOrderRows(paidOrders as unknown as OrderRow[]);
       setOrderRowsLoading(false);
     })();
     (async () => {
@@ -1906,6 +1914,161 @@ function BillingPanelContent({
   );
 }
 
+// Bordereau de livraison : généré automatiquement à la commande pour les livraisons
+// individuelles (voir generateOrderShippingSlip, appelée depuis checkout côté client).
+function ShippingSlipTriggerButton({ disabled, open, onOpen }: { disabled: boolean; open: boolean; onOpen: () => void }) {
+  if (open) return null;
+  return (
+    <button
+      onClick={onOpen}
+      disabled={disabled}
+      className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-[11px] font-semibold text-foreground hover:bg-muted disabled:opacity-50"
+      title={disabled ? "Uniquement pour les livraisons individuelles" : undefined}
+    >
+      Bordereau
+    </button>
+  );
+}
+
+function ShippingSlipPanelContent({ orderId, onClose }: { orderId: string; onClose: () => void }) {
+  const [slip, setSlip] = useState<OrderShippingSlipRow | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    const result = await getOrderShippingSlip({ data: { orderId } });
+    if (result.ok) setSlip(result.slip);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderId]);
+
+  const download = async () => {
+    setDownloading(true);
+    const result = await getShippingSlipDownloadUrl({ data: { orderId } });
+    setDownloading(false);
+    if (!result.ok || !result.url) {
+      toast.error("Téléchargement impossible");
+      return;
+    }
+    window.open(result.url, "_blank", "noopener,noreferrer");
+  };
+
+  return (
+    <div className="rounded-lg border border-border bg-muted/20 p-3 text-xs">
+      {loading && <p className="text-muted-foreground">Chargement…</p>}
+      {!loading && (
+        <>
+          {slip ? (
+            <div className="flex items-center justify-between rounded-md border border-border bg-background px-3 py-2">
+              <span>
+                Bordereau <span className="font-mono font-semibold">{slip.slip_number}</span> — généré le{" "}
+                {new Date(slip.created_at).toLocaleDateString("fr-FR")}
+              </span>
+              <button
+                onClick={download}
+                disabled={downloading || !slip.pdf_path}
+                className="rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+              >
+                {downloading ? "…" : "Télécharger"}
+              </button>
+            </div>
+          ) : (
+            <p className="text-muted-foreground">Aucun bordereau généré pour cette commande.</p>
+          )}
+          <button onClick={onClose} className="mt-2 text-[11px] text-muted-foreground hover:underline">
+            Fermer
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
+// Paramètres globaux de livraison groupée : date limite et frais fixes de livraison
+// individuelle appliqués aux commandes passées après cette date.
+function ShippingSettingsPanel() {
+  const [deadline, setDeadline] = useState("");
+  const [fee, setFee] = useState("0");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    const settings = await getShippingSettings();
+    setDeadline(settings.group_order_deadline ? settings.group_order_deadline.slice(0, 16) : "");
+    setFee(String(settings.individual_shipping_fee));
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  const submit = async () => {
+    setSaving(true);
+    const result = await saveShippingSettings({
+      data: {
+        groupOrderDeadline: deadline ? new Date(deadline).toISOString() : null,
+        individualShippingFee: Number(fee) || 0,
+      },
+    });
+    setSaving(false);
+    if (!result.ok) {
+      toast.error(`Enregistrement échoué : ${result.error}`);
+      return;
+    }
+    toast.success("Paramètres de livraison mis à jour");
+  };
+
+  return (
+    <div className="mb-4 rounded-2xl border border-border bg-card p-4">
+      <h3 className="text-sm font-semibold text-foreground">Livraison groupée / individuelle</h3>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Après la date limite, la livraison à l'établissement n'est plus proposée : les commandes basculent
+        automatiquement en livraison individuelle à domicile, avec frais de port et bordereau générés à la commande.
+      </p>
+      {loading ? (
+        <p className="mt-3 text-xs text-muted-foreground">Chargement…</p>
+      ) : (
+        <div className="mt-3 flex flex-wrap items-end gap-3">
+          <label className="text-xs">
+            <span className="mb-1 block font-medium text-muted-foreground">Date limite commande groupée</span>
+            <input
+              type="datetime-local"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              className="h-9 rounded-md border border-border bg-background px-2 text-xs"
+            />
+          </label>
+          <label className="text-xs">
+            <span className="mb-1 block font-medium text-muted-foreground">Frais livraison individuelle (€)</span>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={fee}
+              onChange={(e) => setFee(e.target.value)}
+              className="h-9 w-28 rounded-md border border-border bg-background px-2 text-xs"
+            />
+          </label>
+          <button
+            onClick={submit}
+            disabled={saving}
+            className="h-9 rounded-md bg-primary px-4 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          >
+            {saving ? "…" : "Enregistrer"}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function TrackingPanel({
   orders,
   loading,
@@ -1922,6 +2085,7 @@ function TrackingPanel({
   const [drafts, setDrafts] = useState<Record<string, { tracking_number: string; tracking_carrier: string }>>({});
   const [refundOpenOrderId, setRefundOpenOrderId] = useState<string | null>(null);
   const [billingOpenOrderId, setBillingOpenOrderId] = useState<string | null>(null);
+  const [slipOpenOrderId, setSlipOpenOrderId] = useState<string | null>(null);
 
   const draftFor = (o: OrderRow) =>
     drafts[o.id] ?? {
@@ -1933,7 +2097,9 @@ function TrackingPanel({
     setDrafts((prev) => ({ ...prev, [id]: { ...draftFor(orders.find((o) => o.id === id)!), ...patch } }));
 
   return (
-    <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
+    <div className="mt-4">
+      <ShippingSettingsPanel />
+      <div className="overflow-hidden rounded-2xl border border-border bg-card">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-secondary text-left text-xs uppercase tracking-wider text-muted-foreground">
@@ -1941,6 +2107,7 @@ function TrackingPanel({
               <th className="px-4 py-3">Commande</th>
               <th className="px-4 py-3">Famille</th>
               <th className="px-4 py-3">Mode</th>
+              <th className="px-4 py-3">Type</th>
               <th className="px-4 py-3">Statut</th>
               <th className="px-4 py-3">Transporteur</th>
               <th className="px-4 py-3">N° de suivi</th>
@@ -1950,14 +2117,14 @@ function TrackingPanel({
           <tbody className="divide-y divide-border">
             {loading && (
               <tr>
-                <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
+                <td colSpan={8} className="px-4 py-6 text-center text-muted-foreground">
                   Chargement…
                 </td>
               </tr>
             )}
             {!loading && orders.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
+                <td colSpan={8} className="px-4 py-6 text-center text-muted-foreground">
                   Aucune commande.
                 </td>
               </tr>
@@ -1966,6 +2133,7 @@ function TrackingPanel({
               const d = draftFor(o);
               const refundOpen = refundOpenOrderId === o.id;
               const billingOpen = billingOpenOrderId === o.id;
+              const slipOpen = slipOpenOrderId === o.id;
               return (
                 <Fragment key={o.id}>
                   <tr className="hover:bg-muted/30">
@@ -1987,6 +2155,17 @@ function TrackingPanel({
                     ) : (
                       <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5">
                         <Truck className="h-3 w-3" /> Domicile
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-xs">
+                    {o.delivery_type === "individual" ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">
+                        Individuelle
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5">
+                        Groupée
                       </span>
                     )}
                   </td>
@@ -2048,6 +2227,11 @@ function TrackingPanel({
                         open={billingOpen}
                         onOpen={() => setBillingOpenOrderId(o.id)}
                       />
+                      <ShippingSlipTriggerButton
+                        disabled={o.delivery_type !== "individual"}
+                        open={slipOpen}
+                        onOpen={() => setSlipOpenOrderId(o.id)}
+                      />
                       <button
                         onClick={() =>
                           onUpdate(
@@ -2068,14 +2252,14 @@ function TrackingPanel({
                   </tr>
                   {refundOpen && (
                     <tr>
-                      <td colSpan={7} className="bg-muted/10 px-4 py-3">
+                      <td colSpan={8} className="bg-muted/10 px-4 py-3">
                         <RefundPanelContent orderId={o.id} onClose={() => setRefundOpenOrderId(null)} />
                       </td>
                     </tr>
                   )}
                   {billingOpen && (
                     <tr>
-                      <td colSpan={7} className="bg-muted/10 px-4 py-3">
+                      <td colSpan={8} className="bg-muted/10 px-4 py-3">
                         <BillingPanelContent
                           orderId={o.id}
                           defaultName={`${o.family_prenom} ${o.family_nom}`.trim()}
@@ -2084,11 +2268,19 @@ function TrackingPanel({
                       </td>
                     </tr>
                   )}
+                  {slipOpen && (
+                    <tr>
+                      <td colSpan={8} className="bg-muted/10 px-4 py-3">
+                        <ShippingSlipPanelContent orderId={o.id} onClose={() => setSlipOpenOrderId(null)} />
+                      </td>
+                    </tr>
+                  )}
                 </Fragment>
               );
             })}
           </tbody>
         </table>
+      </div>
       </div>
     </div>
   );
