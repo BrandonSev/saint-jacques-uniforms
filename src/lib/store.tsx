@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
+import { getShippingSettings, generateOrderShippingSlip } from "@/lib/shipping-settings.functions";
 
 export type Child = {
   id: string;
@@ -589,13 +590,22 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
       checkout: async (shipping) => {
         if (!user || !profile) throw new Error("Non connecté");
         if (cart.length === 0) throw new Error("Panier vide");
-        const total = cart.reduce((s, i) => s + i.qty * i.price, 0);
+        const subtotal = cart.reduce((s, i) => s + i.qty * i.price, 0);
+
+        const settings = await getShippingSettings();
+        const deadline = settings.group_order_deadline ? new Date(settings.group_order_deadline) : null;
+        const isIndividual = !!deadline && Date.now() > deadline.getTime();
+        const shippingFee = isIndividual ? settings.individual_shipping_fee : 0;
+        const total = subtotal + shippingFee;
+
         const { data: order, error: oErr } = await supabase
           .from("orders")
           .insert({
             user_id: user.id,
             status: "En attente paiement",
             total_amount: total,
+            delivery_type: isIndividual ? "individual" : "grouped",
+            shipping_fee: shippingFee,
             family_civilite: profile.civilite,
             family_nom: profile.nom,
             family_prenom: profile.prenom,
@@ -607,7 +617,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
             shipping_address: shipping.address ?? null,
             shipping_postal: shipping.postal ?? null,
             shipping_city: shipping.city ?? null,
-          })
+          } as any)
           .select()
           .single();
         if (oErr) throw oErr;
@@ -635,6 +645,9 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
         if (iErr) throw iErr;
         setCart([]);
         await supabase.from("cart_items").delete().eq("user_id", user.id);
+        if (isIndividual) {
+          generateOrderShippingSlip({ data: { orderId: order.id } }).catch(() => {});
+        }
         return { orderId: order.id, orderNumber: order.order_number };
       },
     }),
