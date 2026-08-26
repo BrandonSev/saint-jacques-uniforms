@@ -24,10 +24,11 @@ export function BackToSchoolBanner() {
       <div className="mx-auto flex max-w-6xl w-full items-center justify-center gap-2 px-4 py-2 text-[12px] font-semibold leading-snug sm:px-6 sm:text-[13px] lg:px-8">
         <CalendarClock className="hidden h-4 w-4 shrink-0 sm:inline" aria-hidden />
         <span className="text-center">
-          <strong>Précommande garantie terminée.</strong> Vous pouvez encore commander selon les blouses disponibles à
-          produire.
+          <strong>Précommande garantie de la rentrée terminée.</strong> Les blouses commandées par les parents
+          arrivent à l'école pour distribution aux élèves. Merci de vous munir de votre bon de commande afin de
+          retirer vos blouses commandées lors de la distribution.
           <br />
-          Nous ferons notre maximum pour intégrer les commandes reçues rapidement à la production.
+          Pour les nouvelles commandes, les expéditions individuelles pourront avoir lieu à compter du 5 septembre.
         </span>
       </div>
     </div>
