@@ -58,20 +58,27 @@ export const saveShippingSettings = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
-// Génère (ou renvoie, si déjà existant) le bordereau de livraison d'une commande en
-// livraison individuelle : réserve un numéro séquentiel BL-ANNÉE-NNNNN, construit le
-// PDF (contenu du colis + adresse, sans transporteur/tracking pas encore connus au
-// moment de la commande), le stocke, puis enregistre le chemin. Appelée automatiquement
-// juste après la création de la commande si delivery_type === "individual".
+// Génère (ou régénère si déjà existant, ex. après correction du template) le bordereau
+// de livraison d'une commande en livraison individuelle : réserve un numéro séquentiel
+// BL-ANNÉE-NNNNN (conservé s'il existe déjà), (re)construit le PDF (contenu du colis +
+// adresse, sans transporteur/tracking pas encore connus au moment de la commande), et
+// écrase le fichier stocké au même chemin. Appelée automatiquement juste après la création
+// de la commande si delivery_type === "individual" (par la famille elle-même), ou à la
+// demande par un admin (bouton "Régénérer") — d'où l'autorisation propriétaire OU admin.
 export const generateOrderShippingSlip = createServerFn({ method: "POST" })
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
   .inputValidator((d) => z.object({ orderId: z.string().uuid() }).parse(d))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
     // Cast : colonne delivery_type ajoutée par la migration 20260803120000, types Supabase pas encore régénérés.
     const { data: order, error: orderError } = await (supabaseAdmin.from as any)("orders")
-      .select("id, order_number, delivery_type, shipping_recipient, shipping_address, shipping_postal, shipping_city")
+      .select("id, order_number, user_id, delivery_type, shipping_recipient, shipping_address, shipping_postal, shipping_city")
       .eq("id", data.orderId)
       .maybeSingle();
     if (orderError || !order) return { ok: false as const, error: "order_not_found" as const };
+    if ((order as any).user_id !== userId && !(await userHasAnyRole(userId, ["admin"]))) {
+      return { ok: false as const, error: "forbidden" as const };
+    }
     if ((order as any).delivery_type !== "individual") {
       return { ok: false as const, error: "not_individual_delivery" as const };
     }

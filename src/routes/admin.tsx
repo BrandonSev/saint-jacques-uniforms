@@ -16,6 +16,7 @@ import {
   saveShippingSettings,
   getOrderShippingSlip,
   getShippingSlipDownloadUrl,
+  generateOrderShippingSlip,
   type OrderShippingSlipRow,
 } from "@/lib/shipping-settings.functions";
 import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, sendUrgentOrderReminder, listAllFamilies, apelListFamilies, applyOrderCorrectionStock } from "@/lib/apel.functions";
@@ -1938,6 +1939,7 @@ function ShippingSlipPanelContent({ orderId, onClose }: { orderId: string; onClo
   const [slip, setSlip] = useState<OrderShippingSlipRow | null>(null);
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -1962,6 +1964,21 @@ function ShippingSlipPanelContent({ orderId, onClose }: { orderId: string; onClo
     window.open(result.url, "_blank", "noopener,noreferrer");
   };
 
+  // Reconstruit le PDF à partir des données actuelles de la commande et l'écrase au même
+  // chemin de stockage (numéro de bordereau conservé) — utile après une correction du
+  // template ou des données de la commande.
+  const regenerate = async () => {
+    setRegenerating(true);
+    const result = await generateOrderShippingSlip({ data: { orderId } });
+    setRegenerating(false);
+    if (!result.ok) {
+      toast.error("Régénération impossible");
+      return;
+    }
+    toast.success(`Bordereau ${result.slipNumber} régénéré`);
+    await load();
+  };
+
   return (
     <div className="rounded-lg border border-border bg-muted/20 p-3 text-xs">
       {loading && <p className="text-muted-foreground">Chargement…</p>}
@@ -1973,13 +1990,23 @@ function ShippingSlipPanelContent({ orderId, onClose }: { orderId: string; onClo
                 Bordereau <span className="font-mono font-semibold">{slip.slip_number}</span> — généré le{" "}
                 {new Date(slip.created_at).toLocaleDateString("fr-FR")}
               </span>
-              <button
-                onClick={download}
-                disabled={downloading || !slip.pdf_path}
-                className="rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-              >
-                {downloading ? "…" : "Télécharger"}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={regenerate}
+                  disabled={regenerating || downloading}
+                  className="rounded-md border border-border px-3 py-1.5 text-[11px] font-semibold text-foreground hover:bg-muted disabled:opacity-50"
+                  title="Reconstruire le PDF à partir des données actuelles de la commande"
+                >
+                  {regenerating ? "…" : "Régénérer"}
+                </button>
+                <button
+                  onClick={download}
+                  disabled={downloading || regenerating || !slip.pdf_path}
+                  className="rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                >
+                  {downloading ? "…" : "Télécharger"}
+                </button>
+              </div>
             </div>
           ) : (
             <p className="text-muted-foreground">Aucun bordereau généré pour cette commande.</p>
