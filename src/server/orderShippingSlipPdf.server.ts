@@ -43,10 +43,11 @@ export function buildOrderShippingSlipPdf(data: ShippingSlipData): Buffer {
   doc.text("Groupe scolaire catholique · Dax", textX, 58);
 
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(20);
-  doc.text("BORDEREAU DE LIVRAISON", W - M, 40, { align: "right" });
+  doc.setFontSize(16);
+  doc.text("BORDEREAU", W - M, 32, { align: "right" });
+  doc.text("DE LIVRAISON", W - M, 50, { align: "right" });
   doc.setFontSize(11);
-  doc.text(data.slipNumber, W - M, 60, { align: "right" });
+  doc.text(data.slipNumber, W - M, 68, { align: "right" });
 
   doc.setTextColor(20, 20, 20);
   doc.setFontSize(10);
