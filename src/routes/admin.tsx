@@ -133,6 +133,10 @@ type OrderRow = {
   family_nom: string;
   family_email: string;
   shipping_mode: string;
+  shipping_recipient: string | null;
+  shipping_address: string | null;
+  shipping_postal: string | null;
+  shipping_city: string | null;
   delivery_type: string;
   tracking_number: string | null;
   tracking_carrier: string | null;
@@ -167,7 +171,7 @@ function AdminPage() {
       const { data, error } = await supabase
         .from("orders")
         .select(
-          "id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, shipping_mode, delivery_type, tracking_number, tracking_carrier, payplug_payment_id, paid_at",
+          "id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, shipping_mode, shipping_recipient, shipping_address, shipping_postal, shipping_city, delivery_type, tracking_number, tracking_carrier, payplug_payment_id, paid_at",
         )
         .not("paid_at", "is", null)
         .order("created_at", { ascending: false });
@@ -2107,6 +2111,7 @@ function TrackingPanel({
               <th className="px-4 py-3">Commande</th>
               <th className="px-4 py-3">Famille</th>
               <th className="px-4 py-3">Mode</th>
+              <th className="px-4 py-3">Adresse</th>
               <th className="px-4 py-3">Type</th>
               <th className="px-4 py-3">Statut</th>
               <th className="px-4 py-3">Transporteur</th>
@@ -2117,14 +2122,14 @@ function TrackingPanel({
           <tbody className="divide-y divide-border">
             {loading && (
               <tr>
-                <td colSpan={8} className="px-4 py-6 text-center text-muted-foreground">
+                <td colSpan={9} className="px-4 py-6 text-center text-muted-foreground">
                   Chargement…
                 </td>
               </tr>
             )}
             {!loading && orders.length === 0 && (
               <tr>
-                <td colSpan={8} className="px-4 py-6 text-center text-muted-foreground">
+                <td colSpan={9} className="px-4 py-6 text-center text-muted-foreground">
                   Aucune commande.
                 </td>
               </tr>
@@ -2156,6 +2161,19 @@ function TrackingPanel({
                       <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5">
                         <Truck className="h-3 w-3" /> Domicile
                       </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-xs">
+                    {o.shipping_mode === "pickup" ? (
+                      <span className="text-muted-foreground">—</span>
+                    ) : o.shipping_address ? (
+                      <div className="max-w-[220px]">
+                        {o.shipping_recipient && <div className="font-medium text-foreground">{o.shipping_recipient}</div>}
+                        <div className="text-muted-foreground">{o.shipping_address}</div>
+                        <div className="text-muted-foreground">{[o.shipping_postal, o.shipping_city].filter(Boolean).join(" ")}</div>
+                      </div>
+                    ) : (
+                      <span className="text-amber-700 dark:text-amber-400">Non renseignée</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-xs">
@@ -2252,14 +2270,14 @@ function TrackingPanel({
                   </tr>
                   {refundOpen && (
                     <tr>
-                      <td colSpan={8} className="bg-muted/10 px-4 py-3">
+                      <td colSpan={9} className="bg-muted/10 px-4 py-3">
                         <RefundPanelContent orderId={o.id} onClose={() => setRefundOpenOrderId(null)} />
                       </td>
                     </tr>
                   )}
                   {billingOpen && (
                     <tr>
-                      <td colSpan={8} className="bg-muted/10 px-4 py-3">
+                      <td colSpan={9} className="bg-muted/10 px-4 py-3">
                         <BillingPanelContent
                           orderId={o.id}
                           defaultName={`${o.family_prenom} ${o.family_nom}`.trim()}
@@ -2270,7 +2288,7 @@ function TrackingPanel({
                   )}
                   {slipOpen && (
                     <tr>
-                      <td colSpan={8} className="bg-muted/10 px-4 py-3">
+                      <td colSpan={9} className="bg-muted/10 px-4 py-3">
                         <ShippingSlipPanelContent orderId={o.id} onClose={() => setSlipOpenOrderId(null)} />
                       </td>
                     </tr>
