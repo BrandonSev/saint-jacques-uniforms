@@ -598,6 +598,16 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
         const shippingFee = isIndividual ? settings.individual_shipping_fee : 0;
         const total = subtotal + shippingFee;
 
+        // Après la date limite, le retrait à l'établissement n'est plus proposé : on ignore
+        // toute sélection "pickup" encore envoyée par un client dont l'UI n'a pas eu le temps
+        // de se mettre à jour, et on exige une adresse de livraison à domicile.
+        const mode = isIndividual ? "home" : shipping.mode;
+        if (isIndividual && (!shipping.address || !shipping.postal || !shipping.city)) {
+          throw new Error(
+            "La commande groupée est terminée : une adresse de livraison à domicile est requise.",
+          );
+        }
+
         const { data: order, error: oErr } = await supabase
           .from("orders")
           .insert({
@@ -611,7 +621,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
             family_prenom: profile.prenom,
             family_email: profile.email,
             family_telephone: profile.telephone,
-            shipping_mode: shipping.mode,
+            shipping_mode: mode,
             shipping_label: shipping.label ?? null,
             shipping_recipient: shipping.recipient ?? null,
             shipping_address: shipping.address ?? null,

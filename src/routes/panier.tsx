@@ -66,7 +66,11 @@ function PanierPage() {
   const [individualShippingFee, setIndividualShippingFee] = useState(0);
   const [isIndividualDelivery, setIsIndividualDelivery] = useState(false);
 
-  useEffect(() => {
+  // Recharge les options de livraison et la date limite depuis la base. Appelé au montage
+  // ET juste avant d'ouvrir la modal de confirmation : un onglet resté ouvert à cheval sur
+  // la date limite ne doit pas continuer à proposer le retrait à l'établissement sur la
+  // seule foi de l'état chargé au premier rendu, potentiellement périmé.
+  const loadDeliveryInfo = () => {
     supabase
       .from("delivery_options")
       .select("code, label, description, active, position")
@@ -82,7 +86,7 @@ function PanierPage() {
         const filtered = filterDeliveryOptions(mapped);
         if (filtered) setDeliveryOptions(filtered);
       });
-    getShippingSettings().then((settings) => {
+    return getShippingSettings().then((settings) => {
       const deadline = settings.group_order_deadline ? new Date(settings.group_order_deadline) : null;
       const individual = !!deadline && Date.now() > deadline.getTime();
       setIsIndividualDelivery(individual);
@@ -93,7 +97,12 @@ function PanierPage() {
           return homeOnly.length ? homeOnly : [{ code: "home", label: "Livraison à domicile", description: null }];
         });
       }
+      return individual;
     });
+  };
+
+  useEffect(() => {
+    loadDeliveryInfo();
   }, []);
 
   const groups = useMemo<Group[]>(() => {
@@ -121,7 +130,10 @@ function PanierPage() {
       return;
     }
     setSizeConfirmed(false);
-    setConfirmOpen(true);
+    // Recharge la date limite / les options de livraison avant d'ouvrir la modal : un onglet
+    // resté ouvert avant le passage en livraison individuelle ne doit pas continuer à proposer
+    // le retrait à l'établissement sur la foi de l'état chargé au premier rendu de la page.
+    loadDeliveryInfo().finally(() => setConfirmOpen(true));
   };
 
   const onCheckout = async (shipping: ShippingChoice) => {
