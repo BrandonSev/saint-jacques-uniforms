@@ -32,3 +32,7 @@ dist-ssr
 *.sw?
 
 .worktrees/
+
+# Sorties locales des scripts d'aperçu (ex. scripts/preview-invoice.ts)
+scripts/*.pdf
+scripts/*.png
