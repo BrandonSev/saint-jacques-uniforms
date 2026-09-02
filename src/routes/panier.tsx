@@ -70,35 +70,49 @@ function PanierPage() {
   // ET juste avant d'ouvrir la modal de confirmation : un onglet resté ouvert à cheval sur
   // la date limite ne doit pas continuer à proposer le retrait à l'établissement sur la
   // seule foi de l'état chargé au premier rendu, potentiellement périmé.
-  const loadDeliveryInfo = () => {
-    supabase
-      .from("delivery_options")
-      .select("code, label, description, active, position")
-      .eq("active", true)
-      .order("position", { ascending: true })
-      .then(({ data }) => {
-        if (!data || !data.length) return;
-        const mapped: DeliveryOption[] = data.map((d: any) => ({
-          code: d.code,
-          label: d.label,
-          description: d.description,
-        }));
-        const filtered = filterDeliveryOptions(mapped);
-        if (filtered) setDeliveryOptions(filtered);
-      });
-    return getShippingSettings().then((settings) => {
-      const deadline = settings.group_order_deadline ? new Date(settings.group_order_deadline) : null;
-      const individual = !!deadline && Date.now() > deadline.getTime();
-      setIsIndividualDelivery(individual);
-      setIndividualShippingFee(settings.individual_shipping_fee);
+  const loadDeliveryInfo = async () => {
+    // Les deux appels partent en parallèle mais sont combinés dans une seule mise à jour
+    // d'état, dans un ordre fixe : la date limite dépassée doit toujours avoir le dernier
+    // mot sur la présence de "pickup", quel que soit l'ordre de résolution des requêtes
+    // (sinon la réponse de `delivery_options` peut réinjecter "pickup" après coup).
+    const [optionsResult, settings] = await Promise.all([
+      supabase
+        .from("delivery_options")
+        .select("code, label, description, active, position")
+        .eq("active", true)
+        .order("position", { ascending: true }),
+      getShippingSettings(),
+    ]);
+
+    const deadline = settings.group_order_deadline ? new Date(settings.group_order_deadline) : null;
+    const individual = !!deadline && Date.now() > deadline.getTime();
+    setIsIndividualDelivery(individual);
+    setIndividualShippingFee(settings.individual_shipping_fee);
+
+    const data = optionsResult.data;
+    let options: DeliveryOption[] | null = null;
+    if (data && data.length) {
+      const mapped: DeliveryOption[] = data.map((d: any) => ({
+        code: d.code,
+        label: d.label,
+        description: d.description,
+      }));
+      options = filterDeliveryOptions(mapped);
+    }
+    if (options) {
       if (individual) {
-        setDeliveryOptions((prev) => {
-          const homeOnly = prev.filter((o) => o.code !== "pickup");
-          return homeOnly.length ? homeOnly : [{ code: "home", label: "Livraison à domicile", description: null }];
-        });
+        const homeOnly = options.filter((o) => o.code !== "pickup");
+        options = homeOnly.length ? homeOnly : [{ code: "home", label: "Livraison à domicile", description: null }];
       }
-      return individual;
-    });
+      setDeliveryOptions(options);
+    } else if (individual) {
+      setDeliveryOptions((prev) => {
+        const homeOnly = prev.filter((o) => o.code !== "pickup");
+        return homeOnly.length ? homeOnly : [{ code: "home", label: "Livraison à domicile", description: null }];
+      });
+    }
+
+    return individual;
   };
 
   useEffect(() => {
