@@ -2117,6 +2117,10 @@ function TrackingPanel({
   const [refundOpenOrderId, setRefundOpenOrderId] = useState<string | null>(null);
   const [billingOpenOrderId, setBillingOpenOrderId] = useState<string | null>(null);
   const [slipOpenOrderId, setSlipOpenOrderId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkStatus, setBulkStatus] = useState<string>(ORDER_STATUSES[0]);
+  const [bulkNotify, setBulkNotify] = useState(true);
+  const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number } | null>(null);
 
   const draftFor = (o: OrderRow) =>
     drafts[o.id] ?? {
@@ -2127,14 +2131,116 @@ function TrackingPanel({
   const setDraft = (id: string, patch: Partial<{ tracking_number: string; tracking_carrier: string }>) =>
     setDrafts((prev) => ({ ...prev, [id]: { ...draftFor(orders.find((o) => o.id === id)!), ...patch } }));
 
+  const visibleIds = orders.map((o) => o.id);
+  const allSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedIds.has(id));
+  const someSelected = visibleIds.some((id) => selectedIds.has(id));
+
+  const toggleSelectAll = () => {
+    setSelectedIds((prev) => {
+      if (allSelected) return new Set();
+      return new Set(visibleIds);
+    });
+  };
+
+  const toggleSelectOne = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const clearSelection = () => setSelectedIds(new Set());
+
+  const applyBulkStatus = async () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    setBulkProgress({ done: 0, total: ids.length });
+    let successCount = 0;
+    const failures: string[] = [];
+    for (const id of ids) {
+      const order = orders.find((o) => o.id === id);
+      try {
+        const success = await onUpdate(id, { status: bulkStatus }, bulkNotify);
+        if (success) successCount++;
+        else failures.push(order?.order_number ?? id);
+      } catch {
+        failures.push(order?.order_number ?? id);
+      }
+      setBulkProgress((prev) => (prev ? { ...prev, done: prev.done + 1 } : prev));
+    }
+    setBulkProgress(null);
+    clearSelection();
+    if (failures.length === 0) {
+      toast.success(`${successCount} commande(s) mise(s) à jour vers "${bulkStatus}"`);
+    } else {
+      toast.error(
+        `${successCount} commande(s) mise(s) à jour, ${failures.length} échec(s) : ${failures.join(", ")}`,
+      );
+    }
+  };
+
   return (
     <div className="mt-4">
       <ShippingSettingsPanel />
+      {someSelected && (
+        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-card p-4">
+          <span className="text-sm font-medium text-foreground">
+            {selectedIds.size} commande{selectedIds.size > 1 ? "s" : ""} sélectionnée{selectedIds.size > 1 ? "s" : ""}
+          </span>
+          <select
+            value={bulkStatus}
+            onChange={(e) => setBulkStatus(e.target.value)}
+            disabled={bulkProgress !== null}
+            className="h-9 rounded-md border border-border bg-background px-2 text-xs"
+          >
+            {ORDER_STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+          <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={bulkNotify}
+              onChange={(e) => setBulkNotify(e.target.checked)}
+              disabled={bulkProgress !== null}
+            />
+            Notifier les familles par email
+          </label>
+          <button
+            onClick={applyBulkStatus}
+            disabled={bulkProgress !== null}
+            className="h-9 rounded-md bg-primary px-4 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          >
+            {bulkProgress ? `Traitement… ${bulkProgress.done} / ${bulkProgress.total}` : "Appliquer"}
+          </button>
+          <button
+            onClick={clearSelection}
+            disabled={bulkProgress !== null}
+            className="h-9 rounded-md border border-border px-4 text-[11px] font-semibold text-muted-foreground hover:bg-muted/40 disabled:opacity-50"
+          >
+            Annuler la sélection
+          </button>
+        </div>
+      )}
       <div className="overflow-hidden rounded-2xl border border-border bg-card">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-secondary text-left text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
+              <th className="px-4 py-3">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  ref={(el) => {
+                    if (el) el.indeterminate = !allSelected && someSelected;
+                  }}
+                  onChange={toggleSelectAll}
+                />
+              </th>
               <th className="px-4 py-3">Commande</th>
               <th className="px-4 py-3">Famille</th>
               <th className="px-4 py-3">Mode</th>
@@ -2149,14 +2255,14 @@ function TrackingPanel({
           <tbody className="divide-y divide-border">
             {loading && (
               <tr>
-                <td colSpan={9} className="px-4 py-6 text-center text-muted-foreground">
+                <td colSpan={10} className="px-4 py-6 text-center text-muted-foreground">
                   Chargement…
                 </td>
               </tr>
             )}
             {!loading && orders.length === 0 && (
               <tr>
-                <td colSpan={9} className="px-4 py-6 text-center text-muted-foreground">
+                <td colSpan={10} className="px-4 py-6 text-center text-muted-foreground">
                   Aucune commande.
                 </td>
               </tr>
@@ -2169,6 +2275,13 @@ function TrackingPanel({
               return (
                 <Fragment key={o.id}>
                   <tr className="hover:bg-muted/30">
+                  <td className="px-4 py-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(o.id)}
+                      onChange={() => toggleSelectOne(o.id)}
+                    />
+                  </td>
                   <td className="px-4 py-3 font-medium text-foreground">
                     {o.order_number}
                     <div className="text-[11px] text-muted-foreground">
@@ -2191,14 +2304,14 @@ function TrackingPanel({
                     )}
                   </td>
                   <td className="px-4 py-3 text-xs">
-                    {o.shipping_mode === "pickup" ? (
-                      <span className="text-muted-foreground">—</span>
-                    ) : o.shipping_address ? (
+                    {o.shipping_address ? (
                       <div className="max-w-[220px]">
                         {o.shipping_recipient && <div className="font-medium text-foreground">{o.shipping_recipient}</div>}
                         <div className="text-muted-foreground">{o.shipping_address}</div>
                         <div className="text-muted-foreground">{[o.shipping_postal, o.shipping_city].filter(Boolean).join(" ")}</div>
                       </div>
+                    ) : o.shipping_mode === "pickup" ? (
+                      <span className="text-muted-foreground">—</span>
                     ) : (
                       <span className="text-amber-700 dark:text-amber-400">Non renseignée</span>
                     )}
@@ -2297,14 +2410,14 @@ function TrackingPanel({
                   </tr>
                   {refundOpen && (
                     <tr>
-                      <td colSpan={9} className="bg-muted/10 px-4 py-3">
+                      <td colSpan={10} className="bg-muted/10 px-4 py-3">
                         <RefundPanelContent orderId={o.id} onClose={() => setRefundOpenOrderId(null)} />
                       </td>
                     </tr>
                   )}
                   {billingOpen && (
                     <tr>
-                      <td colSpan={9} className="bg-muted/10 px-4 py-3">
+                      <td colSpan={10} className="bg-muted/10 px-4 py-3">
                         <BillingPanelContent
                           orderId={o.id}
                           defaultName={`${o.family_prenom} ${o.family_nom}`.trim()}
@@ -2315,7 +2428,7 @@ function TrackingPanel({
                   )}
                   {slipOpen && (
                     <tr>
-                      <td colSpan={9} className="bg-muted/10 px-4 py-3">
+                      <td colSpan={10} className="bg-muted/10 px-4 py-3">
                         <ShippingSlipPanelContent orderId={o.id} onClose={() => setSlipOpenOrderId(null)} />
                       </td>
                     </tr>
