@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formatCivilite } from "@/lib/utils";
-import { SAINT_JACQUES_LOGO_BASE64 } from "@/assets/saintJacquesLogoBase64";
+import { FRANCE_UNIFORMES_LOGO_BASE64 } from "@/assets/franceUniformesLogoBase64";
 
 const FU_NAVY: [number, number, number] = [10, 37, 64];
 const FU_BAND: [number, number, number] = [228, 243, 249]; // #e4f3f9
@@ -70,14 +70,8 @@ export function buildOrderInvoicePdf(data: InvoiceData): Buffer {
   doc.setFillColor(...FU_BAND);
   doc.rect(0, 90, W, 3, "F");
 
-  doc.addImage(SAINT_JACQUES_LOGO_BASE64, "PNG", M, 18, 54, 54);
-  const textX = M + 66;
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(14);
-  doc.text("Saint-Jacques-de-Compostelle", textX, 42);
-  doc.setFontSize(9);
-  doc.setTextColor(200, 220, 235);
-  doc.text("Groupe scolaire catholique · Dax", textX, 58);
+  // Logo large (ratio ~4,25:1) : dimensionné sur la hauteur du bandeau plutôt qu'en badge carré.
+  doc.addImage(FRANCE_UNIFORMES_LOGO_BASE64, "PNG", M, 25, 170, 40);
 
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(20);
