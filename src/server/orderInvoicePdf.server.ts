@@ -90,10 +90,6 @@ export function buildOrderInvoicePdf(data: InvoiceData): Buffer {
   let y = 120;
   doc.text(`N° de commande : ${data.orderNumber}`, M, y);
   doc.text(`Date de facturation : ${fr(data.paidAt)}`, W - M, y, { align: "right" });
-  y += 16;
-  doc.setTextColor(80, 80, 80);
-  doc.text(`Commande réglée le ${fr(data.paidAt)}`, W - M, y, { align: "right" });
-  doc.setTextColor(20, 20, 20);
   y += 24;
 
   doc.setFontSize(10);
