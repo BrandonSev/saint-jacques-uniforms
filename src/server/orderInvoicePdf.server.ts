@@ -6,6 +6,14 @@ import { FRANCE_UNIFORMES_LOGO_BASE64 } from "@/assets/franceUniformesLogoBase64
 const FU_NAVY: [number, number, number] = [10, 37, 64];
 const FU_BAND: [number, number, number] = [228, 243, 249]; // #e4f3f9
 
+// Taux de TVA applicable (France, taux normal). Les montants stockés en base (unit_price,
+// line_total, total_amount) sont des montants TTC : la base ne conserve aucune colonne HT/TVA,
+// le HT est donc dérivé par déduction (HT = TTC / (1 + taux)) au moment de l'édition du PDF.
+const VAT_RATE = 0.2;
+function ht(ttc: number): number {
+  return ttc / (1 + VAT_RATE);
+}
+
 const ISSUER = {
   name: "France Uniformes",
   address: "2 rue Percheronne",
@@ -107,28 +115,50 @@ export function buildOrderInvoicePdf(data: InvoiceData): Buffer {
 
   autoTable(doc, {
     startY: y,
-    head: [["Enfant", "Produit", "Taille", "Qté", "PU", "Total"]],
+    head: [["Enfant", "Produit", "Taille", "Qté", "PU HT", "PU TTC", "Total HT", "Total TTC"]],
     body: data.items.map((it) => [
       it.child,
       `${it.productName}\nRéf. ${it.productRef}`,
       it.size,
       String(it.quantity),
+      eur(ht(it.unitPrice)),
       eur(it.unitPrice),
+      eur(ht(it.lineTotal)),
       eur(it.lineTotal),
     ]),
     theme: "striped",
-    styles: { fontSize: 9, cellPadding: 6 },
+    styles: { fontSize: 8, cellPadding: 5 },
     headStyles: { fillColor: FU_NAVY, textColor: 255 },
-    columnStyles: { 3: { halign: "right" }, 4: { halign: "right" }, 5: { halign: "right" } },
+    columnStyles: {
+      3: { halign: "right" },
+      4: { halign: "right" },
+      5: { halign: "right" },
+      6: { halign: "right" },
+      7: { halign: "right" },
+    },
     margin: { left: M, right: M },
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const finalY = (doc as any).lastAutoTable.finalY + 16;
+  const finalY = (doc as any).lastAutoTable.finalY + 20;
+  const totalHt = ht(data.totalAmount);
+  const totalVat = data.totalAmount - totalHt;
+
+  doc.setFontSize(9);
+  doc.setTextColor(80, 80, 80);
+  doc.text("Total HT", W - M - 130, finalY);
+  doc.text(eur(totalHt), W - M, finalY, { align: "right" });
+  doc.text(`TVA (${(VAT_RATE * 100).toFixed(0)}%)`, W - M - 130, finalY + 16);
+  doc.text(eur(totalVat), W - M, finalY + 16, { align: "right" });
+
+  doc.setDrawColor(200, 200, 200);
+  doc.line(W - M - 130, finalY + 24, W - M, finalY + 24);
+
+  doc.setTextColor(20, 20, 20);
   doc.setFontSize(11);
-  doc.text("Total TTC", W - M - 120, finalY);
+  doc.text("Total TTC", W - M - 130, finalY + 42);
   doc.setFontSize(14);
-  doc.text(eur(data.totalAmount), W - M, finalY, { align: "right" });
+  doc.text(eur(data.totalAmount), W - M, finalY + 42, { align: "right" });
 
   const pageH = doc.internal.pageSize.getHeight();
   doc.setFontSize(7);
