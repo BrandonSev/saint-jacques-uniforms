@@ -99,7 +99,7 @@ export function buildOrderInvoicePdf(data: InvoiceData): Buffer {
   doc.text("ÉMETTEUR", M, y);
   doc.text("DESTINATAIRE", W / 2, y);
   doc.setTextColor(20);
-  y += 14;
+  y += 22;
   const colWidth = (W - M * 2) / 2 - 10;
   const issuer = `${ISSUER.name}\n${ISSUER.address}\n${ISSUER.postalCity}\n${ISSUER.country}\n${ISSUER.email}`;
   const issuerLines = doc.splitTextToSize(issuer, colWidth);
