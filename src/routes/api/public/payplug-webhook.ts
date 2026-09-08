@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { fetchPayplugPayment } from "@/server/payplug.server";
+import { fetchFuStock, decrementFuStock } from "@/server/franceUniformes.server";
 import {
   sendOrderConfirmation,
   sendAdminOrderNotification,
@@ -64,6 +65,43 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
               await supabaseAdmin.rpc("decrement_blouse_stock", { _order_id: orderId });
             } catch (e) {
               console.error("payplug webhook decrement_blouse_stock:", e);
+            }
+
+            // France Uniformes est la source de vérité du stock réel (affiché
+            // en live via /api/public/fu-stock) : il faut le décrémenter là
+            // aussi, sans quoi le compteur ne bougerait jamais pour les
+            // acheteurs suivants. Idempotency-Key = commande + taille, pour
+            // qu'un rejeu du webhook ne décrémente pas deux fois.
+            try {
+              const { data: blouseItems } = await supabaseAdmin
+                .from("order_items")
+                .select("size, quantity")
+                .eq("order_id", orderId)
+                .eq("product_id", "blouse-officielle");
+
+              if (blouseItems && blouseItems.length > 0) {
+                const bySize = new Map<string, number>();
+                for (const it of blouseItems as Array<{ size: string; quantity: number }>) {
+                  bySize.set(it.size, (bySize.get(it.size) ?? 0) + it.quantity);
+                }
+
+                const fuStock = await fetchFuStock();
+                for (const [size, qty] of bySize) {
+                  const match = fuStock.find((s) => s.size === size);
+                  if (!match) {
+                    console.error(`payplug webhook fu decrement: taille FU introuvable pour "${size}"`);
+                    continue;
+                  }
+                  await decrementFuStock({
+                    skuExterne: match.skuExterne,
+                    qty,
+                    idempotencyKey: `${orderId}-${size}`,
+                    idOrder: orderId,
+                  });
+                }
+              }
+            } catch (e) {
+              console.error("payplug webhook fu decrement:", e);
             }
 
             // Emails

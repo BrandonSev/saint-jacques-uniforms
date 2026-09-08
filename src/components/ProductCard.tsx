@@ -9,7 +9,6 @@ import guideMesuresImg from "@/assets/guide-tailles-mesures.png";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { FrenchFlag } from "@/components/FrenchFlag";
 import { SizeBadge } from "@/components/SizeBadge";
-import { supabase } from "@/integrations/supabase/client";
 
 export type ProductGenre = "Fille" | "Garçon" | "Unisexe";
 
@@ -51,15 +50,15 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
   useEffect(() => {
     if (!isBlouse) return;
     let mounted = true;
-    supabase
-      .from("blouse_stock")
-      .select("size, remaining")
-      .then(({ data }) => {
+    fetch("/api/public/fu-stock")
+      .then((r) => r.json())
+      .then((data) => {
         if (!mounted || !data) return;
         const map: Record<string, number> = {};
         for (const r of data as Array<{ size: string; remaining: number }>) map[r.size] = r.remaining;
         setStock(map);
-      });
+      })
+      .catch(() => {});
     return () => {
       mounted = false;
     };
