@@ -133,6 +133,7 @@ type OrderRow = {
   family_prenom: string;
   family_nom: string;
   family_email: string;
+  family_telephone: string | null;
   shipping_mode: string;
   shipping_recipient: string | null;
   shipping_address: string | null;
@@ -172,7 +173,7 @@ function AdminPage() {
       const { data, error } = await supabase
         .from("orders")
         .select(
-          "id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, shipping_mode, shipping_recipient, shipping_address, shipping_postal, shipping_city, delivery_type, tracking_number, tracking_carrier, payplug_payment_id, paid_at",
+          "id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, family_telephone, shipping_mode, shipping_recipient, shipping_address, shipping_postal, shipping_city, delivery_type, tracking_number, tracking_carrier, payplug_payment_id, paid_at",
         )
         .not("paid_at", "is", null)
         .order("created_at", { ascending: false });
@@ -2291,6 +2292,13 @@ function TrackingPanel({
                   <td className="px-4 py-3">
                     {o.family_prenom} {o.family_nom}
                     <div className="text-[11px] text-muted-foreground">{o.family_email}</div>
+                    {o.family_telephone && (
+                      <div className="text-[11px] text-muted-foreground">
+                        <a href={`tel:${o.family_telephone}`} className="hover:text-foreground">
+                          {o.family_telephone}
+                        </a>
+                      </div>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-xs">
                     {o.shipping_mode === "pickup" ? (
