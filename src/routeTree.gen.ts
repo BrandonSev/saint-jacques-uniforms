@@ -36,7 +36,6 @@ import { Route as AideCguRouteImport } from './routes/aide.cgu'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as EnfantsChildIdHistoriqueRouteImport } from './routes/enfants.$childId.historique'
 import { Route as ApiPublicPayplugWebhookRouteImport } from './routes/api/public/payplug-webhook'
-import { Route as ApiPublicFuStockRouteImport } from './routes/api/public/fu-stock'
 import { Route as ApiPublicEmailDiagRouteImport } from './routes/api/public/email-diag'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -180,11 +179,6 @@ const ApiPublicPayplugWebhookRoute = ApiPublicPayplugWebhookRouteImport.update({
   path: '/api/public/payplug-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicFuStockRoute = ApiPublicFuStockRouteImport.update({
-  id: '/api/public/fu-stock',
-  path: '/api/public/fu-stock',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicEmailDiagRoute = ApiPublicEmailDiagRouteImport.update({
   id: '/api/public/email-diag',
   path: '/api/public/email-diag',
@@ -245,7 +239,6 @@ export interface FileRoutesByFullPath {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/enfants/': typeof EnfantsIndexRoute
   '/api/public/email-diag': typeof ApiPublicEmailDiagRoute
-  '/api/public/fu-stock': typeof ApiPublicFuStockRoute
   '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -281,7 +274,6 @@ export interface FileRoutesByTo {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/enfants': typeof EnfantsIndexRoute
   '/api/public/email-diag': typeof ApiPublicEmailDiagRoute
-  '/api/public/fu-stock': typeof ApiPublicFuStockRoute
   '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -318,7 +310,6 @@ export interface FileRoutesById {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/enfants/': typeof EnfantsIndexRoute
   '/api/public/email-diag': typeof ApiPublicEmailDiagRoute
-  '/api/public/fu-stock': typeof ApiPublicFuStockRoute
   '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -356,7 +347,6 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/enfants/'
     | '/api/public/email-diag'
-    | '/api/public/fu-stock'
     | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
     | '/lovable/email/suppression'
@@ -392,7 +382,6 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/enfants'
     | '/api/public/email-diag'
-    | '/api/public/fu-stock'
     | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
     | '/lovable/email/suppression'
@@ -428,7 +417,6 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/enfants/'
     | '/api/public/email-diag'
-    | '/api/public/fu-stock'
     | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
     | '/lovable/email/suppression'
@@ -464,7 +452,6 @@ export interface RootRouteChildren {
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   EnfantsIndexRoute: typeof EnfantsIndexRoute
   ApiPublicEmailDiagRoute: typeof ApiPublicEmailDiagRoute
-  ApiPublicFuStockRoute: typeof ApiPublicFuStockRoute
   ApiPublicPayplugWebhookRoute: typeof ApiPublicPayplugWebhookRoute
   EnfantsChildIdHistoriqueRoute: typeof EnfantsChildIdHistoriqueRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
@@ -666,13 +653,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPayplugWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/fu-stock': {
-      id: '/api/public/fu-stock'
-      path: '/api/public/fu-stock'
-      fullPath: '/api/public/fu-stock'
-      preLoaderRoute: typeof ApiPublicFuStockRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/email-diag': {
       id: '/api/public/email-diag'
       path: '/api/public/email-diag'
@@ -755,7 +735,6 @@ const rootRouteChildren: RootRouteChildren = {
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   EnfantsIndexRoute: EnfantsIndexRoute,
   ApiPublicEmailDiagRoute: ApiPublicEmailDiagRoute,
-  ApiPublicFuStockRoute: ApiPublicFuStockRoute,
   ApiPublicPayplugWebhookRoute: ApiPublicPayplugWebhookRoute,
   EnfantsChildIdHistoriqueRoute: EnfantsChildIdHistoriqueRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
