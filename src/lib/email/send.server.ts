@@ -35,7 +35,15 @@ export async function enqueueTransactionalEmail(params: {
   }
   const fromAddress = process.env.MAILER_FROM || `${SITE_NAME} <${FROM_LOCALPART}@${FROM_DOMAIN}>`;
   const messageId = crypto.randomUUID();
-  const idemKey = idempotencyKey || messageId;
+  const rawIdemKey = idempotencyKey || messageId;
+  // Sanitize: HTTP header values must be ASCII. Replace any non-ASCII or
+  // whitespace/control chars with '-' to avoid "invalid header value" errors.
+  const idemKey = rawIdemKey
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\x21-\x7E]+/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 200);
 
   // Render
   const element = React.createElement(template.component, templateData);

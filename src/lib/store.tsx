@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
+import { getShippingSettings, generateOrderShippingSlip } from "@/lib/shipping-settings.functions";
 
 export type Child = {
   id: string;
@@ -188,7 +189,8 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
   const [authLoading, setAuthLoading] = useState(true);
   const [childList, setChildList] = useState<Child[]>([]);
   const [parentList, setParentList] = useState<FamilyParent[]>([]);
-  const [cart, setCart] = useLocal<CartItem[]>("sjc.cart", []);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cartLoaded, setCartLoaded] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isApel, setIsApel] = useState(false);
 
@@ -245,14 +247,97 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
     setIsApel(roles.includes("apel"));
   }, []);
 
+  const dbRowToItem = (r: any): CartItem => ({
+    id: r.id,
+    productId: r.product_id,
+    name: r.name,
+    ref: r.ref,
+    price: Number(r.price),
+    size: r.size,
+    qty: r.qty,
+    image: r.image ?? "",
+    childId: r.child_id ?? "",
+  });
+
+  const loadCart = useCallback(async (uid: string) => {
+    // Récupère le panier serveur
+    const { data: dbRows } = await supabase
+      .from("cart_items")
+      .select("*")
+      .eq("user_id", uid)
+      .order("created_at", { ascending: true });
+    const dbItems: CartItem[] = (dbRows ?? []).map(dbRowToItem);
+
+    // Fusionne avec un éventuel panier local (utilisateur non connecté avant)
+    let localItems: CartItem[] = [];
+    try {
+      const raw = typeof window !== "undefined" ? localStorage.getItem("sjc.cart") : null;
+      if (raw) localItems = JSON.parse(raw) as CartItem[];
+    } catch {}
+
+    if (localItems.length > 0) {
+      for (const li of localItems) {
+        const existing = dbItems.find(
+          (d) => d.productId === li.productId && d.size === li.size && d.childId === li.childId,
+        );
+        if (existing) {
+          const newQty = existing.qty + li.qty;
+          await supabase.from("cart_items").update({ qty: newQty }).eq("id", existing.id);
+          existing.qty = newQty;
+        } else {
+          const { data: inserted } = await supabase
+            .from("cart_items")
+            .insert({
+              user_id: uid,
+              product_id: li.productId,
+              name: li.name,
+              ref: li.ref,
+              price: li.price,
+              size: li.size,
+              qty: li.qty,
+              image: li.image ?? "",
+              child_id: li.childId || null,
+            })
+            .select()
+            .single();
+          if (inserted) dbItems.push(dbRowToItem(inserted));
+        }
+      }
+      try {
+        localStorage.removeItem("sjc.cart");
+      } catch {}
+    }
+
+    setCart(dbItems);
+    setCartLoaded(true);
+  }, []);
+
   useEffect(() => {
     if (user) {
       loadProfile(user.id);
       loadChildren(user.id);
       loadParents(user.id);
       loadAdmin(user.id);
+      loadCart(user.id);
+    } else {
+      // Utilisateur déconnecté : charge le panier local s'il existe
+      try {
+        const raw = typeof window !== "undefined" ? localStorage.getItem("sjc.cart") : null;
+        setCart(raw ? (JSON.parse(raw) as CartItem[]) : []);
+      } catch {
+        setCart([]);
+      }
+      setCartLoaded(true);
     }
-  }, [user, loadProfile, loadChildren, loadParents, loadAdmin]);
+  }, [user, loadProfile, loadChildren, loadParents, loadAdmin, loadCart]);
+
+  // Persiste le panier en localStorage uniquement quand l'utilisateur n'est pas connecté.
+  useEffect(() => {
+    if (!cartLoaded || user) return;
+    try {
+      localStorage.setItem("sjc.cart", JSON.stringify(cart));
+    } catch {}
+  }, [cart, cartLoaded, user]);
 
   // Purge stale cart items whose child no longer exists (e.g. child deleted on
   // another device, or legacy items added before child selection was required).
@@ -260,10 +345,17 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
     if (!user) return;
     const validIds = new Set(childList.map((c) => c.id));
     setCart((prev) => {
-      const next = prev.filter((i) => i.childId && validIds.has(i.childId));
-      return next.length === prev.length ? prev : next;
+      const stale = prev.filter((i) => !i.childId || !validIds.has(i.childId));
+      if (stale.length === 0) return prev;
+      // Supprime côté DB en arrière-plan
+      supabase
+        .from("cart_items")
+        .delete()
+        .in("id", stale.map((s) => s.id))
+        .then(() => {});
+      return prev.filter((i) => i.childId && validIds.has(i.childId));
     });
-  }, [user, childList, setCart]);
+  }, [user, childList]);
 
   const familyDisplayName = profile?.family_name || profile?.nom || "";
   const displayedChildren = childList.map((c) => {
@@ -343,6 +435,9 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
         if (error) throw error;
         setChildList((p) => p.filter((c) => c.id !== id));
         setCart((p) => p.filter((i) => i.childId !== id));
+        if (user) {
+          await supabase.from("cart_items").delete().eq("user_id", user.id).eq("child_id", id);
+        }
       },
 
       parents: parentList,
@@ -354,7 +449,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
           .insert({
             user_id: user.id,
             role: p.role || (position === 0 ? "Mère" : "Père"),
-            civilite: p.civilite || "Mme",
+            civilite: p.civilite || "Madame",
             prenom: p.prenom || "",
             nom: p.nom || "",
             email: p.email || null,
@@ -436,43 +531,103 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
 
       cart,
       addToCart: (item) => {
-        setCart((prev) => {
-          const existing = prev.find(
-            (i) => i.productId === item.productId && i.size === item.size && i.childId === item.childId,
-          );
-          if (existing) return prev.map((i) => (i.id === existing.id ? { ...i, qty: i.qty + item.qty } : i));
-          return [...prev, { ...item, id: `${item.productId}-${item.size}-${item.childId}-${Date.now()}` }];
-        });
+        const existing = cart.find(
+          (i) => i.productId === item.productId && i.size === item.size && i.childId === item.childId,
+        );
+        if (existing) {
+          const newQty = existing.qty + item.qty;
+          setCart((prev) => prev.map((i) => (i.id === existing.id ? { ...i, qty: newQty } : i)));
+          if (user) {
+            supabase.from("cart_items").update({ qty: newQty }).eq("id", existing.id).then(() => {});
+          }
+          return;
+        }
+        const tempId = `tmp-${item.productId}-${item.size}-${item.childId}-${Date.now()}`;
+        const newItem: CartItem = { ...item, id: tempId };
+        setCart((prev) => [...prev, newItem]);
+        if (user) {
+          supabase
+            .from("cart_items")
+            .insert({
+              user_id: user.id,
+              product_id: item.productId,
+              name: item.name,
+              ref: item.ref,
+              price: item.price,
+              size: item.size,
+              qty: item.qty,
+              image: item.image ?? "",
+              child_id: item.childId || null,
+            })
+            .select()
+            .single()
+            .then(({ data }) => {
+              if (data) {
+                const real = dbRowToItem(data);
+                setCart((prev) => prev.map((i) => (i.id === tempId ? real : i)));
+              }
+            });
+        }
       },
-      updateQty: (id, qty) =>
-        setCart((prev) =>
-          qty <= 0 ? prev.filter((i) => i.id !== id) : prev.map((i) => (i.id === id ? { ...i, qty } : i)),
-        ),
-      removeFromCart: (id) => setCart((prev) => prev.filter((i) => i.id !== id)),
-      clearCart: () => setCart([]),
+      updateQty: (id, qty) => {
+        if (qty <= 0) {
+          setCart((prev) => prev.filter((i) => i.id !== id));
+          if (user) supabase.from("cart_items").delete().eq("id", id).then(() => {});
+        } else {
+          setCart((prev) => prev.map((i) => (i.id === id ? { ...i, qty } : i)));
+          if (user) supabase.from("cart_items").update({ qty }).eq("id", id).then(() => {});
+        }
+      },
+      removeFromCart: (id) => {
+        setCart((prev) => prev.filter((i) => i.id !== id));
+        if (user) supabase.from("cart_items").delete().eq("id", id).then(() => {});
+      },
+      clearCart: () => {
+        setCart([]);
+        if (user) supabase.from("cart_items").delete().eq("user_id", user.id).then(() => {});
+      },
       cartCount: cart.reduce((s, i) => s + i.qty, 0),
       checkout: async (shipping) => {
         if (!user || !profile) throw new Error("Non connecté");
         if (cart.length === 0) throw new Error("Panier vide");
-        const total = cart.reduce((s, i) => s + i.qty * i.price, 0);
+        const subtotal = cart.reduce((s, i) => s + i.qty * i.price, 0);
+
+        const settings = await getShippingSettings();
+        const deadline = settings.group_order_deadline ? new Date(settings.group_order_deadline) : null;
+        const isIndividual = !!deadline && Date.now() > deadline.getTime();
+        const shippingFee = isIndividual ? settings.individual_shipping_fee : 0;
+        const total = subtotal + shippingFee;
+
+        // Après la date limite, le retrait à l'établissement n'est plus proposé : on ignore
+        // toute sélection "pickup" encore envoyée par un client dont l'UI n'a pas eu le temps
+        // de se mettre à jour, et on exige une adresse de livraison à domicile.
+        const mode = isIndividual ? "home" : shipping.mode;
+        if (isIndividual && (!shipping.address || !shipping.postal || !shipping.city)) {
+          throw new Error(
+            "La commande groupée est terminée : une adresse de livraison à domicile est requise.",
+          );
+        }
+
         const { data: order, error: oErr } = await supabase
           .from("orders")
           .insert({
             user_id: user.id,
             status: "En attente paiement",
             total_amount: total,
+            delivery_type: isIndividual ? "individual" : "grouped",
+            shipping_fee: shippingFee,
             family_civilite: profile.civilite,
             family_nom: profile.nom,
             family_prenom: profile.prenom,
             family_email: profile.email,
             family_telephone: profile.telephone,
-            shipping_mode: shipping.mode,
+            shipping_mode: mode,
             shipping_label: shipping.label ?? null,
             shipping_recipient: shipping.recipient ?? null,
             shipping_address: shipping.address ?? null,
             shipping_postal: shipping.postal ?? null,
             shipping_city: shipping.city ?? null,
-          })
+          } as any)
           .select()
           .single();
         if (oErr) throw oErr;
@@ -499,6 +654,10 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
         const { error: iErr } = await supabase.from("order_items").insert(items);
         if (iErr) throw iErr;
         setCart([]);
+        await supabase.from("cart_items").delete().eq("user_id", user.id);
+        if (isIndividual) {
+          generateOrderShippingSlip({ data: { orderId: order.id } }).catch(() => {});
+        }
         return { orderId: order.id, orderNumber: order.order_number };
       },
     }),

@@ -7,16 +7,18 @@ import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore, type CartItem, type Child, type Profile, type ShippingChoice, type FamilyParent } from "@/lib/store";
-import { createOrderPayment } from "@/server/payplug.functions";
+import { createOrderPayment } from "@/lib/payplug.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { PageWatermark } from "@/components/PageWatermark";
 import { BackToSchoolAlert } from "@/components/BackToSchoolAlert";
+import { formatCivilite } from "@/lib/utils";
 import {
   filterDeliveryOptions,
   getInitialDeliveryOptions,
   pickInitialMode,
   type DeliveryOption,
 } from "@/lib/deliveryOptions";
+import { getShippingSettings } from "@/lib/shipping-settings.functions";
 
 export const Route = createFileRoute("/panier")({
   head: () => ({
@@ -61,23 +63,60 @@ function PanierPage() {
   const [deliveryOptions, setDeliveryOptions] = useState<DeliveryOption[]>(
     () => getInitialDeliveryOptions(),
   );
+  const [individualShippingFee, setIndividualShippingFee] = useState(0);
+  const [isIndividualDelivery, setIsIndividualDelivery] = useState(false);
+
+  // Recharge les options de livraison et la date limite depuis la base. Appelé au montage
+  // ET juste avant d'ouvrir la modal de confirmation : un onglet resté ouvert à cheval sur
+  // la date limite ne doit pas continuer à proposer le retrait à l'établissement sur la
+  // seule foi de l'état chargé au premier rendu, potentiellement périmé.
+  const loadDeliveryInfo = async () => {
+    // Les deux appels partent en parallèle mais sont combinés dans une seule mise à jour
+    // d'état, dans un ordre fixe : la date limite dépassée doit toujours avoir le dernier
+    // mot sur la présence de "pickup", quel que soit l'ordre de résolution des requêtes
+    // (sinon la réponse de `delivery_options` peut réinjecter "pickup" après coup).
+    const [optionsResult, settings] = await Promise.all([
+      supabase
+        .from("delivery_options")
+        .select("code, label, description, active, position")
+        .eq("active", true)
+        .order("position", { ascending: true }),
+      getShippingSettings(),
+    ]);
+
+    const deadline = settings.group_order_deadline ? new Date(settings.group_order_deadline) : null;
+    const individual = !!deadline && Date.now() > deadline.getTime();
+    setIsIndividualDelivery(individual);
+    setIndividualShippingFee(settings.individual_shipping_fee);
+
+    const data = optionsResult.data;
+    let options: DeliveryOption[] | null = null;
+    if (data && data.length) {
+      const mapped: DeliveryOption[] = data.map((d: any) => ({
+        code: d.code,
+        label: d.label,
+        description: d.description,
+      }));
+      options = filterDeliveryOptions(mapped);
+    }
+    if (options) {
+      if (individual) {
+        const homeOnly = options.filter((o) => o.code !== "pickup");
+        options = homeOnly.length ? homeOnly : [{ code: "home", label: "Livraison à domicile", description: null }];
+      }
+      setDeliveryOptions(options);
+    } else if (individual) {
+      setDeliveryOptions((prev) => {
+        const homeOnly = prev.filter((o) => o.code !== "pickup");
+        return homeOnly.length ? homeOnly : [{ code: "home", label: "Livraison à domicile", description: null }];
+      });
+    }
+
+    return individual;
+  };
 
   useEffect(() => {
-    supabase
-      .from("delivery_options")
-      .select("code, label, description, active, position")
-      .eq("active", true)
-      .order("position", { ascending: true })
-      .then(({ data }) => {
-        if (!data || !data.length) return;
-        const mapped: DeliveryOption[] = data.map((d: any) => ({
-          code: d.code,
-          label: d.label,
-          description: d.description,
-        }));
-        const filtered = filterDeliveryOptions(mapped);
-        if (filtered) setDeliveryOptions(filtered);
-      });
+    loadDeliveryInfo();
   }, []);
 
   const groups = useMemo<Group[]>(() => {
@@ -92,7 +131,8 @@ function PanierPage() {
   }, [cart, children]);
 
   const subtotal = cart.reduce((s, i) => s + i.qty * i.price, 0);
-  const total = subtotal;
+  const shippingFee = isIndividualDelivery ? individualShippingFee : 0;
+  const total = subtotal + shippingFee;
 
   const openConfirm = () => {
     if (!user) {
@@ -104,7 +144,10 @@ function PanierPage() {
       return;
     }
     setSizeConfirmed(false);
-    setConfirmOpen(true);
+    // Recharge la date limite / les options de livraison avant d'ouvrir la modal : un onglet
+    // resté ouvert avant le passage en livraison individuelle ne doit pas continuer à proposer
+    // le retrait à l'établissement sur la foi de l'état chargé au premier rendu de la page.
+    loadDeliveryInfo().finally(() => setConfirmOpen(true));
   };
 
   const onCheckout = async (shipping: ShippingChoice) => {
@@ -186,11 +229,19 @@ function PanierPage() {
                   <Row label={`Articles`} value={`${cartCount}`} />
                   <Row label="Enfants concernés" value={`${groups.length}`} />
                   <Row label="Sous-total" value={formatEUR(subtotal)} />
-                   <Row 
-                     label="Livraison" 
-                     value="Gratuite pour la rentrée de sept. 2026" 
-                     subValue="À retirer auprès de l'APEL fin août"
-                   />
+                  {isIndividualDelivery ? (
+                    <Row
+                      label="Frais de livraison individuelle"
+                      value={formatEUR(shippingFee)}
+                      subValue="Date limite de la commande groupée dépassée"
+                    />
+                  ) : (
+                    <Row
+                      label="Livraison"
+                      value="Gratuite pour la rentrée de sept. 2026"
+                      subValue="À retirer auprès de l'APEL fin août"
+                    />
+                  )}
                 </dl>
                 <div className="my-5 h-px bg-border" />
                 <div className="flex items-baseline justify-between">
@@ -225,6 +276,8 @@ function PanierPage() {
         <ConfirmModal
           groups={groups}
           subtotal={subtotal}
+          shippingFee={shippingFee}
+          isIndividualDelivery={isIndividualDelivery}
           processing={processing}
           sizeConfirmed={sizeConfirmed}
           profile={profile}
@@ -244,6 +297,8 @@ function PanierPage() {
 function ConfirmModal({
   groups,
   subtotal,
+  shippingFee,
+  isIndividualDelivery,
   processing,
   sizeConfirmed,
   profile,
@@ -255,6 +310,8 @@ function ConfirmModal({
 }: {
   groups: Group[];
   subtotal: number;
+  shippingFee: number;
+  isIndividualDelivery: boolean;
   processing: boolean;
   sizeConfirmed: boolean;
   profile: Profile | null;
@@ -271,7 +328,7 @@ function ConfirmModal({
     addresses.push({
       id: "profile",
       label: "Adresse principale",
-      recipient: `${profile.civilite ?? ""} ${profile.prenom} ${profile.nom}`.trim(),
+      recipient: `${formatCivilite(profile.civilite)} ${profile.prenom} ${profile.nom}`.trim(),
       address: profile.adresse,
       postal: profile.code_postal,
       city: profile.ville,
@@ -283,7 +340,7 @@ function ConfirmModal({
       addresses.push({
         id: `parent-${p.id}`,
         label: p.role || "Parent",
-        recipient: `${p.civilite} ${p.prenom} ${p.nom}`.trim(),
+        recipient: `${formatCivilite(p.civilite)} ${p.prenom} ${p.nom}`.trim(),
         address: p.adresse,
         postal: p.code_postal,
         city: p.ville,
@@ -294,7 +351,7 @@ function ConfirmModal({
       addresses.push({
         id: `parent-${p.id}-alt`,
         label: p.shipping_label || "Autre adresse",
-        recipient: `${p.civilite} ${p.prenom} ${p.nom}`.trim(),
+        recipient: `${formatCivilite(p.civilite)} ${p.prenom} ${p.nom}`.trim(),
         address: p.shipping_adresse,
         postal: p.shipping_code_postal,
         city: p.shipping_ville,
@@ -360,6 +417,18 @@ function ConfirmModal({
         </header>
 
         <div className="max-h-[55vh] overflow-y-auto px-6 py-5">
+          {isIndividualDelivery && (
+            <div className="mb-4 gap-3 items-start justify-start flex flex-col rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+              <div>
+                <p className="font-semibold">Date limite de la commande groupée dépassée</p>
+                <p className="mt-1 opacity-90">
+                  Votre commande sera expédiée individuellement à votre domicile. Des frais de livraison de{" "}
+                  {formatEUR(shippingFee)} s'appliquent.
+                </p>
+              </div>
+            </div>
+          )}
           {/* Mode de livraison */}
           <div className="mb-4">
             <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Mode de livraison</p>
@@ -518,9 +587,10 @@ function ConfirmModal({
               <div className="text-xs text-muted-foreground">
                 {groups.reduce((s, g) => s + g.items.reduce((ss, it) => ss + it.qty, 0), 0)} article(s) ·{" "}
                 {groups.length} enfant(s)
+                {shippingFee > 0 && <> · + {formatEUR(shippingFee)} de livraison</>}
               </div>
             </div>
-            <div className="text-xl font-semibold text-primary">{formatEUR(subtotal)}</div>
+            <div className="text-xl font-semibold text-primary">{formatEUR(subtotal + shippingFee)}</div>
           </div>
 
           <div className="mt-3 flex items-center justify-end gap-2">

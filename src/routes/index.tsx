@@ -11,11 +11,11 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Boutique groupe scolaire Saint-Jacques-de-Compostelle — Dax" },
-       {
-         name: "description",
-         content:
-           "Espace familles officiel du Groupe scolaire Saint-Jacques-de-Compostelle de Dax. Commandez les tenues officielles en quelques clics.",
-       },
+      {
+        name: "description",
+        content:
+          "Espace familles officiel du Groupe scolaire Saint-Jacques-de-Compostelle de Dax. Commandez les tenues officielles en quelques clics.",
+      },
       { property: "og:title", content: "Boutique groupe scolaire Saint-Jacques-de-Compostelle — Dax" },
       {
         property: "og:description",
@@ -84,15 +84,15 @@ function Index() {
                 <span className="text-[10px] font-medium uppercase tracking-[0.32em] text-white/70">Depuis 2003</span>
                 <span className="h-px w-10 bg-gold" />
               </div>
-               <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg mx-auto lg:mx-0">
-                 Bienvenue sur l'espace familles du Groupe scolaire Saint-Jacques-de-Compostelle de Dax. Commandez les
-                 tenues officielles en quelques clics.
-               </p>
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg mx-auto lg:mx-0">
+                Bienvenue sur l'espace familles du Groupe scolaire Saint-Jacques-de-Compostelle de Dax. Commandez les
+                tenues officielles en quelques clics.
+              </p>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
                 <Link
                   to="/login"
-                  className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-primary shadow-xl transition-all hover:gap-3"
+                  className="inline-flex h-12 items-center gap-2 rounded-full bg-white text-sm font-semibold text-primary shadow-xl transition-all hover:gap-3 px-[24px]"
                 >
                   Accéder à mon espace famille <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -109,11 +109,6 @@ function Index() {
                 />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex min-h-[14rem] flex-col justify-end overflow-visible rounded-b-xl bg-gradient-to-t from-primary-deep/85 via-primary-deep/30 to-transparent p-5 sm:min-h-[18rem] sm:p-6 lg:min-h-[22rem]">
                   <div className="relative font-medium uppercase tracking-[0.22em] text-white/75 text-xs sm:text-sm lg:text-base">
-                    {/* Rond jaune décoratif — débordant hors de l'image, centré sur le R */}
-                    <span
-                      aria-hidden="true"
-                      className="pointer-events-none absolute -left-6 top-1/2 z-0 h-16 w-16 -translate-y-1/2 rounded-full bg-gold/80 shadow-lg sm:-left-8 sm:h-24 sm:w-24"
-                    />
                     <span className="relative z-10">Rentrée 2026-2027</span>
                   </div>
                   <div className="relative z-10 mt-1 font-semibold text-white text-xl sm:text-2xl lg:text-3xl">
@@ -121,7 +116,7 @@ function Index() {
                   </div>
                 </div>
               </div>
-              <div className="absolute -right-4 -top-4 z-0 hidden h-20 w-20 rounded-lg border-2 border-gold/70 bg-white/10 backdrop-blur lg:block" />
+              
             </div>
           </div>
         </div>

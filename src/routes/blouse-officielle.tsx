@@ -11,6 +11,7 @@ import { useStore } from "@/lib/store";
 import { recommendSize } from "@/lib/sizeRecommendation";
 import { SizeBadge } from "@/components/SizeBadge";
 import { FrenchFlag } from "@/components/FrenchFlag";
+import { supabase } from "@/integrations/supabase/client";
 import blouseProduct from "@/assets/blouse-bleue-officielle.jpeg";
 import bloussePliee from "@/assets/blouse-pliee.jpeg";
 import classeBlouses from "@/assets/enfants-classe-blouses.jpg";
@@ -35,7 +36,7 @@ export const Route = createFileRoute("/blouse-officielle")({
   ),
 });
 
-const sizes = ["3 ans", "4 ans", "6 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];
+const sizes = ["4 ans", "6 ans", "8 ans", "10 ans", "12 ans", "14 ans", "16 ans", "18 ans"];
 
 function MaternellePage() {
   const { addToCart, children } = useStore();
@@ -44,6 +45,7 @@ function MaternellePage() {
   const [childId, setChildId] = useState("");
   const [activeImg, setActiveImg] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [stock, setStock] = useState<Record<string, number>>({});
   const gallery = [blouseProduct, classeBlouses, bloussePliee];
 
   // Blouse officielle = Unisexe : aucun blocage par genre.
@@ -71,6 +73,26 @@ function MaternellePage() {
   useEffect(() => {
     if (recommendation) setSize(recommendation.size);
   }, [recommendation]);
+
+  useEffect(() => {
+    let mounted = true;
+    supabase
+      .from("blouse_stock")
+      .select("size, remaining")
+      .then(({ data }) => {
+        if (!mounted || !data) return;
+        const map: Record<string, number> = {};
+        for (const r of data as Array<{ size: string; remaining: number }>) map[r.size] = r.remaining;
+        setStock(map);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const remainingForSize = (s: string) => (s in stock ? stock[s] : null);
+  const selectedRemaining = remainingForSize(size);
+  const outOfStock = selectedRemaining !== null && selectedRemaining <= 0;
 
   const FAV_KEY = "sjc.favorites";
   const PRODUCT_ID = "blouse-officielle";
@@ -104,6 +126,14 @@ function MaternellePage() {
     }
     if (!childId) {
       toast.error("Choisissez un enfant");
+      return;
+    }
+    if (selectedRemaining !== null && selectedRemaining < qty) {
+      toast.error(
+        selectedRemaining <= 0
+          ? `Taille ${size} en rupture de stock`
+          : `Stock insuffisant : ${selectedRemaining} restante(s) en taille ${size}`,
+      );
       return;
     }
     addToCart({
@@ -225,39 +255,68 @@ function MaternellePage() {
                     Guide des tailles
                   </Link>
                 </div>
-                {recommendation && (
-                  <SizeBadge size={recommendation.size} variant="blouse" />
-                )}
+                {recommendation && <SizeBadge size={recommendation.size} variant="blouse" />}
               </div>
               {recommendation && (
                 <div className="mt-1 space-y-2 text-[11px] italic leading-relaxed text-muted-foreground">
                   <p>
-                    Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la blouse, emmanchures élargies et manches allongées, pour un confort optimal, y compris portée sur un sweat.
+                    Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la
+                    blouse, emmanchures élargies et manches allongées, pour un confort optimal, y compris portée sur un
+                    sweat.
                   </p>
                   <p>
-                    Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir la bonne taille.
+                    Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir la
+                    bonne taille.
                   </p>
-                  <p>
-                    En cas de doute, vous pouvez toujours prendre une taille au-dessus.
-                  </p>
+                  <p>En cas de doute, vous pouvez toujours prendre une taille au-dessus.</p>
                 </div>
               )}
-              <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8">
-                {sizes.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setSize(s)}
-                    className={`h-12 rounded-lg border text-sm font-medium transition-all ${
-                      size === s
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : recommendation?.size === s
-                          ? "border-emerald-700 bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-700 hover:bg-emerald-100"
-                          : "border-border bg-card text-foreground hover:border-primary/40"
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
+              <div className="mt-3 grid grid-cols-4 gap-2">
+                {sizes.map((s) => {
+                  const rem = remainingForSize(s);
+                  const isOut = rem !== null && rem <= 0;
+                  const isLow = rem !== null && rem > 0 && rem <= 3;
+                  return (
+                    <button
+                      key={s}
+                      onClick={() => !isOut && setSize(s)}
+                      disabled={isOut}
+                      title={
+                        rem === null ? undefined : isOut ? `Taille ${s} en rupture de stock` : `${rem} restante(s)`
+                      }
+                      className={`relative h-14 rounded-lg border px-2 text-sm font-medium transition-all ${
+                        isOut
+                          ? "cursor-not-allowed border-border bg-muted text-muted-foreground line-through opacity-60"
+                          : size === s
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : recommendation?.size === s
+                              ? "border-emerald-700 bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-700 hover:bg-emerald-100"
+                              : "border-border bg-card text-foreground hover:border-primary/40"
+                      }`}
+                    >
+                      <span className="block">{s}</span>
+                      {rem !== null && (
+                        <span
+                          className={`mt-0.5 block text-[9px] font-normal leading-none ${
+                            isOut || isLow
+                              ? "text-red-600"
+                              : size === s
+                                ? "text-primary-foreground/80"
+                                : "text-muted-foreground"
+                          }`}
+                        >
+                          {isOut ? (
+                            "Rupture"
+                          ) : (
+                            <>
+                              {rem} disponibles <br /> à produire
+                            </>
+                          )}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -280,10 +339,16 @@ function MaternellePage() {
               </div>
               <button
                 onClick={handleAdd}
-                disabled={children.length === 0 || !childId}
+                disabled={children.length === 0 || !childId || outOfStock}
                 className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-card)] transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {children.length === 0 ? "Ajoutez un enfant" : !childId ? "Choisir un enfant" : "Ajouter au panier"}
+                {children.length === 0
+                  ? "Ajoutez un enfant"
+                  : !childId
+                    ? "Choisir un enfant"
+                    : outOfStock
+                      ? "Taille en rupture"
+                      : "Ajouter au panier"}
               </button>
               <button
                 onClick={toggleFavorite}
@@ -334,14 +399,12 @@ function MaternellePage() {
               </span>
             </div>
             <div className="text-left">
-              <h3 className="text-lg font-semibold tracking-tight text-foreground">
-                Fabriqué en France & solidaire
-              </h3>
+              <h3 className="text-lg font-semibold tracking-tight text-foreground">Fabriqué en France & solidaire</h3>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                Confection 100% française réalisée en partie via l'<strong className="text-foreground">économie
-                sociale et solidaire</strong> : nos vêtements sont fabriqués par des personnes en
-                situation de handicap, en reconversion ou en réinsertion professionnelle. Un engagement
-                concret pour un savoir-faire local et utile.
+                Confection 100% française réalisée en partie via l'
+                <strong className="text-foreground">économie sociale et solidaire</strong> : nos vêtements sont
+                fabriqués par des personnes en situation de handicap, en reconversion ou en réinsertion professionnelle.
+                Un engagement concret pour un savoir-faire local et utile.
               </p>
             </div>
           </div>
