@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
-import { Download, ShieldCheck, AlertTriangle, X, ImageIcon, Truck, Users, Trash2 } from "lucide-react";
+import { Download, ShieldCheck, AlertTriangle, X, ImageIcon, Truck, Users, Trash2, Copy } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { RequireAuth } from "@/components/RequireAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,7 +23,7 @@ import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFi
 import { listCustomTemplates, saveCustomTemplate, sendCustomBulkEmail } from "@/lib/email-templates-admin.functions";
 import { formatCivilite } from "@/lib/utils";
 import { currentSchoolYear, isClasseConfirmedForCurrentYear } from "@/lib/schoolYear";
-import { CARRIERS } from "@/lib/tracking";
+import { CARRIERS, formatAddressBlock } from "@/lib/tracking";
 import { BlouseStockManager } from "@/components/BlouseStockManager";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
@@ -2188,6 +2188,74 @@ function CarrierField({ value, onChange }: { value: string; onChange: (v: string
   );
 }
 
+async function copyToClipboard(label: string, value: string) {
+  const text = value.trim();
+  if (!text) {
+    toast.error(`${label} : rien à copier`);
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(text);
+    toast.success(`${label} copié`);
+  } catch {
+    toast.error("Copie impossible (presse-papier indisponible)");
+  }
+}
+
+// Menu de copie rapide des infos d'expédition, pour les recoller dans le
+// formulaire Colissimo sans les ressaisir à la main.
+function CopyShippingMenu({ order }: { order: OrderRow }) {
+  const [open, setOpen] = useState(false);
+  const recipient =
+    order.shipping_recipient?.trim() || `${order.family_prenom} ${order.family_nom}`.trim();
+  const fields: Array<{ label: string; value: string | null | undefined }> = [
+    {
+      label: "Adresse complète",
+      value: formatAddressBlock({ ...order, shipping_recipient: recipient }),
+    },
+    { label: "Destinataire", value: recipient },
+    { label: "Adresse (rue)", value: order.shipping_address },
+    { label: "Code postal", value: order.shipping_postal },
+    { label: "Ville", value: order.shipping_city },
+    { label: "Téléphone", value: order.family_telephone },
+    { label: "Email", value: order.family_email },
+  ].filter((f) => f.value && String(f.value).trim());
+
+  return (
+    <div className="relative mt-1.5">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] font-semibold ${
+          open
+            ? "border-primary bg-primary/10 text-primary"
+            : "border-border text-muted-foreground hover:bg-muted/40"
+        }`}
+      >
+        <Copy className="h-3 w-3" /> Copier
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <div className="absolute left-0 z-20 mt-1 w-52 rounded-lg border border-border bg-card p-1 shadow-lg">
+            {fields.map((f) => (
+              <button
+                key={f.label}
+                onClick={() => {
+                  copyToClipboard(f.label, String(f.value));
+                  setOpen(false);
+                }}
+                className="block w-full rounded-md px-2 py-1.5 text-left text-[11px] text-foreground hover:bg-muted/50"
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 function TrackingPanel({
   orders,
   loading,
@@ -2412,6 +2480,7 @@ function TrackingPanel({
                         {o.shipping_recipient && <div className="font-medium text-foreground">{o.shipping_recipient}</div>}
                         <div className="text-muted-foreground">{o.shipping_address}</div>
                         <div className="text-muted-foreground">{[o.shipping_postal, o.shipping_city].filter(Boolean).join(" ")}</div>
+                        <CopyShippingMenu order={o} />
                       </div>
                     ) : o.shipping_mode === "pickup" ? (
                       <span className="text-muted-foreground">—</span>
