@@ -18,6 +18,7 @@ import {
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore } from "@/lib/store";
+import { trackingUrl } from "@/lib/tracking";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { PageWatermark } from "@/components/PageWatermark";
@@ -442,6 +443,16 @@ function CommandesPage() {
                                 {o.tracking_carrier ? `${o.tracking_carrier} · ` : ""}
                                 <span className="font-mono">{o.tracking_number}</span>
                               </div>
+                              {trackingUrl(o.tracking_carrier, o.tracking_number) && (
+                                <a
+                                  href={trackingUrl(o.tracking_carrier, o.tracking_number)!}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="mt-1.5 inline-flex items-center gap-1 font-semibold text-primary hover:underline"
+                                >
+                                  <Truck className="h-3 w-3" /> Suivre mon colis
+                                </a>
+                              )}
                             </div>
                           )}
                         </div>

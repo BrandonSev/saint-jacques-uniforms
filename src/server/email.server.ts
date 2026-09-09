@@ -1,6 +1,7 @@
 // Bridge des anciens helpers vers la queue Lovable Emails.
 // Tous les envois passent par enqueueTransactionalEmail -> templates React Email.
 import { enqueueTransactionalEmail } from "@/lib/email/send.server";
+import { shortHash } from "@/lib/tracking";
 
 export type OrderEmailItem = { name: string; size: string; qty: number; price: number; child: string };
 
@@ -47,11 +48,14 @@ export async function sendOrderStatusEmail(
   status: string,
   extras: { trackingNumber?: string | null; trackingCarrier?: string | null; note?: string | null; familyName?: string } = {},
 ) {
+  // Le hash du n° de suivi entre dans la clé : ajouter/corriger un numéro après
+  // l'envoi initial du mail de statut redéclenche bien un nouvel envoi.
+  const trackSuffix = extras.trackingNumber ? shortHash(extras.trackingNumber) : "x";
   await enqueueTransactionalEmail({
     templateName: "order-status",
     recipientEmail: to,
     templateData: { prenom, orderNumber, status, ...extras },
-    idempotencyKey: `status-${orderNumber}-${status}`,
+    idempotencyKey: `status-${orderNumber}-${status}-${trackSuffix}`,
   });
 }
 

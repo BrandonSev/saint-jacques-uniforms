@@ -22,6 +22,7 @@ import {
 import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, sendUrgentOrderReminder, listAllFamilies, apelListFamilies, applyOrderCorrectionStock } from "@/lib/apel.functions";
 import { listCustomTemplates, saveCustomTemplate, sendCustomBulkEmail } from "@/lib/email-templates-admin.functions";
 import { formatCivilite } from "@/lib/utils";
+import { CARRIERS } from "@/lib/tracking";
 import { BlouseStockManager } from "@/components/BlouseStockManager";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
@@ -394,6 +395,15 @@ function AdminPage() {
     patch: Partial<Pick<OrderRow, "status" | "tracking_number" | "tracking_carrier">>,
     notify: boolean,
   ): Promise<boolean> => {
+    // Notifie la famille et signale (toast) si l'e-mail n'a pas pu partir — sinon l'échec
+    // d'envoi est totalement silencieux.
+    const notifyFamily = () =>
+      sendOrderStatusUpdate({ data: { orderId } })
+        .then((r) => {
+          if (!r?.ok) toast.warning("Commande mise à jour, mais l'e-mail n'a pas pu être envoyé.");
+        })
+        .catch(() => toast.warning("Commande mise à jour, mais l'e-mail n'a pas pu être envoyé."));
+
     // Le changement de statut passe par une server function (plutôt qu'un update client direct) :
     // le passage à "Livrée" doit déclencher la génération atomique de la facture (numéro
     // comptable séquentiel + PDF), ce qui ne peut pas se faire de façon fiable côté client.
@@ -411,7 +421,7 @@ function AdminPage() {
         return false;
       }
       setOrderRows((prev) => prev.map((o) => (o.id === orderId ? { ...o, ...patch } : o)));
-      if (notify) sendOrderStatusUpdate({ data: { orderId } }).catch(() => {});
+      if (notify) notifyFamily();
       if (result.invoiceNumber) toast.success(`Commande mise à jour — facture ${result.invoiceNumber} générée`);
       else toast.success("Commande mise à jour");
       return true;
@@ -423,9 +433,7 @@ function AdminPage() {
       return false;
     }
     setOrderRows((prev) => prev.map((o) => (o.id === orderId ? { ...o, ...patch } : o)));
-    if (notify) {
-      sendOrderStatusUpdate({ data: { orderId } }).catch(() => {});
-    }
+    if (notify) notifyFamily();
     toast.success("Commande mise à jour");
     return true;
   };
@@ -2101,6 +2109,48 @@ function ShippingSettingsPanel() {
   );
 }
 
+// Sélecteur de transporteur : liste gérée (lien de suivi auto dans l'e-mail) + « Autre… »
+// qui révèle un champ libre pour les cas non gérés / valeurs héritées.
+function CarrierField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const isKnown = (CARRIERS as readonly string[]).includes(value);
+  const [manual, setManual] = useState(!!value && !isKnown);
+  const showManual = manual || (!!value && !isKnown);
+  return (
+    <div className="flex flex-col gap-1">
+      <select
+        value={showManual ? "__autre__" : value}
+        onChange={(e) => {
+          const v = e.target.value;
+          if (v === "__autre__") {
+            setManual(true);
+            onChange("");
+          } else {
+            setManual(false);
+            onChange(v);
+          }
+        }}
+        className="h-8 w-36 rounded-md border border-border bg-background px-2 text-xs"
+      >
+        <option value="">— transporteur —</option>
+        {CARRIERS.map((c) => (
+          <option key={c} value={c}>
+            {c}
+          </option>
+        ))}
+        <option value="__autre__">Autre…</option>
+      </select>
+      {showManual && (
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Nom du transporteur"
+          className="h-8 w-36 rounded-md border border-border bg-background px-2 text-xs"
+        />
+      )}
+    </div>
+  );
+}
+
 function TrackingPanel({
   orders,
   loading,
@@ -2118,6 +2168,8 @@ function TrackingPanel({
   const [refundOpenOrderId, setRefundOpenOrderId] = useState<string | null>(null);
   const [billingOpenOrderId, setBillingOpenOrderId] = useState<string | null>(null);
   const [slipOpenOrderId, setSlipOpenOrderId] = useState<string | null>(null);
+  const [shipOpenOrderId, setShipOpenOrderId] = useState<string | null>(null);
+  const [shipping, setShipping] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkStatus, setBulkStatus] = useState<string>(ORDER_STATUSES[0]);
   const [bulkNotify, setBulkNotify] = useState(true);
@@ -2273,6 +2325,8 @@ function TrackingPanel({
               const refundOpen = refundOpenOrderId === o.id;
               const billingOpen = billingOpenOrderId === o.id;
               const slipOpen = slipOpenOrderId === o.id;
+              const shipOpen = shipOpenOrderId === o.id;
+              const canShip = !["Expédiée", "Livrée", "Annulée", "Remboursée"].includes(o.status);
               return (
                 <Fragment key={o.id}>
                   <tr className="hover:bg-muted/30">
@@ -2349,11 +2403,9 @@ function TrackingPanel({
                     </select>
                   </td>
                   <td className="px-4 py-3">
-                    <input
+                    <CarrierField
                       value={d.tracking_carrier}
-                      onChange={(e) => setDraft(o.id, { tracking_carrier: e.target.value })}
-                      placeholder="Colissimo, Chronopost…"
-                      className="h-8 w-32 rounded-md border border-border bg-background px-2 text-xs"
+                      onChange={(v) => setDraft(o.id, { tracking_carrier: v })}
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -2398,6 +2450,18 @@ function TrackingPanel({
                         open={slipOpen}
                         onOpen={() => setSlipOpenOrderId(o.id)}
                       />
+                      {canShip && (
+                        <button
+                          onClick={() => setShipOpenOrderId(shipOpen ? null : o.id)}
+                          className={`inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-[11px] font-semibold ${
+                            shipOpen
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border text-foreground hover:bg-muted/40"
+                          }`}
+                        >
+                          <Truck className="h-3 w-3" /> Marquer expédiée
+                        </button>
+                      )}
                       <button
                         onClick={() =>
                           onUpdate(
@@ -2438,6 +2502,61 @@ function TrackingPanel({
                     <tr>
                       <td colSpan={10} className="bg-muted/10 px-4 py-3">
                         <ShippingSlipPanelContent orderId={o.id} onClose={() => setSlipOpenOrderId(null)} />
+                      </td>
+                    </tr>
+                  )}
+                  {shipOpen && (
+                    <tr>
+                      <td colSpan={10} className="bg-muted/10 px-4 py-4">
+                        <div className="flex flex-wrap items-end gap-3">
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                              Transporteur
+                            </label>
+                            <CarrierField
+                              value={d.tracking_carrier}
+                              onChange={(v) => setDraft(o.id, { tracking_carrier: v })}
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                              N° de suivi
+                            </label>
+                            <input
+                              value={d.tracking_number}
+                              onChange={(e) => setDraft(o.id, { tracking_number: e.target.value })}
+                              placeholder="N° de suivi"
+                              className="h-8 w-48 rounded-md border border-border bg-background px-2 text-xs font-mono"
+                            />
+                          </div>
+                          <button
+                            disabled={shipping || !d.tracking_carrier.trim() || !d.tracking_number.trim()}
+                            onClick={async () => {
+                              setShipping(true);
+                              const ok = await onUpdate(
+                                o.id,
+                                {
+                                  status: "Expédiée",
+                                  tracking_carrier: d.tracking_carrier.trim() || null,
+                                  tracking_number: d.tracking_number.trim() || null,
+                                },
+                                true,
+                              );
+                              setShipping(false);
+                              if (ok) setShipOpenOrderId(null);
+                            }}
+                            className="inline-flex h-8 items-center gap-1 rounded-md bg-primary px-4 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                          >
+                            <Truck className="h-3 w-3" />
+                            {shipping ? "Envoi…" : "Confirmer l'expédition (+ e-mail)"}
+                          </button>
+                          <button
+                            onClick={() => setShipOpenOrderId(null)}
+                            className="inline-flex h-8 items-center rounded-md border border-border px-3 text-[11px] font-semibold text-muted-foreground hover:bg-muted/40"
+                          >
+                            Fermer
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   )}
