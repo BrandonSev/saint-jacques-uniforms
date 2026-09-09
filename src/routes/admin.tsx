@@ -22,6 +22,7 @@ import {
 import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, sendUrgentOrderReminder, listAllFamilies, apelListFamilies, applyOrderCorrectionStock } from "@/lib/apel.functions";
 import { listCustomTemplates, saveCustomTemplate, sendCustomBulkEmail } from "@/lib/email-templates-admin.functions";
 import { formatCivilite } from "@/lib/utils";
+import { currentSchoolYear, isClasseConfirmedForCurrentYear } from "@/lib/schoolYear";
 import { CARRIERS } from "@/lib/tracking";
 import { BlouseStockManager } from "@/components/BlouseStockManager";
 
@@ -49,8 +50,14 @@ type Row = {
   family_telephone: string | null;
   child_prenom: string;
   child_nom: string;
+  /** Classe figée sur la commande (snapshot au moment de l'achat). */
   child_classe: string | null;
   child_section: string | null;
+  /** Classe courante de la fiche enfant (à jour), null si fiche supprimée. */
+  child_classe_actuelle: string | null;
+  child_section_actuelle: string | null;
+  /** Année scolaire pour laquelle la famille a confirmé la classe courante. */
+  child_classe_confirmee_annee: string | null;
   product_name: string;
   product_ref: string;
   variant: string | null;
@@ -196,6 +203,7 @@ function AdminPage() {
           `
           child_prenom, child_nom, child_classe, child_section,
           product_name, product_ref, size, quantity, unit_price, line_total,
+          children ( classe, section, classe_confirmee_annee ),
           orders!inner ( order_number, created_at, status, paid_at, family_civilite, family_nom, family_prenom, family_email, family_telephone )
         `,
         )
@@ -221,6 +229,9 @@ function AdminPage() {
         child_nom: r.child_nom,
         child_classe: r.child_classe,
         child_section: r.child_section,
+        child_classe_actuelle: r.children?.classe ?? null,
+        child_section_actuelle: r.children?.section ?? null,
+        child_classe_confirmee_annee: r.children?.classe_confirmee_annee ?? null,
         product_name: r.product_name,
         product_ref: r.product_ref,
         variant: null,
@@ -445,23 +456,35 @@ function AdminPage() {
   };
 
   const exportExcel = () => {
-    const data = rows.map((r) => ({
-      "N° Commande": r.order_number,
-      Date: new Date(r.created_at).toLocaleDateString("fr-FR"),
-      Statut: r.status,
-      Famille: `${formatCivilite(r.family_civilite)} ${r.family_prenom} ${r.family_nom}`.trim(),
-      Email: r.family_email,
-      Téléphone: r.family_telephone ?? "",
-      Enfant: `${r.child_prenom} ${r.child_nom}`,
-      Classe: r.child_classe ?? "",
-      Section: r.child_section ?? "",
-      Produit: r.product_name,
-      Référence: r.product_ref,
-      Taille: r.size,
-      Quantité: r.quantity,
-      "Prix unitaire (€)": r.unit_price,
-      "Total ligne (€)": r.line_total,
-    }));
+    const annee = currentSchoolYear();
+    const data = rows.map((r) => {
+      // Classe courante de la fiche enfant (à jour) ; à défaut, snapshot de la commande.
+      const classeFiable = r.child_classe_actuelle ?? r.child_classe ?? "";
+      const confirmee = isClasseConfirmedForCurrentYear(r.child_classe_confirmee_annee);
+      return {
+        "N° Commande": r.order_number,
+        Date: new Date(r.created_at).toLocaleDateString("fr-FR"),
+        Statut: r.status,
+        Famille: `${formatCivilite(r.family_civilite)} ${r.family_prenom} ${r.family_nom}`.trim(),
+        Email: r.family_email,
+        Téléphone: r.family_telephone ?? "",
+        Enfant: `${r.child_prenom} ${r.child_nom}`,
+        Classe: classeFiable,
+        "Classe confirmée": confirmee
+          ? `Oui (${annee})`
+          : r.child_classe_confirmee_annee
+            ? `Non — dernière confirmation ${r.child_classe_confirmee_annee}`
+            : "Non — jamais confirmée",
+        "Classe à la commande": r.child_classe ?? "",
+        Section: r.child_section_actuelle ?? r.child_section ?? "",
+        Produit: r.product_name,
+        Référence: r.product_ref,
+        Taille: r.size,
+        Quantité: r.quantity,
+        "Prix unitaire (€)": r.unit_price,
+        "Total ligne (€)": r.line_total,
+      };
+    });
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Commandes");
@@ -630,7 +653,21 @@ function AdminPage() {
                       <td className="px-4 py-3">
                         {r.child_prenom} {r.child_nom}
                       </td>
-                      <td className="px-4 py-3 text-muted-foreground">{r.child_classe ?? "—"}</td>
+                      <td className="px-4 py-3 text-muted-foreground">
+                        {r.child_classe_actuelle ?? r.child_classe ?? "—"}
+                        {!isClasseConfirmedForCurrentYear(r.child_classe_confirmee_annee) && (
+                          <span
+                            title={`Classe non confirmée par la famille pour ${currentSchoolYear()}${
+                              r.child_classe_confirmee_annee
+                                ? ` (dernière confirmation ${r.child_classe_confirmee_annee})`
+                                : ""
+                            }. Classe à la commande : ${r.child_classe ?? "—"}.`}
+                            className="ml-1.5 inline-flex items-center rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800"
+                          >
+                            à vérifier
+                          </span>
+                        )}
+                      </td>
                       <td className="px-4 py-3">
                         {r.product_name} <span className="text-xs text-muted-foreground">({r.product_ref})</span>
                       </td>

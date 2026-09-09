@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useStore, type Child } from "@/lib/store";
 import { recommendSize } from "@/lib/sizeRecommendation";
+import { classesBySection as classesBySectionShared, currentSchoolYear } from "@/lib/schoolYear";
 import guideMesuresImg from "@/assets/guide-tailles-mesures.png";
 
 export type ChildForm = {
@@ -41,12 +42,7 @@ const empty: ChildForm = {
   modele_blouse_2025: "",
 };
 
-const classesBySection: Record<string, string[]> = {
-  Maternelle: ["PS", "MS", "GS"],
-  Élémentaire: ["CP", "CE1", "CE2", "CM1"],
-  Collège: ["CM2", "6e", "5e", "4e"],
-  Lycée: ["3e", "2nde", "1re", "Terminale"],
-};
+const classesBySection: Record<string, string[]> = classesBySectionShared;
 
 type Props = {
   open: boolean;
@@ -103,13 +99,16 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
       return;
     }
     setSaving(true);
+    // La classe est saisie/relue par la famille dans ce formulaire : on tamponne
+    // l'année scolaire courante pour marquer la classe comme confirmée.
+    const payload = { ...form, classe_confirmee_annee: currentSchoolYear() };
     try {
       if (isEdit && initial && "id" in initial) {
-        await updateChild(initial.id, form);
+        await updateChild(initial.id, payload);
         toast.success("Enfant mis à jour");
       } else {
         const before = new Set(children.map((c) => c.id));
-        await addChild(form);
+        await addChild(payload);
         toast.success(`${form.prenom} ajouté${form.genre === "Fille" ? "e" : ""}`);
         if (onCreated) {
           // Find the freshly created child (latest one not in `before`)

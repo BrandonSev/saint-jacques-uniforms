@@ -10,6 +10,8 @@ export type Child = {
   naissance: string;
   classe: string;
   section: string;
+  /** Année scolaire (format "AAAA/AAAA+1") pour laquelle la classe a été confirmée. "" = jamais. */
+  classe_confirmee_annee: string;
   taille: string;
   hauteur: string;
   tour: string;
@@ -94,6 +96,7 @@ function decorate(
     nom: string;
     naissance: string | null;
     classe: string | null;
+    classe_confirmee_annee?: string | null;
     section: string | null;
     taille: string | null;
     hauteur: string | null;
@@ -115,6 +118,7 @@ function decorate(
     nom: c.nom,
     naissance: c.naissance ?? "",
     classe: c.classe ?? "",
+    classe_confirmee_annee: c.classe_confirmee_annee ?? "",
     section: c.section ?? "",
     taille: c.taille ?? "",
     hauteur: c.hauteur ?? "",
@@ -396,6 +400,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
             nom: c.nom,
             naissance: c.naissance || null,
             classe: c.classe || null,
+            classe_confirmee_annee: c.classe_confirmee_annee || null,
             section: c.section || null,
             taille: c.taille || null,
             hauteur: c.hauteur || null,
@@ -425,6 +430,9 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
         }
         if ("modele_blouse_2025" in dbPatch && !dbPatch.modele_blouse_2025) {
           dbPatch.modele_blouse_2025 = null;
+        }
+        if ("classe_confirmee_annee" in dbPatch && !dbPatch.classe_confirmee_annee) {
+          dbPatch.classe_confirmee_annee = null;
         }
         const { data, error } = await supabase.from("children").update(dbPatch).eq("id", id).select().single();
         if (error) throw error;

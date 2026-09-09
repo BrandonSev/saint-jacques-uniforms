@@ -87,6 +87,7 @@ export type Database = {
         Row: {
           blouse_portee_2025: boolean | null
           classe: string | null
+          classe_confirmee_annee: string | null
           created_at: string
           genre: string | null
           hauteur: string | null
@@ -107,6 +108,7 @@ export type Database = {
         Insert: {
           blouse_portee_2025?: boolean | null
           classe?: string | null
+          classe_confirmee_annee?: string | null
           created_at?: string
           genre?: string | null
           hauteur?: string | null
@@ -127,6 +129,7 @@ export type Database = {
         Update: {
           blouse_portee_2025?: boolean | null
           classe?: string | null
+          classe_confirmee_annee?: string | null
           created_at?: string
           genre?: string | null
           hauteur?: string | null
