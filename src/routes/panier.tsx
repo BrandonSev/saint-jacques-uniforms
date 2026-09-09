@@ -19,6 +19,7 @@ import {
   type DeliveryOption,
 } from "@/lib/deliveryOptions";
 import { getShippingSettings } from "@/lib/shipping-settings.functions";
+import { currentSchoolYear, isClasseConfirmedForCurrentYear } from "@/lib/schoolYear";
 
 export const Route = createFileRoute("/panier")({
   head: () => ({
@@ -565,6 +566,36 @@ function ConfirmModal({
           </ul>
         </div>
 
+        {(() => {
+          const aVerifier = groups
+            .map((g) => g.child)
+            .filter(
+              (c): c is Child =>
+                !!c && !!c.classe && !isClasseConfirmedForCurrentYear(c.classe_confirmee_annee),
+            );
+          if (aVerifier.length === 0) return null;
+          return (
+            <div className="mx-6 mt-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs text-amber-900">
+              <p className="font-semibold">Classe non confirmée pour {currentSchoolYear()}</p>
+              <p className="mt-1">
+                Vérifiez la classe de{" "}
+                {aVerifier.map((c, i) => (
+                  <span key={c.id}>
+                    {i > 0 && ", "}
+                    <span className="font-medium">
+                      {c.prenom} ({c.classe})
+                    </span>
+                  </span>
+                ))}{" "}
+                avant de commander.{" "}
+                <Link to="/enfants" className="font-semibold underline">
+                  Gérer mes enfants
+                </Link>
+              </p>
+            </div>
+          );
+        })()}
+
         <footer className="border-t border-border bg-secondary/40 px-6 py-4">
           <label className="flex items-start gap-2.5 text-xs text-foreground">
             <input
@@ -574,7 +605,8 @@ function ConfirmModal({
               className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-primary"
             />
             <span>
-              Je confirme avoir vérifié les <span className="font-semibold">tailles</span> et le{" "}
+              Je confirme avoir vérifié les <span className="font-semibold">tailles</span>, la{" "}
+              <span className="font-semibold">classe</span> et le{" "}
               <span className="font-semibold">destinataire</span> de chaque article.
             </span>
           </label>
