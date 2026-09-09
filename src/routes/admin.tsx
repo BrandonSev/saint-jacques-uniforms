@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
-import { Download, ShieldCheck, AlertTriangle, X, ImageIcon, Truck, Save, Users, Trash2 } from "lucide-react";
+import { Download, ShieldCheck, AlertTriangle, X, ImageIcon, Truck, Users, Trash2 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { RequireAuth } from "@/components/RequireAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -2248,12 +2248,15 @@ function TrackingPanel({
             disabled={bulkProgress !== null}
             className="h-9 rounded-md border border-border bg-background px-2 text-xs"
           >
-            {ORDER_STATUSES.map((s) => (
+            {ORDER_STATUSES.filter((s) => s !== "Expédiée").map((s) => (
               <option key={s} value={s}>
                 {s}
               </option>
             ))}
           </select>
+          <span className="text-[11px] text-muted-foreground">
+            « Expédiée » se fait ligne par ligne (n° de suivi requis).
+          </span>
           <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <input
               type="checkbox"
@@ -2326,7 +2329,8 @@ function TrackingPanel({
               const billingOpen = billingOpenOrderId === o.id;
               const slipOpen = slipOpenOrderId === o.id;
               const shipOpen = shipOpenOrderId === o.id;
-              const canShip = !["Expédiée", "Livrée", "Annulée", "Remboursée"].includes(o.status);
+              const isShipped = o.status === "Expédiée";
+              const canShip = !["Livrée", "Annulée", "Remboursée"].includes(o.status);
               return (
                 <Fragment key={o.id}>
                   <tr className="hover:bg-muted/30">
@@ -2396,25 +2400,17 @@ function TrackingPanel({
                       className="h-8 rounded-md border border-border bg-background px-2 text-xs"
                     >
                       {ORDER_STATUSES.map((s) => (
-                        <option key={s} value={s}>
+                        <option key={s} value={s} disabled={s === "Expédiée" && !isShipped}>
                           {s}
                         </option>
                       ))}
                     </select>
                   </td>
-                  <td className="px-4 py-3">
-                    <CarrierField
-                      value={d.tracking_carrier}
-                      onChange={(v) => setDraft(o.id, { tracking_carrier: v })}
-                    />
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {o.tracking_carrier || "—"}
                   </td>
-                  <td className="px-4 py-3">
-                    <input
-                      value={d.tracking_number}
-                      onChange={(e) => setDraft(o.id, { tracking_number: e.target.value })}
-                      placeholder="N° de suivi"
-                      className="h-8 w-40 rounded-md border border-border bg-background px-2 text-xs font-mono"
-                    />
+                  <td className="px-4 py-3 text-xs font-mono text-muted-foreground">
+                    {o.tracking_number || "—"}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
@@ -2453,30 +2449,17 @@ function TrackingPanel({
                       {canShip && (
                         <button
                           onClick={() => setShipOpenOrderId(shipOpen ? null : o.id)}
-                          className={`inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-[11px] font-semibold ${
+                          className={`inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-[11px] font-semibold ${
                             shipOpen
-                              ? "border-primary bg-primary/10 text-primary"
-                              : "border-border text-foreground hover:bg-muted/40"
+                              ? "border border-primary bg-primary/10 text-primary"
+                              : isShipped
+                                ? "border border-border text-foreground hover:bg-muted/40"
+                                : "bg-primary text-primary-foreground hover:bg-primary/90"
                           }`}
                         >
-                          <Truck className="h-3 w-3" /> Marquer expédiée
+                          <Truck className="h-3 w-3" /> {isShipped ? "Modifier le suivi" : "Expédier"}
                         </button>
                       )}
-                      <button
-                        onClick={() =>
-                          onUpdate(
-                            o.id,
-                            {
-                              tracking_number: d.tracking_number || null,
-                              tracking_carrier: d.tracking_carrier || null,
-                            },
-                            true,
-                          )
-                        }
-                        className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90"
-                      >
-                        <Save className="h-3 w-3" /> Enregistrer
-                      </button>
                     </div>
                   </td>
                   </tr>
@@ -2533,13 +2516,13 @@ function TrackingPanel({
                             disabled={shipping || !d.tracking_carrier.trim() || !d.tracking_number.trim()}
                             onClick={async () => {
                               setShipping(true);
+                              const carrier = d.tracking_carrier.trim() || null;
+                              const number = d.tracking_number.trim() || null;
                               const ok = await onUpdate(
                                 o.id,
-                                {
-                                  status: "Expédiée",
-                                  tracking_carrier: d.tracking_carrier.trim() || null,
-                                  tracking_number: d.tracking_number.trim() || null,
-                                },
+                                isShipped
+                                  ? { tracking_carrier: carrier, tracking_number: number }
+                                  : { status: "Expédiée", tracking_carrier: carrier, tracking_number: number },
                                 true,
                               );
                               setShipping(false);
@@ -2548,7 +2531,11 @@ function TrackingPanel({
                             className="inline-flex h-8 items-center gap-1 rounded-md bg-primary px-4 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                           >
                             <Truck className="h-3 w-3" />
-                            {shipping ? "Envoi…" : "Confirmer l'expédition (+ e-mail)"}
+                            {shipping
+                              ? "Envoi…"
+                              : isShipped
+                                ? "Mettre à jour le suivi (+ e-mail)"
+                                : "Confirmer l'expédition (+ e-mail)"}
                           </button>
                           <button
                             onClick={() => setShipOpenOrderId(null)}
@@ -2557,6 +2544,11 @@ function TrackingPanel({
                             Fermer
                           </button>
                         </div>
+                        <p className="mt-2 text-[11px] text-muted-foreground">
+                          {isShipped
+                            ? "La commande est déjà expédiée. La mise à jour renvoie un e-mail à la famille avec le nouveau numéro."
+                            : "Passe la commande en « Expédiée » et envoie un e-mail unique à la famille avec le lien de suivi."}
+                        </p>
                       </td>
                     </tr>
                   )}
