@@ -23,6 +23,26 @@ export function trackingUrl(carrier?: string | null, number?: string | null): st
   }
 }
 
+/**
+ * Adresse d'expédition mise en forme sur plusieurs lignes, prête à coller dans
+ * le champ adresse d'un formulaire transporteur (Colissimo…).
+ * Lignes vides ignorées.
+ */
+export function formatAddressBlock(a: {
+  shipping_recipient?: string | null;
+  shipping_address?: string | null;
+  shipping_postal?: string | null;
+  shipping_city?: string | null;
+}): string {
+  return [
+    a.shipping_recipient?.trim(),
+    a.shipping_address?.trim(),
+    [a.shipping_postal?.trim(), a.shipping_city?.trim()].filter(Boolean).join(" ").trim() || null,
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
 /** Empreinte courte et ASCII-safe d'une chaîne, pour la clé d'idempotence email. */
 export function shortHash(input: string): string {
   let h = 5381;
