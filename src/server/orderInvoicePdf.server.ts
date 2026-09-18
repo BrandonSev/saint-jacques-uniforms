@@ -92,9 +92,15 @@ export function buildOrderInvoicePdf(data: InvoiceData): Buffer {
   let y = 120;
   doc.text(`N° de commande : ${data.orderNumber}`, M, y);
   doc.text(`Date de facturation : ${fr(data.paidAt)}`, W - M, y, { align: "right" });
-  y += 24;
+  y += 20;
+
+  doc.setFontSize(9);
+  doc.setTextColor(90, 90, 90);
+  doc.text(`Facture acquittée par Carte Bancaire le ${fr(data.paidAt)}`, M, y);
+  y += 22;
 
   doc.setFontSize(10);
+  doc.setTextColor(20, 20, 20);
   doc.setTextColor(...FU_NAVY);
   doc.text("ÉMETTEUR", M, y);
   doc.text("DESTINATAIRE", W / 2, y);
