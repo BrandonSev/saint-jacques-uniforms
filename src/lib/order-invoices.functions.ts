@@ -20,9 +20,11 @@ export type OrderInvoiceRow = {
 };
 
 // Génère (ou renvoie, si déjà existante) la facture d'une commande livrée : réserve un numéro
-// comptable séquentiel FA-ANNÉE-NNNNN de façon atomique, construit le PDF, le stocke, puis
-// enregistre le chemin. Appelée automatiquement au passage du statut à "Livrée" (voir
-// updateOrderStatus) et jamais régénérée ensuite pour une même commande.
+// comptable séquentiel de façon atomique (FU-B-ANNÉE-NNNNN pour une commande individuelle,
+// FU-BE-ANNÉE-NNNNN pour une commande groupée — séquences indépendantes par préfixe, voir
+// reserve_order_invoice_number), construit le PDF, le stocke, puis enregistre le chemin. Appelée
+// automatiquement au passage du statut à "Livrée" (voir updateOrderStatus) et jamais régénérée
+// ensuite pour une même commande.
 export const generateOrderInvoice = createServerFn({ method: "POST" })
   .middleware([withSupabaseAuth, requireSupabaseAuth])
   .inputValidator((d) => z.object({ orderId: z.string().uuid() }).parse(d))
