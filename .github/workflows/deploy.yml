@@ -50,7 +50,7 @@ jobs:
           url="$(echo -n "$COOLIFY_WEBHOOK" | tr -d '[:space:]')"
           token="$(echo -n "$COOLIFY_TOKEN" | tr -d '[:space:]')"
           token="${token#Bearer}"
-          code=$(curl -sS -o response.txt -w '%{http_code}' --retry 3 \
+          code=$(curl -sS -X POST -o response.txt -w '%{http_code}' --retry 3 \
             -H "Authorization: Bearer $token" "$url")
           echo "HTTP $code"
           cat response.txt; echo
