@@ -42,7 +42,16 @@ jobs:
 
       # Coolify ne fait plus que pull l'image + redémarrer le conteneur.
       - name: Déclencher le déploiement Coolify
+        env:
+          COOLIFY_WEBHOOK: ${{ secrets.COOLIFY_WEBHOOK }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
         run: |
-          curl -fsS --retry 3 \
-            -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-            "${{ secrets.COOLIFY_WEBHOOK }}"
+          # Retire espaces/retours à la ligne collés par erreur dans les secrets.
+          url="$(echo -n "$COOLIFY_WEBHOOK" | tr -d '[:space:]')"
+          token="$(echo -n "$COOLIFY_TOKEN" | tr -d '[:space:]')"
+          token="${token#Bearer}"
+          code=$(curl -sS -o response.txt -w '%{http_code}' --retry 3 \
+            -H "Authorization: Bearer $token" "$url")
+          echo "HTTP $code"
+          cat response.txt; echo
+          [ "$code" -lt 400 ]
