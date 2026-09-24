@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendOrderCorrectionUpdate, sendTestRandomEmail, sendOrderCancellation, sendOrderRefund } from "@/lib/email.functions";
 import { refundOrder, listOrderRefunds, type OrderRefundRow } from "@/lib/order-refunds.functions";
 import { getOrderBilling, saveOrderBilling, type OrderBillingRow } from "@/lib/order-billing.functions";
-import { updateOrderStatus, getOrderInvoice, getInvoiceDownloadUrl, type OrderInvoiceRow } from "@/lib/order-invoices.functions";
+import { updateOrderStatus, getOrderInvoice, getInvoiceDownloadUrl, setOrderDeliveredDate, type OrderInvoiceRow } from "@/lib/order-invoices.functions";
 import {
   getShippingSettings,
   saveShippingSettings,
@@ -25,6 +25,8 @@ import { formatCivilite } from "@/lib/utils";
 import { currentSchoolYear, isClasseConfirmedForCurrentYear } from "@/lib/schoolYear";
 import { CARRIERS, formatAddressBlock } from "@/lib/tracking";
 import { BlouseStockManager } from "@/components/BlouseStockManager";
+import { BatchActionBar, BatchJobsBanner, ExportInvoicesButton } from "@/components/OrderBatchBar";
+import { dateInputToIso, isoToDateInput } from "@/lib/batchDelivery";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
@@ -152,6 +154,7 @@ type OrderRow = {
   tracking_carrier: string | null;
   payplug_payment_id: string | null;
   paid_at: string | null;
+  delivered_at: string | null;
 };
 
 function AdminPage() {
@@ -169,6 +172,24 @@ function AdminPage() {
   const [correctionsLoading, setCorrectionsLoading] = useState(true);
   const [correctionModalOpen, setCorrectionModalOpen] = useState(false);
 
+  const loadOrderRows = async () => {
+    const { data, error } = await supabase
+      .from("orders")
+      .select(
+        "id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, family_telephone, shipping_mode, shipping_recipient, shipping_address, shipping_postal, shipping_city, delivery_type, tracking_number, tracking_carrier, payplug_payment_id, paid_at, delivered_at",
+      )
+      .not("paid_at", "is", null)
+      .order("created_at", { ascending: false });
+    if (error) {
+      toast.error(error.message);
+      setOrderRowsLoading(false);
+      return;
+    }
+    const paidOrders = (data ?? []).filter((o: any) => o.status !== "Annulée" && o.status !== "Remboursée");
+    setOrderRows(paidOrders as unknown as OrderRow[]);
+    setOrderRowsLoading(false);
+  };
+
   useEffect(() => {
     if (!isAdmin) {
       setLoading(false);
@@ -177,25 +198,7 @@ function AdminPage() {
       setCorrectionsLoading(false);
       return;
     }
-    (async () => {
-      const { data, error } = await supabase
-        .from("orders")
-        .select(
-          "id, order_number, created_at, status, total_amount, family_prenom, family_nom, family_email, family_telephone, shipping_mode, shipping_recipient, shipping_address, shipping_postal, shipping_city, delivery_type, tracking_number, tracking_carrier, payplug_payment_id, paid_at",
-        )
-        .not("paid_at", "is", null)
-        .order("created_at", { ascending: false });
-      if (error) {
-        toast.error(error.message);
-        setOrderRowsLoading(false);
-        return;
-      }
-      const paidOrders = (data ?? []).filter(
-        (o: any) => o.status !== "Annulée" && o.status !== "Remboursée",
-      );
-      setOrderRows(paidOrders as unknown as OrderRow[]);
-      setOrderRowsLoading(false);
-    })();
+    void loadOrderRows();
     (async () => {
       const { data, error } = await supabase
         .from("order_items")
@@ -682,7 +685,7 @@ function AdminPage() {
           </div>
         )}
 
-        {tab === "tracking" && <TrackingPanel orders={orderRows} loading={orderRowsLoading} onUpdate={updateOrder} />}
+        {tab === "tracking" && <TrackingPanel orders={orderRows} loading={orderRowsLoading} onUpdate={updateOrder} onReload={loadOrderRows} />}
 
         {tab === "incidents" && (
           <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
@@ -2256,10 +2259,42 @@ function CopyShippingMenu({ order }: { order: OrderRow }) {
   );
 }
 
+function DeliveredDateField({ order, onSaved }: { order: OrderRow; onSaved: () => void }) {
+  const [saving, setSaving] = useState(false);
+  const value = isoToDateInput(order.delivered_at);
+  const save = async (v: string) => {
+    const iso = dateInputToIso(v);
+    if (!iso || v === value) return;
+    setSaving(true);
+    const r = await setOrderDeliveredDate({ data: { orderId: order.id, deliveredAt: iso } });
+    setSaving(false);
+    if (!r.ok) {
+      toast.error(r.error);
+      return;
+    }
+    toast.success("Date de livraison mise à jour");
+    onSaved();
+  };
+  return (
+    <label className="mt-1 flex items-center gap-1 text-[11px] text-muted-foreground">
+      Livrée le
+      <input
+        type="date"
+        key={order.delivered_at ?? "none"}
+        defaultValue={value}
+        disabled={saving}
+        onChange={(e) => void save(e.target.value)}
+        className="h-7 rounded-md border border-border bg-background px-1 text-[11px]"
+      />
+    </label>
+  );
+}
+
 function TrackingPanel({
-  orders,
+  orders: allOrders,
   loading,
   onUpdate,
+  onReload,
 }: {
   orders: OrderRow[];
   loading: boolean;
@@ -2268,6 +2303,7 @@ function TrackingPanel({
     patch: Partial<Pick<OrderRow, "status" | "tracking_number" | "tracking_carrier">>,
     notify: boolean,
   ) => Promise<boolean>;
+  onReload: () => Promise<void>;
 }) {
   const [drafts, setDrafts] = useState<Record<string, { tracking_number: string; tracking_carrier: string }>>({});
   const [refundOpenOrderId, setRefundOpenOrderId] = useState<string | null>(null);
@@ -2276,9 +2312,45 @@ function TrackingPanel({
   const [shipOpenOrderId, setShipOpenOrderId] = useState<string | null>(null);
   const [shipping, setShipping] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [bulkStatus, setBulkStatus] = useState<string>(ORDER_STATUSES[0]);
-  const [bulkNotify, setBulkNotify] = useState(true);
-  const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number } | null>(null);
+  const [batchActive, setBatchActive] = useState(false);
+  const [invoiceByOrder, setInvoiceByOrder] = useState<Record<string, string>>({});
+  const [filters, setFilters] = useState({ q: "", type: "all", status: "all", from: "", to: "", noInvoice: false });
+
+  // Numéros de facture par commande (colonne « facture », filtre « sans facture », export comptable).
+  // Cast : table ajoutée par la migration 20260730133000, types Supabase pas encore régénérés.
+  useEffect(() => {
+    (async () => {
+      const { data } = await (supabase.from as any)("order_invoices").select("order_id, invoice_number").range(0, 4999);
+      const map: Record<string, string> = {};
+      for (const r of (data ?? []) as { order_id: string; invoice_number: string }[]) map[r.order_id] = r.invoice_number;
+      setInvoiceByOrder(map);
+    })();
+  }, [allOrders]);
+
+  const orders = useMemo(() => {
+    const q = filters.q.trim().toLowerCase();
+    return allOrders.filter((o) => {
+      if (filters.type === "individual" && o.delivery_type !== "individual") return false;
+      if (filters.type === "grouped" && o.delivery_type === "individual") return false;
+      if (filters.status !== "all" && o.status !== filters.status) return false;
+      const paidDay = o.paid_at?.slice(0, 10) ?? "";
+      if (filters.from && (!paidDay || paidDay < filters.from)) return false;
+      if (filters.to && (!paidDay || paidDay > filters.to)) return false;
+      if (filters.noInvoice && invoiceByOrder[o.id]) return false;
+      if (q) {
+        const hay = [o.order_number, o.family_prenom, o.family_nom, o.family_email, o.shipping_recipient, o.shipping_city]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [allOrders, filters, invoiceByOrder]);
+
+  const selectedList = orders.filter((o) => selectedIds.has(o.id));
+  const exportIds = (selectedList.length > 0 ? selectedList : orders).filter((o) => invoiceByOrder[o.id]).map((o) => o.id);
+  const setFilter = (patch: Partial<typeof filters>) => setFilters((f) => ({ ...f, ...patch }));
 
   const draftFor = (o: OrderRow) =>
     drafts[o.id] ?? {
@@ -2311,81 +2383,61 @@ function TrackingPanel({
 
   const clearSelection = () => setSelectedIds(new Set());
 
-  const applyBulkStatus = async () => {
-    const ids = Array.from(selectedIds);
-    if (ids.length === 0) return;
-    setBulkProgress({ done: 0, total: ids.length });
-    let successCount = 0;
-    const failures: string[] = [];
-    for (const id of ids) {
-      const order = orders.find((o) => o.id === id);
-      try {
-        const success = await onUpdate(id, { status: bulkStatus }, bulkNotify);
-        if (success) successCount++;
-        else failures.push(order?.order_number ?? id);
-      } catch {
-        failures.push(order?.order_number ?? id);
-      }
-      setBulkProgress((prev) => (prev ? { ...prev, done: prev.done + 1 } : prev));
-    }
-    setBulkProgress(null);
-    clearSelection();
-    if (failures.length === 0) {
-      toast.success(`${successCount} commande(s) mise(s) à jour vers "${bulkStatus}"`);
-    } else {
-      toast.error(
-        `${successCount} commande(s) mise(s) à jour, ${failures.length} échec(s) : ${failures.join(", ")}`,
-      );
-    }
-  };
+  const filterField = "h-9 rounded-md border border-border bg-background px-2 text-xs";
 
   return (
     <div className="mt-4">
       <ShippingSettingsPanel />
-      {someSelected && (
-        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-card p-4">
-          <span className="text-sm font-medium text-foreground">
-            {selectedIds.size} commande{selectedIds.size > 1 ? "s" : ""} sélectionnée{selectedIds.size > 1 ? "s" : ""}
-          </span>
-          <select
-            value={bulkStatus}
-            onChange={(e) => setBulkStatus(e.target.value)}
-            disabled={bulkProgress !== null}
-            className="h-9 rounded-md border border-border bg-background px-2 text-xs"
-          >
-            {ORDER_STATUSES.filter((s) => s !== "Expédiée").map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-          <span className="text-[11px] text-muted-foreground">
-            « Expédiée » se fait ligne par ligne (n° de suivi requis).
-          </span>
-          <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <input
-              type="checkbox"
-              checked={bulkNotify}
-              onChange={(e) => setBulkNotify(e.target.checked)}
-              disabled={bulkProgress !== null}
-            />
-            Notifier les familles par email
-          </label>
-          <button
-            onClick={applyBulkStatus}
-            disabled={bulkProgress !== null}
-            className="h-9 rounded-md bg-primary px-4 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-          >
-            {bulkProgress ? `Traitement… ${bulkProgress.done} / ${bulkProgress.total}` : "Appliquer"}
-          </button>
-          <button
-            onClick={clearSelection}
-            disabled={bulkProgress !== null}
-            className="h-9 rounded-md border border-border px-4 text-[11px] font-semibold text-muted-foreground hover:bg-muted/40 disabled:opacity-50"
-          >
-            Annuler la sélection
-          </button>
+      <BatchJobsBanner onActiveChange={setBatchActive} onJobDone={() => void onReload()} />
+      <div className="mb-4 flex flex-wrap items-end gap-3 rounded-2xl border border-border bg-card p-4">
+        <input
+          type="search"
+          value={filters.q}
+          onChange={(e) => setFilter({ q: e.target.value })}
+          placeholder="Rechercher (n° commande, famille, e-mail, ville…)"
+          className={`${filterField} w-72`}
+        />
+        <select value={filters.type} onChange={(e) => setFilter({ type: e.target.value })} className={filterField}>
+          <option value="all">Tous types</option>
+          <option value="individual">Individuelles</option>
+          <option value="grouped">Groupées</option>
+        </select>
+        <select value={filters.status} onChange={(e) => setFilter({ status: e.target.value })} className={filterField}>
+          <option value="all">Tous statuts</option>
+          {ORDER_STATUSES.filter((s) => s !== "Annulée" && s !== "Remboursée").map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+        <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          Payée du
+          <input type="date" value={filters.from} onChange={(e) => setFilter({ from: e.target.value })} className={filterField} />
+          au
+          <input type="date" value={filters.to} onChange={(e) => setFilter({ to: e.target.value })} className={filterField} />
+        </label>
+        <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <input type="checkbox" checked={filters.noInvoice} onChange={(e) => setFilter({ noInvoice: e.target.checked })} />
+          Sans facture
+        </label>
+        <span className="text-xs text-muted-foreground">
+          {orders.length} / {allOrders.length} commande{allOrders.length > 1 ? "s" : ""}
+        </span>
+        <div className="ml-auto">
+          <ExportInvoicesButton
+            orderIds={exportIds}
+            label={`Exporter pour le comptable (${exportIds.length} facture${exportIds.length > 1 ? "s" : ""}${selectedList.length > 0 ? ", sélection" : ""})`}
+          />
         </div>
+      </div>
+      {selectedList.length > 0 && (
+        <BatchActionBar
+          selected={selectedList}
+          allOrders={allOrders}
+          locked={batchActive}
+          onClear={clearSelection}
+          onLaunched={() => setBatchActive(true)}
+        />
       )}
       <div className="overflow-hidden rounded-2xl border border-border bg-card">
       <div className="overflow-x-auto">
@@ -2451,6 +2503,9 @@ function TrackingPanel({
                     <div className="text-[11px] text-muted-foreground">
                       {new Date(o.created_at).toLocaleDateString("fr-FR")} · {Number(o.total_amount).toFixed(2)} €
                     </div>
+                    {invoiceByOrder[o.id] && (
+                      <div className="font-mono text-[11px] text-emerald-700 dark:text-emerald-400">{invoiceByOrder[o.id]}</div>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     {o.family_prenom} {o.family_nom}
@@ -2511,6 +2566,7 @@ function TrackingPanel({
                         </option>
                       ))}
                     </select>
+                    {o.status === "Livrée" && <DeliveredDateField order={o} onSaved={() => void onReload()} />}
                   </td>
                   <td className="px-4 py-3 text-xs text-muted-foreground">
                     {o.tracking_carrier || "—"}

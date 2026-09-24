@@ -1,18 +1,12 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formatCivilite } from "@/lib/utils";
+import { VAT_RATE, ht } from "@/lib/vat";
 import { FRANCE_UNIFORMES_LOGO_BASE64 } from "@/assets/franceUniformesLogoBase64";
 
 const FU_NAVY: [number, number, number] = [10, 37, 64];
 const FU_BAND: [number, number, number] = [228, 243, 249]; // #e4f3f9
 
-// Taux de TVA applicable (France, taux normal). Les montants stockés en base (unit_price,
-// line_total, total_amount) sont des montants TTC : la base ne conserve aucune colonne HT/TVA,
-// le HT est donc dérivé par déduction (HT = TTC / (1 + taux)) au moment de l'édition du PDF.
-const VAT_RATE = 0.2;
-function ht(ttc: number): number {
-  return ttc / (1 + VAT_RATE);
-}
 
 const ISSUER = {
   name: "France Uniformes",
