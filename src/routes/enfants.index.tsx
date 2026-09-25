@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { ShellMotif } from "@/components/SchoolMotif";
 import { useStore, type Child } from "@/lib/store";
+import { currentSchoolYear, nextLevel, isClasseConfirmedForCurrentYear } from "@/lib/schoolYear";
 import { PurchaseHistoryPreview } from "@/components/PurchaseHistoryPreview";
 import { AddChildDialog } from "@/components/AddChildDialog";
 import { PageWatermark } from "@/components/PageWatermark";
@@ -45,14 +46,6 @@ function computeAgeInfoFromISO(iso: string): { label: string; tooltip: string } 
     label: `${years} an${years > 1 ? "s" : ""}${half}`,
     tooltip: `${years} an${years > 1 ? "s" : ""} et ${months} mois`,
   };
-}
-
-function currentSchoolYear(): string {
-  const now = new Date();
-  const y = now.getFullYear();
-  // School year in France starts in September.
-  const start = now.getMonth() >= 7 ? y : y - 1;
-  return `${start}/${start + 1}`;
 }
 
 function EnfantsPage() {
@@ -143,6 +136,26 @@ function EnfantsPage() {
               enfant={e}
               onEdit={() => setEditing(e)}
               onAdd={() => setCreating(true)}
+              onPromote={async (classe, section) => {
+                try {
+                  await updateChild(e.id, {
+                    classe,
+                    section,
+                    classe_confirmee_annee: currentSchoolYear(),
+                  });
+                  toast.success(`${e.prenom} est maintenant en ${classe}`);
+                } catch (err: any) {
+                  toast.error(err.message);
+                }
+              }}
+              onConfirmSame={async () => {
+                try {
+                  await updateChild(e.id, { classe_confirmee_annee: currentSchoolYear() });
+                  toast.success("Classe confirmée");
+                } catch (err: any) {
+                  toast.error(err.message);
+                }
+              }}
               onDelete={async () => {
                 if (confirm(`Supprimer ${e.prenom} ?`)) {
                   try { await removeChild(e.id); toast.success("Enfant supprimé"); }
@@ -175,7 +188,23 @@ function EnfantsPage() {
   );
 }
 
-function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit: () => void; onDelete: () => void; onAdd: () => void }) {
+function EnfantCard({
+  enfant,
+  onEdit,
+  onDelete,
+  onAdd,
+  onPromote,
+  onConfirmSame,
+}: {
+  enfant: Child;
+  onEdit: () => void;
+  onDelete: () => void;
+  onAdd: () => void;
+  onPromote: (classe: string, section: string) => void;
+  onConfirmSame: () => void;
+}) {
+  const needsConfirm = !isClasseConfirmedForCurrentYear(enfant.classe_confirmee_annee);
+  const suivant = nextLevel(enfant.classe);
   return (
     <article
       className={`overflow-hidden rounded-2xl border border-border shadow-[var(--shadow-card)] ${
@@ -186,6 +215,43 @@ function EnfantCard({ enfant, onEdit, onDelete, onAdd }: { enfant: Child; onEdit
           : "bg-card"
       }`}
     >
+      {needsConfirm && enfant.classe && (
+        <div className="flex flex-col gap-3 border-b border-amber-300 bg-amber-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-2 text-sm text-amber-900">
+            <Info className="mt-0.5 h-4 w-4 shrink-0" />
+            <p>
+              <span className="font-semibold">Nouvelle année scolaire {currentSchoolYear()}.</span>{" "}
+              {suivant ? (
+                <>Confirmez la classe de {enfant.prenom} : passe-t-il/elle en <span className="font-semibold">{suivant.classe}</span> ?</>
+              ) : (
+                <>Confirmez la classe de {enfant.prenom} pour cette année.</>
+              )}
+            </p>
+          </div>
+          <div className="flex shrink-0 flex-wrap gap-2">
+            {suivant && (
+              <button
+                onClick={() => onPromote(suivant.classe, suivant.section)}
+                className="inline-flex h-9 items-center rounded-lg bg-amber-600 px-3 text-xs font-semibold text-white hover:bg-amber-700"
+              >
+                Passer en {suivant.classe}
+              </button>
+            )}
+            <button
+              onClick={onConfirmSame}
+              className="inline-flex h-9 items-center rounded-lg border border-amber-400 bg-white px-3 text-xs font-medium text-amber-800 hover:bg-amber-100"
+            >
+              Reste en {enfant.classe}
+            </button>
+            <button
+              onClick={onEdit}
+              className="inline-flex h-9 items-center rounded-lg border border-amber-400 bg-white px-3 text-xs font-medium text-amber-800 hover:bg-amber-100"
+            >
+              Modifier
+            </button>
+          </div>
+        </div>
+      )}
       <div className="grid gap-0 lg:grid-cols-[280px_1fr]">
         <div
           className={`relative flex flex-col justify-between bg-gradient-to-br p-6 ${

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useStore, type Child } from "@/lib/store";
 import { recommendSize } from "@/lib/sizeRecommendation";
+import { classesBySection as classesBySectionShared, currentSchoolYear } from "@/lib/schoolYear";
 import guideMesuresImg from "@/assets/guide-tailles-mesures.png";
 
 export type ChildForm = {
@@ -41,12 +42,7 @@ const empty: ChildForm = {
   modele_blouse_2025: "",
 };
 
-const classesBySection: Record<string, string[]> = {
-  Maternelle: ["PS", "MS", "GS"],
-  Élémentaire: ["CP", "CE1", "CE2", "CM1"],
-  Collège: ["CM2", "6e", "5e", "4e"],
-  Lycée: ["3e", "2nde", "1re", "Terminale"],
-};
+const classesBySection: Record<string, string[]> = classesBySectionShared;
 
 type Props = {
   open: boolean;
@@ -88,18 +84,31 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.prenom || !form.nom || !form.naissance || !form.classe || !form.section || !form.hauteur) {
-      toast.error("Merci de remplir les champs obligatoires (prénom, nom, naissance, classe, section et hauteur)");
+    if (
+      !form.prenom ||
+      !form.nom ||
+      !form.naissance ||
+      !form.classe ||
+      !form.section ||
+      !form.hauteur ||
+      !form.tour
+    ) {
+      toast.error(
+        "Merci de remplir les champs obligatoires (prénom, nom, naissance, classe, section, hauteur et tour de poitrine)",
+      );
       return;
     }
     setSaving(true);
+    // La classe est saisie/relue par la famille dans ce formulaire : on tamponne
+    // l'année scolaire courante pour marquer la classe comme confirmée.
+    const payload = { ...form, classe_confirmee_annee: currentSchoolYear() };
     try {
       if (isEdit && initial && "id" in initial) {
-        await updateChild(initial.id, form);
+        await updateChild(initial.id, payload);
         toast.success("Enfant mis à jour");
       } else {
         const before = new Set(children.map((c) => c.id));
-        await addChild(form);
+        await addChild(payload);
         toast.success(`${form.prenom} ajouté${form.genre === "Fille" ? "e" : ""}`);
         if (onCreated) {
           // Find the freshly created child (latest one not in `before`)
@@ -320,11 +329,12 @@ export function AddChildDialog({ open, initial, onClose, onCreated }: Props) {
                   badge={1}
                 />
                 <Input
-                  label="Tour de poitrine"
+                  label="Tour de poitrine*"
                   value={form.tour}
                   onChange={(v) => setForm({ ...form, tour: v })}
                   placeholder="ex: 62"
                   suffix="cm"
+                  required
                   badge={2}
                 />
                 <Input

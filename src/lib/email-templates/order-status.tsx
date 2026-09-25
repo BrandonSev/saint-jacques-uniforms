@@ -2,6 +2,9 @@ import * as React from 'react'
 import { Button, Text } from '@react-email/components'
 import { EmailLayout, text, button, muted } from './_layout'
 import type { TemplateEntry } from './registry'
+import { trackingUrl } from '@/lib/tracking'
+
+const trackButton = { ...button, background: '#c8102e' }
 
 const APP_URL = 'https://sjdc-dax.franceuniformes.fr'
 
@@ -26,6 +29,7 @@ function getMap(status?: string) {
 
 function OrderStatusEmail({ prenom = '', familyName, orderNumber = '', status = '', trackingNumber, trackingCarrier, note, appUrl = APP_URL }: Props) {
   const map = getMap(status)
+  const trackUrl = trackingUrl(trackingCarrier, trackingNumber)
   return (
     <EmailLayout preview={`${map.title} — ${orderNumber}`} title={map.title} familyName={familyName} signatureRole="Commandes">
       <Text style={text}>Bonjour {prenom},</Text>
@@ -33,6 +37,9 @@ function OrderStatusEmail({ prenom = '', familyName, orderNumber = '', status = 
       <Text style={text}>{map.body}</Text>
       {trackingNumber ? (
         <Text style={text}>Numéro de suivi : <strong>{trackingCarrier ?? ''} {trackingNumber}</strong></Text>
+      ) : null}
+      {trackUrl ? (
+        <Button href={trackUrl} style={trackButton}>Suivre mon colis</Button>
       ) : null}
       {note ? <Text style={muted}>{note}</Text> : null}
       <Button href={`${appUrl}/commandes`} style={button}>Voir mes commandes</Button>
@@ -44,5 +51,5 @@ export const template = {
   component: OrderStatusEmail,
   subject: (d: Record<string, any>) => `${getMap(d.status).title} — ${d.orderNumber ?? ''}`,
   displayName: 'Mise à jour statut commande',
-  previewData: { prenom: 'Marie', familyName: 'Dupont', orderNumber: 'CMD-20260504-C001-001', status: 'Paiement validé' },
+  previewData: { prenom: 'Marie', familyName: 'Dupont', orderNumber: 'CMD-20260504-C001-001', status: 'Expédiée', trackingCarrier: 'Colissimo', trackingNumber: '6A12345678901' },
 } satisfies TemplateEntry

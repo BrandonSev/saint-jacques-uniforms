@@ -9,6 +9,7 @@ import guideMesuresImg from "@/assets/guide-tailles-mesures.png";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { FrenchFlag } from "@/components/FrenchFlag";
 import { SizeBadge } from "@/components/SizeBadge";
+import { supabase } from "@/integrations/supabase/client";
 
 export type ProductGenre = "Fille" | "Garçon" | "Unisexe";
 
@@ -43,18 +44,40 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
   const [size, setSize] = useState(defaultSize ?? sizes[0]);
   const [qty, setQty] = useState(1);
   const [childId, setChildId] = useState<string>("");
+  const [stock, setStock] = useState<Record<string, number>>({});
+
+  const isBlouse = product.productKind === "blouse";
+
+  useEffect(() => {
+    if (!isBlouse) return;
+    let mounted = true;
+    supabase
+      .from("blouse_stock")
+      .select("size, remaining")
+      .then(({ data }) => {
+        if (!mounted || !data) return;
+        const map: Record<string, number> = {};
+        for (const r of data as Array<{ size: string; remaining: number }>) map[r.size] = r.remaining;
+        setStock(map);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [isBlouse]);
+
+  const remainingForSize = (s: string) => (isBlouse && s in stock ? stock[s] : null);
+  const selectedRemaining = remainingForSize(size);
+  const outOfStock = selectedRemaining !== null && selectedRemaining <= 0;
 
   const productGenre: ProductGenre = product.genre ?? "Unisexe";
   const genreFilter = (c: Child) => {
     if (productGenre === "Unisexe") return true;
     return c.genre === productGenre;
   };
-  const combinedFilter = (c: Child) =>
-    (childFilter ? childFilter(c) : true) && genreFilter(c);
+  const combinedFilter = (c: Child) => (childFilter ? childFilter(c) : true) && genreFilter(c);
 
   const selectedChild = children.find((c) => c.id === childId);
-  const genreMismatch =
-    !!selectedChild && productGenre !== "Unisexe" && selectedChild.genre !== productGenre;
+  const genreMismatch = !!selectedChild && productGenre !== "Unisexe" && selectedChild.genre !== productGenre;
 
   const recommendation = useMemo(() => {
     if (!selectedChild) return null;
@@ -83,15 +106,34 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
       toast.error(disabledLabel ?? "Ce produit n'est pas encore disponible à la commande.");
       return;
     }
-    if (children.length === 0) { toast.error("Ajoutez d'abord un enfant"); return; }
-    if (!childId) { toast.error("Choisissez un enfant"); return; }
+    if (children.length === 0) {
+      toast.error("Ajoutez d'abord un enfant");
+      return;
+    }
+    if (!childId) {
+      toast.error("Choisissez un enfant");
+      return;
+    }
     if (genreMismatch) {
       toast.error(`Ce modèle est réservé aux ${productGenre === "Fille" ? "filles" : "garçons"}.`);
       return;
     }
+    if (selectedRemaining !== null && selectedRemaining < qty) {
+      toast.error(
+        selectedRemaining <= 0
+          ? `Taille ${size} en rupture de stock`
+          : `Stock insuffisant : ${selectedRemaining} restante(s) en taille ${size}`,
+      );
+      return;
+    }
     addToCart({
-      productId: product.id, name: product.name, ref: product.ref,
-      price: product.price, size, qty, image: product.image,
+      productId: product.id,
+      name: product.name,
+      ref: product.ref,
+      price: product.price,
+      size,
+      qty,
+      image: product.image,
       childId,
     });
     toast.success(`${product.name} ajouté au panier`);
@@ -129,7 +171,13 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-3xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]">
-      {product.href ? <Link to={product.href} className="block">{Image}</Link> : Image}
+      {product.href ? (
+        <Link to={product.href} className="block">
+          {Image}
+        </Link>
+      ) : (
+        Image
+      )}
 
       <div className="flex flex-1 flex-col p-6">
         <div className="flex items-baseline justify-between gap-3">
@@ -144,7 +192,9 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
 
         <div className="mt-5">
           <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Pour quel enfant ?</div>
-          <div className="mt-2"><ChildPicker value={childId} onChange={setChildId} filter={combinedFilter} /></div>
+          <div className="mt-2">
+            <ChildPicker value={childId} onChange={setChildId} filter={combinedFilter} />
+          </div>
           {genreMismatch && (
             <p className="mt-2 text-[11px] font-medium text-destructive">
               Cet enfant ne correspond pas au genre de ce modèle.
@@ -159,10 +209,7 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
               <SizeGuideModalTrigger />
             </div>
             {recommendation && (
-              <SizeBadge
-                size={recommendation.size}
-                variant={product.productKind === "blouse" ? "blouse" : "default"}
-              />
+              <SizeBadge size={recommendation.size} variant={product.productKind === "blouse" ? "blouse" : "default"} />
             )}
           </div>
           {recommendation && (
@@ -170,14 +217,15 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
               {product.productKind === "blouse" ? (
                 <>
                   <p>
-                    Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la blouse, emmanchures élargies et manches allongées, pour un confort optimal, y compris portée sur un sweat.
+                    Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la
+                    blouse, emmanchures élargies et manches allongées, pour un confort optimal, y compris portée sur un
+                    sweat.
                   </p>
                   <p>
-                    Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir la bonne taille.
+                    Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir la
+                    bonne taille.
                   </p>
-                  <p>
-                    En cas de doute, vous pouvez toujours prendre une taille au-dessus.
-                  </p>
+                  <p>En cas de doute, vous pouvez toujours prendre une taille au-dessus.</p>
                 </>
               ) : (
                 <p>Recommandation pour une 1ʳᵉ couche (t-shirt, polo, chemise).</p>
@@ -185,41 +233,83 @@ export function ProductCard({ product, sizes, defaultSize, childFilter, disabled
             </div>
           )}
           <div className="mt-2 flex flex-wrap gap-1.5">
-            {sizes.map((s) => (
-              <button
-                key={s}
-                onClick={() => setSize(s)}
-                className={`relative h-9 px-2 min-w-[3.5rem] rounded-md border text-xs font-medium transition-all ${
-                  size === s
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : recommendation?.size === s
-                    ? "border-emerald-700 bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-700 hover:bg-emerald-100"
-                    : "border-border bg-card text-foreground hover:border-primary/40"
-                }`}
-              >
-                {s}
-              </button>
-            ))}
+            {sizes.map((s) =>
+              (() => {
+                const rem = remainingForSize(s);
+                const isOut = rem !== null && rem <= 0;
+                const isLow = rem !== null && rem > 0 && rem <= 3;
+                return (
+                  <button
+                    key={s}
+                    onClick={() => !isOut && setSize(s)}
+                    disabled={isOut}
+                    title={rem === null ? undefined : isOut ? `Taille ${s} en rupture de stock` : `${rem} restante(s)`}
+                    className={`relative h-14 px-2 min-w-[3.5rem] rounded-md border text-xs font-medium transition-all ${
+                      isOut
+                        ? "cursor-not-allowed border-border bg-muted text-muted-foreground line-through opacity-60"
+                        : size === s
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : recommendation?.size === s
+                            ? "border-emerald-700 bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-700 hover:bg-emerald-100"
+                            : "border-border bg-card text-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    <span className="block">{s}</span>
+                    {rem !== null && (
+                      <span
+                        className={`mt-0.5 block text-[9px] font-normal leading-none ${
+                          isOut || isLow
+                            ? "text-red-600"
+                            : size === s
+                              ? "text-primary-foreground/80"
+                              : "text-muted-foreground"
+                        }`}
+                      >
+                        {isOut ? (
+                          "Rupture"
+                        ) : (
+                          <>
+                            {rem} disponibles <br /> à produire
+                          </>
+                        )}
+                      </span>
+                    )}
+                  </button>
+                );
+              })(),
+            )}
           </div>
         </div>
 
         <div className="mt-auto pt-5 flex items-stretch gap-2">
           <div className="inline-flex h-11 items-center rounded-lg border border-border bg-background">
-            <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 text-muted-foreground hover:text-foreground">−</button>
+            <button
+              onClick={() => setQty(Math.max(1, qty - 1))}
+              className="px-3 text-muted-foreground hover:text-foreground"
+            >
+              −
+            </button>
             <span className="w-7 text-center text-sm font-semibold">{qty}</span>
-            <button onClick={() => setQty(qty + 1)} className="px-3 text-muted-foreground hover:text-foreground">+</button>
+            <button onClick={() => setQty(qty + 1)} className="px-3 text-muted-foreground hover:text-foreground">
+              +
+            </button>
           </div>
-          <button onClick={handleAdd} disabled={disabled || children.length === 0 || !childId || genreMismatch}
-            className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">
+          <button
+            onClick={handleAdd}
+            disabled={disabled || children.length === 0 || !childId || genreMismatch || outOfStock}
+            className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
             {disabled
               ? (disabledLabel ?? "Bientôt disponible")
               : children.length === 0
-              ? "Ajoutez un enfant"
-              : !childId
-              ? "Choisir un enfant"
-              : genreMismatch
-              ? "Genre non compatible"
-              : "Ajouter au panier"}
+                ? "Ajoutez un enfant"
+                : !childId
+                  ? "Choisir un enfant"
+                  : genreMismatch
+                    ? "Genre non compatible"
+                    : outOfStock
+                      ? "Taille en rupture"
+                      : "Ajouter au panier"}
           </button>
         </div>
       </div>
@@ -232,8 +322,8 @@ function GenreBadge({ genre }: { genre: ProductGenre }) {
     genre === "Fille"
       ? "border-pink-300 bg-pink-50 text-pink-700"
       : genre === "Garçon"
-      ? "border-sky-300 bg-sky-50 text-sky-700"
-      : "border-border bg-secondary text-muted-foreground";
+        ? "border-sky-300 bg-sky-50 text-sky-700"
+        : "border-border bg-secondary text-muted-foreground";
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${styles}`}
@@ -303,14 +393,14 @@ function SizeGuideModalTrigger() {
         </p>
         <div className="mt-2 space-y-2 text-xs leading-relaxed text-muted-foreground">
           <p>
-            Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la blouse, emmanchures élargies et manches allongées, pour un confort optimal, y compris portée sur un sweat.
+            Votre avis compte. Suite aux retours des familles de la rentrée 2025, nous avons revu la coupe de la blouse,
+            emmanchures élargies et manches allongées, pour un confort optimal, y compris portée sur un sweat.
           </p>
           <p>
-            Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir la bonne taille.
+            Le barème de tailles intègre cette aisance : fiez-vous à vos mesures de corps à nu pour choisir la bonne
+            taille.
           </p>
-          <p>
-            En cas de doute, vous pouvez toujours prendre une taille au-dessus.
-          </p>
+          <p>En cas de doute, vous pouvez toujours prendre une taille au-dessus.</p>
         </div>
         <div className="pt-2">
           <Link to="/aide/guide-tailles" className="text-xs font-semibold text-primary hover:underline">

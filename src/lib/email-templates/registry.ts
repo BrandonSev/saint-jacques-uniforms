@@ -16,17 +16,33 @@ import { template as orderStatus } from './order-status'
 import { template as incidentFamily } from './incident-family'
 import { template as incidentAdmin } from './incident-admin'
 import { template as incidentResolution } from './incident-resolution'
+import { template as orderCorrectionResolution } from './order-correction-resolution'
+import { template as orderCancellation } from './order-cancellation'
+import { template as orderRefund } from './order-refund'
+import { template as adminOrderAction } from './admin-order-action'
 import { template as passwordReset } from './password-reset'
 import { template as apelReminder } from './apel-reminder'
+import { template as signup } from './signup'
+import { template as technicalFix } from './technical-fix'
+import { template as customBulk } from './custom-bulk'
+import { template as urgentOrderReminder } from './urgent-order-reminder'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome': welcome,
+  'signup': signup,
   'order-confirmation': orderConfirmation,
   'admin-order': adminOrder,
   'order-status': orderStatus,
   'incident-family': incidentFamily,
   'incident-admin': incidentAdmin,
   'incident-resolution': incidentResolution,
+  'order-correction-resolution': orderCorrectionResolution,
+  'order-cancellation': orderCancellation,
+  'order-refund': orderRefund,
+  'admin-order-action': adminOrderAction,
   'password-reset': passwordReset,
   'apel-reminder': apelReminder,
+  'technical-fix': technicalFix,
+  'custom-bulk': customBulk,
+  'urgent-order-reminder': urgentOrderReminder,
 }

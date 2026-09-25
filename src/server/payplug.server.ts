@@ -102,3 +102,26 @@ export async function fetchPayplugPayment(id: string): Promise<PayplugPayment> {
   if (!res.ok) throw new Error(json?.message || `PayPlug ${res.status}`);
   return json as PayplugPayment;
 }
+
+export type PayplugRefund = {
+  id: string;
+  is_refunded: boolean;
+  amount: number;
+  payment_id: string;
+  metadata?: Record<string, string>;
+};
+
+export async function refundPayplugPayment(paymentId: string, amountCents?: number): Promise<PayplugRefund> {
+  const body = amountCents != null ? { amount: amountCents } : {};
+  const res = await fetch(`${API_BASE}/payments/${paymentId}/refunds`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: authHeader(), "PayPlug-Version": "2019-08-06" },
+    body: JSON.stringify(body),
+  });
+  const json = await res.json();
+  if (!res.ok) {
+    console.error("PayPlug refund failed:", res.status, json);
+    throw new Error(json?.message || `PayPlug ${res.status}`);
+  }
+  return json as PayplugRefund;
+}
