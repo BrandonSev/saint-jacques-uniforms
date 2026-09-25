@@ -147,3 +147,21 @@ export function buildInvoicesCsv(rows: InvoiceExportRow[]): string {
   });
   return "﻿" + [header.map(csvCell).join(";"), ...lines].join("\r\n") + "\r\n";
 }
+
+/** Mention de livraison portée sur la facture : adresse (individuelle) ou livraison groupée à l'établissement. */
+export function buildDeliveryLabel(
+  order: {
+    delivery_type?: string | null;
+    shipping_recipient?: string | null;
+    shipping_address?: string | null;
+    shipping_postal?: string | null;
+    shipping_city?: string | null;
+  } | null,
+): string | null {
+  if (!order) return null;
+  if (order.delivery_type !== "individual") return "Livraison groupée à l'établissement scolaire";
+  const place = [order.shipping_recipient, order.shipping_address, [order.shipping_postal, order.shipping_city].filter(Boolean).join(" ")]
+    .filter((v) => v && String(v).trim())
+    .join(", ");
+  return place ? `Livraison à : ${place}` : null;
+}

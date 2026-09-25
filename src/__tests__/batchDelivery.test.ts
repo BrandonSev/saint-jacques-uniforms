@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+  buildDeliveryLabel,
   buildInvoicesCsv,
   dateInputToIso,
   invoicePrefix,
@@ -110,5 +111,25 @@ describe("zip", () => {
     expect(view.getUint32(end, true)).toBe(0x06054b50);
     expect(view.getUint16(end + 10, true)).toBe(2);
     expect(crc32(new TextEncoder().encode("123456789"))).toBe(0xcbf43926);
+  });
+});
+
+describe("batchDelivery / mention de livraison", () => {
+  it("donne l'adresse pour une commande individuelle", () => {
+    expect(
+      buildDeliveryLabel({
+        delivery_type: "individual",
+        shipping_recipient: "Marie Dupont",
+        shipping_address: "12 rue des Écoles",
+        shipping_postal: "40100",
+        shipping_city: "Dax",
+      }),
+    ).toBe("Livraison à : Marie Dupont, 12 rue des Écoles, 40100 Dax");
+  });
+
+  it("indique la livraison groupée sinon, et rien si aucune donnée", () => {
+    expect(buildDeliveryLabel({ delivery_type: "grouped" })).toBe("Livraison groupée à l'établissement scolaire");
+    expect(buildDeliveryLabel({ delivery_type: "individual" })).toBeNull();
+    expect(buildDeliveryLabel(null)).toBeNull();
   });
 });

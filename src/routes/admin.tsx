@@ -9,7 +9,6 @@ import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 import { sendOrderStatusUpdate, sendIncidentUpdate, sendOrderCorrectionUpdate, sendTestRandomEmail, sendOrderCancellation, sendOrderRefund } from "@/lib/email.functions";
 import { refundOrder, listOrderRefunds, type OrderRefundRow } from "@/lib/order-refunds.functions";
-import { getOrderBilling, saveOrderBilling, type OrderBillingRow } from "@/lib/order-billing.functions";
 import { updateOrderStatus, getOrderInvoice, getInvoiceDownloadUrl, setOrderDeliveredDate, type OrderInvoiceRow } from "@/lib/order-invoices.functions";
 import {
   getShippingSettings,
@@ -1792,9 +1791,9 @@ function RefundPanelContent({ orderId, onClose }: { orderId: string; onClose: ()
   );
 }
 
-// Édition de facturation réservée aux commandes déjà "Livrée" (voir saveOrderBilling) : une fois
-// la commande livrée, seules d'éventuelles corrections de facturation restent possibles.
-function BillingTriggerButton({ disabled, open, onOpen }: { disabled: boolean; open: boolean; onOpen: () => void }) {
+// Facture : générée automatiquement au passage en « Livrée » avec les coordonnées du client
+// (profil, téléphone, livraison) ; ce panneau permet seulement de la consulter et de la télécharger.
+function InvoiceTriggerButton({ disabled, open, onOpen }: { disabled: boolean; open: boolean; onOpen: () => void }) {
   if (open) return null;
   return (
     <button
@@ -1803,78 +1802,24 @@ function BillingTriggerButton({ disabled, open, onOpen }: { disabled: boolean; o
       className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 text-[11px] font-semibold text-foreground hover:bg-muted disabled:opacity-50"
       title={disabled ? "Disponible une fois la commande livrée" : undefined}
     >
-      Facturation
+      Facture
     </button>
   );
 }
 
-function BillingPanelContent({
-  orderId,
-  defaultName,
-  onClose,
-}: {
-  orderId: string;
-  defaultName: string;
-  onClose: () => void;
-}) {
-  const [billing, setBilling] = useState<OrderBillingRow | null>(null);
+function InvoicePanelContent({ orderId, onClose }: { orderId: string; onClose: () => void }) {
   const [invoice, setInvoice] = useState<OrderInvoiceRow | null>(null);
-  const [form, setForm] = useState({
-    billingName: "",
-    billingAddress: "",
-    billingPostal: "",
-    billingCity: "",
-    note: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
 
-  const load = async () => {
-    setLoading(true);
-    const [result, invoiceResult] = await Promise.all([
-      getOrderBilling({ data: { orderId } }),
-      getOrderInvoice({ data: { orderId } }),
-    ]);
-    if (result.ok) {
-      setBilling(result.billing);
-      setForm({
-        billingName: result.billing?.billing_name ?? defaultName,
-        billingAddress: result.billing?.billing_address ?? "",
-        billingPostal: result.billing?.billing_postal ?? "",
-        billingCity: result.billing?.billing_city ?? "",
-        note: result.billing?.note ?? "",
-      });
-    }
-    if (invoiceResult.ok) setInvoice(invoiceResult.invoice);
-    setLoading(false);
-  };
-
   useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    (async () => {
+      setLoading(true);
+      const result = await getOrderInvoice({ data: { orderId } });
+      if (result.ok) setInvoice(result.invoice);
+      setLoading(false);
+    })();
   }, [orderId]);
-
-  const submit = async () => {
-    setSaving(true);
-    const result = await saveOrderBilling({
-      data: {
-        orderId,
-        billingName: form.billingName || undefined,
-        billingAddress: form.billingAddress || undefined,
-        billingPostal: form.billingPostal || undefined,
-        billingCity: form.billingCity || undefined,
-        note: form.note || undefined,
-      },
-    });
-    setSaving(false);
-    if (!result.ok) {
-      toast.error(`Enregistrement échoué : ${result.error}`);
-      return;
-    }
-    toast.success("Facturation mise à jour");
-    await load();
-  };
 
   const download = async () => {
     setDownloading(true);
@@ -1889,81 +1834,28 @@ function BillingPanelContent({
 
   return (
     <div className="rounded-lg border border-border bg-muted/20 p-3 text-xs">
-      {loading && <p className="text-muted-foreground">Chargement…</p>}
-      {!loading && (
-        <>
-          {invoice ? (
-            <div className="mb-3 flex items-center justify-between rounded-md border border-border bg-background px-3 py-2">
-              <span>
-                Facture <span className="font-mono font-semibold">{invoice.invoice_number}</span> — générée le{" "}
-                {new Date(invoice.created_at).toLocaleDateString("fr-FR")}
-              </span>
-              <button
-                onClick={download}
-                disabled={downloading || !invoice.pdf_path}
-                className="rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-              >
-                {downloading ? "…" : "Télécharger"}
-              </button>
-            </div>
-          ) : (
-            <p className="mb-3 text-muted-foreground">
-              Aucune facture générée (créée automatiquement au passage au statut « Livrée »).
-            </p>
-          )}
-          <div className="grid grid-cols-2 gap-2">
-            <input
-              value={form.billingName}
-              onChange={(e) => setForm((f) => ({ ...f, billingName: e.target.value }))}
-              placeholder="Nom / raison sociale"
-              className="col-span-2 h-8 rounded-md border border-border bg-background px-2 text-xs"
-            />
-            <input
-              value={form.billingAddress}
-              onChange={(e) => setForm((f) => ({ ...f, billingAddress: e.target.value }))}
-              placeholder="Adresse de facturation"
-              className="col-span-2 h-8 rounded-md border border-border bg-background px-2 text-xs"
-            />
-            <input
-              value={form.billingPostal}
-              onChange={(e) => setForm((f) => ({ ...f, billingPostal: e.target.value }))}
-              placeholder="Code postal"
-              className="h-8 rounded-md border border-border bg-background px-2 text-xs"
-            />
-            <input
-              value={form.billingCity}
-              onChange={(e) => setForm((f) => ({ ...f, billingCity: e.target.value }))}
-              placeholder="Ville"
-              className="h-8 rounded-md border border-border bg-background px-2 text-xs"
-            />
-          </div>
-          <input
-            value={form.note}
-            onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
-            placeholder="Note (optionnel)"
-            className="mt-2 h-8 w-full rounded-md border border-border bg-background px-2 text-xs"
-          />
-          <div className="mt-2 flex items-center justify-between">
-            {billing?.updated_at ? (
-              <span className="text-[11px] text-muted-foreground">
-                Dernière modification : {new Date(billing.updated_at).toLocaleString("fr-FR")}
-              </span>
-            ) : (
-              <span />
-            )}
-            <button
-              onClick={submit}
-              disabled={saving}
-              className="rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-            >
-              {saving ? "…" : "Enregistrer"}
-            </button>
-          </div>
-          <button onClick={onClose} className="mt-2 text-[11px] text-muted-foreground hover:underline">
-            Fermer
+      {loading ? (
+        <p className="text-muted-foreground">Chargement…</p>
+      ) : invoice ? (
+        <div className="flex items-center justify-between rounded-md border border-border bg-background px-3 py-2">
+          <span>
+            Facture <span className="font-mono font-semibold">{invoice.invoice_number}</span> — générée le{" "}
+            {new Date(invoice.created_at).toLocaleDateString("fr-FR")}
+          </span>
+          <button
+            onClick={download}
+            disabled={downloading || !invoice.pdf_path}
+            className="rounded-md bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          >
+            {downloading ? "…" : "Télécharger"}
           </button>
-        </>
+        </div>
+      ) : (
+        <p className="text-muted-foreground">Aucune facture générée (créée automatiquement au passage au statut « Livrée »).</p>
       )}
+      <button onClick={onClose} className="mt-2 text-[11px] text-muted-foreground hover:underline">
+        Fermer
+      </button>
     </div>
   );
 }
@@ -2598,7 +2490,7 @@ function TrackingPanel({
                         open={refundOpen}
                         onOpen={() => setRefundOpenOrderId(o.id)}
                       />
-                      <BillingTriggerButton
+                      <InvoiceTriggerButton
                         disabled={o.status !== "Livrée"}
                         open={billingOpen}
                         onOpen={() => setBillingOpenOrderId(o.id)}
@@ -2635,11 +2527,7 @@ function TrackingPanel({
                   {billingOpen && (
                     <tr>
                       <td colSpan={10} className="bg-muted/10 px-4 py-3">
-                        <BillingPanelContent
-                          orderId={o.id}
-                          defaultName={`${o.family_prenom} ${o.family_nom}`.trim()}
-                          onClose={() => setBillingOpenOrderId(null)}
-                        />
+                        <InvoicePanelContent orderId={o.id} onClose={() => setBillingOpenOrderId(null)} />
                       </td>
                     </tr>
                   )}

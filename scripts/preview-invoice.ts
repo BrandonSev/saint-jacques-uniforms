@@ -48,6 +48,7 @@ async function main() {
           prenom: "Marie",
           nom: "Dupont",
           email: "marie.dupont@example.com",
+          phone: "06 12 34 56 78",
         },
         billing: {
           name: null, // le nom de la famille figure déjà au-dessus
@@ -55,6 +56,7 @@ async function main() {
           postal: "40100",
           city: "Dax",
         },
+        deliveryLabel: "Livraison à : Marie Dupont, 12 rue des Lilas, 40100 Dax",
         items: [
           {
             child: "Lucas Dupont",

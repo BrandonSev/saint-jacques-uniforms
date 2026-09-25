@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { buildOrderInvoicePdf } from "@/server/orderInvoicePdf.server";
+import { buildDeliveryLabel } from "@/lib/batchDelivery";
 
 export type GenerateInvoiceResult =
   | { ok: true; invoiceNumber: string; invoiceId: string }
@@ -14,7 +15,7 @@ export type GenerateInvoiceResult =
 export async function generateInvoiceForOrder(orderId: string): Promise<GenerateInvoiceResult> {
   const { data: order, error: orderError } = await supabaseAdmin
     .from("orders")
-    .select("id, order_number, status, total_amount, paid_at, family_civilite, family_nom, family_prenom, family_email")
+    .select("id, user_id, order_number, status, total_amount, paid_at, family_civilite, family_nom, family_prenom, family_email, family_telephone")
     .eq("id", orderId)
     .maybeSingle();
   if (orderError || !order) return { ok: false, error: "order_not_found" };
@@ -32,11 +33,32 @@ export async function generateInvoiceForOrder(orderId: string): Promise<Generate
     invoice_id: string;
   };
 
+  // Coordonnées du client : profil de la famille (adresse, téléphone) — la commande ne stocke que le nom,
+  // l'e-mail et le téléphone au moment de l'achat. Une éventuelle saisie manuelle historique
+  // (table order_billing, ancien formulaire « Facturation ») reste prioritaire.
+  const { data: profile } = await supabaseAdmin
+    .from("profiles")
+    .select("adresse, code_postal, ville, telephone")
+    .eq("id", order.user_id)
+    .maybeSingle();
   // Cast : table ajoutée par la migration 20260730130127, types Supabase pas encore régénérés.
-  const { data: billing } = await (supabaseAdmin.from as any)("order_billing")
+  const { data: legacyBilling } = await (supabaseAdmin.from as any)("order_billing")
     .select("billing_name, billing_address, billing_postal, billing_city")
     .eq("order_id", orderId)
     .maybeSingle();
+  const billing = {
+    name: legacyBilling?.billing_name ?? null,
+    address: legacyBilling?.billing_address ?? profile?.adresse ?? null,
+    postal: legacyBilling?.billing_postal ?? profile?.code_postal ?? null,
+    city: legacyBilling?.billing_city ?? profile?.ville ?? null,
+  };
+
+  // Cast : colonnes de livraison ajoutées par la migration 20260803120000, types Supabase pas encore régénérés.
+  const { data: delivery } = await (supabaseAdmin.from as any)("orders")
+    .select("delivery_type, shipping_recipient, shipping_address, shipping_postal, shipping_city")
+    .eq("id", orderId)
+    .maybeSingle();
+  const deliveryLabel = buildDeliveryLabel(delivery);
 
   const { data: items } = await supabaseAdmin
     .from("order_items")
@@ -53,13 +75,10 @@ export async function generateInvoiceForOrder(orderId: string): Promise<Generate
       prenom: order.family_prenom,
       nom: order.family_nom,
       email: order.family_email,
+      phone: order.family_telephone ?? profile?.telephone ?? null,
     },
-    billing: {
-      name: billing?.billing_name ?? null,
-      address: billing?.billing_address ?? null,
-      postal: billing?.billing_postal ?? null,
-      city: billing?.billing_city ?? null,
-    },
+    billing,
+    deliveryLabel,
     items: (items ?? []).map((it: any) => ({
       child: `${it.child_prenom} ${it.child_nom}`,
       productName: it.product_name,

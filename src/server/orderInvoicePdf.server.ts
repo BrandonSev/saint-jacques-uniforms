@@ -41,6 +41,7 @@ export type InvoiceData = {
     prenom: string;
     nom: string;
     email: string;
+    phone?: string | null;
   };
   billing: {
     name?: string | null;
@@ -48,6 +49,8 @@ export type InvoiceData = {
     postal?: string | null;
     city?: string | null;
   };
+  /** Mention de livraison (adresse pour une commande individuelle, ou livraison groupée à l'établissement). */
+  deliveryLabel?: string | null;
   items: InvoiceItem[];
 };
 
@@ -104,11 +107,18 @@ export function buildOrderInvoicePdf(data: InvoiceData): Buffer {
   const issuer = `${ISSUER.name}\n${ISSUER.address}\n${ISSUER.postalCity}\n${ISSUER.country}\n${ISSUER.email}`;
   const issuerLines = doc.splitTextToSize(issuer, colWidth);
   doc.text(issuerLines, M, y);
-  const recipient = `${formatCivilite(data.family.civilite)} ${data.family.prenom} ${data.family.nom}\n${data.family.email}${
-    data.billing.name || data.billing.address
-      ? `\n${[data.billing.name, data.billing.address, [data.billing.postal, data.billing.city].filter(Boolean).join(" ")].filter(Boolean).join("\n")}`
-      : ""
-  }`;
+  const clientName =
+    data.billing.name || `${formatCivilite(data.family.civilite)} ${data.family.prenom} ${data.family.nom}`.trim();
+  const recipient = [
+    clientName,
+    data.billing.address,
+    [data.billing.postal, data.billing.city].filter(Boolean).join(" "),
+    data.family.email,
+    data.family.phone ? `Tél. ${data.family.phone}` : null,
+    data.deliveryLabel ? `\n${data.deliveryLabel}` : null,
+  ]
+    .filter(Boolean)
+    .join("\n");
   const recipientLines = doc.splitTextToSize(recipient, colWidth);
   doc.text(recipientLines, W / 2, y);
   y += Math.max(issuerLines.length, recipientLines.length) * 12 + 16;
