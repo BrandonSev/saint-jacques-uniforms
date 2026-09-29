@@ -72,6 +72,27 @@ export const getInvoiceDownloadUrl = createServerFn({ method: "POST" })
     return { ok: true as const, url: signed.signedUrl };
   });
 
+// Reconstruit le PDF de factures déjà émises, sans changer leur numéro (generateInvoiceForOrder est
+// idempotente : reserve_order_invoice_number renvoie le numéro existant, upload en upsert sur le même
+// chemin). Utile après une modification purement visuelle de la mise en page (orderInvoicePdf.server.ts).
+export const regenerateInvoicePdfs = createServerFn({ method: "POST" })
+  .middleware([withSupabaseAuth, requireSupabaseAuth])
+  .inputValidator((d) => z.object({ orderIds: z.array(z.string().uuid()).min(1).max(500) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    if (!(await userHasAnyRole(userId, ["admin"]))) {
+      return { ok: false as const, error: "forbidden" as const };
+    }
+    let success = 0;
+    const failures: { orderId: string; error: string }[] = [];
+    for (const orderId of data.orderIds) {
+      const result = await generateInvoiceForOrder(orderId);
+      if (result.ok) success++;
+      else failures.push({ orderId, error: result.error });
+    }
+    return { ok: true as const, success, failures };
+  });
+
 // Remplace la mise à jour directe côté client du statut : quand le nouveau statut est "Livrée",
 // déclenche automatiquement la génération de facture dans la même requête serveur.
 export const updateOrderStatus = createServerFn({ method: "POST" })

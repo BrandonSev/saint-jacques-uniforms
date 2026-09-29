@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Download, Loader2 } from "lucide-react";
+import { Download, Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -9,6 +9,7 @@ import {
   retryOrderBatchJob,
   type OrderBatchJobRow,
 } from "@/lib/order-batch.functions";
+import { regenerateInvoicePdfs } from "@/lib/order-invoices.functions";
 import { BATCH_TARGET_STATUSES, dateInputToIso, parseDeliveryDatesCsv } from "@/lib/batchDelivery";
 
 type OrderRef = { id: string; order_number: string };
@@ -372,6 +373,37 @@ export function ExportInvoicesButton({ orderIds, label }: { orderIds: string[]; 
   return (
     <button onClick={run} disabled={busy || orderIds.length === 0} className={`${ghostBtn} inline-flex items-center gap-1.5`}>
       {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+      {label}
+    </button>
+  );
+}
+
+/** Reconstruit le PDF des factures données (même numéro) — après une modification de la mise en page. */
+export function RegenerateInvoicesButton({ orderIds, label }: { orderIds: string[]; label: string }) {
+  const [busy, setBusy] = useState(false);
+
+  const run = async () => {
+    if (orderIds.length === 0) return;
+    if (!window.confirm(`Régénérer le PDF de ${orderIds.length} facture${orderIds.length > 1 ? "s" : ""} ? Le numéro n'est pas modifié.`)) return;
+    setBusy(true);
+    try {
+      const r = await regenerateInvoicePdfs({ data: { orderIds } });
+      if (!r.ok) {
+        toast.error("Action réservée aux administrateurs.");
+        return;
+      }
+      if (r.failures.length === 0) toast.success(`${r.success} PDF régénéré(s).`);
+      else toast.warning(`${r.success} PDF régénéré(s), ${r.failures.length} échec(s).`);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Régénération impossible");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <button onClick={run} disabled={busy || orderIds.length === 0} className={`${ghostBtn} inline-flex items-center gap-1.5`}>
+      {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
       {label}
     </button>
   );

@@ -24,7 +24,7 @@ import { formatCivilite } from "@/lib/utils";
 import { currentSchoolYear, isClasseConfirmedForCurrentYear } from "@/lib/schoolYear";
 import { CARRIERS, formatAddressBlock } from "@/lib/tracking";
 import { BlouseStockManager } from "@/components/BlouseStockManager";
-import { BatchActionBar, BatchJobsBanner, ExportInvoicesButton } from "@/components/OrderBatchBar";
+import { BatchActionBar, BatchJobsBanner, ExportInvoicesButton, RegenerateInvoicesButton } from "@/components/OrderBatchBar";
 import { dateInputToIso, isoToDateInput } from "@/lib/batchDelivery";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
@@ -2315,7 +2315,11 @@ function TrackingPanel({
         <span className="text-xs text-muted-foreground">
           {orders.length} / {allOrders.length} commande{allOrders.length > 1 ? "s" : ""}
         </span>
-        <div className="ml-auto">
+        <div className="ml-auto flex gap-2">
+          <RegenerateInvoicesButton
+            orderIds={exportIds.slice(0, 500)}
+            label={`Régénérer le PDF (${Math.min(exportIds.length, 500)}${exportIds.length > 500 ? " / 500 max" : ""}${selectedList.length > 0 ? ", sélection" : ""})`}
+          />
           <ExportInvoicesButton
             orderIds={exportIds}
             label={`Exporter pour le comptable (${exportIds.length} facture${exportIds.length > 1 ? "s" : ""}${selectedList.length > 0 ? ", sélection" : ""})`}

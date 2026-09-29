@@ -91,11 +91,6 @@ export function buildOrderInvoicePdf(data: InvoiceData): Buffer {
   doc.text(`Date de facturation : ${fr(data.paidAt)}`, W - M, y, { align: "right" });
   y += 20;
 
-  doc.setFontSize(9);
-  doc.setTextColor(90, 90, 90);
-  doc.text(`Facture acquittée par Carte Bancaire le ${fr(data.paidAt)}`, M, y);
-  y += 22;
-
   doc.setFontSize(10);
   doc.setTextColor(20, 20, 20);
   doc.setTextColor(...FU_NAVY);
@@ -169,6 +164,10 @@ export function buildOrderInvoicePdf(data: InvoiceData): Buffer {
   doc.text("Total TTC", W - M - 130, finalY + 42);
   doc.setFontSize(14);
   doc.text(eur(data.totalAmount), W - M, finalY + 42, { align: "right" });
+
+  doc.setFontSize(8);
+  doc.setTextColor(90, 90, 90);
+  doc.text(`Facture acquittée par Carte Bancaire le ${fr(data.paidAt)}`, W - M, finalY + 58, { align: "right" });
 
   const pageH = doc.internal.pageSize.getHeight();
   doc.setFontSize(7);
