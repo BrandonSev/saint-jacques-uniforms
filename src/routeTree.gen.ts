@@ -37,6 +37,7 @@ import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/em
 import { Route as EnfantsChildIdHistoriqueRouteImport } from './routes/enfants.$childId.historique'
 import { Route as ApiPublicPayplugWebhookRouteImport } from './routes/api/public/payplug-webhook'
 import { Route as ApiPublicEmailDiagRouteImport } from './routes/api/public/email-diag'
+import { Route as ApiAdminInvoicesExportRouteImport } from './routes/api/admin/invoices-export'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -184,6 +185,11 @@ const ApiPublicEmailDiagRoute = ApiPublicEmailDiagRouteImport.update({
   path: '/api/public/email-diag',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminInvoicesExportRoute = ApiAdminInvoicesExportRouteImport.update({
+  id: '/api/admin/invoices-export',
+  path: '/api/admin/invoices-export',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailTransactionalSendRoute =
   LovableEmailTransactionalSendRouteImport.update({
     id: '/lovable/email/transactional/send',
@@ -238,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/commandes/retour-paiement': typeof CommandesRetourPaiementRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/enfants/': typeof EnfantsIndexRoute
+  '/api/admin/invoices-export': typeof ApiAdminInvoicesExportRoute
   '/api/public/email-diag': typeof ApiPublicEmailDiagRoute
   '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
@@ -273,6 +280,7 @@ export interface FileRoutesByTo {
   '/commandes/retour-paiement': typeof CommandesRetourPaiementRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/enfants': typeof EnfantsIndexRoute
+  '/api/admin/invoices-export': typeof ApiAdminInvoicesExportRoute
   '/api/public/email-diag': typeof ApiPublicEmailDiagRoute
   '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
@@ -309,6 +317,7 @@ export interface FileRoutesById {
   '/commandes/retour-paiement': typeof CommandesRetourPaiementRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/enfants/': typeof EnfantsIndexRoute
+  '/api/admin/invoices-export': typeof ApiAdminInvoicesExportRoute
   '/api/public/email-diag': typeof ApiPublicEmailDiagRoute
   '/api/public/payplug-webhook': typeof ApiPublicPayplugWebhookRoute
   '/enfants/$childId/historique': typeof EnfantsChildIdHistoriqueRoute
@@ -346,6 +355,7 @@ export interface FileRouteTypes {
     | '/commandes/retour-paiement'
     | '/email/unsubscribe'
     | '/enfants/'
+    | '/api/admin/invoices-export'
     | '/api/public/email-diag'
     | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
@@ -381,6 +391,7 @@ export interface FileRouteTypes {
     | '/commandes/retour-paiement'
     | '/email/unsubscribe'
     | '/enfants'
+    | '/api/admin/invoices-export'
     | '/api/public/email-diag'
     | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
@@ -416,6 +427,7 @@ export interface FileRouteTypes {
     | '/commandes/retour-paiement'
     | '/email/unsubscribe'
     | '/enfants/'
+    | '/api/admin/invoices-export'
     | '/api/public/email-diag'
     | '/api/public/payplug-webhook'
     | '/enfants/$childId/historique'
@@ -451,6 +463,7 @@ export interface RootRouteChildren {
   AideMentionsLegalesRoute: typeof AideMentionsLegalesRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   EnfantsIndexRoute: typeof EnfantsIndexRoute
+  ApiAdminInvoicesExportRoute: typeof ApiAdminInvoicesExportRoute
   ApiPublicEmailDiagRoute: typeof ApiPublicEmailDiagRoute
   ApiPublicPayplugWebhookRoute: typeof ApiPublicPayplugWebhookRoute
   EnfantsChildIdHistoriqueRoute: typeof EnfantsChildIdHistoriqueRoute
@@ -660,6 +673,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicEmailDiagRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/invoices-export': {
+      id: '/api/admin/invoices-export'
+      path: '/api/admin/invoices-export'
+      fullPath: '/api/admin/invoices-export'
+      preLoaderRoute: typeof ApiAdminInvoicesExportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/transactional/send': {
       id: '/lovable/email/transactional/send'
       path: '/lovable/email/transactional/send'
@@ -734,6 +754,7 @@ const rootRouteChildren: RootRouteChildren = {
   AideMentionsLegalesRoute: AideMentionsLegalesRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   EnfantsIndexRoute: EnfantsIndexRoute,
+  ApiAdminInvoicesExportRoute: ApiAdminInvoicesExportRoute,
   ApiPublicEmailDiagRoute: ApiPublicEmailDiagRoute,
   ApiPublicPayplugWebhookRoute: ApiPublicPayplugWebhookRoute,
   EnfantsChildIdHistoriqueRoute: EnfantsChildIdHistoriqueRoute,
@@ -747,3 +768,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

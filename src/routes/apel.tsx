@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Download, Send, ShieldCheck, Search, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { Download, Send, ShieldCheck, Search, CheckCircle2, XCircle, Loader2, RefreshCw } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useStore } from "@/lib/store";
 import { toast } from "sonner";
-import { apelListFamilies, sendApelReminders } from "@/server/apel.functions";
+import { apelListFamilies, sendApelReminders } from "@/lib/apel.functions";
+import { formatCivilite } from "@/lib/utils";
 
 const SCHOOL_LABEL = "Saint-Jacques-de-Compostelle — Dax";
 const SCHOOL_SHORT = "Saint-Jacques";
@@ -46,19 +47,21 @@ function ApelPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [sending, setSending] = useState(false);
   const [customMessage, setCustomMessage] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     if (!allowed) {
       setLoading(false);
       return;
     }
+    setLoading(true);
     (async () => {
       const r = await apelListFamilies({ data: {} });
       if (!r.ok) toast.error(r.error || "Erreur de chargement");
       else setFamilies(r.families as Family[]);
       setLoading(false);
     })();
-  }, [allowed]);
+  }, [allowed, refreshKey]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -109,7 +112,7 @@ function ApelPage() {
       "Statut",
     ];
     const rows = filtered.map((f) => [
-      f.family_civilite ?? "",
+      formatCivilite(f.family_civilite),
       f.family_prenom,
       f.family_nom,
       f.family_email,
@@ -198,13 +201,23 @@ function ApelPage() {
               <strong>{DEADLINE}</strong>.
             </p>
           </div>
-          <button
-            onClick={exportCsv}
-            disabled={filtered.length === 0}
-            className="inline-flex h-11 items-center gap-2 rounded-xl border border-border bg-card px-4 text-sm font-medium hover:bg-accent disabled:opacity-50"
-          >
-            <Download className="h-4 w-4" /> Export CSV
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setRefreshKey((k) => k + 1)}
+              disabled={loading}
+              title="Rafraîchir la liste"
+              className="inline-flex h-11 items-center gap-2 rounded-xl border border-border bg-card px-4 text-sm font-medium hover:bg-accent disabled:opacity-50"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} /> Rafraîchir
+            </button>
+            <button
+              onClick={exportCsv}
+              disabled={filtered.length === 0}
+              className="inline-flex h-11 items-center gap-2 rounded-xl border border-border bg-card px-4 text-sm font-medium hover:bg-accent disabled:opacity-50"
+            >
+              <Download className="h-4 w-4" /> Export CSV
+            </button>
+          </div>
         </div>
 
         <div className="mt-6 grid gap-3 sm:grid-cols-4">
@@ -328,7 +341,7 @@ function ApelPage() {
                       />
                     </td>
                     <td className="px-3 py-3 font-medium text-foreground">
-                      {f.family_civilite ?? ""} {f.family_prenom} {f.family_nom}
+                      {formatCivilite(f.family_civilite)} {f.family_prenom} {f.family_nom}
                     </td>
                     <td className="px-3 py-3 text-muted-foreground">{f.family_email}</td>
                     <td className="px-3 py-3 text-muted-foreground">{f.family_telephone ?? "—"}</td>

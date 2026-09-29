@@ -6,7 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
+.history
 node_modules
 dist
 dist-ssr
@@ -30,3 +30,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+.worktrees/
+
+# Sorties locales des scripts d'aperçu (ex. scripts/preview-invoice.ts)
+scripts/*.pdf
+scripts/*.png

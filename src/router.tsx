@@ -1,9 +1,49 @@
+import { useEffect, useState } from "react";
 import { createRouter, useRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { supabase } from "@/integrations/supabase/client";
 
+// Après un déploiement, l'index HTML déjà chargé dans l'onglet référence des
+// chunks (hash) qui n'existent plus sur le serveur une fois le nouveau build
+// en place. Le import() dynamique échoue alors avec ce message caractéristique
+// (Vite/Rollup). On distingue ce cas pour recharger la page au lieu d'afficher
+// un écran d'erreur bloquant en plein tunnel d'achat.
+function isChunkLoadError(error: Error) {
+  return /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed/i.test(
+    error.message,
+  );
+}
+
+export const CHUNK_RELOAD_KEY = "sjc.chunk-reload-attempted";
+
 function DefaultErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
+  const [reloadingForChunkError] = useState(() => {
+    if (typeof window === "undefined" || !isChunkLoadError(error)) return false;
+    if (sessionStorage.getItem(CHUNK_RELOAD_KEY)) return false;
+    sessionStorage.setItem(CHUNK_RELOAD_KEY, "1");
+    return true;
+  });
+
+  useEffect(() => {
+    if (reloadingForChunkError) {
+      window.location.reload();
+    }
+  }, [reloadingForChunkError]);
+
+  if (reloadingForChunkError) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background px-4">
+        <div className="max-w-md text-center">
+          <div className="mx-auto mb-6 h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <h1 className="text-lg font-semibold tracking-tight text-foreground">Mise à jour en cours</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Le site vient d'être mis à jour, la page se recharge automatiquement.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">

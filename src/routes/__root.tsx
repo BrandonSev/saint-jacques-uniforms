@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
 import { StoreProvider } from "@/lib/store";
 import { Toaster } from "@/components/ui/sonner";
+import { CHUNK_RELOAD_KEY } from "@/router";
 
 function NotFoundComponent() {
   return (
@@ -40,6 +42,12 @@ export const Route = createRootRoute({
       { name: "twitter:card", content: "summary" },
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,
@@ -66,6 +74,13 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  // L'app a démarré avec succès : si un reload automatique suite à un chunk
+  // obsolète (voir router.tsx) avait posé ce flag, on le lève pour ne pas
+  // priver une future erreur de chunk (autre déploiement) de son auto-reload.
+  useEffect(() => {
+    sessionStorage.removeItem(CHUNK_RELOAD_KEY);
+  }, []);
+
   return (
     <StoreProvider>
       <Outlet />

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PageWatermark } from "@/components/PageWatermark";
 
@@ -22,31 +22,79 @@ function MentionsPage() {
           <span className="h-px w-6 bg-gold" /> Légal
         </span>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Mentions légales</h1>
+        <p className="mt-3 text-sm text-muted-foreground">Dernière mise à jour : mardi 19 mai 2026 (23:21)</p>
 
-        <div className="mt-8 space-y-6 text-sm leading-relaxed text-foreground/85">
-          <section>
-            <h2 className="text-base font-semibold text-foreground">Éditeur du site</h2>
-            <p className="mt-2">
-              France Uniformes — Société par actions simplifiée<br />
-              Siège social : 2 Rue Percheronne, 28000 Chartres<br />
-              {"EMAIL\n"} : <a href="mailto:info@franceuniformes.fr" className="text-primary hover:underline">info@franceuniformes.fr</a>
-            </p>
-          </section>
-          <section>
-            <h2 className="text-base font-semibold text-foreground">Directeur de la publication</h2>
-            <p className="mt-2">La direction de France Uniformes.</p>
-          </section>
-          <section>
-            <h2 className="text-base font-semibold text-foreground">Hébergement</h2>
-            <p className="mt-2">Le site est hébergé sur une infrastructure cloud sécurisée.</p>
-          </section>
-          <section>
-            <h2 className="text-base font-semibold text-foreground">Propriété intellectuelle</h2>
-            <p className="mt-2">
-              L'ensemble des contenus (textes, images, logos) sont la propriété de France Uniformes ou
-              de leurs ayants droit. Toute reproduction sans autorisation est interdite.
-            </p>
-          </section>
+        <div className="prose prose-sm mt-8 max-w-none text-foreground/85">
+          <h2 className="mt-8 text-lg font-semibold text-foreground">Éditeur du site</h2>
+          <p className="mt-2 text-sm leading-relaxed">
+            <strong>France Uniformes</strong>
+            <br />
+            Société par Actions Simplifiée (SAS) au capital de 2 500 €
+            <br />
+            Siège social : 2 Rue Percheronne, 28000 Chartres
+            <br />
+            RCS Chartres n° 983 587 932 — SIRET : 983 587 932 00010
+            <br />
+            TVA intracommunautaire : FR43983587932
+            <br />
+            Email :{" "}
+            <a href="mailto:info@franceuniformes.fr" className="text-primary hover:underline">
+              info@franceuniformes.fr
+            </a>
+          </p>
+
+          <h2 className="mt-6 text-lg font-semibold text-foreground">Directeur de la publication</h2>
+          <p className="mt-2 text-sm leading-relaxed">
+            Paul Baudinet, Directeur Général de France Uniformes
+          </p>
+
+          <h2 className="mt-6 text-lg font-semibold text-foreground">Hébergement</h2>
+          <p className="mt-2 text-sm leading-relaxed">
+            <strong>OVHcloud SAS</strong>
+            <br />
+            2 Rue Kellermann, 59100 Roubaix, France
+            <br />
+            <a
+              href="https://www.ovhcloud.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              www.ovhcloud.com
+            </a>
+          </p>
+
+          <h2 className="mt-6 text-lg font-semibold text-foreground">Propriété intellectuelle</h2>
+          <p className="mt-2 text-sm leading-relaxed">
+            L'ensemble des contenus présents sur la plateforme (textes, images, logos, graphismes, interface, structure) est la propriété exclusive de France Uniformes ou de ses partenaires et est protégé par les lois françaises et internationales relatives à la propriété intellectuelle. Toute reproduction, représentation ou exploitation sans autorisation préalable écrite est strictement interdite.
+          </p>
+
+          <h2 className="mt-6 text-lg font-semibold text-foreground">Protection des données personnelles</h2>
+          <p className="mt-2 text-sm leading-relaxed">
+            Le traitement des données personnelles est décrit dans notre{" "}
+            <Link to="/aide/confidentialite" className="text-primary underline hover:no-underline">
+              Politique de confidentialité
+            </Link>{" "}
+            accessible sur cette plateforme. Pour toute question :{" "}
+            <a href="mailto:dpo@franceuniformes.fr" className="text-primary hover:underline">
+              dpo@franceuniformes.fr
+            </a>
+          </p>
+
+          <h2 className="mt-6 text-lg font-semibold text-foreground">Médiation</h2>
+          <p className="mt-2 text-sm leading-relaxed">
+            En cas de litige lié à un achat, France Uniformes adhère au service de médiation du{" "}
+            <strong>CM2C — Centre de la Médiation de la Consommation de Conciliateurs de justice</strong>, 49 rue de Ponthieu, 75008 Paris —{" "}
+            <a
+              href="https://www.cm2c.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              www.cm2c.net
+            </a>
+            .
+          </p>
         </div>
       </article>
       <SiteFooter />

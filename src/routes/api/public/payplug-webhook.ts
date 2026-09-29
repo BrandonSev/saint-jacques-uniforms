@@ -35,19 +35,36 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
 
         const { data: order } = await supabaseAdmin
           .from("orders")
-          .select("id, order_number, status, family_email, family_prenom, family_nom, total_amount, paid_at")
+          .select("id, order_number, status, family_email, family_prenom, family_nom, total_amount, paid_at, payplug_payment_id")
           .eq("id", orderId)
           .maybeSingle();
         if (!order) return new Response("order not found", { status: 200 });
 
-        const wasPaid = !!order.paid_at;
+        const wasPaid = !!order.paid_at || order.status === "Paiement validé";
+
+        // Ignore les anciens échecs, mais accepte toujours un paiement confirmé :
+        // si la sauvegarde du nouveau payment_id a été retardée/échouée, le succès doit gagner.
+        if (order.payplug_payment_id && order.payplug_payment_id !== id && !payment.is_paid) {
+          return new Response("stale payment id", { status: 200 });
+        }
 
         if (payment.is_paid) {
           if (!wasPaid) {
-            await supabaseAdmin
+            const { error: updateError } = await supabaseAdmin
               .from("orders")
-              .update({ status: "Paiement validé", paid_at: new Date().toISOString() })
+              .update({ status: "Paiement validé", paid_at: new Date().toISOString(), payplug_payment_id: id })
               .eq("id", orderId);
+            if (updateError) {
+              console.error("payplug webhook paid update:", updateError);
+              return new Response("update failed", { status: 500 });
+            }
+
+            // Déduit le stock des blouses officielles (silencieux en cas d'erreur)
+            try {
+              await supabaseAdmin.rpc("decrement_blouse_stock", { _order_id: orderId });
+            } catch (e) {
+              console.error("payplug webhook decrement_blouse_stock:", e);
+            }
 
             // Emails
             try {
@@ -75,6 +92,8 @@ export const Route = createFileRoute("/api/public/payplug-webhook")({
             }
           }
         } else if (payment.failure) {
+          // N'écrase pas un paiement déjà validé
+          if (wasPaid) return new Response("already paid, ignoring failure", { status: 200 });
           await supabaseAdmin
             .from("orders")
             .update({ status: "Paiement échoué" })

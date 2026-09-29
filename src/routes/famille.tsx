@@ -8,6 +8,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { useStore, type FamilyParent } from "@/lib/store";
 import { PageWatermark } from "@/components/PageWatermark";
 import { AddChildDialog } from "@/components/AddChildDialog";
+import { formatCivilite } from "@/lib/utils";
 
 export const Route = createFileRoute("/famille")({
   head: () => ({
@@ -144,7 +145,7 @@ function FamillePage() {
                 parent={{
                   id: "__new__",
                   role: "Mère",
-                  civilite: profile?.civilite || "Mme",
+                  civilite: formatCivilite(profile?.civilite) || "Madame",
                   prenom: profile?.prenom || "",
                   nom: profile?.nom || "",
                   email: user?.email ?? profile?.email ?? "",
@@ -306,7 +307,7 @@ function ParentCard({
   const [roleCustom, setRoleCustom] = useState(initialRoleIsKnown ? "" : parent.role || "");
   const [form, setForm] = useState({
     role: parent.role || "Parent",
-    civilite: parent.civilite || "Mme",
+    civilite: formatCivilite(parent.civilite) || "Madame",
     prenom: parent.prenom || "",
     nom: parent.nom || "",
     email: parent.email || "",
@@ -329,7 +330,7 @@ function ParentCard({
     setRoleCustom(known ? "" : parent.role || "");
     setForm({
       role: parent.role || "Parent",
-      civilite: parent.civilite || "Mme",
+      civilite: formatCivilite(parent.civilite) || "Madame",
       prenom: parent.prenom || "",
       nom: parent.nom || "",
       email: parent.email || "",
@@ -432,8 +433,9 @@ function ParentCard({
             onChange={(e) => set("civilite", e.target.value)}
             className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
           >
-            <option value="Mme">Mme</option>
-            <option value="M.">M.</option>
+            <option value="Madame">Madame</option>
+            <option value="Monsieur">Monsieur</option>
+            <option value="Autre">Autre</option>
           </select>
         </Field>
         <Field label="Prénom">
