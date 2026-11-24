@@ -276,6 +276,7 @@ export type Database = {
           header_title: string
           id: string
           name: string
+          preheader: string | null
           signature_role: string
           updated_at: string
         }
@@ -288,6 +289,7 @@ export type Database = {
           header_title: string
           id?: string
           name: string
+          preheader?: string | null
           signature_role?: string
           updated_at?: string
         }
@@ -300,6 +302,7 @@ export type Database = {
           header_title?: string
           id?: string
           name?: string
+          preheader?: string | null
           signature_role?: string
           updated_at?: string
         }

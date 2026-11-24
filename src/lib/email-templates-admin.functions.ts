@@ -5,6 +5,7 @@ import { withSupabaseAuth } from "@/integrations/supabase/supabase-auth-middlewa
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { enqueueTransactionalEmail } from "@/lib/email/send.server";
 import { formatCivilite } from "@/lib/utils";
+import { CUSTOM_BULK_FIXED } from "@/lib/email-templates/custom-bulk.constants";
 
 type AppRole = "admin" | "apel" | "user";
 async function userHasAnyRole(userId: string, roles: AppRole[]) {
@@ -18,6 +19,7 @@ export type CustomTemplate = {
   id: string;
   name: string;
   header_title: string;
+  preheader: string | null;
   body: string;
   button_label: string | null;
   button_url: string | null;
@@ -36,7 +38,7 @@ export const listCustomTemplates = createServerFn({ method: "POST" })
     }
     const { data, error } = await supabaseAdmin
       .from("email_templates_custom")
-      .select("id, name, header_title, body, button_label, button_url, signature_role, updated_at")
+      .select("id, name, header_title, preheader, body, button_label, button_url, signature_role, updated_at")
       .order("updated_at", { ascending: false });
     if (error) return { ok: false as const, error: error.message, templates: [] };
     return { ok: true as const, templates: data ?? [] };
@@ -51,10 +53,8 @@ export const saveCustomTemplate = createServerFn({ method: "POST" })
         id: z.string().uuid().optional(),
         name: z.string().min(1).max(200),
         headerTitle: z.string().min(1).max(200),
+        preheader: z.string().max(200).optional(),
         body: z.string().min(1).max(5000),
-        buttonLabel: z.string().max(100).optional(),
-        buttonUrl: z.string().url().max(500).optional(),
-        signatureRole: z.string().min(1).max(100),
       })
       .parse(d),
   )
@@ -66,10 +66,12 @@ export const saveCustomTemplate = createServerFn({ method: "POST" })
     const row = {
       name: data.name,
       header_title: data.headerTitle,
+      preheader: data.preheader ?? null,
       body: data.body,
-      button_label: data.buttonLabel ?? null,
-      button_url: data.buttonUrl ?? null,
-      signature_role: data.signatureRole,
+      // Bouton et signature sont désormais fixes dans le template « custom-bulk ».
+      button_label: null,
+      button_url: null,
+      signature_role: CUSTOM_BULK_FIXED.signatureRole,
       updated_at: new Date().toISOString(),
     };
     if (data.id) {
@@ -96,10 +98,8 @@ export const sendCustomBulkEmail = createServerFn({ method: "POST" })
         profileIds: z.array(z.string().uuid()).max(500).optional(),
         rawEmails: z.array(z.string().email()).max(500).optional(),
         headerTitle: z.string().min(1).max(200),
+        preheader: z.string().max(200).optional(),
         body: z.string().min(1).max(5000),
-        buttonLabel: z.string().max(100).optional(),
-        buttonUrl: z.string().url().max(500).optional(),
-        signatureRole: z.string().min(1).max(100),
       })
       .refine((d) => (d.profileIds?.length ?? 0) + (d.rawEmails?.length ?? 0) > 0, {
         message: "at_least_one_recipient_required",
@@ -117,10 +117,8 @@ export const sendCustomBulkEmail = createServerFn({ method: "POST" })
 
     const templateData = {
       headerTitle: data.headerTitle,
+      preheader: data.preheader,
       body: data.body,
-      buttonLabel: data.buttonLabel,
-      buttonUrl: data.buttonUrl,
-      signatureRole: data.signatureRole,
     };
 
     let profiles: Array<{ id: string; email: string; prenom: string | null; nom: string | null; civilite: string | null }> = [];

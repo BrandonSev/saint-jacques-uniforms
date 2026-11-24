@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import * as XLSX from "xlsx";
 import { Download, ShieldCheck, AlertTriangle, X, ImageIcon, Truck, Users, Trash2, Copy } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
@@ -20,6 +20,8 @@ import {
 } from "@/lib/shipping-settings.functions";
 import { listRoleAssignments, setUserRole, sendTestApelReminder, sendTechnicalFixNotice, sendUrgentOrderReminder, listAllFamilies, apelListFamilies, applyOrderCorrectionStock } from "@/lib/apel.functions";
 import { listCustomTemplates, saveCustomTemplate, sendCustomBulkEmail } from "@/lib/email-templates-admin.functions";
+import { parseRichText, renderRichParagraph, toggleWrap } from "@/lib/email-templates/richText";
+import { CUSTOM_BULK_FIXED } from "@/lib/email-templates/custom-bulk.constants";
 import { formatCivilite } from "@/lib/utils";
 import { currentSchoolYear, isClasseConfirmedForCurrentYear } from "@/lib/schoolYear";
 import { CARRIERS, formatAddressBlock } from "@/lib/tracking";
@@ -2621,6 +2623,7 @@ type CustomTemplate = {
   id: string;
   name: string;
   header_title: string;
+  preheader: string | null;
   body: string;
   button_label: string | null;
   button_url: string | null;
@@ -2640,11 +2643,22 @@ function EmailsPanel() {
   const [templateId, setTemplateId] = useState<string | undefined>(undefined);
   const [name, setName] = useState("");
   const [headerTitle, setHeaderTitle] = useState("");
+  const [preheader, setPreheader] = useState("");
   const [body, setBody] = useState("");
-  const [buttonLabel, setButtonLabel] = useState("");
-  const [buttonUrl, setButtonUrl] = useState("");
-  const [signatureRole, setSignatureRole] = useState("technique");
   const [saving, setSaving] = useState(false);
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
+
+  // Gras / italique / souligné : entoure (ou retire) la sélection du textarea.
+  const applyFormat = (marker: "**" | "*" | "__") => {
+    const el = bodyRef.current;
+    if (!el) return;
+    const r = toggleWrap(body, el.selectionStart, el.selectionEnd, marker);
+    setBody(r.value);
+    requestAnimationFrame(() => {
+      el.focus();
+      el.setSelectionRange(r.start, r.end);
+    });
+  };
 
   const [recipientTab, setRecipientTab] = useState<"families" | "raw">("families");
   const [families, setFamilies] = useState<FamilyRow[]>([]);
@@ -2677,15 +2691,13 @@ function EmailsPanel() {
     setTemplateId(t.id);
     setName(t.name);
     setHeaderTitle(t.header_title);
+    setPreheader(t.preheader ?? "");
     setBody(t.body);
-    setButtonLabel(t.button_label ?? "");
-    setButtonUrl(t.button_url ?? "");
-    setSignatureRole(t.signature_role);
   };
 
   const handleSave = async () => {
     if (!name.trim() || !headerTitle.trim() || !body.trim()) {
-      toast.error("Nom, titre et corps du message sont requis");
+      toast.error("Nom, objet et corps du message sont requis");
       return;
     }
     setSaving(true);
@@ -2694,10 +2706,8 @@ function EmailsPanel() {
         id: templateId,
         name: name.trim(),
         headerTitle: headerTitle.trim(),
+        preheader: preheader.trim() || undefined,
         body,
-        buttonLabel: buttonLabel.trim() || undefined,
-        buttonUrl: buttonUrl.trim() || undefined,
-        signatureRole: signatureRole.trim() || "technique",
       },
     });
     setSaving(false);
@@ -2751,7 +2761,7 @@ function EmailsPanel() {
 
   const handleSend = async () => {
     if (!headerTitle.trim() || !body.trim()) {
-      toast.error("Titre et corps du message sont requis");
+      toast.error("Objet et corps du message sont requis");
       return;
     }
     if (recipientCount === 0) {
@@ -2767,10 +2777,8 @@ function EmailsPanel() {
           profileIds: Array.from(selected),
           rawEmails: parsedRawEmails,
           headerTitle: headerTitle.trim(),
+          preheader: preheader.trim() || undefined,
           body,
-          buttonLabel: buttonLabel.trim() || undefined,
-          buttonUrl: buttonUrl.trim() || undefined,
-          signatureRole: signatureRole.trim() || "technique",
         },
       });
       if (!r.ok) {
@@ -2788,7 +2796,7 @@ function EmailsPanel() {
     }
   };
 
-  const previewParagraphs = body.split(/\n\s*\n/).filter((p) => p.trim().length > 0);
+  const previewParagraphs = parseRichText(body);
 
   return (
     <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -2817,47 +2825,67 @@ function EmailsPanel() {
           placeholder="Ex: Relance inscription résolue"
         />
 
-        <label className="mt-4 block text-xs font-medium text-muted-foreground">Titre du header</label>
+        <label className="mt-4 block text-xs font-medium text-muted-foreground">Pré-header</label>
+        <input
+          className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+          value={preheader}
+          onChange={(e) => setPreheader(e.target.value)}
+          maxLength={200}
+          placeholder="Court résumé affiché dans la boîte de réception, après l'objet"
+        />
+
+        <label className="mt-4 block text-xs font-medium text-muted-foreground">Objet</label>
         <input
           className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
           value={headerTitle}
           onChange={(e) => setHeaderTitle(e.target.value)}
+          maxLength={200}
+          placeholder="Également affiché en titre de l'email"
         />
 
         <label className="mt-4 block text-xs font-medium text-muted-foreground">Corps du message</label>
-        <textarea
-          className="mt-1 h-32 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          placeholder="Séparez les paragraphes par une ligne vide"
-        />
-
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs font-medium text-muted-foreground">Texte du bouton</label>
-            <input
-              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
-              value={buttonLabel}
-              onChange={(e) => setButtonLabel(e.target.value)}
-            />
+        <div className="mt-1 overflow-hidden rounded-lg border border-border bg-background">
+          <div className="flex gap-1 border-b border-border bg-muted/40 px-2 py-1">
+            {(
+              [
+                { marker: "**", label: "G", title: "Gras (Ctrl+B)", className: "font-bold" },
+                { marker: "*", label: "I", title: "Italique (Ctrl+I)", className: "italic" },
+                { marker: "__", label: "S", title: "Souligné (Ctrl+U)", className: "underline" },
+              ] as const
+            ).map((f) => (
+              <button
+                key={f.marker}
+                type="button"
+                title={f.title}
+                aria-label={f.title}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => applyFormat(f.marker)}
+                className={`h-7 w-7 rounded text-sm text-foreground hover:bg-muted ${f.className}`}
+              >
+                {f.label}
+              </button>
+            ))}
           </div>
-          <div>
-            <label className="block text-xs font-medium text-muted-foreground">Lien du bouton</label>
-            <input
-              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
-              value={buttonUrl}
-              onChange={(e) => setButtonUrl(e.target.value)}
-              placeholder="https://..."
-            />
-          </div>
+          <textarea
+            ref={bodyRef}
+            className="h-40 w-full bg-background px-3 py-2 text-sm outline-none"
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            onKeyDown={(e) => {
+              if (!(e.ctrlKey || e.metaKey)) return;
+              const k = e.key.toLowerCase();
+              const marker = k === "b" ? "**" : k === "i" ? "*" : k === "u" ? "__" : null;
+              if (!marker) return;
+              e.preventDefault();
+              applyFormat(marker);
+            }}
+            placeholder="Séparez les paragraphes par une ligne vide"
+          />
         </div>
-
-        <label className="mt-4 block text-xs font-medium text-muted-foreground">Signature</label>
-        <input
-          className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
-          value={signatureRole}
-          onChange={(e) => setSignatureRole(e.target.value)}
-        />
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          Sélectionnez du texte puis G / I / S. La salutation, le bouton « {CUSTOM_BULK_FIXED.buttonLabel} », les
+          remerciements, la signature et la mention légale sont ajoutés automatiquement.
+        </p>
 
         <button
           onClick={handleSave}
@@ -2871,8 +2899,14 @@ function EmailsPanel() {
       <div className="rounded-2xl border border-border bg-card p-5">
         <h2 className="text-base font-semibold text-foreground">Aperçu</h2>
         <div className="mt-3 overflow-hidden rounded-xl border border-border">
+          <div className="border-b border-border bg-muted/40 px-4 py-2 text-xs">
+            <p className="truncate">
+              <span className="font-semibold text-foreground">{headerTitle || "Objet"}</span>
+              <span className="text-muted-foreground"> — {preheader.trim() || headerTitle || "Pré-header"}</span>
+            </p>
+          </div>
           <div style={{ backgroundColor: "#0a2540", padding: "26px 32px" }}>
-            <p style={{ fontSize: "22px", fontWeight: 600, color: "#ffffff", margin: 0 }}>{headerTitle || "Titre du header"}</p>
+            <p style={{ fontSize: "22px", fontWeight: 600, color: "#ffffff", margin: 0 }}>{headerTitle || "Objet"}</p>
           </div>
           <div style={{ height: "3px", backgroundColor: "#c8102e" }} />
           <div style={{ padding: "24px", backgroundColor: "#ffffff" }}>
@@ -2881,26 +2915,34 @@ function EmailsPanel() {
               <p style={{ fontSize: "15px", color: "#999999", margin: "0 0 14px" }}>Corps du message…</p>
             ) : (
               previewParagraphs.map((p, i) => (
-                <p key={i} style={{ fontSize: "15px", color: "#1a1a1a", margin: "0 0 14px" }}>
-                  {p}
+                <p key={i} style={{ fontSize: "15px", lineHeight: 1.6, color: "#1a1a1a", margin: "0 0 14px" }}>
+                  {renderRichParagraph(p)}
                 </p>
               ))
             )}
-            {buttonLabel && buttonUrl ? (
-              <span
-                style={{
-                  display: "inline-block",
-                  background: "#0a2540",
-                  color: "#ffffff",
-                  padding: "12px 24px",
-                  borderRadius: "8px",
-                  fontWeight: 600,
-                  fontSize: "14px",
-                }}
-              >
-                {buttonLabel}
-              </span>
-            ) : null}
+            <span
+              style={{
+                display: "inline-block",
+                background: "#0a2540",
+                color: "#ffffff",
+                padding: "12px 24px",
+                borderRadius: "8px",
+                fontWeight: 600,
+                fontSize: "14px",
+                marginBottom: "14px",
+              }}
+            >
+              {CUSTOM_BULK_FIXED.buttonLabel}
+            </span>
+            <p style={{ fontSize: "15px", color: "#1a1a1a", margin: "0 0 14px" }}>{CUSTOM_BULK_FIXED.thanks}</p>
+            <p style={{ fontSize: "14px", lineHeight: 1.6, color: "#1a1a1a", margin: "28px 0 0" }}>
+              Bien cordialement,
+              <br />
+              <strong>L'équipe {CUSTOM_BULK_FIXED.signatureRole} de France Uniformes</strong>
+            </p>
+            <p style={{ fontSize: "13px", lineHeight: 1.5, color: "#1a1a1a", margin: "14px 0 0" }}>
+              Cet email vous est envoyé par <strong>France Uniformes</strong> {CUSTOM_BULK_FIXED.disclaimer}
+            </p>
           </div>
           <div style={{ backgroundColor: "#f5f5f5", padding: "16px 24px", textAlign: "center" }}>
             <p style={{ fontSize: "12px", color: "#666666", margin: 0, fontWeight: 600 }}>France Uniformes — Uniformes scolaires sur mesure</p>
