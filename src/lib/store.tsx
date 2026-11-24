@@ -1,4 +1,5 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
 import { getShippingSettings, generateOrderShippingSlip } from "@/lib/shipping-settings.functions";
@@ -82,6 +83,32 @@ export type ShippingChoice = {
   label?: string;
 };
 
+// Seule la blouse officielle a un stock par taille (table `blouse_stock`).
+const BLOUSE_PRODUCT_ID = "blouse-officielle";
+
+/** Tailles de blouse épuisées (remaining <= 0). null si le stock n'a pas pu être lu
+ * (erreur réseau, visiteur non connecté : la RLS réserve la lecture aux comptes). */
+async function fetchExhaustedBlouseSizes(): Promise<Set<string> | null> {
+  const { data, error } = await supabase.from("blouse_stock").select("size, remaining");
+  if (error || !data) return null;
+  return new Set(data.filter((r) => r.remaining <= 0).map((r) => r.size));
+}
+
+function isUnavailable(item: CartItem, exhausted: Set<string>): boolean {
+  return item.productId.split("::")[0] === BLOUSE_PRODUCT_ID && exhausted.has(item.size);
+}
+
+function notifyRemoved(removed: CartItem[]) {
+  if (removed.length === 0) return;
+  const list = removed.map((i) => `${i.name} (taille ${i.size})`).join(", ");
+  toast.warning(
+    removed.length > 1
+      ? `Ces articles ne sont plus disponibles et ont été retirés de votre panier : ${list}.`
+      : `Cet article n'est plus disponible et a été retiré de votre panier : ${list}.`,
+    { duration: 10000 },
+  );
+}
+
 const COLORS = [
   "from-primary/15 to-primary/5",
   "from-gold/25 to-gold/5",
@@ -161,6 +188,8 @@ type StoreCtx = {
   updateQty: (id: string, qty: number) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
+  /** Retire du panier les articles dont la taille n'est plus disponible ; renvoie les articles retirés. */
+  purgeUnavailableSizes: () => Promise<CartItem[]>;
   cartCount: number;
   checkout: (shipping: ShippingChoice) => Promise<{ orderId: string; orderNumber: string }>;
 };
@@ -195,6 +224,8 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
   const [parentList, setParentList] = useState<FamilyParent[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartLoaded, setCartLoaded] = useState(false);
+  const cartRef = useRef<CartItem[]>(cart);
+  cartRef.current = cart;
   const [isAdmin, setIsAdmin] = useState(false);
   const [isApel, setIsApel] = useState(false);
 
@@ -312,9 +343,35 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
       } catch {}
     }
 
-    setCart(dbItems);
+    // Retire les tailles devenues indisponibles depuis l'ajout au panier.
+    const exhausted = await fetchExhaustedBlouseSizes();
+    const removed = exhausted ? dbItems.filter((i) => isUnavailable(i, exhausted)) : [];
+    if (removed.length > 0) {
+      await supabase
+        .from("cart_items")
+        .delete()
+        .in("id", removed.map((i) => i.id));
+      notifyRemoved(removed);
+    }
+
+    setCart(dbItems.filter((i) => !removed.includes(i)));
     setCartLoaded(true);
   }, []);
+
+  const purgeUnavailableSizes = useCallback(async (): Promise<CartItem[]> => {
+    const exhausted = await fetchExhaustedBlouseSizes();
+    if (!exhausted || exhausted.size === 0) return [];
+    const removed = cartRef.current.filter((i) => isUnavailable(i, exhausted));
+    if (removed.length === 0) return [];
+    const removedIds = new Set(removed.map((i) => i.id));
+    setCart((prev) => prev.filter((i) => !removedIds.has(i.id)));
+    if (user) {
+      const dbIds = removed.map((i) => i.id).filter((id) => !id.startsWith("tmp-"));
+      if (dbIds.length > 0) await supabase.from("cart_items").delete().in("id", dbIds);
+    }
+    notifyRemoved(removed);
+    return removed;
+  }, [user]);
 
   useEffect(() => {
     if (user) {
@@ -594,10 +651,18 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
         setCart([]);
         if (user) supabase.from("cart_items").delete().eq("user_id", user.id).then(() => {});
       },
+      purgeUnavailableSizes,
       cartCount: cart.reduce((s, i) => s + i.qty, 0),
       checkout: async (shipping) => {
         if (!user || !profile) throw new Error("Non connecté");
         if (cart.length === 0) throw new Error("Panier vide");
+        // Le stock a pu changer depuis l'ouverture du panier : on revérifie juste avant de créer
+        // la commande et on s'arrête si des articles ont été retirés, pour que la famille revoie
+        // son panier et le total avant de payer.
+        const removed = await purgeUnavailableSizes();
+        if (removed.length > 0) {
+          throw new Error("Votre panier a été mis à jour : vérifiez-le avant de valider à nouveau.");
+        }
         const subtotal = cart.reduce((s, i) => s + i.qty * i.price, 0);
 
         const settings = await getShippingSettings();
@@ -682,6 +747,7 @@ export function StoreProvider({ children: kids }: { children: ReactNode }) {
       cart,
       setCart,
       loadProfile,
+      purgeUnavailableSizes,
     ],
   );
 

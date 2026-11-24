@@ -56,7 +56,8 @@ function summarizeItems(items: CartItem[]): string {
 }
 
 function PanierPage() {
-  const { user, profile, cart, children, cartCount, updateQty, removeFromCart, checkout, parents } = useStore();
+  const { user, profile, cart, children, cartCount, updateQty, removeFromCart, checkout, parents, purgeUnavailableSizes } =
+    useStore();
   const navigate = useNavigate();
   const [processing, setProcessing] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -120,6 +121,12 @@ function PanierPage() {
     loadDeliveryInfo();
   }, []);
 
+  // Retire les tailles devenues indisponibles (panier conservé d'une visite précédente,
+  // ou stock épuisé pendant la navigation). Relancé une fois le panier chargé.
+  useEffect(() => {
+    if (cartCount > 0) purgeUnavailableSizes();
+  }, [user, cartCount > 0]);
+
   const groups = useMemo<Group[]>(() => {
     const map = new Map<string, Group>();
     for (const item of cart) {
@@ -145,6 +152,8 @@ function PanierPage() {
       return;
     }
     setSizeConfirmed(false);
+    // Revérifie la disponibilité des tailles avant d'afficher le récapitulatif.
+    purgeUnavailableSizes();
     // Recharge la date limite / les options de livraison avant d'ouvrir la modal : un onglet
     // resté ouvert avant le passage en livraison individuelle ne doit pas continuer à proposer
     // le retrait à l'établissement sur la foi de l'état chargé au premier rendu de la page.
